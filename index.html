@@ -2,168 +2,299 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SpinnerRealYT Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="icon" type="image/png" href="Logo.png">
+<!-- IKONA KARTY -->
+<link rel="icon" href="Logo.png">
 
 <style>
+:root{
+    --bg:#0f172a;
+    --card:#111827;
+    --accent:#38bdf8;
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+}
+
+*{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto}
+
 body{
-  margin:0;
-  background:#0f0f0f;
-  color:white;
-  font-family:system-ui,sans-serif;
+    margin:0;
+    background:linear-gradient(180deg,#020617,#0f172a);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
 }
 
 /* HEADER */
-.top-header{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:14px;
-  padding:14px;
-  font-size:24px;
-  font-weight:700;
-  background:linear-gradient(135deg,#1a1a1a,#2a2a2a);
+header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px 24px;
+    background:rgba(15,23,42,.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid #1e293b;
 }
-.top-header img{height:50px}
 
-/* NAV */
+header img{
+    height:48px;
+}
+
+header h1{
+    font-size:22px;
+    margin:0;
+}
+
+/* MENU */
 nav{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  padding:10px;
-  background:#161616;
-}
-nav button{
-  background:#222;
-  color:white;
-  border:1px solid #333;
-  padding:8px 16px;
-  border-radius:8px;
-  cursor:pointer;
-}
-nav button.active{
-  background:#4da3ff;
-  color:black;
+    display:flex;
+    gap:10px;
+    padding:16px;
+    justify-content:center;
 }
 
-/* SECTIONS */
-section{
-  display:none;
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
+nav button{
+    background:#1e293b;
+    color:var(--text);
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
 }
-section.active{display:block}
+
+nav button.active{
+    background:var(--accent);
+    color:#020617;
+    font-weight:600;
+}
+
+/* CONTENT */
+main{
+    flex:1;
+    padding:20px;
+    max-width:1100px;
+    margin:auto;
+    width:100%;
+}
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+/* CARD */
+.card{
+    background:var(--card);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
 
 /* FOOTER */
 footer{
-  text-align:center;
-  padding:15px;
-  color:#aaa;
-  font-size:13px;
-  margin-top:40px;
+    text-align:center;
+    padding:16px;
+    color:var(--muted);
+    font-size:14px;
 }
 
-/* ===== TWÓJ CSS SAPERA ===== */
-#menu { padding: 10px; background: #333; border-radius:10px }
-input { width: 60px; padding: 3px; margin: 3px; text-align: center; }
-button { padding: 5px 10px; margin: 3px; font-size: 14px; }
-#info { margin-top: 5px; }
-#game {
-  display: grid;
-  justify-content: center;
-  margin: 10px auto;
-  gap: 1px;
-  background: #555;
-  touch-action: none;
+/* ===== SAPER ===== */
+#board{
+    display:grid;
+    gap:6px;
+    margin-top:16px;
 }
-.cell { background: #888; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; }
-.open { background: #ccc; }
-.mine { background: #f00; color: white; }
-.flagged { background: #ff0; }
-.number1{color:blue}.number2{color:green}.number3{color:red}.number4{color:navy}
-.number5{color:brown}.number6{color:teal}.number7{color:black}.number8{color:gray}
+
+.cell{
+    width:36px;
+    height:36px;
+    background:#1e293b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    cursor:pointer;
+    border-radius:6px;
+    user-select:none;
+}
+
+.cell.revealed{
+    background:#020617;
+    cursor:default;
+}
+
+.cell.mine{
+    background:#dc2626;
+}
+
+.controls{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.controls button{
+    background:var(--accent);
+    color:#020617;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<header class="top-header">
-  <img src="Logo.png">
-  <span>SpinnerRealYT Games</span>
+<header>
+    <img src="Logo.png" alt="SpinnerRealYT logo">
+    <h1>SpinnerRealYT Games</h1>
 </header>
 
 <nav>
-  <button class="active" onclick="showTab('home',this)">Menu</button>
-  <button onclick="showTab('saper',this); initSaper()">Saper</button>
-  <button onclick="showTab('sondaze',this)">Sondaże</button>
+    <button class="active" onclick="showSection('home',this)">Menu</button>
+    <button onclick="showSection('saper',this)">Saper</button>
+    <button onclick="showSection('sondaze',this)">Sondaże</button>
 </nav>
 
-<section id="home" class="active">
-  <h2>🎮 SpinnerRealYT Games</h2>
-  <p>Gry HTML, testy, statystyki.</p>
+<main>
+
+<!-- MENU -->
+<section id="home" class="section active">
+    <div class="card">
+        <h2>🎮 Witaj!</h2>
+        <p>Strona z grami HTML i projektami politycznymi SpinnerRealYT.</p>
+        <p>Wybierz zakładkę u góry.</p>
+    </div>
 </section>
 
-<section id="saper">
-  <h2>💣 Saper</h2>
+<!-- SAPER -->
+<section id="saper" class="section">
+    <div class="card">
+        <h2>💣 Saper</h2>
+        <p>Kliknij „Nowa gra”, aby wygenerować planszę.</p>
 
-  <div id="menu">
-    Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="100">
-    Bomby: <input type="number" id="bomb-count" value="10" min="5">
-    <button id="start-btn">Start Game</button>
-    <button id="reset-btn">Reset</button>
-    <button id="mode-toggle">Flag Mode: OFF</button>
-    <button id="hint-btn">Hint (1 free)</button>
-    <div id="info">Flags: 0 / 0</div>
-    <div id="points-info">Points: 0 | Hints: 1</div>
-  </div>
+        <div class="controls">
+            <button onclick="startGame()">Nowa gra</button>
+        </div>
 
-  <div id="game"></div>
-
-  <div id="controls">
-    <button id="btn-open">Otwórz</button>
-    <button id="btn-flag">Flaga</button>
-  </div>
+        <div id="board"></div>
+    </div>
 </section>
 
-<section id="sondaze">
-  <h2>📊 Średnie* sondaże Partii Politycznych w Polsce</h2>
-  <div class="flourish-embed flourish-chart" data-src="visualisation/27035462">
-    <script src="https://public.flourish.studio/resources/embed.js"></script>
-  </div>
-  <p style="color:#aaa;font-size:13px">
-    * Średnia liczona na podstawie kilku sondaży.
-  </p>
+<!-- SONDAŻE -->
+<section id="sondaze" class="section">
+    <div class="card">
+        <h2>📊 Średnie* sondaże Partii Politycznych w Polsce</h2>
+
+        <div class="flourish-embed flourish-chart" data-src="visualisation/27035462"></div>
+        <script src="https://public.flourish.studio/resources/embed.js"></script>
+
+        <p style="margin-top:14px;color:var(--muted);font-size:14px;">
+            *Sondaże przedstawiają uśrednione wyniki z różnych badań opinii publicznej.
+        </p>
+    </div>
 </section>
+
+</main>
 
 <footer>
-  © 2026 SpinnerRealYT Games
+    © 2026 SpinnerRealYT Games
 </footer>
 
 <script>
-function showTab(id,btn){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  btn.classList.add("active");
+/* ===== MENU ===== */
+function showSection(id,btn){
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 }
-</script>
 
-<script>
-let saperLoaded=false;
-function initSaper(){
-  if(saperLoaded) return;
-  saperLoaded=true;
+/* ===== SAPER LOGIC ===== */
+const size = 8;
+const minesCount = 10;
+let board = [];
+let revealed = [];
 
-  /* ===== TWÓJ ORYGINALNY SKRYPT SAPERA – 1:1 ===== */
-  (() => {
-    /* ⬅️ TU WKLEJASZ DOKŁADNIE TEN KOD,
-       KTÓRY MI WCZEŚNIEJ DAŁEŚ
-       BEZ JAKIEJKOLWIEK ZMIANY */
-  })();
+function startGame(){
+    const boardEl = document.getElementById('board');
+    boardEl.innerHTML = '';
+    boardEl.style.gridTemplateColumns = `repeat(${size},36px)`;
+
+    board = Array(size*size).fill(0);
+    revealed = Array(size*size).fill(false);
+
+    let placed = 0;
+    while(placed < minesCount){
+        let i = Math.floor(Math.random()*board.length);
+        if(board[i] !== 'M'){
+            board[i] = 'M';
+            placed++;
+        }
+    }
+
+    for(let i=0;i<board.length;i++){
+        if(board[i]==='M') continue;
+        let count = 0;
+        neighbors(i).forEach(n=>{
+            if(board[n]==='M') count++;
+        });
+        board[i] = count;
+    }
+
+    board.forEach((_,i)=>{
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.onclick = ()=>reveal(i,cell);
+        boardEl.appendChild(cell);
+    });
+}
+
+function neighbors(i){
+    const x = i % size;
+    const y = Math.floor(i/size);
+    let res=[];
+    for(let dy=-1;dy<=1;dy++){
+        for(let dx=-1;dx<=1;dx++){
+            if(dx===0 && dy===0) continue;
+            let nx=x+dx, ny=y+dy;
+            if(nx>=0 && nx<size && ny>=0 && ny<size){
+                res.push(ny*size+nx);
+            }
+        }
+    }
+    return res;
+}
+
+function reveal(i,cell){
+    if(revealed[i]) return;
+    revealed[i]=true;
+    cell.classList.add('revealed');
+
+    if(board[i]==='M'){
+        cell.classList.add('mine');
+        cell.textContent='💣';
+        alert('💥 Przegrałeś!');
+        return;
+    }
+
+    if(board[i]>0){
+        cell.textContent=board[i];
+    }else{
+        neighbors(i).forEach(n=>{
+            const c = document.getElementById('board').children[n];
+            if(c) reveal(n,c);
+        });
+    }
 }
 </script>
 
