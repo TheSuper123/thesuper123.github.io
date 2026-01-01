@@ -106,66 +106,205 @@ footer{
 }
 
 /* ===== SAPER ===== */
-#board{
+<!-- SAPER -->
+<section id="saper" class="section">
+<div class="card">
+
+<h2>💣 Saper</h2>
+
+<div id="menu" style="background:#1e293b;border-radius:12px;padding:10px;">
+Rozmiar:
+<input type="number" id="grid-size" value="9" min="5" max="100">
+Bomby:
+<input type="number" id="bomb-count" value="10" min="5">
+
+<button id="start-btn">Start</button>
+<button id="reset-btn">Reset</button>
+<button id="mode-toggle">Flag Mode: OFF</button>
+<button id="hint-btn">Hint (1 free)</button>
+
+<div id="info">Flags: 0 / 0</div>
+<div id="points-info">Points: 0 | Hints: 1</div>
+</div>
+
+<div id="game"></div>
+
+<div id="controls">
+<button id="btn-open">Otwórz</button>
+<button id="btn-flag">Flaga</button>
+</div>
+
+<style>
+#game{
     display:grid;
-    gap:6px;
-    margin-top:16px;
-}
-
-.cell{
-    width:36px;
-    height:36px;
-    background:#1e293b;
-    display:flex;
-    align-items:center;
     justify-content:center;
-    font-weight:700;
-    cursor:pointer;
-    border-radius:6px;
-    user-select:none;
-}
-
-.cell.revealed{
+    margin:15px auto;
+    gap:2px;
     background:#020617;
-    cursor:default;
+    touch-action:none;
 }
-
-.cell.mine{
-    background:#dc2626;
-}
-
-.controls{
+.cell{
+    background:#334155;
     display:flex;
-    gap:10px;
-    margin-top:10px;
-}
-
-.controls button{
-    background:var(--accent);
-    color:#020617;
-    border:none;
-    padding:8px 14px;
-    border-radius:8px;
-    font-weight:600;
+    justify-content:center;
+    align-items:center;
     cursor:pointer;
+    user-select:none;
+    font-weight:700;
+    border-radius:4px;
 }
+.open{background:#e5e7eb;color:#020617;}
+.mine{background:#dc2626;color:white;}
+.flagged{background:#facc15;color:#020617;}
+.number1{color:#2563eb}
+.number2{color:#16a34a}
+.number3{color:#dc2626}
+.number4{color:#1e3a8a}
+.number5{color:#7c2d12}
+.number6{color:#0f766e}
+.number7{color:black}
+.number8{color:#4b5563}
 </style>
-</head>
 
-<body>
+<script>
+(() => {
+let ROWS=9,COLS=9,MINES_COUNT=10;
+const gameEl=document.getElementById('game');
+const infoEl=document.getElementById('info');
+const modeToggleBtn=document.getElementById('mode-toggle');
+const resetBtn=document.getElementById('reset-btn');
+const startBtn=document.getElementById('start-btn');
+const gridSizeInput=document.getElementById('grid-size');
+const bombCountInput=document.getElementById('bomb-count');
+const btnOpen=document.getElementById('btn-open');
+const btnFlag=document.getElementById('btn-flag');
+const hintBtn=document.getElementById('hint-btn');
+const pointsInfoEl=document.getElementById('points-info');
 
-<header>
-    <img src="Logo.png" alt="SpinnerRealYT logo">
-    <h1>SpinnerRealYT Games</h1>
-</header>
+let cells=[],minePositions=new Set(),flags=new Set(),opened=new Set();
+let gameOver=false,flagMode=false,firstClick=true,points=0,hints=1;
 
-<nav>
-    <button class="active" onclick="showSection('home',this)">Menu</button>
-    <button onclick="showSection('saper',this)">Saper</button>
-    <button onclick="showSection('sondaze',this)">Sondaże</button>
-</nav>
+function updatePointsInfo(){
+    pointsInfoEl.textContent=`Points: ${points} | Hints: ${hints}`;
+}
 
-<main>
+function createGrid(){
+    gameEl.innerHTML='';
+    cells=[];
+    const size=Math.floor(Math.min(500/COLS,500/ROWS));
+    gameEl.style.gridTemplateColumns=`repeat(${COLS},${size}px)`;
+    for(let i=0;i<ROWS*COLS;i++){
+        const c=document.createElement('div');
+        c.className='cell';
+        c.dataset.index=i;
+        c.style.width=c.style.height=size+'px';
+        c.style.fontSize=Math.floor(size*0.6)+'px';
+        gameEl.appendChild(c);
+        cells.push(c);
+    }
+}
+
+function neighbors(i){
+    const r=Math.floor(i/COLS),c=i%COLS,res=[];
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+        if(!dr&&!dc)continue;
+        const nr=r+dr,nc=c+dc;
+        if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS)res.push(nr*COLS+nc);
+    }
+    return res;
+}
+
+function placeMines(first){
+    minePositions.clear();
+    while(minePositions.size<MINES_COUNT){
+        const p=Math.floor(Math.random()*ROWS*COLS);
+        if(p===first||neighbors(first).includes(p))continue;
+        minePositions.add(p);
+    }
+}
+
+function countMines(i){
+    return neighbors(i).filter(n=>minePositions.has(n)).length;
+}
+
+function openCell(i){
+    if(gameOver||opened.has(i)||flags.has(i))return;
+    if(firstClick){firstClick=false;placeMines(i);}
+    opened.add(i);
+    const c=cells[i];
+    c.classList.add('open');
+    if(minePositions.has(i)){
+        c.textContent='💣';
+        c.classList.add('mine');
+        return lose();
+    }
+    const n=countMines(i);
+    if(n){c.textContent=n;c.classList.add(`number${n}`);}
+    else neighbors(i).forEach(openCell);
+    checkWin();
+}
+
+function toggleFlag(i){
+    if(gameOver||opened.has(i))return;
+    const c=cells[i];
+    if(flags.has(i)){flags.delete(i);c.textContent='';c.classList.remove('flagged');}
+    else if(flags.size<MINES_COUNT){flags.add(i);c.textContent='🚩';c.classList.add('flagged');}
+    infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
+    checkWin();
+}
+
+function lose(){
+    gameOver=true;
+    infoEl.textContent='💥 Game Over';
+    minePositions.forEach(i=>{
+        if(!opened.has(i)){
+            cells[i].textContent='💣';
+            cells[i].classList.add('mine','open');
+        }
+    });
+}
+
+function checkWin(){
+    if(opened.size===ROWS*COLS-MINES_COUNT){
+        gameOver=true;
+        infoEl.textContent='🎉 You Win!';
+        points++;updatePointsInfo();
+    }
+}
+
+function reset(){
+    gameOver=false;firstClick=true;
+    flags.clear();opened.clear();
+    infoEl.textContent=`Flags: 0 / ${MINES_COUNT}`;
+    createGrid();bind();updatePointsInfo();
+}
+
+function bind(){
+    cells.forEach(c=>{
+        c.onclick=()=>flagMode?toggleFlag(+c.dataset.index):openCell(+c.dataset.index);
+        c.oncontextmenu=e=>{e.preventDefault();toggleFlag(+c.dataset.index);}
+    });
+}
+
+startBtn.onclick=()=>{
+    ROWS=COLS=+gridSizeInput.value;
+    MINES_COUNT=+bombCountInput.value;
+    reset();
+};
+resetBtn.onclick=reset;
+modeToggleBtn.onclick=()=>{
+    flagMode=!flagMode;
+    modeToggleBtn.textContent=`Flag Mode: ${flagMode?'ON':'OFF'}`;
+};
+btnOpen.onclick=()=>flagMode=false;
+btnFlag.onclick=()=>flagMode=true;
+
+reset();
+})();
+</script>
+
+</div>
+</section>
 
 <!-- MENU -->
 <section id="home" class="section active">
