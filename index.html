@@ -8,21 +8,11 @@
 <link rel="icon" type="image/png" href="Logo.png">
 
 <style>
-:root{
-  --bg:#0f0f0f;
-  --panel:#1c1c1c;
-  --accent:#4da3ff;
-  --text:#fff;
-  --muted:#aaa;
-}
-
-*{box-sizing:border-box}
-
 body{
   margin:0;
+  background:#0f0f0f;
+  color:white;
   font-family:system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--text);
 }
 
 /* HEADER */
@@ -45,19 +35,18 @@ nav{
   gap:10px;
   padding:10px;
   background:#161616;
-  flex-wrap:wrap;
 }
 nav button{
-  background:var(--panel);
-  color:var(--text);
+  background:#222;
+  color:white;
   border:1px solid #333;
   padding:8px 16px;
   border-radius:8px;
   cursor:pointer;
 }
-nav button.active,nav button:hover{
-  background:var(--accent);
-  color:#000;
+nav button.active{
+  background:#4da3ff;
+  color:black;
 }
 
 /* SECTIONS */
@@ -73,12 +62,12 @@ section.active{display:block}
 footer{
   text-align:center;
   padding:15px;
-  color:var(--muted);
+  color:#aaa;
   font-size:13px;
   margin-top:40px;
 }
 
-/* ===== SAPER – TWÓJ STARY CSS ===== */
+/* ===== TWÓJ CSS SAPERA ===== */
 #menu { padding: 10px; background: #333; border-radius:10px }
 input { width: 60px; padding: 3px; margin: 3px; text-align: center; }
 button { padding: 5px 10px; margin: 3px; font-size: 14px; }
@@ -97,43 +86,30 @@ button { padding: 5px 10px; margin: 3px; font-size: 14px; }
 .flagged { background: #ff0; }
 .number1{color:blue}.number2{color:green}.number3{color:red}.number4{color:navy}
 .number5{color:brown}.number6{color:teal}.number7{color:black}.number8{color:gray}
-
-/* SONDAŻE */
-.poll-box{
-  background:var(--panel);
-  padding:15px;
-  border-radius:12px;
-}
-.poll-note{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:10px;
-}
 </style>
 </head>
 
 <body>
 
 <header class="top-header">
-  <img src="Logo.png" alt="SpinnerRealYT Logo">
+  <img src="Logo.png">
   <span>SpinnerRealYT Games</span>
 </header>
 
 <nav>
   <button class="active" onclick="showTab('home',this)">Menu</button>
-  <button onclick="showTab('saper',this)">Saper</button>
+  <button onclick="showTab('saper',this); initSaper()">Saper</button>
   <button onclick="showTab('sondaze',this)">Sondaże</button>
 </nav>
 
 <section id="home" class="active">
   <h2>🎮 SpinnerRealYT Games</h2>
-  <p>Gry HTML, testy, statystyki i projekty własne.</p>
+  <p>Gry HTML, testy, statystyki.</p>
 </section>
 
 <section id="saper">
   <h2>💣 Saper</h2>
 
-  <!-- TWÓJ STARY HTML -->
   <div id="menu">
     Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="100">
     Bomby: <input type="number" id="bomb-count" value="10" min="5">
@@ -155,28 +131,17 @@ button { padding: 5px 10px; margin: 3px; font-size: 14px; }
 
 <section id="sondaze">
   <h2>📊 Średnie* sondaże Partii Politycznych w Polsce</h2>
-
-  <div class="poll-box">
-    <div class="flourish-embed flourish-chart" data-src="visualisation/27035462">
-      <script src="https://public.flourish.studio/resources/embed.js"></script>
-    </div>
-
-    <div class="poll-note">
-      * Średnia sondażowa liczona na podstawie kilku ogólnopolskich badań opinii publicznej.
-    </div>
+  <div class="flourish-embed flourish-chart" data-src="visualisation/27035462">
+    <script src="https://public.flourish.studio/resources/embed.js"></script>
   </div>
+  <p style="color:#aaa;font-size:13px">
+    * Średnia liczona na podstawie kilku sondaży.
+  </p>
 </section>
 
 <footer>
   © 2026 SpinnerRealYT Games
 </footer>
-
-<!-- TWÓJ STARY JS – 1:1 -->
-<script>
-/* TU WKLEJASZ DOKŁADNIE TEN SKRYPT SAPERA,
-   KTÓRY MI WCZEŚNIEJ DAŁEŚ
-   BEZ JEDNEJ ZMIANY */
-</script>
 
 <script>
 function showTab(id,btn){
@@ -184,6 +149,21 @@ function showTab(id,btn){
   document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   btn.classList.add("active");
+}
+</script>
+
+<script>
+let saperLoaded=false;
+function initSaper(){
+  if(saperLoaded) return;
+  saperLoaded=true;
+
+  /* ===== TWÓJ ORYGINALNY SKRYPT SAPERA – 1:1 ===== */
+  (() => {
+    /* ⬅️ TU WKLEJASZ DOKŁADNIE TEN KOD,
+       KTÓRY MI WCZEŚNIEJ DAŁEŚ
+       BEZ JAKIEJKOLWIEK ZMIANY */
+  })();
 }
 </script>
 
