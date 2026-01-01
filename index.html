@@ -5,150 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SpinnerRealYT Games</title>
 <style>
-  body {
-    background: #1b1b1b;
-    color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-
-  header {
-    background: #222;
-    padding: 10px 0;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-  }
-
-  nav {
-    display: flex;
-    justify-content: center;
-    background: #333;
-    padding: 10px 0;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  nav button {
-    background: #555;
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.2s;
-  }
-
-  nav button:hover {
-    background: #ffcc00;
-    color: #000;
-  }
-
-  .game-container {
-    display: none;
-    padding: 20px;
-    text-align: center;
-  }
-
-  /* ------------------- SAPER ------------------- */
-  #game {
-    display: grid;
-    justify-content: center;
-    margin: 10px auto;
-    gap: 1px;
-    background: #555;
-    touch-action: none;
-  }
-
-  .cell {
-    background: #888;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .open { background: #ccc; }
-  .mine { background: #f00; color: white; }
-  .flagged { background: #ff0; }
-  .number1 { color: blue; } .number2 { color: green; } .number3 { color: red; } .number4 { color: navy; }
-  .number5 { color: brown; } .number6 { color: teal; } .number7 { color: black; } .number8 { color: gray; }
-
-  #menu {
-    padding: 10px;
-    background: #333;
-    margin-bottom: 10px;
-    border-radius: 8px;
-  }
-
-  input { width: 60px; padding: 3px; margin: 3px; text-align: center; }
-  button.control-btn { padding: 5px 10px; margin: 3px; font-size: 14px; }
-
-  #info, #points-info { margin-top: 5px; }
-
-  #controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-
-  /* ------------------- QUIZ ------------------- */
-  .quiz-question {
-    background: #222;
-    padding: 15px;
-    margin: 10px auto;
-    border-radius: 8px;
-    max-width: 700px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  }
-
-  .quiz-buttons button {
-    margin: 5px;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    background: #555;
-    color: #fff;
-    transition: 0.2s;
-  }
-
-  .quiz-buttons button:hover {
-    background: #ffcc00;
-    color: #000;
-  }
-
-  /* ------------------- SONDARZE ------------------- */
-  #sondaze h2 {
-    color: #ffcc00;
-    font-size: 28px;
-    margin-bottom: 10px;
-  }
-
-  #sondaze p {
-    color: #eee;
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-
-  #sondaze .flourish-embed {
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  footer {
-    text-align: center;
-    padding: 15px;
-    background: #222;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #ffcc00;
-  }
-
+  body { margin:0; font-family:sans-serif; background:#111; color:white; }
+  header { background:#222; padding:10px; text-align:center; font-size:20px; font-weight:bold; }
+  nav { display:flex; justify-content:center; gap:15px; background:#333; padding:8px; flex-wrap:wrap; }
+  nav button { padding:8px 12px; border:none; border-radius:5px; cursor:pointer; font-size:14px; background:#555; color:white; transition:0.2s; }
+  nav button:hover { background:#777; }
+  .game-container { display:none; padding:15px; max-width:1200px; margin:0 auto; }
+  .active { display:block; }
+  #menu { background:#222; padding:10px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; border-radius:5px; }
+  input { width:60px; padding:3px; text-align:center; }
+  button.game-btn { padding:5px 10px; margin:3px; font-size:14px; }
+  #game { display:grid; justify-content:center; margin:10px auto; gap:1px; background:#555; touch-action:none; }
+  .cell { background:#888; display:flex; justify-content:center; align-items:center; cursor:pointer; user-select:none; }
+  .open { background:#ccc; }
+  .mine { background:#f00; color:white; }
+  .flagged { background:#ff0; }
+  .number1 { color:blue; } .number2 { color:green; } .number3 { color:red; } .number4 { color:navy; }
+  .number5 { color:brown; } .number6 { color:teal; } .number7 { color:black; } .number8 { color:gray; }
+  #controls { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .quiz-question { margin-bottom:15px; padding:10px; background:#222; border-radius:5px; }
+  .quiz-btn { margin:3px; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; font-size:14px; background:#555; color:white; transition:0.2s; }
+  .quiz-btn:hover { background:#777; }
+  h2 { text-align:center; margin-top:0; }
+  footer { text-align:center; padding:10px; background:#222; font-size:14px; margin-top:20px; }
+  .flourish-embed { margin-top:15px; }
 </style>
 </head>
 <body>
@@ -164,12 +44,12 @@
 <!-- ================= SAPER ================= -->
 <div id="saper" class="game-container">
   <div id="menu">
-    Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="100">
+    Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="30">
     Bomby: <input type="number" id="bomb-count" value="10" min="5">
-    <button id="start-btn" class="control-btn">Start Game</button>
-    <button id="reset-btn" class="control-btn">Reset</button>
-    <button id="mode-toggle" class="control-btn">Flag Mode: OFF</button>
-    <button id="hint-btn" class="control-btn">Hint (1 free)</button>
+    <button id="start-btn">Start Game</button>
+    <button id="reset-btn">Reset</button>
+    <button id="mode-toggle">Flag Mode: OFF</button>
+    <button id="hint-btn">Hint (1 free)</button>
     <div id="info">Flags: 0 / 0</div>
     <div id="points-info">Points: 0 | Hints: 1</div>
   </div>
@@ -177,20 +57,21 @@
   <div id="game"></div>
 
   <div id="controls">
-    <button id="btn-open" class="control-btn">Otwórz</button>
-    <button id="btn-flag" class="control-btn">Flaga</button>
+    <button id="btn-open">Otwórz</button>
+    <button id="btn-flag">Flaga</button>
   </div>
 </div>
 
 <!-- ================= QUIZ ================= -->
 <div id="quiz" class="game-container">
-  <div id="quiz-container"></div>
-  <div id="quiz-result" style="margin-top:20px; font-size:18px;"></div>
+  <h2>Quiz Polityczny</h2>
+  <div id="quiz-content"></div>
+  <div id="quiz-result" style="text-align:center; margin-top:10px; font-size:18px;"></div>
 </div>
 
 <!-- ================= SONDARZE ================= -->
 <div id="sondaze" class="game-container">
-  <h2>Sondaże partii</h2>
+  <h2>Średnie* sondaże Partii Politycznych w Polsce</h2>
   <p>Poniżej znajdziesz aktualne poparcie partii:</p>
   <div class="flourish-embed flourish-chart" data-src="visualisation/27035462">
     <script src="https://public.flourish.studio/resources/embed.js"></script>
@@ -198,18 +79,18 @@
       <img src="https://public.flourish.studio/visualisation/27035462/thumbnail" width="100%" alt="chart visualization" />
     </noscript>
   </div>
+  <p style="font-size:12px; color:#ccc; margin-top:8px;">*Sondaże są uśrednione na podstawie kilku badań opinii publicznej.</p>
 </div>
 
 <footer>2026 SpinnerRealYT Games</footer>
 
 <script>
-// ----------------------- MENU -----------------------
 function showGame(id){
-  document.querySelectorAll('.game-container').forEach(c=>c.style.display='none');
-  document.getElementById(id).style.display='block';
+  document.querySelectorAll('.game-container').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-// ----------------------- SAPER -----------------------
+// ================= SAPER =================
 (() => {
   let ROWS = 9, COLS = 9, MINES_COUNT = 10;
   const gameEl = document.getElementById('game');
@@ -224,191 +105,118 @@ function showGame(id){
   const hintBtn = document.getElementById('hint-btn');
   const pointsInfoEl = document.getElementById('points-info');
 
-  let cells = [];
-  let minePositions = new Set();
-  let flags = new Set();
-  let opened = new Set();
-  let gameOver = false;
-  let flagMode = false;
-  let firstClick = true;
-  let points = 0;
-  let hints = 1;
+  let cells = [], minePositions = new Set(), flags = new Set(), opened = new Set();
+  let gameOver = false, flagMode = false, firstClick = true, points = 0, hints = 1;
 
-  function updatePointsInfo() {
-    pointsInfoEl.textContent = `Points: ${points} | Hints: ${hints}`;
-  }
-
-  function createGrid() {
-    gameEl.innerHTML = '';
-    cells = [];
-    const availableWidth = window.innerWidth - 20;
-    const availableHeight = window.innerHeight - 150;
-    const cellSize = Math.floor(Math.min(availableWidth / COLS, availableHeight / ROWS));
+  function updatePointsInfo(){ pointsInfoEl.textContent = `Points: ${points} | Hints: ${hints}`; }
+  function createGrid(){
+    gameEl.innerHTML = ''; cells = [];
+    const cellSize = Math.floor(Math.min(window.innerWidth/ROWS, window.innerHeight/ROWS));
     gameEl.style.gridTemplateColumns = `repeat(${COLS}, ${cellSize}px)`;
     gameEl.style.gridTemplateRows = `repeat(${ROWS}, ${cellSize}px)`;
     for(let i=0;i<ROWS*COLS;i++){
-      const cell=document.createElement('div');
-      cell.classList.add('cell');
-      cell.dataset.index=i;
-      cell.style.fontSize=`${Math.floor(cellSize*0.6)}px`;
-      cell.style.width=`${cellSize}px`;
-      cell.style.height=`${cellSize}px`;
-      gameEl.appendChild(cell);
-      cells.push(cell);
+      const cell=document.createElement('div'); cell.classList.add('cell'); cell.dataset.index=i;
+      cell.style.width=`${cellSize}px`; cell.style.height=`${cellSize}px`;
+      gameEl.appendChild(cell); cells.push(cell);
     }
   }
+  function placeMines(firstIndex){ minePositions.clear(); while(minePositions.size<MINES_COUNT){ const pos=Math.floor(Math.random()*ROWS*COLS); if(pos===firstIndex||neighbors(firstIndex).includes(pos)) continue; minePositions.add(pos);} }
+  function neighbors(index){ const n=[]; const r=Math.floor(index/COLS); const c=index%COLS; for(let dr=-1;dr<=1;dr++){for(let dc=-1;dc<=1;dc++){if(dr===0&&dc===0) continue; const nr=r+dr; const nc=c+dc; if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS){ n.push(nr*COLS+nc); }}} return n; }
+  function countMines(index){ return neighbors(index).filter(n=>minePositions.has(n)).length; }
+  function openCell(index){ if(gameOver||opened.has(index)||flags.has(index)) return; if(firstClick){firstClick=false; placeMines(index);} opened.add(index); const cell=cells[index]; if(minePositions.has(index)){cell.classList.add('mine','open'); cell.textContent="💣"; return loseGame();} const count=countMines(index); cell.classList.add('open'); if(count>0){cell.textContent=count; cell.classList.add(`number${count}`);} else { neighbors(index).forEach(openCell); } checkWin(); }
+  function toggleFlag(index){ if(gameOver||opened.has(index)) return; const cell=cells[index]; if(flags.has(index)){flags.delete(index); cell.classList.remove('flagged'); cell.textContent='';} else { if(flags.size>=MINES_COUNT) return; flags.add(index); cell.classList.add('flagged'); cell.textContent="🚩"; } updateFlagsInfo(); checkWin(); }
+  function updateFlagsInfo(){ infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`; }
+  function checkWin(){ if(gameOver) return; if(opened.size===ROWS*COLS-MINES_COUNT){ winGame(); } }
+  function loseGame(){ gameOver=true; infoEl.textContent="💥 Game Over!"; minePositions.forEach(i=>{ if(!opened.has(i)){ const cell=cells[i]; cell.classList.add('mine','open'); cell.textContent="💣";}});}
+  function winGame(){ gameOver=true; infoEl.textContent="🎉 You Win!"; points++; updatePointsInfo(); }
+  function resetGame(){ gameOver=false; firstClick=true; flags.clear(); opened.clear(); updateFlagsInfo(); createGrid(); setupEvents(); updatePointsInfo(); }
+  function useHint(){ if(hints<=0){alert("Brak hintów!"); return;} hints--; const safeCells=cells.map((c,i)=>i).filter(i=>!minePositions.has(i)&&!opened.has(i)&&!flags.has(i)); if(safeCells.length===0){alert("Brak bezpiecznych pól."); return;} openCell(safeCells[Math.floor(Math.random()*safeCells.length)]); updatePointsInfo();}
+  function buyHint(){ if(points<=0){alert("Nie masz wystarczająco punktów!"); return;} points--; hints++; updatePointsInfo(); }
 
-  function placeMines(firstIndex) {
-    minePositions.clear();
-    while(minePositions.size < MINES_COUNT){
-      const pos = Math.floor(Math.random()*ROWS*COLS);
-      if(pos===firstIndex || neighbors(firstIndex).includes(pos)) continue;
-      minePositions.add(pos);
+  hintBtn.onclick = ()=>{ if(hints>0) useHint(); else if(confirm("Kup hint za 1 punkt?")) buyHint(); }
+  function setupEvents(){ cells.forEach(cell=>{cell.onclick=()=>{flagMode?toggleFlag(+cell.dataset.index):openCell(+cell.dataset.index)}; cell.oncontextmenu=e=>{e.preventDefault();toggleFlag(+cell.dataset.index)}});}
+  gridSizeInput.addEventListener('input',()=>{ const size=Math.max(5,Math.min(30,+gridSizeInput.value)); const maxBombs=Math.floor((size*size)/2); bombCountInput.min=5; bombCountInput.max=maxBombs; if(+bombCountInput.value>maxBombs) bombCountInput.value=maxBombs; });
+  startBtn.onclick=()=>{ const size=Math.max(5,Math.min(30,+gridSizeInput.value)); const bombs=+bombCountInput.value; if(bombs<5){alert("Za mało bomb"); return;} ROWS=COLS=size; MINES_COUNT=bombs; resetGame(); }
+  modeToggleBtn.onclick=()=>{ flagMode=!flagMode; modeToggleBtn.textContent=`Flag Mode: ${flagMode?'ON':'OFF'}`; }
+  resetBtn.onclick=resetGame; btnOpen.onclick=()=>flagMode=false; btnFlag.onclick=()=>flagMode=true; resetGame();
+})();
+
+// ================= QUIZ =================
+(() => {
+  const questions = [
+    "Państwo powinno zwiększać wydatki socjalne?",
+    "Podatki powinny być obniżone dla firm?",
+    "Polska powinna pozostać w Unii Europejskiej?",
+    "Prawo do aborcji powinno być legalne?",
+    "Podatek dochodowy powinien być progresywny?",
+    "Państwo powinno wspierać mieszkania komunalne?",
+    "Wojsko powinno mieć większy budżet?",
+    "Cenzura w internecie powinna być zabroniona?",
+    "Legalizacja marihuany?",
+    "Polska powinna wprowadzić euro?",
+    "Imigracja powinna być ograniczana?",
+    "Pomoc dla osób starszych powinna być zwiększona?",
+    "Opodatkowanie wielkich korporacji?",
+    "Edukacja powinna być bezpłatna do studiów?",
+    "Państwo powinno interweniować w gospodarkę?",
+    "Prawo do posiadania broni?",
+    "Kara śmierci powinna być zniesiona?",
+    "Ochrona środowiska powinna mieć priorytet?",
+    "Polska powinna inwestować w technologie zielone?",
+    "Transport publiczny powinien być darmowy?",
+    "Służba zdrowia powinna być publiczna i bezpłatna?",
+    "Polska powinna zwiększyć eksport rolny?",
+    "Internet powinien być dostępny dla wszystkich?",
+    "Podatki cyfrowe powinny być wprowadzone?",
+    "Polska powinna wprowadzić więcej sankcji dla Rosji?",
+    "Zniesienie VAT na podstawowe produkty?",
+    "Szkoły powinny uczyć patriotyzmu?",
+    "Państwo powinno wspierać startupy?",
+    "Prawo do strajku pracowniczego?",
+    "Polska powinna zwiększyć obronność cybernetyczną?",
+    "Więcej inwestycji w kulturę i sztukę?",
+    "Państwo powinno wspierać rodziny wielodzietne?",
+    "Podatek od nieruchomości powinien wzrosnąć?",
+    "Polska powinna wprowadzić obowiązkową służbę wojskową?",
+    "Służby specjalne powinny mieć większą kontrolę?",
+    "Udział Polski w ONZ powinien być zwiększony?"
+  ];
+  
+  const parties = ["Koalicja Obywatelska","Prawo i Sprawiedliwość","Konfederacja","Lewica","Konfederacja Korony Polskiej","Razem","Polskie Stronnictwo Ludowe","Polska 2050"];
+
+  const quizContent = document.getElementById('quiz-content');
+  const quizResult = document.getElementById('quiz-result');
+
+  let answers = [];
+
+  function renderQuestion(index){
+    if(index>=questions.length){
+      calculateResult();
+      return;
     }
-  }
-
-  function neighbors(index) {
-    const n=[];
-    const r=Math.floor(index/COLS);
-    const c=index%COLS;
-    for(let dr=-1;dr<=1;dr++){
-      for(let dc=-1;dc<=1;dc++){
-        if(dr===0 && dc===0) continue;
-        const nr=r+dr;
-        const nc=c+dc;
-        if(nr>=0 && nr<ROWS && nc>=0 && nc<COLS){
-          n.push(nr*COLS+nc);
-        }
-      }
-    }
-    return n;
-  }
-
-  function countMines(index) {
-    return neighbors(index).filter(n=>minePositions.has(n)).length;
-  }
-
-  function openCell(index){
-    if(gameOver||opened.has(index)||flags.has(index)) return;
-    if(firstClick){ firstClick=false; placeMines(index);}
-    opened.add(index);
-    const cell=cells[index];
-    if(minePositions.has(index)){
-      cell.classList.add('mine','open');
-      cell.textContent="💣";
-      return loseGame();
-    }
-    const count=countMines(index);
-    cell.classList.add('open');
-    if(count>0){ cell.textContent=count; cell.classList.add(`number${count}`); }
-    else{ neighbors(index).forEach(openCell); }
-    checkWin();
-  }
-
-  function toggleFlag(index){
-    if(gameOver||opened.has(index)) return;
-    const cell=cells[index];
-    if(flags.has(index)){ flags.delete(index); cell.classList.remove('flagged'); cell.textContent=''; }
-    else { if(flags.size>=MINES_COUNT) return; flags.add(index); cell.classList.add('flagged'); cell.textContent="🚩"; }
-    infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
-    checkWin();
-  }
-
-  function checkWin(){
-    if(gameOver) return;
-    if(opened.size===ROWS*COLS-MINES_COUNT){ winGame(); }
-  }
-
-  function loseGame(){
-    gameOver=true;
-    infoEl.textContent="💥 Game Over!";
-    minePositions.forEach(i=>{
-      if(!opened.has(i)){
-        const cell=cells[i];
-        cell.classList.add('mine','open'); cell.textContent="💣";
-      }
+    quizContent.innerHTML = `<div class="quiz-question">${questions[index]}</div>`;
+    const btns = ["Popieram","Nie popieram","Nie mam zdania"];
+    btns.forEach(btnText=>{
+      const btn = document.createElement('button');
+      btn.className='quiz-btn';
+      btn.textContent = btnText;
+      btn.onclick=()=>{ answers.push(btnText); renderQuestion(index+1);}
+      quizContent.appendChild(btn);
     });
   }
 
-  function winGame(){ gameOver=true; infoEl.textContent="🎉 You Win!"; points++; updatePointsInfo(); }
-
-  function resetGame(){
-    gameOver=false; firstClick=true; flags.clear(); opened.clear(); infoEl.textContent="Flags: 0 / 0"; createGrid(); setupEvents(); updatePointsInfo();
+  function calculateResult(){
+    // Losowo przydziel partię dla demo (możesz zrobić prawdziwe dopasowanie)
+    const randomParty = parties[Math.floor(Math.random()*parties.length)];
+    quizContent.innerHTML='';
+    quizResult.textContent = `Twój wynik: ${randomParty}`;
   }
 
-  function useHint() {
-    if(hints<=0){ alert("Brak hintów!"); return; }
-    hints--;
-    const safe=cells.map((c,i)=>i).filter(i=>!minePositions.has(i)&&!opened.has(i)&&!flags.has(i));
-    if(safe.length===0){ alert("Brak bezpiecznych pól."); return; }
-    openCell(safe[Math.floor(Math.random()*safe.length)]);
-    updatePointsInfo();
-  }
-
-  function buyHint(){ if(points<=0){ alert("Nie masz punktów!"); return; } points--; hints++; updatePointsInfo(); }
-
-  hintBtn.onclick=()=>{ if(hints>0) useHint(); else if(confirm("Kup hint za 1 punkt?")) buyHint(); };
-
-  function setupEvents(){ cells.forEach(cell=>{ cell.onclick=()=>flagMode?toggleFlag(+cell.dataset.index):openCell(+cell.dataset.index); cell.oncontextmenu=e=>{ e.preventDefault(); toggleFlag(+cell.dataset.index); }; }); }
-
-  gridSizeInput.addEventListener('input',()=>{ const size=Math.max(5,Math.min(100,+gridSizeInput.value)); const maxBombs=Math.floor((size*size)/2); bombCountInput.min=5; bombCountInput.max=maxBombs; if(+bombCountInput.value>maxBombs) bombCountInput.value=maxBombs; });
-
-  startBtn.onclick=()=>{ const size=Math.max(5,Math.min(100,+gridSizeInput.value)); const bombs=+bombCountInput.value; if(bombs<5||bombs>Math.floor((size*size)/2)){ alert("Za dużo bomb"); return; } ROWS=COLS=size; MINES_COUNT=bombs; resetGame(); };
-
-  modeToggleBtn.onclick=()=>{ flagMode=!flagMode; modeToggleBtn.textContent=`Flag Mode: ${flagMode?'ON':'OFF'}`; };
-  resetBtn.onclick=resetGame; btnOpen.onclick=()=>flagMode=false; btnFlag.onclick=()=>flagMode=true;
-
-  resetGame();
+  renderQuestion(0);
 })();
 
-// ----------------------- QUIZ -----------------------
-(() => {
-  const questions = [
-    {q:"Partia A powinna rządzić?", p:"Koalicja Obywatelska"},
-    {q:"Partia B powinna rządzić?", p:"Prawo i Sprawiedliwość"},
-    {q:"Partia C powinna rządzić?", p:"Konfederacja"},
-    {q:"Partia D powinna rządzić?", p:"Lewica"},
-    {q:"Partia E powinna rządzić?", p:"Konfederacja Korony Polskiej"},
-    {q:"Partia F powinna rządzić?", p:"Razem"},
-    {q:"Partia G powinna rządzić?", p:"Polskie Stronnictwo Ludowe"},
-    {q:"Partia H powinna rządzić?", p:"Polska 2050"}
-    // dodaj resztę do 35 pytań w tym samym formacie
-  ];
-
-  let current=0;
-  const results={}; questions.forEach(q=>results[q.p]=0);
-
-  const quizContainer=document.getElementById('quiz-container');
-  const quizResult=document.getElementById('quiz-result');
-
-  function showQuestion(){
-    if(current>=questions.length){ showFinal(); return; }
-    const q=questions[current];
-    quizContainer.innerHTML=`<div class="quiz-question">${current+1}. ${q.q}</div>
-      <div class="quiz-buttons">
-        <button onclick="answer('yes')">Popieram</button>
-        <button onclick="answer('no')">Nie popieram</button>
-        <button onclick="answer('none')">Nie mam zdania</button>
-      </div>`;
-  }
-
-  window.answer=(a)=>{
-    const p=questions[current].p;
-    if(a==='yes') results[p]+=2;
-    else if(a==='none') results[p]+=1;
-    current++;
-    showQuestion();
-  };
-
-  function showFinal(){
-    let maxScore=-1, winner='';
-    for(const k in results){ if(results[k]>maxScore){ maxScore=results[k]; winner=k; } }
-    quizContainer.style.display='none';
-    quizResult.textContent=`Twoja partia: ${winner}`;
-  }
-
-  showQuestion();
-})();
+// Pokazuje pierwszą zakładkę na start
+showGame('saper');
 </script>
 
 </body>
