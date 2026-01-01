@@ -1,44 +1,238 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja Strona</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpinnerRealyt Games</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #1e3c72, #2a5298);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(0,0,0,0.5);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+      color: #ffcc00;
+    }
+
+    nav {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    nav button {
+      background-color: #ffcc00;
+      color: #1e3c72;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+    }
+
+    nav button:hover {
+      background-color: #e6b800;
+      transform: scale(1.05);
+    }
+
+    .game {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #saperBoard {
+      display: inline-block;
+      border: 3px solid #ffcc00;
+      margin-top: 20px;
+    }
+
+    .cell {
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+      border: 1px solid #fff;
+      line-height: 30px;
+      vertical-align: top;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .cell.revealed {
+      background-color: #ddd;
+      color: #000;
+      cursor: default;
+    }
+
+    .cell.mine {
+      background-color: red;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Witaj na mojej stronie!</h1>
-    </header>
-    <main>
-        <h2>O mnie</h2>
-        <p>To jest przykładowa strona stworzona w HTML.</p>
-        <p>Możesz tu dodać więcej treści, zdjęć, linków itp.</p>
-    </main>
-    <footer>
-        <p>© 2026 Moja Strona</p>
-    </footer>
+
+<header>
+  <h1>SpinnerRealyt Games</h1>
+</header>
+
+<nav>
+  <button onclick="showGame('saper')">Saper</button>
+  <!-- później można dodać kolejne gry -->
+</nav>
+
+<div id="saper" class="game">
+  <h2>Saper</h2>
+  <div id="saperBoard"></div>
+  <p id="saperMessage"></p>
+  <button onclick="initSaper()">Restart</button>
+</div>
+
+<footer>
+  © 2026 SpinnerRealyt Games
+</footer>
+
+<script>
+  const rows = 8;
+  const cols = 8;
+  const minesCount = 10;
+  let board = [];
+  let mineLocations = [];
+
+  function showGame(gameId) {
+    document.querySelectorAll('.game').forEach(g => g.style.display = 'none');
+    document.getElementById(gameId).style.display = 'block';
+    if(gameId === 'saper') initSaper();
+  }
+
+  function initSaper() {
+    board = [];
+    mineLocations = [];
+    const boardDiv = document.getElementById('saperBoard');
+    boardDiv.innerHTML = '';
+    document.getElementById('saperMessage').textContent = '';
+
+    // create board array
+    for(let r=0;r<rows;r++){
+      let row = [];
+      for(let c=0;c<cols;c++){
+        row.push({mine:false, revealed:false, adjacent:0});
+      }
+      board.push(row);
+    }
+
+    // place mines
+    while(mineLocations.length < minesCount){
+      let r = Math.floor(Math.random()*rows);
+      let c = Math.floor(Math.random()*cols);
+      if(!board[r][c].mine){
+        board[r][c].mine = true;
+        mineLocations.push([r,c]);
+      }
+    }
+
+    // calculate adjacent mines
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(board[r][c].mine) continue;
+        let count = 0;
+        for(let dr=-1;dr<=1;dr++){
+          for(let dc=-1;dc<=1;dc++){
+            if(r+dr>=0 && r+dr<rows && c+dc>=0 && c+dc<cols){
+              if(board[r+dr][c+dc].mine) count++;
+            }
+          }
+        }
+        board[r][c].adjacent = count;
+      }
+    }
+
+    // draw board
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        let cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+        cell.addEventListener('click', () => revealCell(r,c));
+        boardDiv.appendChild(cell);
+      }
+      let br = document.createElement('div');
+      br.style.clear = 'both';
+      boardDiv.appendChild(br);
+    }
+  }
+
+  function revealCell(r,c){
+    let cellObj = board[r][c];
+    let cellDiv = document.querySelector(`.cell[data-row='${r}'][data-col='${c}']`);
+    if(cellObj.revealed) return;
+    cellObj.revealed = true;
+
+    if(cellObj.mine){
+      cellDiv.classList.add('revealed','mine');
+      document.getElementById('saperMessage').textContent = 'Game Over! 💥';
+      revealAllMines();
+      return;
+    }
+
+    cellDiv.classList.add('revealed');
+    if(cellObj.adjacent > 0) cellDiv.textContent = cellObj.adjacent;
+    else{
+      // reveal neighbors
+      for(let dr=-1;dr<=1;dr++){
+        for(let dc=-1;dc<=1;dc++){
+          if(r+dr>=0 && r+dr<rows && c+dc>=0 && c+dc<cols){
+            revealCell(r+dr,c+dc);
+          }
+        }
+      }
+    }
+
+    checkWin();
+  }
+
+  function revealAllMines(){
+    mineLocations.forEach(([r,c])=>{
+      let cellDiv = document.querySelector(`.cell[data-row='${r}'][data-col='${c}']`);
+      cellDiv.classList.add('revealed','mine');
+    });
+  }
+
+  function checkWin(){
+    let revealedCount = 0;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(board[r][c].revealed) revealedCount++;
+      }
+    }
+    if(revealedCount === rows*cols - minesCount){
+      document.getElementById('saperMessage').textContent = 'You Win! 🎉';
+      revealAllMines();
+    }
+  }
+</script>
+
 </body>
 </html>
