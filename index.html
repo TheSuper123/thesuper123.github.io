@@ -6,39 +6,44 @@
 <title>SpinnerRealYT Games</title>
 <style>
   body { 
-    background: #222; 
-    color: white; 
-    font-family: sans-serif; 
-    margin: 0; 
-    padding: 0; 
-    text-align: center; 
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(120deg, #1c1c1c, #2a2a2a);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
   header {
-    background: #333;
-    padding: 15px;
+    background: #111;
+    padding: 20px;
+    text-align: center;
     font-size: 2em;
+    font-weight: bold;
+    letter-spacing: 1px;
     color: #ffcc00;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   }
 
   nav {
-    background: #444;
-    padding: 10px;
     display: flex;
     justify-content: center;
+    gap: 15px;
+    background: #222;
+    padding: 15px;
     flex-wrap: wrap;
-    gap: 10px;
   }
 
   nav button {
     background: #ffcc00;
     color: #222;
     border: none;
-    padding: 10px 20px;
+    border-radius: 8px;
+    padding: 12px 25px;
     font-size: 1em;
+    font-weight: bold;
     cursor: pointer;
-    border-radius: 5px;
     transition: all 0.2s ease;
   }
 
@@ -47,27 +52,29 @@
     transform: scale(1.05);
   }
 
+  main {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .game-container {
     display: none;
-    margin: 20px auto;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
   }
 
-  footer {
-    margin-top: 40px;
-    padding: 10px;
-    background: #333;
-    color: #ccc;
-    font-size: 0.9em;
-  }
-
-  /* --- Saper CSS (Twój styl) --- */
+  /* --- Saper --- */
   #saper-game { 
     display: grid; 
     justify-content: center; 
     margin: 20px auto; 
     gap: 1px; 
     background: #555; 
-    touch-action: none; 
   }
   .cell { background: #888; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; }
   .open { background: #ccc; }
@@ -76,245 +83,206 @@
   .number1 { color: blue; } .number2 { color: green; } .number3 { color: red; } .number4 { color: navy; }
   .number5 { color: brown; } .number6 { color: teal; } .number7 { color: black; } .number8 { color: gray; }
   #saper-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+  /* --- Quiz --- */
+  .quiz-question {
+    background: #333;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px auto;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  .quiz-question p {
+    font-size: 1.2em;
+  }
+
+  .quiz-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+  }
+
+  .quiz-buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #ffcc00;
+    color: #222;
+    transition: all 0.2s;
+  }
+
+  .quiz-buttons button:hover {
+    background: #e6b800;
+    transform: scale(1.05);
+  }
+
+  footer {
+    background: #111;
+    text-align: center;
+    padding: 15px;
+    color: #ccc;
+    font-size: 0.9em;
+  }
+
+  #quiz-result {
+    font-size: 1.5em;
+    margin-top: 20px;
+    color: #ffcc00;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
 
-<header>SpinnerRealyt Games</header>
+<header>SpinnerRealYT Games</header>
 
 <nav>
   <button onclick="showGame('saper')">Saper</button>
-  <!-- później dodasz kolejne gry tutaj -->
+  <button onclick="showGame('quiz')">Quiz Polityczny</button>
 </nav>
 
-<!-- KONTEJNER DLA GRY SAPER -->
-<div id="saper" class="game-container">
-  <div id="menu">
-    Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="100">
-    Bomby: <input type="number" id="bomb-count" value="10" min="5">
-    <button id="start-btn">Start Game</button>
-    <button id="reset-btn">Reset</button>
-    <button id="mode-toggle">Flag Mode: OFF</button>
-    <button id="hint-btn">Hint (1 free)</button>
-    <div id="info">Flags: 0 / 0</div>
-    <div id="points-info">Points: 0 | Hints: 1</div>
+<main>
+  <!-- Saper -->
+  <div id="saper" class="game-container">
+    <div id="menu">
+      Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="30">
+      Bomby: <input type="number" id="bomb-count" value="10" min="5">
+      <button id="start-btn">Start Game</button>
+      <button id="reset-btn">Reset</button>
+      <button id="mode-toggle">Flag Mode: OFF</button>
+      <button id="hint-btn">Hint (1 free)</button>
+      <div id="info">Flags: 0 / 0</div>
+      <div id="points-info">Points: 0 | Hints: 1</div>
+    </div>
+
+    <div id="saper-game"></div>
+
+    <div id="saper-controls">
+      <button id="btn-open">Otwórz</button>
+      <button id="btn-flag">Flaga</button>
+    </div>
   </div>
 
-  <div id="saper-game"></div>
-
-  <div id="saper-controls">
-    <button id="btn-open">Otwórz</button>
-    <button id="btn-flag">Flaga</button>
+  <!-- Quiz -->
+  <div id="quiz" class="game-container">
+    <div id="quiz-container"></div>
+    <div id="quiz-result"></div>
   </div>
-</div>
+</main>
 
-<footer>© 2026 SpinnerRealyt Games</footer>
+<footer>© 2026 SpinnerRealYT Games</footer>
 
 <script>
 // --- Pokazywanie gry ---
 function showGame(gameId){
-  document.querySelectorAll('.game-container').forEach(c => c.style.display = 'none');
-  document.getElementById(gameId).style.display = 'block';
+  document.querySelectorAll('.game-container').forEach(c => c.style.display='none');
+  document.getElementById(gameId).style.display='block';
 }
 
-// --- Tutaj wklejasz dokładnie swój skrypt Saper.js ---
+// ====================== SAPER ======================
 (() => {
-  // Zmieniamy ID na #saper-game zamiast #game
-  let ROWS = 9, COLS = 9, MINES_COUNT = 10;
-  const gameEl = document.getElementById('saper-game');
-  const infoEl = document.getElementById('info');
-  const modeToggleBtn = document.getElementById('mode-toggle');
-  const resetBtn = document.getElementById('reset-btn');
-  const startBtn = document.getElementById('start-btn');
-  const gridSizeInput = document.getElementById('grid-size');
-  const bombCountInput = document.getElementById('bomb-count');
-  const btnOpen = document.getElementById('btn-open');
-  const btnFlag = document.getElementById('btn-flag');
-  const hintBtn = document.getElementById('hint-btn');
-  const pointsInfoEl = document.getElementById('points-info');
+  let ROWS=9,COLS=9,MINES_COUNT=10;
+  const gameEl=document.getElementById('saper-game');
+  const infoEl=document.getElementById('info');
+  const modeToggleBtn=document.getElementById('mode-toggle');
+  const resetBtn=document.getElementById('reset-btn');
+  const startBtn=document.getElementById('start-btn');
+  const gridSizeInput=document.getElementById('grid-size');
+  const bombCountInput=document.getElementById('bomb-count');
+  const btnOpen=document.getElementById('btn-open');
+  const btnFlag=document.getElementById('btn-flag');
+  const hintBtn=document.getElementById('hint-btn');
+  const pointsInfoEl=document.getElementById('points-info');
 
-  let cells = [];
-  let minePositions = new Set();
-  let flags = new Set();
-  let opened = new Set();
-  let gameOver = false;
-  let flagMode = false;
-  let firstClick = true;
-  let points = 0;
-  let hints = 1;
+  let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
+  let gameOver=false, flagMode=false, firstClick=true, points=0, hints=1;
 
-  function updatePointsInfo() {
-    pointsInfoEl.textContent = `Points: ${points} | Hints: ${hints}`;
-  }
+  function updatePointsInfo(){ pointsInfoEl.textContent=`Points: ${points} | Hints: ${hints}`; }
 
-  function createGrid() {
-    gameEl.innerHTML = '';
-    cells = [];
-    const availableWidth = window.innerWidth - 20;
-    const availableHeight = window.innerHeight - 150;
-    const cellSize = Math.floor(Math.min(availableWidth / COLS, availableHeight / ROWS));
-    gameEl.style.gridTemplateColumns = `repeat(${COLS}, ${cellSize}px)`;
-    gameEl.style.gridTemplateRows = `repeat(${ROWS}, ${cellSize}px)`;
-
+  function createGrid(){
+    gameEl.innerHTML=''; cells=[];
+    const availableWidth=window.innerWidth-20;
+    const availableHeight=window.innerHeight-200;
+    const cellSize=Math.floor(Math.min(availableWidth/COLS,availableHeight/ROWS));
+    gameEl.style.gridTemplateColumns=`repeat(${COLS},${cellSize}px)`;
+    gameEl.style.gridTemplateRows=`repeat(${ROWS},${cellSize}px)`;
     for(let i=0;i<ROWS*COLS;i++){
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cell.dataset.index = i;
-      cell.style.fontSize = `${Math.floor(cellSize*0.6)}px`;
-      cell.style.width = `${cellSize}px`;
-      cell.style.height = `${cellSize}px`;
-      gameEl.appendChild(cell);
-      cells.push(cell);
+      const cell=document.createElement('div');
+      cell.classList.add('cell'); cell.dataset.index=i;
+      cell.style.fontSize=`${Math.floor(cellSize*0.6)}px`;
+      cell.style.width=`${cellSize}px`; cell.style.height=`${cellSize}px`;
+      gameEl.appendChild(cell); cells.push(cell);
     }
   }
 
   function placeMines(firstIndex){
     minePositions.clear();
-    while(minePositions.size < MINES_COUNT){
-      const pos = Math.floor(Math.random() * ROWS*COLS);
-      if(pos === firstIndex || neighbors(firstIndex).includes(pos)) continue;
+    while(minePositions.size<MINES_COUNT){
+      const pos=Math.floor(Math.random()*ROWS*COLS);
+      if(pos===firstIndex||neighbors(firstIndex).includes(pos)) continue;
       minePositions.add(pos);
     }
   }
 
   function neighbors(index){
-    const n=[];
-    const r=Math.floor(index/COLS);
-    const c=index%COLS;
-    for(let dr=-1;dr<=1;dr++){
-      for(let dc=-1;dc<=1;dc++){
-        if(dr===0 && dc===0) continue;
-        const nr=r+dr;
-        const nc=c+dc;
-        if(nr>=0 && nr<ROWS && nc>=0 && nc<COLS) n.push(nr*COLS+nc);
-      }
-    }
+    const n=[]; const r=Math.floor(index/COLS); const c=index%COLS;
+    for(let dr=-1;dr<=1;dr++){for(let dc=-1;dc<=1;dc++){
+      if(dr===0&&dc===0) continue;
+      const nr=r+dr; const nc=c+dc;
+      if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS) n.push(nr*COLS+nc);
+    }}
     return n;
   }
 
-  function countMines(index){
-    return neighbors(index).filter(n=>minePositions.has(n)).length;
-  }
+  function countMines(index){ return neighbors(index).filter(n=>minePositions.has(n)).length; }
 
   function openCell(index){
-    if(gameOver || opened.has(index) || flags.has(index)) return;
+    if(gameOver||opened.has(index)||flags.has(index)) return;
     if(firstClick){ firstClick=false; placeMines(index); }
     opened.add(index);
-    const cell = cells[index];
-    if(minePositions.has(index)){
-      cell.classList.add('mine','open');
-      cell.textContent="💣";
-      return loseGame();
-    }
+    const cell=cells[index];
+    if(minePositions.has(index)){ cell.classList.add('mine','open'); cell.textContent="💣"; return loseGame(); }
     const count=countMines(index);
-    cell.classList.add('open');
-    if(count>0) cell.textContent=count;
-    else neighbors(index).forEach(openCell);
+    cell.classList.add('open'); if(count>0) cell.textContent=count; else neighbors(index).forEach(openCell);
     checkWin();
   }
 
   function toggleFlag(index){
-    if(gameOver || opened.has(index)) return;
-    const cell = cells[index];
-    if(flags.has(index)){
-      flags.delete(index);
-      cell.classList.remove('flagged');
-      cell.textContent='';
-    } else {
-      if(flags.size>=MINES_COUNT) return;
-      flags.add(index);
-      cell.classList.add('flagged');
-      cell.textContent='🚩';
-    }
-    updateFlagsInfo();
-    checkWin();
+    if(gameOver||opened.has(index)) return;
+    const cell=cells[index];
+    if(flags.has(index)){ flags.delete(index); cell.classList.remove('flagged'); cell.textContent=''; }
+    else { if(flags.size>=MINES_COUNT) return; flags.add(index); cell.classList.add('flagged'); cell.textContent='🚩'; }
+    updateFlagsInfo(); checkWin();
   }
 
-  function updateFlagsInfo(){
-    infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
-  }
+  function updateFlagsInfo(){ infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`; }
 
-  function checkWin(){
-    if(gameOver) return;
-    if(opened.size===ROWS*COLS-MINES_COUNT){
-      winGame();
-    }
-  }
+  function checkWin(){ if(gameOver) return; if(opened.size===ROWS*COLS-MINES_COUNT) winGame(); }
 
-  function loseGame(){
-    gameOver=true;
-    infoEl.textContent="💥 Game Over!";
-    minePositions.forEach(i=>{
-      if(!opened.has(i)){
-        const cell=cells[i];
-        cell.classList.add('mine','open');
-        cell.textContent="💣";
-      }
-    });
-  }
+  function loseGame(){ gameOver=true; infoEl.textContent="💥 Game Over!"; minePositions.forEach(i=>{ if(!opened.has(i)){ const cell=cells[i]; cell.classList.add('mine','open'); cell.textContent="💣"; }}); }
 
-  function winGame(){
-    gameOver=true;
-    infoEl.textContent="🎉 You Win!";
-    points++;
-    updatePointsInfo();
-  }
+  function winGame(){ gameOver=true; infoEl.textContent="🎉 You Win!"; points++; updatePointsInfo(); }
 
-  function resetGame(){
-    gameOver=false;
-    firstClick=true;
-    flags.clear();
-    opened.clear();
-    updateFlagsInfo();
-    createGrid();
-    setupEvents();
-    updatePointsInfo();
-  }
+  function resetGame(){ gameOver=false; firstClick=true; flags.clear(); opened.clear(); updateFlagsInfo(); createGrid(); setupEvents(); updatePointsInfo(); }
 
-  function useHint(){
-    if(hints<=0){ alert("Brak hintów!"); return; }
-    hints--;
-    const safeCells = cells.map((c,i)=>i).filter(i=>!minePositions.has(i)&&!opened.has(i)&&!flags.has(i));
-    if(safeCells.length===0){ alert("Brak bezpiecznych pól."); return; }
-    const rand = safeCells[Math.floor(Math.random()*safeCells.length)];
-    openCell(rand);
-    updatePointsInfo();
-  }
+  function useHint(){ if(hints<=0){ alert("Brak hintów!"); return; } hints--; const safeCells=cells.map((c,i)=>i).filter(i=>!minePositions.has(i)&&!opened.has(i)&&!flags.has(i)); if(safeCells.length===0){ alert("Brak bezpiecznych pól."); return; } openCell(safeCells[Math.floor(Math.random()*safeCells.length)]); updatePointsInfo(); }
 
-  function buyHint(){
-    if(points<=0){ alert("Nie masz punktów!"); return; }
-    points--;
-    hints++;
-    updatePointsInfo();
-  }
+  function buyHint(){ if(points<=0){ alert("Nie masz punktów!"); return; } points--; hints++; updatePointsInfo(); }
 
-  hintBtn.onclick = ()=>{
-    if(hints>0) useHint();
-    else if(confirm("Kup hint za 1 punkt?")) buyHint();
-  };
+  hintBtn.onclick=()=>{ if(hints>0) useHint(); else if(confirm("Kup hint za 1 punkt?")) buyHint(); };
 
-  function setupEvents(){
-    cells.forEach(cell=>{
-      cell.onclick=()=>{ const i=+cell.dataset.index; flagMode?toggleFlag(i):openCell(i); };
-      cell.oncontextmenu=e=>{ e.preventDefault(); toggleFlag(+cell.dataset.index); };
-    });
-  }
+  function setupEvents(){ cells.forEach(cell=>{ cell.onclick=()=>{ const i=+cell.dataset.index; flagMode?toggleFlag(i):openCell(i); }; cell.oncontextmenu=e=>{ e.preventDefault(); toggleFlag(+cell.dataset.index); }; }); }
 
-  gridSizeInput.addEventListener('input',()=>{
-    const size=Math.max(5,Math.min(100,+gridSizeInput.value));
-    const maxBombs=Math.floor((size*size)/2);
-    bombCountInput.min=5; bombCountInput.max=maxBombs;
-    if(+bombCountInput.value>maxBombs) bombCountInput.value=maxBombs;
-  });
+  gridSizeInput.addEventListener('input',()=>{ const size=Math.max(5,Math.min(100,+gridSizeInput.value)); const maxBombs=Math.floor((size*size)/2); bombCountInput.min=5; bombCountInput.max=maxBombs; if(+bombCountInput.value>maxBombs) bombCountInput.value=maxBombs; });
 
-  startBtn.onclick=()=>{
-    const size=Math.max(5,Math.min(100,+gridSizeInput.value));
-    const maxBombs=Math.floor((size*size)/2);
-    const bombs=+bombCountInput.value;
-    if(bombs<5 || bombs>maxBombs){ alert("Error: za dużo bomb"); return; }
-    ROWS=COLS=size; MINES_COUNT=bombs;
-    resetGame();
-  };
+  startBtn.onclick=()=>{ const size=Math.max(5,Math.min(100,+gridSizeInput.value)); const maxBombs=Math.floor((size*size)/2); const bombs=+bombCountInput.value; if(bombs<5 || bombs>maxBombs){ alert("Error: za dużo bomb"); return; } ROWS=COLS=size; MINES_COUNT=bombs; resetGame(); };
 
   modeToggleBtn.onclick=()=>{ flagMode=!flagMode; modeToggleBtn.textContent=`Flag Mode: ${flagMode?'ON':'OFF'}`; };
   resetBtn.onclick=resetGame;
@@ -322,6 +290,98 @@ function showGame(gameId){
   btnFlag.onclick=()=>flagMode=true;
 
   resetGame();
+})();
+
+// ====================== QUIZ ======================
+(() => {
+  const questions = [
+    "Czy popierasz większe wydatki na edukację?",
+    "Czy popierasz wyższe podatki dla najbogatszych?",
+    "Czy popierasz obniżenie podatków dla firm?",
+    "Czy popierasz zwiększenie finansowania dla służby zdrowia?",
+    "Czy popierasz zaostrzenie przepisów dotyczących aborcji?",
+    "Czy popierasz legalizację marihuany?",
+    "Czy popierasz wprowadzenie 4-dniowego tygodnia pracy?",
+    "Czy popierasz zwiększenie wydatków na armię?",
+    "Czy popierasz wprowadzenie euro w Polsce?",
+    "Czy popierasz zwiększenie płacy minimalnej?",
+    "Czy popierasz zniesienie podatku od spadków?",
+    "Czy popierasz zakaz hodowli zwierząt futerkowych?",
+    "Czy popierasz wprowadzenie podatku od dużych korporacji technologicznych?",
+    "Czy popierasz zmniejszenie emisji CO2 w Polsce?",
+    "Czy popierasz wprowadzenie nauki o historii Polski w szkołach prywatnych?",
+    "Czy popierasz centralizację władzy?",
+    "Czy popierasz decentralizację władzy?",
+    "Czy popierasz legalizację eutanazji?",
+    "Czy popierasz wprowadzenie obowiązkowego szczepienia dzieci?",
+    "Czy popierasz wprowadzenie podatku od cukru?",
+    "Czy popierasz ograniczenie handlu w niedziele?",
+    "Czy popierasz zniesienie ograniczeń handlowych?",
+    "Czy popierasz większą pomoc dla rolników?",
+    "Czy popierasz rozwój elektrowni wiatrowych?",
+    "Czy popierasz rozwój elektrowni jądrowych?",
+    "Czy popierasz zwiększenie kontroli internetu?",
+    "Czy popierasz wprowadzenie podatku cyfrowego?",
+    "Czy popierasz wprowadzenie programu 500+ dla wszystkich dzieci?",
+    "Czy popierasz podwyższenie wieku emerytalnego?",
+    "Czy popierasz obniżenie wieku emerytalnego?",
+    "Czy popierasz przyjmowanie uchodźców?",
+    "Czy popierasz zwiększenie wydatków na kulturę?",
+    "Czy popierasz wprowadzenie minimalnej stawki godzinowej dla studentów?",
+    "Czy popierasz wprowadzenie darmowego transportu publicznego?"
+  ];
+
+  const parties = [
+    "Koalicja Obywatelska","Prawo i Sprawiedliwość","Konfederacja",
+    "Lewica","Konfederacja Korony Polskiej","Razem",
+    "Polskie Stronnictwo Ludowe","Polska 2050"
+  ];
+
+  const quizContainer = document.getElementById('quiz-container');
+  const quizResult = document.getElementById('quiz-result');
+  let currentQ=0;
+  let scores=Array(parties.length).fill(0);
+
+  function showQuestion(){
+    quizContainer.innerHTML='';
+    if(currentQ>=questions.length){ finishQuiz(); return; }
+
+    const qDiv=document.createElement('div');
+    qDiv.classList.add('quiz-question');
+    const p=document.createElement('p'); p.textContent=`${currentQ+1}. ${questions[currentQ]}`;
+    qDiv.appendChild(p);
+
+    const btnDiv=document.createElement('div'); btnDiv.classList.add('quiz-buttons');
+    ["Popieram","Nie popieram","Nie mam zdania"].forEach((ans,i)=>{
+      const btn=document.createElement('button');
+      btn.textContent=ans;
+      btn.onclick=()=>{ recordAnswer(i); };
+      btnDiv.appendChild(btn);
+    });
+
+    qDiv.appendChild(btnDiv);
+    quizContainer.appendChild(qDiv);
+  }
+
+  function recordAnswer(ans){
+    // Prosta losowa symulacja punktów dla partii
+    parties.forEach((_,i)=>{
+      const rnd=Math.floor(Math.random()*2);
+      if(ans===0) scores[i]+=rnd+1;
+      else if(ans===1) scores[i]+=rnd;
+    });
+    currentQ++;
+    showQuestion();
+  }
+
+  function finishQuiz(){
+    const maxScore=Math.max(...scores);
+    const winner=parties[scores.indexOf(maxScore)];
+    quizContainer.innerHTML='';
+    quizResult.textContent=`Twoja partia to: ${winner}`;
+  }
+
+  showQuestion();
 })();
 </script>
 
