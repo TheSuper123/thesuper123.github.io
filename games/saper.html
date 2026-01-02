@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Neon Flappy – SpinnerRealYT Games</title>
+<title>Saper – SpinnerRealYT Games</title>
 
 <link rel="icon" type="image/png" href="../Logo.png?v=2">
 <link rel="apple-touch-icon" href="../Logo.png?v=2">
@@ -14,6 +14,8 @@
   --card:#0f172a;
   --accent:#38bdf8;
   --text:#e5e7eb;
+  /* Dynamiczny rozmiar komórki: min 20px, max 45px, idealnie 8% szerokości ekranu */
+  --cell-size: clamp(20px, 8vw, 45px);
 }
 *{box-sizing:border-box}
 body{
@@ -22,10 +24,7 @@ body{
   background:radial-gradient(circle at top,#020617,#000);
   color:var(--text);
   user-select: none;
-  overflow-x: hidden;
 }
-
-/* NAGŁÓWEK IDENTYCZNY JAK W SAPERZE */
 header{
   display:flex; align-items:center; gap:15px; padding:15px 20px;
   background:rgba(15,23,42,.9); backdrop-filter:blur(10px);
@@ -39,69 +38,60 @@ nav button{
 nav button:hover{ background:rgba(56,189,248,.15); color:var(--accent); }
 
 main{ max-width: 600px; margin:auto; padding:10px; }
-
-/* KARTA GRY */
 .card{
   background:linear-gradient(180deg,#0f172a,#020617);
   border-radius:20px; padding:15px;
   box-shadow:0 20px 60px rgba(0,0,0,.6);
-  position: relative;
 }
 h2{text-align:center; margin-top:0;}
 
-#ui-score {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: var(--accent);
+#menu {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  margin-bottom: 15px; font-size: 14px;
+}
+input, button {
+  background:#1e293b; color:white; border:1px solid #334155;
+  border-radius:8px; padding:6px 10px;
+}
+button { cursor:pointer; background: var(--card); border-color: var(--accent); color: var(--accent); font-weight: bold;}
+button:active { transform: scale(0.95); }
+
+/* KONTENER GRY - SKALOWANIE */
+#game {
+  display: grid;
+  justify-content: center;
+  margin: 10px auto;
+  gap: 3px;
+  background: rgba(0,0,0,0.2);
+  padding: 5px;
+  border-radius: 8px;
+  width: fit-content; /* Ważne: dopasuj do zawartości */
+  max-width: 100%;
 }
 
-/* KONTENER CANVAS */
-#game-wrapper {
-    position: relative;
-    width: fit-content;
-    margin: 10px auto;
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: #334155;
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer; font-weight: 700; border-radius: 4px;
+  transition: background 0.2s;
+  font-size: calc(var(--cell-size) * 0.5);
 }
+.open { background:#e5e7eb; color:#020617; }
+.mine { background:#dc2626; color:white; }
+.flagged { background:#facc15; color:#020617; }
 
-canvas {
-    background: #000;
-    border-radius: 12px;
-    display: block;
-    border: 2px solid var(--accent);
-    cursor: pointer;
-    max-width: 100%;
-    height: auto;
+/* Kolory cyferek */
+.number1{color:#2563eb} .number2{color:#16a34a} .number3{color:#dc2626}
+.number4{color:#1e3a8a} .number5{color:#7c2d12} .number6{color:#0f766e}
+
+#controls-mobile {
+  display: flex; justify-content: center; gap: 10px; margin-top: 15px;
 }
+.btn-mode { padding: 12px 20px; flex: 1; max-width: 150px; }
+.active-mode { background: var(--accent); color: #020617; }
 
-/* OVERLAY MENU WYBORU */
-#overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.95);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-}
-
-.diff-btn {
-    background: var(--card);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 160px;
-    font-weight: bold;
-    transition: 0.2s;
-}
-.diff-btn:active { transform: scale(0.95); }
-
-/* STOPKA IDENTYCZNA */
 footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 </style>
 </head>
@@ -114,134 +104,168 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 
 <main>
   <div class="card">
-    <h2>🚀 Neon Flappy</h2>
-    <div id="ui-score">Score: 0 | Best: <span id="high-score">0</span></div>
-    
-    <div id="game-wrapper">
-        <canvas id="game" width="320" height="480"></canvas>
-        
-        <div id="overlay">
-            <h3 id="msg">Wybierz Poziom</h3>
-            <button class="diff-btn" onclick="startGame('amator')">AMATOR</button>
-            <button class="diff-btn" onclick="startGame('latwy')">ŁATWY</button>
-            <button class="diff-btn" onclick="startGame('sredni')">ŚREDNI</button>
-            <button class="diff-btn" onclick="startGame('trudny')">TRUDNY</button>
-        </div>
+    <h2>💣 Saper</h2>
+    <div id="menu">
+      <div style="display:flex; gap:5px; align-items:center;">
+        Size: <input type="number" id="grid-size" value="9" min="5" max="15" style="width:50px">
+        Bombs: <input type="number" id="bomb-count" value="10" min="5" style="width:50px">
+      </div>
+      <button id="start-btn">Nowa Gra</button>
+      <div id="info">Flags: 0 / 10</div>
     </div>
 
-    <div style="text-align:center; margin-top:10px; font-size: 13px; opacity: 0.7;">
-        Klikaj lub Space, aby skoczyć
+    <div id="game"></div>
+
+    <div id="controls-mobile">
+      <button id="btn-open" class="btn-mode active-mode">Odkryj</button>
+      <button id="btn-flag" class="btn-mode">Flaga</button>
     </div>
+    
+    <div id="points-info" style="text-align:center; margin-top:10px;">Points: 0</div>
   </div>
 </main>
 
 <footer>© 2026 SpinnerRealYT Games</footer>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-const scoreEl = document.getElementById("ui-score");
-const highScoreEl = document.getElementById("high-score");
-const overlay = document.getElementById("overlay");
-const msg = document.getElementById("msg");
+(() => {
+    let ROWS=9, COLS=9, MINES_COUNT=10;
+    const gameEl=document.getElementById('game');
+    const infoEl=document.getElementById('info');
+    const startBtn=document.getElementById('start-btn');
+    const gridSizeInput=document.getElementById('grid-size');
+    const bombCountInput=document.getElementById('bomb-count');
+    const btnOpen=document.getElementById('btn-open');
+    const btnFlag=document.getElementById('btn-flag');
+    const pointsInfoEl=document.getElementById('points-info');
 
-let bird = { x: 50, y: 240, w: 24, h: 24, dy: 0 };
-let pipes = [];
-let score = 0;
-let gameOver = true;
-let frame = 0;
-let highScore = localStorage.getItem("flappy_high") || 0;
-highScoreEl.textContent = highScore;
+    let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
+    let gameOver=false, flagMode=false, firstClick=true, points=0;
 
-const config = {
-    amator: { gravity: 0.35, jump: -6.5, gap: 170, speed: 2, pipeFreq: 110 },
-    latwy:  { gravity: 0.45, jump: -7.5, gap: 150, speed: 2.5, pipeFreq: 95 },
-    sredni: { gravity: 0.55, jump: -8.5, gap: 135, speed: 3, pipeFreq: 85 },
-    trudny: { gravity: 0.65, jump: -9.5, gap: 120, speed: 3.8, pipeFreq: 75 }
-};
-let cur = config.sredni;
-
-function startGame(diff) {
-    cur = config[diff];
-    bird.y = 240;
-    bird.dy = 0;
-    pipes = [];
-    score = 0;
-    frame = 0;
-    gameOver = false;
-    overlay.style.display = "none";
-    loop();
-}
-
-function input() { if(!gameOver) bird.dy = cur.jump; }
-window.addEventListener("keydown", (e) => { if(e.code === "Space") { e.preventDefault(); input(); } });
-canvas.addEventListener("touchstart", (e) => { e.preventDefault(); input(); });
-canvas.addEventListener("mousedown", input);
-
-function loop() {
-    if(gameOver) return;
-
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Ptak
-    bird.dy += cur.gravity;
-    bird.y += bird.dy;
-    ctx.fillStyle = "#38bdf8";
-    ctx.shadowBlur = 10; ctx.shadowColor = "#38bdf8";
-    ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
-    ctx.shadowBlur = 0;
-
-    // Rury
-    if(frame % cur.pipeFreq === 0) {
-        let gapY = Math.random() * (canvas.height - cur.gap - 100) + 50;
-        pipes.push({ x: canvas.width, y: gapY, passed: false });
-    }
-
-    for(let i = pipes.length - 1; i >= 0; i--) {
-        let p = pipes[i];
-        p.x -= cur.speed;
-
-        ctx.fillStyle = "#1e293b";
-        ctx.strokeStyle = "#38bdf8";
-        ctx.lineWidth = 2;
+    function createGrid(){
+        gameEl.innerHTML='';
+        cells=[];
+        // Ustawienie liczby kolumn w CSS Grid
+        gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
         
-        // Góra
-        ctx.fillRect(p.x, 0, 50, p.y);
-        ctx.strokeRect(p.x, -2, 50, p.y + 2);
+        for(let i=0; i<ROWS*COLS; i++){
+            const c=document.createElement('div');
+            c.className='cell';
+            c.dataset.index=i;
+            c.onclick = () => handleCellClick(i);
+            c.oncontextmenu = (e) => { e.preventDefault(); toggleFlag(i); };
+            gameEl.appendChild(c);
+            cells.push(c);
+        }
+    }
+
+    function handleCellClick(i) {
+        if(flagMode) toggleFlag(i);
+        else openCell(i);
+    }
+
+    function neighbors(i){
+        const r=Math.floor(i/COLS), c=i%COLS, res=[];
+        for(let dr=-1; dr<=1; dr++) for(let dc=-1; dc<=1; dc++){
+            if(!dr && !dc) continue;
+            const nr=r+dr, nc=c+dc;
+            if(nr>=0 && nr<ROWS && nc>=0 && nc<COLS) res.push(nr*COLS+nc);
+        }
+        return res;
+    }
+
+    function placeMines(firstIndex){
+        minePositions.clear();
+        while(minePositions.size < MINES_COUNT){
+            const p = Math.floor(Math.random()*ROWS*COLS);
+            if(p === firstIndex || neighbors(firstIndex).includes(p)) continue;
+            minePositions.add(p);
+        }
+    }
+
+    function openCell(i){
+        if(gameOver || opened.has(i) || flags.has(i)) return;
+        if(firstClick){ firstClick=false; placeMines(i); }
         
-        // Dół
-        ctx.fillRect(p.x, p.y + cur.gap, 50, canvas.height);
-        ctx.strokeRect(p.x, p.y + cur.gap, 50, canvas.height - (p.y + cur.gap) + 2);
-
-        // Kolizje
-        if (bird.x < p.x + 50 && bird.x + bird.w > p.x && (bird.y < p.y || bird.y + bird.h > p.y + cur.gap)) {
-            die();
+        opened.add(i);
+        const c=cells[i];
+        c.classList.add('open');
+        
+        if(minePositions.has(i)){
+            c.textContent='💣';
+            c.classList.add('mine');
+            return lose();
         }
-        if (!p.passed && p.x + 50 < bird.x) {
-            score++;
-            p.passed = true;
+        
+        const n = neighbors(i).filter(idx => minePositions.has(idx)).length;
+        if(n > 0){
+            c.textContent = n;
+            c.classList.add(`number${n}`);
+        } else {
+            neighbors(i).forEach(openCell);
         }
-        if (p.x < -60) pipes.splice(i, 1);
+        checkWin();
     }
 
-    if(bird.y + bird.h > canvas.height || bird.y < 0) die();
-
-    scoreEl.innerHTML = `Score: ${score} | Best: ${highScore}`;
-    frame++;
-    requestAnimationFrame(loop);
-}
-
-function die() {
-    gameOver = true;
-    if(score > highScore) {
-        highScore = score;
-        localStorage.setItem("flappy_high", highScore);
-        highScoreEl.textContent = highScore;
+    function toggleFlag(i){
+        if(gameOver || opened.has(i)) return;
+        const c=cells[i];
+        if(flags.has(i)){
+            flags.delete(i);
+            c.textContent='';
+            c.classList.remove('flagged');
+        } else if(flags.size < MINES_COUNT){
+            flags.add(i);
+            c.textContent='🚩';
+            c.classList.add('flagged');
+        }
+        infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
     }
-    msg.textContent = "Koniec! Wynik: " + score;
-    overlay.style.display = "flex";
-}
+
+    function lose(){
+        gameOver=true;
+        infoEl.textContent='💥 Przegrana!';
+        minePositions.forEach(i => {
+            cells[i].classList.add('mine', 'open');
+            cells[i].textContent='💣';
+        });
+    }
+
+    function checkWin(){
+        if(opened.size === ROWS*COLS - MINES_COUNT){
+            gameOver=true;
+            infoEl.textContent='🎉 Wygrana!';
+            points += 10;
+            pointsInfoEl.textContent = `Points: ${points}`;
+        }
+    }
+
+    function reset(){
+        ROWS = Math.min(parseInt(gridSizeInput.value) || 9, 15); // limit dla mobile
+        COLS = ROWS;
+        MINES_COUNT = Math.min(parseInt(bombCountInput.value) || 10, Math.floor(ROWS*COLS*0.3));
+        gameOver=false; firstClick=true;
+        flags.clear(); opened.clear();
+        infoEl.textContent=`Flags: 0 / ${MINES_COUNT}`;
+        createGrid();
+    }
+
+    startBtn.onclick = reset;
+    
+    btnOpen.onclick = () => {
+        flagMode = false;
+        btnOpen.classList.add('active-mode');
+        btnFlag.classList.remove('active-mode');
+    };
+    
+    btnFlag.onclick = () => {
+        flagMode = true;
+        btnFlag.classList.add('active-mode');
+        btnOpen.classList.remove('active-mode');
+    };
+
+    reset();
+})();
 </script>
 </body>
 </html>
