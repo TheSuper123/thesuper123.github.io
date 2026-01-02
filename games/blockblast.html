@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Block Blast – SpinnerRealYT Games</title>
 <style>
 :root{
@@ -10,6 +10,9 @@
   --card:#0f172a;
   --accent:#38bdf8;
   --text:#e5e7eb;
+  /* Dynamiczne obliczanie rozmiaru komórki */
+  --cell-size: clamp(30px, 8vw, 45px); 
+  --grid-gap: 4px;
 }
 *{box-sizing:border-box;}
 body{
@@ -18,106 +21,115 @@ body{
   background:radial-gradient(circle at top,#020617,#000);
   color:var(--text);
   overflow: hidden;
-  user-select: none; /* blokuje kopiowanie tekstu */
-  touch-action: none; /* blokuje przewijanie przy przeciąganiu */
+  user-select: none;
+  touch-action: none;
 }
 header{
   display:flex;
   align-items:center;
-  justify-content:flex-start;
-  padding:15px 20px;
+  justify-content:space-between;
+  padding:10px 15px;
   background:rgba(15,23,42,.9);
   backdrop-filter:blur(10px);
-  position:relative;
   z-index:100;
 }
-header img{height:42px;margin-right:20px;}
+header img{height:30px;}
 header button{
-  background:none; border:none; color:var(--text);
-  font-size:15px; padding:8px 14px; border-radius:10px; cursor:pointer;
+  background:rgba(56,189,248,.1); border:1px solid var(--accent); color:var(--text);
+  font-size:14px; padding:6px 12px; border-radius:8px; cursor:pointer;
 }
-header button:hover{ background:rgba(56,189,248,.15); color:var(--accent); }
 
-main{max-width:1100px;margin:auto;padding:25px}
+main{
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .card{
+  width: 100%;
   background:linear-gradient(180deg,#0f172a,#020617);
   border-radius:20px;
-  padding:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-  position: relative;
+  padding:15px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
 }
-h2{text-align:center;margin:0 0 10px 0;}
+h2{text-align:center; margin:0 0 5px 0; font-size: 1.2rem;}
 #score{
   text-align:center;
-  font-size:24px;
+  font-size:20px;
   font-weight:bold;
-  margin-bottom:15px;
+  margin-bottom:10px;
   color: var(--accent);
 }
+
+/* KONTENER PLANSZY */
 #board{
   display:grid;
-  grid-template-columns:repeat(9, 40px);
-  grid-template-rows:repeat(9, 40px);
-  gap:4px;
+  grid-template-columns:repeat(9, var(--cell-size));
+  grid-template-rows:repeat(9, var(--cell-size));
+  gap:var(--grid-gap);
   justify-content:center;
-  position:relative;
   margin: 0 auto;
   background: rgba(255,255,255,0.05);
-  padding: 10px;
+  padding: 8px;
   border-radius: 10px;
   width: fit-content;
 }
 .cell{
-  width:40px;
-  height:40px;
+  width:var(--cell-size);
+  height:var(--cell-size);
   background:#1e293b;
   border-radius:4px;
 }
+
+/* KLOCKI DO WYBORU */
 #next-blocks{
   display:flex;
-  justify-content:center;
+  justify-content:space-around;
   align-items: center;
-  gap:40px;
-  margin-top:30px;
-  min-height: 140px;
+  margin-top:20px;
+  min-height: 120px;
+  width: 100%;
 }
 .block{
   display:grid;
   cursor: grab;
-  user-select:none;
   touch-action: none;
+  /* Skalowanie klocków na dole, żeby były mniejsze */
+  transform: scale(0.8);
 }
 .block-cell{
-  width:40px;
-  height:40px;
+  width:var(--cell-size);
+  height:var(--cell-size);
   border-radius:4px;
 }
 .ghost-cell{
   position:absolute;
-  width:40px;
-  height:40px;
+  width:var(--cell-size);
+  height:var(--cell-size);
   border-radius:4px;
   opacity:0.4;
   pointer-events:none;
   z-index:5;
   display: none;
 }
-footer{ text-align:center; opacity:.6; padding:20px; font-size: 12px; }
+footer{ text-align:center; opacity:.6; padding:10px; font-size: 10px; }
 </style>
 </head>
 <body>
 
 <header>
-<img src="../Logo.png" alt="SpinnerRealYT">
+<img src="../Logo.png" alt="Logo">
 <button onclick="location.href='../index.html'">Menu</button>
 </header>
 
 <main>
 <div class="card">
-<h2>🟦 Block Blast 9x9</h2>
-<div id="score">Punkty: 0</div>
-<div id="board"></div>
-<div id="next-blocks"></div>
+  <div id="score">Punkty: 0</div>
+  <div id="board"></div>
+  <div id="next-blocks"></div>
 </div>
 </main>
 
@@ -126,7 +138,21 @@ footer{ text-align:center; opacity:.6; padding:20px; font-size: 12px; }
 </footer>
 
 <script>
-const ROWS=9, COLS=9, GRID_STEP=44;
+// Pobieramy realny rozmiar z CSS, aby JS wiedział jak przesuwać klocki
+function getCellSize() {
+  const temp = document.createElement('div');
+  temp.style.width = "var(--cell-size)";
+  document.body.appendChild(temp);
+  const size = parseFloat(getComputedStyle(temp).width);
+  const gap = 4; // var(--grid-gap)
+  document.body.removeChild(temp);
+  return size + gap;
+}
+
+let GRID_STEP = getCellSize();
+window.addEventListener('resize', () => { GRID_STEP = getCellSize(); });
+
+const ROWS=9, COLS=9;
 const COLORS=["#38bdf8", "#4ade80", "#fb7185", "#fbbf24", "#a78bfa", "#2dd4bf"];
 const SHAPES=[
   [[1,1,1,1]], [[1],[1],[1],[1]], [[1,1],[1,1]], 
@@ -164,12 +190,12 @@ function generateNext(){
   for(let i=0;i<3;i++){
     const shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
     const color=COLORS[Math.floor(Math.random()*COLORS.length)];
-    const blockId = Date.now() + "-" + i;
+    const blockId = "b-" + Date.now() + "-" + i;
     
     const blockDiv=document.createElement("div");
     blockDiv.className="block";
     blockDiv.id = blockId;
-    blockDiv.style.gridTemplateColumns=`repeat(${shape[0].length}, 40px)`;
+    blockDiv.style.gridTemplateColumns=`repeat(${shape[0].length}, var(--cell-size))`;
     blockDiv.style.gap = "2px";
     
     shape.forEach(row => {
@@ -195,8 +221,12 @@ function makeDraggable(blockEl, blockId){
     const {shape, color} = blockData;
 
     const rect = blockEl.getBoundingClientRect();
+    // Offset musi brać pod uwagę środek klocka dla lepszego wrażenia na dotyk
     const offsetX = clientX - rect.left;
     const offsetY = clientY - rect.top;
+
+    // Reset skali przy przeciąganiu
+    blockEl.style.transform = "scale(1)";
 
     let localGhosts = [];
     for(let r=0; r<shape.length; r++){
@@ -216,21 +246,23 @@ function makeDraggable(blockEl, blockId){
     blockEl.style.pointerEvents = "none";
 
     function move(ev){
-      let x = ev.clientX ?? ev.touches[0].clientX;
-      let y = ev.clientY ?? ev.touches[0].clientY;
+      const x = ev.clientX ?? (ev.touches ? ev.touches[0].clientX : 0);
+      const y = ev.clientY ?? (ev.touches ? ev.touches[0].clientY : 0);
 
+      // Przesunięcie klocka nieco wyżej nad palec, żeby gracz widział co kładzie
       blockEl.style.left = (x - offsetX) + "px";
-      blockEl.style.top = (y - offsetY) + "px";
+      blockEl.style.top = (y - offsetY - 50) + "px";
 
       const boardRect = boardEl.getBoundingClientRect();
-      const col = Math.round((x - boardRect.left - offsetX - 10) / GRID_STEP);
-      const row = Math.round((y - boardRect.top - offsetY - 10) / GRID_STEP);
+      // Obliczanie pozycji względem siatki (z uwzględnieniem offsetu palca)
+      const col = Math.round((x - boardRect.left - offsetX - 8) / GRID_STEP);
+      const row = Math.round((y - boardRect.top - offsetY - 58) / GRID_STEP);
 
       if(canPlace(row, col, shape)){
         localGhosts.forEach(g => {
           g.el.style.display = "block";
-          g.el.style.left = (col + g.c) * GRID_STEP + 10 + "px";
-          g.el.style.top = (row + g.r) * GRID_STEP + 10 + "px";
+          g.el.style.left = (col + g.c) * GRID_STEP + 8 + "px";
+          g.el.style.top = (row + g.r) * GRID_STEP + 8 + "px";
         });
       } else {
         localGhosts.forEach(g => g.el.style.display = "none");
@@ -238,8 +270,8 @@ function makeDraggable(blockEl, blockId){
     }
 
     function end(ev){
-      let x = ev.clientX ?? ev.changedTouches[0].clientX;
-      let y = ev.clientY ?? ev.changedTouches[0].clientY;
+      const x = ev.clientX ?? (ev.changedTouches ? ev.changedTouches[0].clientX : 0);
+      const y = ev.clientY ?? (ev.changedTouches ? ev.changedTouches[0].clientY : 0);
 
       document.removeEventListener("mousemove", move);
       document.removeEventListener("mouseup", end);
@@ -247,8 +279,8 @@ function makeDraggable(blockEl, blockId){
       document.removeEventListener("touchend", end);
 
       const boardRect = boardEl.getBoundingClientRect();
-      const col = Math.round((x - boardRect.left - offsetX - 10) / GRID_STEP);
-      const row = Math.round((y - boardRect.top - offsetY - 10) / GRID_STEP);
+      const col = Math.round((x - boardRect.left - offsetX - 8) / GRID_STEP);
+      const row = Math.round((y - boardRect.top - offsetY - 58) / GRID_STEP);
 
       if(canPlace(row, col, shape)){
         placeBlock(row, col, shape, color);
@@ -262,8 +294,8 @@ function makeDraggable(blockEl, blockId){
         blockEl.style.pointerEvents = "auto";
         blockEl.style.left = "";
         blockEl.style.top = "";
+        blockEl.style.transform = "scale(0.8)";
       }
-
       localGhosts.forEach(g => g.el.remove());
     }
 
