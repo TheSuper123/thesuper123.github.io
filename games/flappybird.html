@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flappy Bird - SpinnerRealYT Games</title>
+<style>
+:root {
+    --bg: #020617;
+    --card: #0f172a;
+    --accent: #38bdf8;
+    --text: #e5e7eb;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: radial-gradient(circle at top, #020617, #000);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* KONTENER GRY */
+.game-container {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+canvas {
+    background: #111; /* Ciemne tło gry dla kontrastu neonu */
+    border-radius: 12px;
+    display: block;
+    margin: 15px auto;
+    border: 2px solid var(--accent);
+    cursor: pointer;
+}
+
+h1 { margin: 0; color: var(--accent); font-size: 24px; }
+
+/* MENU TRUDNOŚCI */
+#overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.diff-btn {
+    background: none;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 150px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.diff-btn:hover {
+    background: rgba(56, 189, 248, 0.15);
+    transform: scale(1.05);
+}
+
+#ui-score {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+</style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>NEON FLAPPY</h1>
+    <div id="ui-score">Wynik: 0 | Najlepszy: <span id="high-score">0</span></div>
+    
+    <canvas id="game" width="360" height="500"></canvas>
+    
+    <div id="overlay">
+        <h2>Wybierz trudność</h2>
+        <button class="diff-btn" onclick="startGame('amator')">AMATOR</button>
+        <button class="diff-btn" onclick="startGame('latwy')">ŁATWY</button>
+        <button class="diff-btn" onclick="startGame('sredni')">ŚREDNI</button>
+        <button class="diff-btn" onclick="startGame('trudny')">TRUDNY</button>
+        <p style="font-size: 12px; opacity: 0.6; margin-top: 15px;">Klikaj lub użyj spacji, aby lecieć</p>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("ui-score");
+const highScoreEl = document.getElementById("high-score");
+
+// Stan gry
+let bird = { x: 50, y: 250, w: 25, h: 25, dy: 0 };
+let pipes = [];
+let score = 0;
+let gameOver = true;
+let frame = 0;
+let highScore = localStorage.getItem("flappy_high") || 0;
+highScoreEl.textContent = highScore;
+
+// Konfiguracja poziomów
+const config = {
+    amator: { gravity: 0.4, jump: -7, gap: 180, speed: 2, pipeFreq: 120 },
+    latwy:  { gravity: 0.5, jump: -8, gap: 160, speed: 2.5, pipeFreq: 100 },
+    sredni: { gravity: 0.6, jump: -9, gap: 140, speed: 3, pipeFreq: 80 },
+    trudny: { gravity: 0.7, jump: -10, gap: 120, speed: 4, pipeFreq: 70 }
+};
+let currentDiff = config.sredni;
+
+function startGame(diff) {
+    currentDiff = config[diff];
+    resetGame();
+    document.getElementById("overlay").style.display = "none";
+}
+
+function resetGame() {
+    bird.y = 250;
+    bird.dy = 0;
+    pipes = [];
+    score = 0;
+    frame = 0;
+    gameOver = false;
+    requestAnimationFrame(update);
+}
+
+function handleInput() {
+    if(!gameOver) bird.dy = currentDiff.jump;
+}
+
+document.addEventListener("keydown", (e) => { if(e.code === "Space") handleInput(); });
+canvas.addEventListener("mousedown", handleInput);
+
+function generatePipe() {
+    const minHeight = 50;
+    const maxHeight = canvas.height - currentDiff.gap - minHeight;
+    const y = Math.floor(Math.random() * (maxHeight - minHeight)) + minHeight;
+    pipes.push({ x: canvas.width, y: y, passed: false });
+}
+
+function update() {
+    if(gameOver) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Fizyka ptaka
+    bird.dy += currentDiff.gravity;
+    bird.y += bird.dy;
+
+    // Rysuj ptaka (Neonowy kwadrat)
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "#38bdf8";
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+    ctx.shadowBlur = 0;
+
+    // Rury
+    if(frame % currentDiff.pipeFreq === 0) generatePipe();
+
+    for(let i = pipes.length - 1; i >= 0; i--) {
+        let p = pipes[i];
+        p.x -= currentDiff.speed;
+
+        // Rysuj rury
+        ctx.fillStyle = "#1e293b";
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2;
+
+        // Górna rura
+        ctx.fillRect(p.x, 0, 50, p.y);
+        ctx.strokeRect(p.x, 0, 50, p.y);
+
+        // Dolna rura
+        const bottomY = p.y + currentDiff.gap;
+        ctx.fillRect(p.x, bottomY, 50, canvas.height - bottomY);
+        ctx.strokeRect(p.x, bottomY, 50, canvas.height - bottomY);
+
+        // Kolizja
+        if (
+            bird.x < p.x + 50 &&
+            bird.x + bird.w > p.x &&
+            (bird.y < p.y || bird.y + bird.h > bottomY)
+        ) {
+            endGame();
+        }
+
+        // Punktacja
+        if(!p.passed && p.x + 50 < bird.x) {
+            score++;
+            p.passed = true;
+        }
+
+        // Usuwanie rur poza ekranem
+        if(p.x < -60) pipes.splice(i, 1);
+    }
+
+    // Granice ekranu
+    if(bird.y + bird.h > canvas.height || bird.y < 0) {
+        endGame();
+    }
+
+    scoreEl.innerHTML = `Wynik: ${score} | Najlepszy: ${highScore}`;
+    frame++;
+    requestAnimationFrame(update);
+}
+
+function endGame() {
+    gameOver = true;
+    if(score > highScore) {
+        highScore = score;
+        localStorage.setItem("flappy_high", highScore);
+        highScoreEl.textContent = highScore;
+    }
+    
+    setTimeout(() => {
+        document.getElementById("overlay").style.display = "flex";
+        document.querySelector("#overlay h2").textContent = "Wynik: " + score;
+    }, 500);
+}
+</script>
+</body>
+</html>
