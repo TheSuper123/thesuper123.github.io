@@ -12,6 +12,7 @@
 --card:#0f172a;
 --accent:#38bdf8;
 --text:#e5e7eb;
+--danger:#f87171;
 }
 *{box-sizing:border-box}
 body{
@@ -32,6 +33,7 @@ top:0;
 z-index:100;
 }
 header img{height:42px}
+nav{ display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 nav button{
 background:none;
 border:none;
@@ -40,12 +42,20 @@ font-size:15px;
 padding:8px 14px;
 border-radius:10px;
 cursor:pointer;
+transition: 0.2s;
 }
 nav button:hover,
 nav button.active{
 background:rgba(56,189,248,.15);
 color:var(--accent);
 }
+
+/* PRZYCISK LOGOWANIA W NAV */
+#auth-nav-btn {
+    border: 1px solid var(--accent);
+    font-weight: bold;
+}
+
 main{
 max-width:1100px;
 margin:auto;
@@ -65,35 +75,46 @@ opacity:.6;
 padding:25px 10px;
 }
 
+/* ===== MODAL LOGOWANIA ===== */
+#auth-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center; z-index: 10000;
+}
+#auth-overlay.active { display: flex; }
+.auth-modal {
+    width: 90%; max-width: 380px; animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.auth-input {
+    width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px;
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;
+}
+.auth-input:focus { border-color: var(--accent); }
+.btn-submit {
+    width: 100%; padding: 12px; background: var(--accent); color: var(--bg);
+    border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px;
+}
+.auth-switch {
+    text-align: center; margin-top: 15px; font-size: 13px; opacity: 0.7;
+}
+.auth-switch span { color: var(--accent); cursor: pointer; text-decoration: underline; }
+#auth-msg { text-align: center; margin-top: 10px; font-size: 13px; min-height: 1.2em; }
+#auth-msg.error { color: var(--danger); }
+#auth-msg.success { color: #4ade80; }
+
 /* ===== BANNER COOKIES ===== */
 #cookie-banner{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--card);
-  color:var(--text);
-  padding:15px 20px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.6);
-  display:none;
-  z-index:9999;
-  max-width:90%;
-  text-align:center;
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:var(--card); color:var(--text); padding:15px 20px;
+  border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.6);
+  display:none; z-index:9999; max-width:90%; text-align:center;
 }
 #cookie-banner button{
-  background:var(--accent);
-  border:none;
-  padding:8px 14px;
-  border-radius:10px;
-  cursor:pointer;
-  margin:5px 3px 0 3px;
-  color:#020617;
-  font-weight:700;
-}
-#cookie-banner a{
-  color:var(--accent);
-  text-decoration:underline;
+  background:var(--accent); border:none; padding:8px 14px;
+  border-radius:10px; cursor:pointer; margin:5px 3px 0 3px;
+  color:#020617; font-weight:700;
 }
 </style>
 </head>
@@ -115,22 +136,82 @@ Zero reklam. Zero śmieci. 100% fun.
 </div>
 </main>
 
-<footer>
-© 2026 SpinnerRealYT Games
-</footer>
+<div id="auth-overlay">
+    <div class="card auth-modal">
+        <h2 id="auth-title">Zaloguj się</h2>
+        <input type="text" id="auth-user" class="auth-input" placeholder="Nazwa użytkownika">
+        <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło">
+        <button class="btn-submit" id="auth-submit">Zaloguj</button>
+        <div id="auth-msg"></div>
+        <div class="auth-switch" id="auth-toggle-box">
+            Nie masz konta? <span onclick="toggleAuth()">Zarejestruj się</span>
+        </div>
+        <button onclick="closeAuth()" style="background:none; border:none; color:white; width:100%; margin-top:15px; cursor:pointer; opacity:0.5;">Zamknij</button>
+    </div>
+</div>
 
-<!-- ===== BANNER COOKIES ===== -->
+<footer>© 2026 SpinnerRealYT Games</footer>
+
 <div id="cookie-banner">
-<p>
-Ta strona używa ciasteczek (cookies) w celu poprawnego działania strony.  
-<a href="privacy.html" target="_blank">Polityka prywatności</a>
-</p>
+<p>Ta strona używa ciasteczek. <a href="privacy.html" style="color:var(--accent)">Więcej</a></p>
 <button onclick="acceptCookies()">Akceptuję</button>
-<button onclick="rejectCookies()">Odrzuć</button>
 </div>
 
 <script>
-/* ===== MENU ===== */
+/* ===== SYSTEM LOGOWANIA (LOCAL DB) ===== */
+let isLoginMode = true;
+
+function getFingerprint() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = "top"; ctx.font = "12px Arial";
+    ctx.fillText('SpinnerRealYT-V1', 2, 2);
+    return btoa(canvas.toDataURL());
+}
+
+function openAuth() { document.getElementById('auth-overlay').classList.add('active'); }
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('active'); }
+
+function toggleAuth() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Stwórz konto";
+    document.getElementById('auth-submit').textContent = isLoginMode ? "Zaloguj" : "Zarejestruj się";
+    document.getElementById('auth-toggle-box').innerHTML = isLoginMode ? 
+        'Nie masz konta? <span onclick="toggleAuth()">Zarejestruj się</span>' : 
+        'Masz już konto? <span onclick="toggleAuth()">Zaloguj się</span>';
+}
+
+document.getElementById('auth-submit').onclick = () => {
+    const user = document.getElementById('auth-user').value.trim();
+    const pass = document.getElementById('auth-pass').value.trim();
+    const msg = document.getElementById('auth-msg');
+    const fingerprint = getFingerprint();
+
+    if(!user || !pass) { msg.textContent = "Wypełnij pola!"; msg.className = "error"; return; }
+
+    let users = JSON.parse(localStorage.getItem("sp_users") || "[]");
+    let fps = JSON.parse(localStorage.getItem("sp_fps") || "{}");
+
+    if(isLoginMode) {
+        const found = users.find(u => u.u === user && u.p === pass);
+        if(found) {
+            localStorage.setItem("sp_logged", user);
+            location.reload();
+        } else { msg.textContent = "Błędne dane!"; msg.className = "error"; }
+    } else {
+        if(users.find(u => u.u === user)) { msg.textContent = "Nick zajęty!"; msg.className = "error"; return; }
+        if(fps[fingerprint]) { msg.textContent = "Wykryto multikonto!"; msg.className = "error"; return; }
+
+        users.push({ u: user, p: pass });
+        fps[fingerprint] = user;
+        localStorage.setItem("sp_users", JSON.stringify(users));
+        localStorage.setItem("sp_fps", JSON.stringify(fps));
+        msg.textContent = "Konto utworzone!"; msg.className = "success";
+        setTimeout(toggleAuth, 1000);
+    }
+};
+
+/* ===== MENU & INICJALIZACJA ===== */
 const games = [
   { file: "games/saper.html", name: "Saper" },
   { file: "games/neonmaze.html", name: "Neonowy Labirynt" },
@@ -144,39 +225,44 @@ const games = [
 
 const nav = document.getElementById("nav");
 
-/* MENU */
-const menuBtn = document.createElement("button");
-menuBtn.textContent = "Menu";
-menuBtn.classList.add("active");
-menuBtn.onclick = () => location.href = "index.html";
-nav.appendChild(menuBtn);
+function renderMenu() {
+    nav.innerHTML = "";
+    const loggedUser = localStorage.getItem("sp_logged");
 
-/* AUTOMATYCZNE BUTTONY */
-games.forEach(g => {
-  const btn = document.createElement("button");
-  btn.textContent = g.name;
-  btn.onclick = () => location.href = g.file;
-  nav.appendChild(btn);
-});
+    // Przycisk Menu/Główna
+    const menuBtn = document.createElement("button");
+    menuBtn.textContent = "Główna";
+    menuBtn.classList.add("active");
+    menuBtn.onclick = () => location.href = "index.html";
+    nav.appendChild(menuBtn);
+
+    // Przycisk Logowania/Profilu
+    const authNav = document.createElement("button");
+    authNav.id = "auth-nav-btn";
+    if(loggedUser) {
+        authNav.textContent = `👤 ${loggedUser}`;
+        authNav.onclick = () => { if(confirm("Wylogować?")) { localStorage.removeItem("sp_logged"); location.reload(); } };
+    } else {
+        authNav.textContent = "Zaloguj się";
+        authNav.onclick = openAuth;
+    }
+    nav.appendChild(authNav);
+
+    // Gry
+    games.forEach(g => {
+        const btn = document.createElement("button");
+        btn.textContent = g.name;
+        btn.onclick = () => location.href = g.file;
+        nav.appendChild(btn);
+    });
+}
 
 /* ===== COOKIES ===== */
-const cookieBanner = document.getElementById("cookie-banner");
-
-function acceptCookies(){
-  localStorage.setItem("cookiesAccepted","true");
-  cookieBanner.style.display = "none";
-}
-
-function rejectCookies(){
-  localStorage.setItem("cookiesAccepted","false");
-  cookieBanner.style.display = "none";
-}
+function acceptCookies(){ localStorage.setItem("cookiesAccepted","true"); document.getElementById("cookie-banner").style.display = "none"; }
 
 window.onload = () => {
-  const consent = localStorage.getItem("cookiesAccepted");
-  if(consent !== "true" && consent !== "false"){
-    cookieBanner.style.display = "block";
-  }
+    renderMenu();
+    if(localStorage.getItem("cookiesAccepted") !== "true") document.getElementById("cookie-banner").style.display = "block";
 };
 </script>
 
