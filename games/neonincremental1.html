@@ -8,9 +8,8 @@
 <style>
 :root{ --bg:#020617; --card:#0f172a; --accent:#38bdf8; --text:#e5e7eb; --gold:#facc15; --path:#1e293b; --danger:#f87171;}
 *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-body{ margin:0; font-family:Inter,sans-serif; background:var(--bg); color:var(--text); overflow:hidden; touch-action:none; }
+body{ margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--text); overflow:hidden; touch-action:none; }
 
-/* MAPA I KAMERA */
 #game-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #000; }
 #world-map { position: absolute; width: 5000px; height: 5000px; background-image: radial-gradient(circle, #1e293b 1px, transparent 1px); background-size: 60px 60px; }
 
@@ -19,44 +18,55 @@ body{ margin:0; font-family:Inter,sans-serif; background:var(--bg); color:var(--
     box-shadow: 0 0 20px var(--accent); border-radius: 8px; z-index: 100;
 }
 
-/* DUŻE KWADRACIKI (NODES) */
+/* NODES */
 .node {
-    position: absolute; width: 140px; height: 140px; background: var(--card);
-    border: 4px solid var(--path); border-radius: 20px; display: none;
+    position: absolute; width: 160px; height: 160px; background: var(--card);
+    border: 4px solid var(--path); border-radius: 24px; display: none;
     flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 10px; z-index: 50; transition: transform 0.2s, border-color 0.2s;
+    text-align: center; padding: 15px; z-index: 50; transition: 0.2s;
 }
 .node.visible { display: flex; animation: fadeIn 0.4s forwards; }
-.node b { font-size: 14px; margin-bottom: 5px; color: var(--accent); }
-.node i { font-size: 11px; opacity: 0.8; font-style: normal; margin-bottom: 8px; line-height: 1.2; }
-.node .cost-txt { font-weight: bold; font-size: 13px; }
-.node.can-afford { border-color: #4ade80; box-shadow: 0 0 20px rgba(74, 222, 128, 0.3); }
+.node b { font-size: 14px; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+.node .type-tag { font-size: 9px; background: rgba(56,189,248,0.2); padding: 2px 6px; border-radius: 10px; margin-bottom: 5px; }
+.node i { font-size: 11px; opacity: 0.7; font-style: normal; margin-bottom: 5px; line-height: 1.2; min-height: 26px; }
+.node small { font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+.node .cost-txt { font-weight: 800; font-size: 14px; }
+
+.node.can-afford { border-color: #4ade80; box-shadow: 0 0 20px rgba(74, 222, 128, 0.2); }
 .node.maxed { border-color: var(--gold); }
+.node.teleport-node { border-style: dashed; border-color: var(--gold); }
 
-/* LINIE */
+/* SVG PATHS */
 #path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-line { stroke: var(--path); stroke-width: 6; stroke-linecap: round; }
-line.active { stroke: var(--accent); stroke-dasharray: 12; animation: dash 1.5s linear infinite; }
+line { stroke: var(--path); stroke-width: 8; stroke-linecap: round; }
+line.active { stroke: var(--accent); stroke-dasharray: 15; animation: dash 1.5s linear infinite; }
 
-@keyframes dash { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes dash { from { stroke-dashoffset: 30; } to { stroke-dashoffset: 0; } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
 
-/* UI I STEROWANIE MOBILE */
-#ui { position: fixed; top: 20px; width: 100%; text-align: center; z-index: 200; pointer-events: none; }
-.currency { font-size: 36px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
+/* UI */
+#ui { position: fixed; top: 25px; width: 100%; text-align: center; z-index: 200; pointer-events: none; }
+.currency { font-size: 38px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
 
-#mobile-controls {
-    position: fixed; bottom: 30px; left: 20px; display: none; grid-template-areas: ". up ." "left down right"; gap: 10px; z-index: 300;
+/* TELEPORT MENU */
+#tp-menu {
+    position: fixed; bottom: 120px; right: 20px; display: none;
+    flex-direction: column; gap: 10px; z-index: 500;
 }
-.joy-btn {
-    width: 60px; height: 60px; background: rgba(15, 23, 42, 0.8); border: 2px solid var(--accent);
-    border-radius: 15px; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 24px;
+.tp-btn {
+    background: var(--card); border: 2px solid var(--gold); color: white;
+    padding: 12px; border-radius: 12px; cursor: pointer; font-size: 12px;
+}
+#tp-toggle {
+    position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px;
+    background: var(--gold); color: #000; border-radius: 50%; border: none;
+    font-weight: 900; font-size: 24px; cursor: pointer; display: none; z-index: 501;
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
 }
 
-#reset-btn {
-    position: fixed; top: 20px; right: 20px; background: var(--danger); color: white; border: none;
-    padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; display: none; z-index: 400;
-}
+#mobile-controls { position: fixed; bottom: 30px; left: 20px; display: none; grid-template-areas: ". up ." "left down right"; gap: 12px; z-index: 300; }
+.joy-btn { width: 60px; height: 60px; background: rgba(15, 23, 42, 0.85); border: 2px solid var(--accent); border-radius: 15px; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+#reset-btn { position: fixed; top: 20px; right: 20px; background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; display: none; z-index: 400; }
 </style>
 </head>
 <body>
@@ -65,7 +75,7 @@ line.active { stroke: var(--accent); stroke-dasharray: 12; animation: dash 1.5s 
 
 <div id="ui">
     <div class="currency"><span id="points">0</span> Δ</div>
-    <div style="font-weight: bold;">+<span id="pps">0</span>/s</div>
+    <div style="font-weight:bold;">+<span id="pps">0</span>/s</div>
 </div>
 
 <div id="game-viewport">
@@ -74,6 +84,9 @@ line.active { stroke: var(--accent); stroke-dasharray: 12; animation: dash 1.5s 
         <div id="player"></div>
     </div>
 </div>
+
+<button id="tp-toggle" onclick="toggleTP()">1</button>
+<div id="tp-menu"></div>
 
 <div id="mobile-controls">
     <div class="joy-btn" style="grid-area: up" id="btn-up">▲</div>
@@ -88,25 +101,30 @@ const SAVE_KEY = `sp_save_neon_tree_${currentUser || 'guest'}`;
 
 let state = {
     points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
-    unlockedNodes: ["start"], purchasedLevels: { "start": 0 }, lockedOut: []
+    unlockedNodes: ["start"], purchasedLevels: { "start": 0 }, lockedOut: [],
+    teleports: [] // IDs kupionych teleporterów
 };
 
 const nodes = {
-    "start": { x: 2500, y: 2500, name: "RDZEŃ", desc: "Zasila Twoje drzewko", cost: 0, max: 1, pps: 1, next: ["gen1"] },
-    "gen1": { x: 2500, y: 2200, name: "GENERATOR I", desc: "Zwiększa zysk punktów", cost: 20, max: 10, pps: 2, next: ["branch_speed", "branch_power"] },
-    "branch_speed": { x: 2200, y: 2000, name: "BUTY", desc: "Szybsze poruszanie się", cost: 100, max: 5, speed: 1.5, next: ["choice1"] },
-    "branch_power": { x: 2800, y: 2000, name: "REAKTOR", desc: "Duży bonus do punktów", cost: 150, max: 10, pps: 10, next: ["choice1"] },
-    "choice1": { x: 2500, y: 1700, name: "BRAMA WYBORU", desc: "Wybierz swoją ścieżkę", type: "choose", options: ["ninja", "tank"], cost: 500, next: [] },
-    "ninja": { x: 2200, y: 1400, name: "NINJA", desc: "Bardzo szybki ruch", cost: 1000, max: 1, speed: 10, next: ["end"] },
-    "tank": { x: 2800, y: 1400, name: "TANK", desc: "Ogromny zysk pasywny", cost: 1000, max: 1, pps: 200, next: ["end"] },
-    "end": { x: 2500, y: 1100, name: "NIESKOŃCZONOŚĆ", desc: "Ostateczny cel", cost: 10000, max: 1, pps: 1000, next: [] }
+    "start": { x: 2500, y: 2500, name: "Rdzeń", type: "Generacja", desc: "Zasila system", cost: 0, max: 1, pps: 1, next: ["up1"] },
+    "up1": { x: 2500, y: 2200, name: "Generator I", type: "Generacja", desc: "Zysk punktów", cost: 20, max: 10, pps: 2, next: ["up2"] },
+    "up2": { x: 2200, y: 2200, name: "Turbo Buty", type: "Prędkość", desc: "Szybszy ruch", cost: 100, max: 5, speed: 1.5, next: ["tp10"] },
+    // TP Node - Upgrade 10 (Teleporter)
+    "tp10": { x: 1900, y: 2200, name: "Teleporter Alpha", type: "Teleportacja", desc: "Odblokowuje skok tutaj", cost: 1500, max: 1, next: ["up3"] },
+    "up3": { x: 1900, y: 1900, name: "Reaktor", type: "Generacja", desc: "Duża moc", cost: 500, max: 10, pps: 20, next: ["up4"] },
+    "up4": { x: 2200, y: 1900, name: "Wiertło", type: "Generacja", desc: "Wydobywa Deltę", cost: 1200, max: 10, pps: 50, next: ["tp20"] },
+    // TP Node - Upgrade 20
+    "tp20": { x: 2500, y: 1900, name: "Teleporter Beta", type: "Teleportacja", desc: "Odblokowuje skok tutaj", cost: 5000, max: 1, next: ["end"] },
+    "end": { x: 2500, y: 1500, name: "Koniec Drzewka", type: "Finał", desc: "To nie koniec...", cost: 100000, max: 1, pps: 5000, next: [] }
 };
 
 const keys = {};
-window.onkeydown = e => keys[e.key.toLowerCase()] = true;
+window.onkeydown = e => {
+    keys[e.key.toLowerCase()] = true;
+    if(e.key === "1" && state.teleports.length > 0) toggleTP();
+};
 window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-// Obsługa Mobile
 if ('ontouchstart' in window) {
     document.getElementById('mobile-controls').style.display = 'grid';
     const bind = (id, k) => {
@@ -121,17 +139,15 @@ if ('ontouchstart' in window) {
 if(currentUser) document.getElementById('reset-btn').style.display = 'block';
 
 function resetData() {
-    const pass = prompt("Wpisz hasło do konta, aby potwierdzić usunięcie danych:");
-    // W systemie lokalnym pobieramy hasło z bazy użytkowników
+    const pass = prompt("Hasło konta:");
     const users = JSON.parse(localStorage.getItem("sp_users") || "[]");
     const me = users.find(u => u.u === currentUser);
-    
-    if(me && pass === me.p) {
-        localStorage.removeItem(SAVE_KEY);
-        location.reload();
-    } else {
-        alert("Błędne hasło!");
-    }
+    if(me && pass === me.p) { localStorage.removeItem(SAVE_KEY); location.reload(); }
+}
+
+function toggleTP() {
+    const menu = document.getElementById('tp-menu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
 function init() {
@@ -144,10 +160,10 @@ function init() {
     for (let id in nodes) {
         const n = nodes[id];
         const div = document.createElement('div');
-        div.className = 'node';
+        div.className = 'node' + (n.type === "Teleportacja" ? " teleport-node" : "");
         div.id = `node-${id}`;
-        div.style.left = n.x - 70 + 'px';
-        div.style.top = n.y - 70 + 'px';
+        div.style.left = n.x - 80 + 'px';
+        div.style.top = n.y - 80 + 'px';
         map.appendChild(div);
 
         if (n.next) {
@@ -161,7 +177,28 @@ function init() {
             });
         }
     }
+    updateTPMenu();
     gameLoop();
+}
+
+function updateTPMenu() {
+    const menu = document.getElementById('tp-menu');
+    const toggle = document.getElementById('tp-toggle');
+    menu.innerHTML = "";
+    if(state.teleports.length > 0) {
+        toggle.style.display = 'block';
+        state.teleports.forEach(id => {
+            const btn = document.createElement('button');
+            btn.className = 'tp-btn';
+            btn.innerText = nodes[id].name;
+            btn.onclick = () => {
+                state.pX = nodes[id].x + 100; // Teleport obok, nie na button
+                state.pY = nodes[id].y;
+                toggleTP();
+            };
+            menu.appendChild(btn);
+        });
+    }
 }
 
 function gameLoop() {
@@ -173,7 +210,6 @@ function gameLoop() {
 
     state.pX += mx; state.pY += my;
 
-    // Kamera na środek
     const v = document.getElementById('game-viewport');
     const m = document.getElementById('world-map');
     m.style.left = (v.clientWidth/2 - state.pX) + 'px';
@@ -185,7 +221,7 @@ function gameLoop() {
     for (let id in nodes) {
         if (!state.unlockedNodes.includes(id) || state.lockedOut.includes(id)) continue;
         const n = nodes[id];
-        if (Math.hypot(state.pX - n.x, state.pY - n.y) < 75) {
+        if (Math.hypot(state.pX - n.x, state.pY - n.y) < 80) {
             if (state.points >= n.cost) buyNode(id);
         }
     }
@@ -198,25 +234,23 @@ function gameLoop() {
 function buyNode(id) {
     const n = nodes[id];
     const lvls = state.purchasedLevels[id] || 0;
-    if (lvls >= n.max && n.type !== 'choose') return;
+    if (lvls >= n.max) return;
 
     state.points -= n.cost;
-    if (n.type === 'choose') {
-        const choice = prompt(`Wybierz: ${n.options[0]} lub ${n.options[1]}`);
-        if(n.options.includes(choice)) {
-            state.unlockedNodes.push(choice);
-            state.lockedOut.push(n.options.find(o => o !== choice));
-            state.purchasedLevels[id] = 1;
-        } else { state.points += n.cost; return; }
-    } else {
-        state.purchasedLevels[id] = lvls + 1;
-        if (n.pps) state.pps += n.pps;
-        if (n.speed) state.speed += n.speed;
-        if (state.purchasedLevels[id] === 1 && n.next) {
-            n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
-        }
-        n.cost = Math.floor(n.cost * 1.7);
+    state.purchasedLevels[id] = lvls + 1;
+    
+    if (n.pps) state.pps += n.pps;
+    if (n.speed) state.speed += n.speed;
+    if (n.type === "Teleportacja") {
+        state.teleports.push(id);
+        updateTPMenu();
     }
+
+    if (state.purchasedLevels[id] === 1 && n.next) {
+        n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
+    }
+    
+    if(n.max > 1) n.cost = Math.floor(n.cost * 1.7);
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
 
@@ -230,7 +264,18 @@ function updateUI() {
         if (state.unlockedNodes.includes(id) && !state.lockedOut.includes(id)) {
             el.classList.add('visible');
             const lvls = state.purchasedLevels[id] || 0;
-            el.innerHTML = `<b>${n.name}</b><i>${n.desc}</i><span class="cost-txt" style="color:${state.points >= n.cost ? '#4ade80' : '#f87171'}">${lvls >= n.max ? 'MAX' : n.cost + ' Δ'}</span>`;
+            const isTP = n.type === "Teleportacja";
+            
+            el.innerHTML = `
+                <div class="type-tag">${n.type}</div>
+                <b>${n.name}</b>
+                <i>${n.desc}</i>
+                ${n.max > 1 ? `<small>Level ${lvls}/${n.max}</small>` : ""}
+                <span class="cost-txt" style="color:${state.points >= n.cost ? '#4ade80' : '#f87171'}">
+                    ${lvls >= n.max ? (isTP ? 'ACTIVE' : 'MAX') : n.cost + ' Δ'}
+                </span>
+            `;
+
             if (state.points >= n.cost && lvls < n.max) el.classList.add('can-afford'); else el.classList.remove('can-afford');
             if (lvls >= n.max) el.classList.add('maxed');
             if (lvls > 0 && n.next) {
