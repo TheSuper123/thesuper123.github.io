@@ -12,7 +12,7 @@
 --card:#0f172a;
 --accent:#38bdf8;
 --text:#e5e7eb;
---colors: #2563eb, #16a34a, #dc2626, #f59e0b, #8b5cf6;
+--block-colors: #2563eb,#16a34a,#dc2626,#f59e0b,#8b5cf6;
 }
 *{box-sizing:border-box}
 body{
@@ -65,25 +65,38 @@ padding:25px 10px;
 /* BLOCK BLAST */
 #board{
 display:grid;
-grid-template-columns:repeat(9,50px);
-grid-template-rows:repeat(9,50px);
-gap:5px;
+grid-template-columns:repeat(9,40px);
+grid-template-rows:repeat(9,40px);
+gap:2px;
 justify-content:center;
 margin:20px auto;
 }
 .cell{
-width:50px;
-height:50px;
-border-radius:10px;
+width:40px;
+height:40px;
+border-radius:5px;
 background:#334155;
-cursor:pointer;
 display:flex;
 align-items:center;
 justify-content:center;
-font-weight:700;
-transition: all 0.2s;
 user-select:none;
+position:relative;
 }
+.block{
+width:40px;
+height:40px;
+position:absolute;
+border-radius:5px;
+cursor:pointer;
+}
+#next-blocks{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:15px;
+}
+#score{text-align:center;margin-top:10px;font-weight:700;font-size:18px;}
+button{cursor:pointer;background:#020617;color:white;border:1px solid #334155;border-radius:10px;padding:6px 10px;margin:5px;}
 </style>
 </head>
 
@@ -97,10 +110,13 @@ user-select:none;
 <main>
 <div class="card">
 <h2>🟦 Block Blast 9x9</h2>
-<p style="text-align:center">Klikaj bloki tego samego koloru, aby je zniszczyć. Zbieraj punkty!</p>
+<p style="text-align:center">
+Umieść bloki na planszy. Wypełnij linie i kolumny, aby zdobywać punkty.
+</p>
 <div id="board"></div>
+<div id="next-blocks"></div>
+<div id="score">Punkty: 0</div>
 <div style="text-align:center;margin-top:10px">
-<p id="score">Punkty: 0</p>
 <button id="restart">Restart</button>
 </div>
 </div>
@@ -140,88 +156,125 @@ games.forEach(g=>{
 
 <script>
 /* ===== LOGIKA BLOCK BLAST ===== */
-const boardEl = document.getElementById("board");
-const scoreEl = document.getElementById("score");
-const restartBtn = document.getElementById("restart");
-
 const ROWS = 9;
 const COLS = 9;
 const COLORS = ["#2563eb","#16a34a","#dc2626","#f59e0b","#8b5cf6"];
+const SHAPES = [
+  [[1],[1],[1]], // linia pionowa
+  [[1,1,1]], // linia pozioma
+  [[1,1],[1,0]], // L
+  [[1,1],[1,1]], // kwadrat
+  [[1,0],[1,1]] // odwrotne L
+];
+
+const boardEl = document.getElementById("board");
+const nextEl = document.getElementById("next-blocks");
+const scoreEl = document.getElementById("score");
+const restartBtn = document.getElementById("restart");
+
 let board = [];
 let score = 0;
+let blocks = [];
 
 function init(){
-score = 0;
-scoreEl.textContent = "Punkty: "+score;
-board = [];
-boardEl.innerHTML = "";
-for(let r=0;r<ROWS;r++){
-  board[r]=[];
-  for(let c=0;c<COLS;c++){
+  score = 0;
+  scoreEl.textContent = "Punkty: "+score;
+  board = Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  blocks = [];
+  boardEl.innerHTML = "";
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const cell=document.createElement("div");
+      cell.className="cell";
+      cell.dataset.row=r;
+      cell.dataset.col=c;
+      boardEl.appendChild(cell);
+    }
+  }
+  spawnNextBlocks();
+}
+
+function spawnNextBlocks(){
+  nextEl.innerHTML = "";
+  blocks = [];
+  for(let i=0;i<3;i++){
+    const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
     const color = COLORS[Math.floor(Math.random()*COLORS.length)];
-    board[r][c] = color;
-    const cell = document.createElement("div");
-    cell.className="cell";
-    cell.style.background=color;
-    cell.dataset.row=r;
-    cell.dataset.col=c;
-    cell.onclick = ()=>clickCell(r,c);
-    boardEl.appendChild(cell);
+    const blockDiv = document.createElement("div");
+    blockDiv.className="block";
+    blockDiv.style.background=color;
+    blockDiv.dataset.shape = JSON.stringify(shape);
+    blockDiv.dataset.color = color;
+    blockDiv.draggable=true;
+    blockDiv.style.width = shape[0].length*40+"px";
+    blockDiv.style.height = shape.length*40+"px";
+    nextEl.appendChild(blockDiv);
+    blocks.push(blockDiv);
+
+    blockDiv.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text/plain", nextEl.children.indexOf(blockDiv));
+    });
   }
 }
+
+function isValid(r,c,shape){
+  for(let i=0;i<shape.length;i++){
+    for(let j=0;j<shape[i].length;j++){
+      if(shape[i][j]){
+        const rr=r+i, cc=c+j;
+        if(rr>=ROWS || cc>=COLS || board[rr][cc]) return false;
+      }
+    }
+  }
+  return true;
 }
 
-function clickCell(r,c){
-const target = board[r][c];
-if(!target) return;
-const toRemove = [];
-findConnected(r,c,target,toRemove);
-if(toRemove.length<2) return; // minimum 2 aby zniszczyć
-toRemove.forEach(([x,y])=>{
-  board[x][y]=null;
-});
-score += toRemove.length;
-scoreEl.textContent = "Punkty: "+score;
-applyGravity();
-render();
+function placeBlock(r,c,shape,color){
+  for(let i=0;i<shape.length;i++){
+    for(let j=0;j<shape[i].length;j++){
+      if(shape[i][j]) board[r+i][c+j]=color;
+    }
+  }
+  renderBoard();
+  checkLines();
 }
 
-function findConnected(r,c,color,toRemove){
-if(r<0||r>=ROWS||c<0||c>=COLS) return;
-if(board[r][c]!==color) return;
-const key = r+"-"+c;
-if(toRemove.some(e=>e[0]===r&&e[1]===c)) return;
-toRemove.push([r,c]);
-findConnected(r+1,c,color,toRemove);
-findConnected(r-1,c,color,toRemove);
-findConnected(r,c+1,color,toRemove);
-findConnected(r,c-1,color,toRemove);
+function renderBoard(){
+  [...boardEl.children].forEach(cell=>{
+    const r=parseInt(cell.dataset.row);
+    const c=parseInt(cell.dataset.col);
+    cell.style.background=board[r][c]||"#334155";
+  });
 }
 
-function applyGravity(){
-for(let c=0;c<COLS;c++){
-  let column = [];
+function checkLines(){
+  let linesCleared=0;
+
+  // sprawdź wiersze
   for(let r=0;r<ROWS;r++){
-    if(board[r][c]) column.push(board[r][c]);
+    if(board[r].every(v=>v)){
+      linesCleared++;
+      board[r]=Array(COLS).fill(null);
+    }
   }
-  while(column.length<ROWS) column.unshift(null);
-  for(let r=0;r<ROWS;r++){
-    board[r][c] = column[r];
+
+  // sprawdź kolumny
+  for(let c=0;c<COLS;c++){
+    if(board.every(row=>row[c])){
+      linesCleared++;
+      for(let r=0;r<ROWS;r++) board[r][c]=null;
+    }
+  }
+
+  if(linesCleared>0){
+    score += linesCleared*10;
+    scoreEl.textContent = "Punkty: "+score;
+    renderBoard();
   }
 }
-}
-
-function render(){
-[...boardEl.children].forEach(cell=>{
-  const r = parseInt(cell.dataset.row);
-  const c = parseInt(cell.dataset.col);
-  cell.style.background = board[r][c] || "#020617";
-});
-}
-
-restartBtn.onclick = init;
 
 init();
+restartBtn.onclick=init;
 </script>
 
 </body>
