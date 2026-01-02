@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block Blast - SpinnerRealYT Games</title>
+<link rel="icon" href="Logo.png">
+
+<style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
+  --cell:#334155;
+  --filled:#38bdf8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
+}
+header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:15px 20px;
+  background:rgba(15,23,42,.9);
+  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+header img{height:42px}
+nav button{
+  background:none;
+  border:none;
+  color:var(--text);
+  font-size:15px;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+}
+nav button:hover,
+nav button.active{
+  background:rgba(56,189,248,.15);
+  color:var(--accent);
+}
+main{max-width:1100px;margin:auto;padding:25px}
+.card{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  margin-bottom:25px;
+}
+h1,h2{text-align:center}
+footer{
+  text-align:center;
+  opacity:.6;
+  padding:25px 10px;
+}
+
+/* BLOCK BLAST */
+#board{
+  display:grid;
+  margin:20px auto;
+  gap:2px;
+  background:var(--bg);
+}
+.cell{
+  width:40px;
+  height:40px;
+  background:var(--cell);
+  border-radius:5px;
+}
+.filled{background:var(--filled);}
+#nextBlocks{
+  display:flex;
+  justify-content:center;
+  margin-top:15px;
+  gap:15px;
+}
+.block{
+  display:grid;
+  gap:2px;
+  cursor:pointer;
+}
+.block .cell{
+  width:30px;
+  height:30px;
+}
+#score{
+  text-align:center;
+  font-size:20px;
+  margin-top:10px;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<header>
+<img src="Logo.png" alt="SpinnerRealYT">
+<nav id="nav"></nav>
+</header>
+
+<main>
+<section class="card">
+<h2>🎮 Block Blast</h2>
+<p style="text-align:center">
+Umieszczaj bloki na planszy i czyść linie! Gra kończy się, gdy nie możesz wstawić nowych bloków.
+</p>
+
+<div id="score">Punkty: 0</div>
+<div id="board"></div>
+<div id="nextBlocks"></div>
+</section>
+</main>
+
+<footer>
+© 2026 SpinnerRealYT Games
+</footer>
+
+<script>
+const BOARD_SIZE = 9;
+const boardEl = document.getElementById("board");
+const nextEl = document.getElementById("nextBlocks");
+const scoreEl = document.getElementById("score");
+let board = [];
+let score = 0;
+let nextBlocks = [];
+
+boardEl.style.gridTemplateColumns = `repeat(${BOARD_SIZE},40px)`;
+boardEl.style.gridTemplateRows = `repeat(${BOARD_SIZE},40px)`;
+
+// Tworzenie planszy
+function initBoard(){
+  boardEl.innerHTML = '';
+  board = [];
+  for(let r=0;r<BOARD_SIZE;r++){
+    let row=[];
+    for(let c=0;c<BOARD_SIZE;c++){
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      boardEl.appendChild(cell);
+      row.push(cell);
+    }
+    board.push(row);
+  }
+}
+initBoard();
+
+// Definicja bloków (różne kształty)
+const SHAPES=[
+  [[1,1,1,1]], // linia pozioma
+  [[1],[1],[1],[1]], // linia pionowa
+  [[1,1],[1,1]], // kwadrat
+  [[1,1,0],[0,1,1]], // zygzak
+  [[0,1,1],[1,1,0]], // zygzak odwrotny
+  [[1,0],[1,0],[1,1]], // L
+  [[0,1],[0,1],[1,1]], // L odwrotne
+];
+
+// Tworzenie nowych bloków
+function generateNextBlocks(){
+  nextBlocks = [];
+  nextEl.innerHTML='';
+  for(let i=0;i<3;i++){
+    const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
+    nextBlocks.push(shape);
+    const blockDiv = document.createElement("div");
+    blockDiv.classList.add("block");
+    blockDiv.dataset.index = i;
+    blockDiv.style.gridTemplateColumns = `repeat(${shape[0].length},30px)`;
+    blockDiv.style.gridTemplateRows = `repeat(${shape.length},30px)`;
+    shape.forEach(row=>{
+      row.forEach(cell=>{
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        if(cell) div.classList.add("filled");
+        blockDiv.appendChild(div);
+      });
+    });
+    blockDiv.draggable = true;
+    blockDiv.ondragstart = e=>{
+      e.dataTransfer.setData("blockIndex",blockDiv.dataset.index);
+    };
+    nextEl.appendChild(blockDiv);
+  }
+}
+
+// Sprawdzenie, czy blok pasuje
+function canPlace(shape, r0, c0){
+  for(let r=0;r<shape.length;r++){
+    for(let c=0;c<shape[r].length;c++){
+      if(shape[r][c]){
+        const rr = r0+r;
+        const cc = c0+c;
+        if(rr>=BOARD_SIZE || cc>=BOARD_SIZE || board[rr][cc].classList.contains("filled")) return false;
+      }
+    }
+  }
+  return true;
+}
+
+// Umieszczenie bloku
+function placeBlock(shape,r0,c0){
+  for(let r=0;r<shape.length;r++){
+    for(let c=0;c<shape[r].length;c++){
+      if(shape[r][c]){
+        board[r0+r][c0+c].classList.add("filled");
+      }
+    }
+  }
+  checkLines();
+}
+
+// Sprawdzenie wypełnionych linii
+function checkLines(){
+  for(let r=0;r<BOARD_SIZE;r++){
+    if(board[r].every(cell=>cell.classList.contains("filled"))){
+      board[r].forEach(cell=>cell.classList.remove("filled"));
+      score+=10;
+    }
+  }
+  for(let c=0;c<BOARD_SIZE;c++){
+    let full=true;
+    for(let r=0;r<BOARD_SIZE;r++){
+      if(!board[r][c].classList.contains("filled")) full=false;
+    }
+    if(full){
+      for(let r=0;r<BOARD_SIZE;r++) board[r][c].classList.remove("filled");
+      score+=10;
+    }
+  }
+  scoreEl.textContent = "Punkty: "+score;
+}
+
+// Obsługa upuszczania bloków
+boardEl.ondragover = e=>e.preventDefault();
+boardEl.ondrop = e=>{
+  const index = e.dataTransfer.getData("blockIndex");
+  const shape = nextBlocks[index];
+  const rect = boardEl.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const c0 = Math.floor(x/42); // uwzględnia gap
+  const r0 = Math.floor(y/42);
+  if(canPlace(shape,r0,c0)){
+    placeBlock(shape,r0,c0);
+    generateNextBlocks();
+    checkGameOver();
+  }
+}
+
+// Sprawdzenie końca gry
+function checkGameOver(){
+  for(const shape of nextBlocks){
+    for(let r=0;r<BOARD_SIZE;r++){
+      for(let c=0;c<BOARD_SIZE;c++){
+        if(canPlace(shape,r,c)) return;
+      }
+    }
+  }
+  alert("Koniec gry! Wynik: "+score);
+  location.reload();
+}
+
+generateNextBlocks();
+</script>
+
+</body>
+</html>
