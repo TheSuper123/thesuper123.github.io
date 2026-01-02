@@ -12,7 +12,6 @@
 --card:#0f172a;
 --accent:#38bdf8;
 --text:#e5e7eb;
---block-colors: #2563eb,#16a34a,#dc2626,#f59e0b,#8b5cf6;
 }
 *{box-sizing:border-box}
 body{
@@ -70,32 +69,27 @@ grid-template-rows:repeat(9,40px);
 gap:2px;
 justify-content:center;
 margin:20px auto;
+position:relative;
 }
 .cell{
 width:40px;
 height:40px;
-border-radius:5px;
 background:#334155;
-display:flex;
-align-items:center;
-justify-content:center;
-user-select:none;
-position:relative;
-}
-.block{
-width:40px;
-height:40px;
-position:absolute;
 border-radius:5px;
-cursor:pointer;
 }
 #next-blocks{
 display:flex;
 justify-content:center;
-gap:10px;
-margin-top:15px;
+gap:15px;
+margin-top:10px;
 }
-#score{text-align:center;margin-top:10px;font-weight:700;font-size:18px;}
+.block{
+position:absolute;
+pointer-events:none;
+z-index:50;
+opacity:.8;
+}
+#score{text-align:center;margin-top:10px;font-size:18px;font-weight:700;}
 button{cursor:pointer;background:#020617;color:white;border:1px solid #334155;border-radius:10px;padding:6px 10px;margin:5px;}
 </style>
 </head>
@@ -109,16 +103,20 @@ button{cursor:pointer;background:#020617;color:white;border:1px solid #334155;bo
 
 <main>
 <div class="card">
-<h2>🟦 Block Blast 9x9</h2>
-<p style="text-align:center">
-Umieść bloki na planszy. Wypełnij linie i kolumny, aby zdobywać punkty.
-</p>
+<h2>🟦 Block Blast 9×9</h2>
+
+<p style="text-align:center">Przeciągnij klocek na planszę i ułóż tak, żeby wypełnić linię lub kolumnę.</p>
+
 <div id="board"></div>
+
 <div id="next-blocks"></div>
+
 <div id="score">Punkty: 0</div>
-<div style="text-align:center;margin-top:10px">
+
+<div style="text-align:center">
 <button id="restart">Restart</button>
 </div>
+
 </div>
 </main>
 
@@ -129,16 +127,10 @@ Umieść bloki na planszy. Wypełnij linie i kolumny, aby zdobywać punkty.
 <script>
 /* MENU */
 const games = [
-  { file: "../index.html", name: "Menu" },
-  { file: "saper.html", name: "Saper" },
-  { file: "quiz.html", name: "Quiz" },
-  { file: "polls.html", name: "Sondaże" },
-  { file: "tictactoe.html", name: "Kółko i Krzyżyk" },
-  { file: "blockblast.html", name: "Block Blast" }
+  { file: "../index.html", name: "Menu" }
 ];
 
 const nav = document.getElementById("nav");
-
 const menuBtn = document.createElement("button");
 menuBtn.textContent = "Menu";
 menuBtn.classList.add("active");
@@ -155,126 +147,168 @@ games.forEach(g=>{
 </script>
 
 <script>
-/* ===== LOGIKA BLOCK BLAST ===== */
-const ROWS = 9;
-const COLS = 9;
-const COLORS = ["#2563eb","#16a34a","#dc2626","#f59e0b","#8b5cf6"];
-const SHAPES = [
-  [[1],[1],[1]], // linia pionowa
-  [[1,1,1]], // linia pozioma
-  [[1,1],[1,0]], // L
-  [[1,1],[1,1]], // kwadrat
-  [[1,0],[1,1]] // odwrotne L
+/* ===== LOGIKA ===== */
+
+const ROWS=9, COLS=9;
+const COLORS=["#2563eb","#16a34a","#dc2626","#f59e0b","#8b5cf6"];
+const SHAPES=[
+  [[1,1,1]],              // linia pozioma
+  [[1],[1],[1]],          // linia pionowa
+  [[1,1],[1,1]],          // kwadrat
+  [[1,1,1],[0,1,0]],      // T
+  [[1,1,0],[0,1,1]],      // S
+  [[0,1,1],[1,1,0]],      // Z
 ];
 
-const boardEl = document.getElementById("board");
-const nextEl = document.getElementById("next-blocks");
-const scoreEl = document.getElementById("score");
-const restartBtn = document.getElementById("restart");
+const boardEl=document.getElementById("board");
+const nextEl=document.getElementById("next-blocks");
+const scoreEl=document.getElementById("score");
+const restartBtn=document.getElementById("restart");
 
-let board = [];
-let score = 0;
-let blocks = [];
+let board, score, nextShapes;
+let currentDrag=null;
 
 function init(){
-  score = 0;
-  scoreEl.textContent = "Punkty: "+score;
-  board = Array.from({length:ROWS},()=>Array(COLS).fill(null));
-  blocks = [];
-  boardEl.innerHTML = "";
+  score=0;
+  scoreEl.textContent="Punkty: "+score;
+  board=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  boardEl.innerHTML="";
   for(let r=0;r<ROWS;r++){
     for(let c=0;c<COLS;c++){
       const cell=document.createElement("div");
       cell.className="cell";
-      cell.dataset.row=r;
-      cell.dataset.col=c;
+      cell.dataset.r=r;
+      cell.dataset.c=c;
       boardEl.appendChild(cell);
     }
   }
-  spawnNextBlocks();
+  generateNext();
 }
 
-function spawnNextBlocks(){
-  nextEl.innerHTML = "";
-  blocks = [];
+function generateNext(){
+  nextEl.innerHTML="";
+  nextShapes=[];
   for(let i=0;i<3;i++){
-    const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
-    const color = COLORS[Math.floor(Math.random()*COLORS.length)];
-    const blockDiv = document.createElement("div");
-    blockDiv.className="block";
-    blockDiv.style.background=color;
-    blockDiv.dataset.shape = JSON.stringify(shape);
-    blockDiv.dataset.color = color;
-    blockDiv.draggable=true;
-    blockDiv.style.width = shape[0].length*40+"px";
-    blockDiv.style.height = shape.length*40+"px";
-    nextEl.appendChild(blockDiv);
-    blocks.push(blockDiv);
-
-    blockDiv.addEventListener("dragstart", e=>{
-      e.dataTransfer.setData("text/plain", nextEl.children.indexOf(blockDiv));
-    });
+    const shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
+    const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    const div=document.createElement("div");
+    div.className="block";
+    div.dataset.shape=JSON.stringify(shape);
+    div.dataset.color=color;
+    div.style.width=shape[0].length*40+"px";
+    div.style.height=shape.length*40+"px";
+    div.style.background=color;
+    nextEl.appendChild(div);
+    nextShapes.push({shape,color});
+    makeDraggable(div,i);
   }
 }
 
-function isValid(r,c,shape){
-  for(let i=0;i<shape.length;i++){
-    for(let j=0;j<shape[i].length;j++){
-      if(shape[i][j]){
-        const rr=r+i, cc=c+j;
-        if(rr>=ROWS || cc>=COLS || board[rr][cc]) return false;
+function makeDraggable(div,index){
+  div.onmousedown=function(e){
+    currentDrag={div,shape:nextShapes[index].shape,color:nextShapes[index].color};
+    document.body.appendChild(div);
+    moveAt(e.pageX,e.pageY);
+    document.onmousemove=dragMove;
+    div.style.opacity="1";
+    div.style.pointerEvents="none";
+  };
+  document.onmouseup=function(){
+    if(currentDrag){
+      placeOnBoard(currentDrag);
+      currentDrag.div.style.pointerEvents="auto";
+      currentDrag=null;
+      document.onmousemove=null;
+    }
+  };
+}
+
+function dragMove(e){
+  if(!currentDrag) return;
+  moveAt(e.pageX,e.pageY);
+}
+
+function moveAt(x,y){
+  const {div,shape}=currentDrag;
+  div.style.left=x- (shape[0].length*20) + "px";
+  div.style.top=y- (shape.length*20) + "px";
+}
+
+function placeOnBoard({div,shape,color}){
+  const boardRect=boardEl.getBoundingClientRect();
+  const cx=event.clientX-boardRect.left;
+  const cy=event.clientY-boardRect.top;
+  const cellSize=boardRect.width/COLS;
+
+  const col=Math.floor(cx/cellSize);
+  const row=Math.floor(cy/cellSize);
+
+  if(row>=0 && row<ROWS && col>=0 && col<COLS && canPlace(row,col,shape)){
+    shape.forEach((rArr, dr)=>{
+      rArr.forEach((cellVal, dc)=>{
+        if(cellVal) board[row+dr][col+dc]=color;
+      });
+    });
+    updateBoard();
+    removeFull();
+    scoreEl.textContent="Punkty: "+score;
+    div.remove();
+    nextShapes.shift();
+    if(nextShapes.length===0) generateNext();
+  } else {
+    resetBlockPosition(div);
+  }
+}
+
+function resetBlockPosition(div){
+  nextEl.appendChild(div);
+  div.style.position="relative";
+  div.style.left="0";
+  div.style.top="0";
+}
+
+function canPlace(r,c,shape){
+  for(let dr=0; dr<shape.length; dr++){
+    for(let dc=0; dc<shape[dr].length; dc++){
+      if(shape[dr][dc]){
+        if(r+dr>=ROWS||c+dc>=COLS||board[r+dr][c+dc]) return false;
       }
     }
   }
   return true;
 }
 
-function placeBlock(r,c,shape,color){
-  for(let i=0;i<shape.length;i++){
-    for(let j=0;j<shape[i].length;j++){
-      if(shape[i][j]) board[r+i][c+j]=color;
-    }
-  }
-  renderBoard();
-  checkLines();
-}
-
-function renderBoard(){
+function updateBoard(){
   [...boardEl.children].forEach(cell=>{
-    const r=parseInt(cell.dataset.row);
-    const c=parseInt(cell.dataset.col);
-    cell.style.background=board[r][c]||"#334155";
+    const r=parseInt(cell.dataset.r);
+    const c=parseInt(cell.dataset.c);
+    cell.style.background=board[r][c] || "#334155";
   });
 }
 
-function checkLines(){
-  let linesCleared=0;
-
-  // sprawdź wiersze
+function removeFull(){
+  let lines=0;
+  // wiersze
   for(let r=0;r<ROWS;r++){
     if(board[r].every(v=>v)){
-      linesCleared++;
+      lines++;
       board[r]=Array(COLS).fill(null);
     }
   }
-
-  // sprawdź kolumny
+  // kolumny
   for(let c=0;c<COLS;c++){
     if(board.every(row=>row[c])){
-      linesCleared++;
+      lines++;
       for(let r=0;r<ROWS;r++) board[r][c]=null;
     }
   }
-
-  if(linesCleared>0){
-    score += linesCleared*10;
-    scoreEl.textContent = "Punkty: "+score;
-    renderBoard();
-  }
+  score += lines*10;
+  updateBoard();
 }
 
 init();
 restartBtn.onclick=init;
+
 </script>
 
 </body>
