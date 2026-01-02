@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flappy Bird - SpinnerRealYT Games</title>
+<style>
+body {
+  margin:0;
+  background: linear-gradient(#70c5ce, #fff);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:sans-serif;
+}
+canvas {
+  background: #70c5ce;
+  display:block;
+  margin:auto;
+  border:2px solid #000;
+}
+#score {
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:24px;
+  font-weight:bold;
+  color:#fff;
+  text-shadow: 2px 2px 2px #000;
+}
+</style>
+</head>
+<body>
+<div id="score">0</div>
+<canvas id="game" width="400" height="600"></canvas>
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let bird = { x:50, y:300, w:30, h:30, dy:0 };
+const gravity = 0.6;
+const jump = -10;
+let pipes = [];
+const pipeWidth = 50;
+const pipeGap = 150;
+let frame = 0;
+let score = 0;
+let gameOver = false;
+
+// ===== OBSŁUGA SKOKU =====
+document.addEventListener("keydown",()=>{if(!gameOver) bird.dy=jump});
+document.addEventListener("click",()=>{if(!gameOver) bird.dy=jump});
+
+// ===== GENEROWANIE RUR =====
+function generatePipe() {
+  const y = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 50;
+  pipes.push({x:canvas.width, y:y});
+}
+
+// ===== GŁÓWNA PĘTLA =====
+function update(){
+  if(gameOver) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // grawitacja
+  bird.dy += gravity;
+  bird.y += bird.dy;
+
+  // rysuj ptaka
+  ctx.fillStyle="yellow";
+  ctx.fillRect(bird.x,bird.y,bird.w,bird.h);
+
+  // generowanie rur co 100 klatek
+  if(frame%100==0) generatePipe();
+
+  // rysuj i przesuwaj rury
+  ctx.fillStyle="green";
+  pipes.forEach((p,i)=>{
+    p.x -= 2;
+    // góra
+    ctx.fillRect(p.x,0,pipeWidth,p.y);
+    // dół
+    ctx.fillRect(p.x,p.y+pipeGap,pipeWidth,canvas.height-(p.y+pipeGap));
+
+    // kolizja
+    if(bird.x < p.x+pipeWidth && bird.x+bird.w>p.x && (bird.y<p.y || bird.y+bird.h>p.y+pipeGap)){
+      gameOver=true;
+      alert("Game Over! Wynik: "+score);
+      location.reload();
+    }
+
+    // punktacja
+    if(p.x+pipeWidth==bird.x) score++;
+  });
+
+  // dolna i górna granica
+  if(bird.y+bird.h>canvas.height || bird.y<0){
+    gameOver=true;
+    alert("Game Over! Wynik: "+score);
+    location.reload();
+  }
+
+  document.getElementById("score").textContent=score;
+  frame++;
+  requestAnimationFrame(update);
+}
+
+update();
+</script>
+</body>
+</html>
