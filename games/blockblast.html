@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Block Blast – SpinnerRealYT Games</title>
-<link rel="icon" href="../Logo.png"> <!-- LOGO W KARTECIE -->
+<link rel="icon" href="../Logo.png"> <!-- LOGO W KARCIE -->
 
 <style>
 :root{
@@ -13,7 +13,7 @@
   --accent:#38bdf8;
   --text:#e5e7eb;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;}
 body{
   margin:0;
   font-family:Inter,system-ui,sans-serif;
@@ -23,7 +23,7 @@ body{
 header{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-start; /* Menu po lewej */
   padding:15px 20px;
   background:rgba(15,23,42,.9);
   backdrop-filter:blur(10px);
@@ -31,7 +31,7 @@ header{
   top:0;
   z-index:100;
 }
-header img{height:42px}
+header img{height:42px;margin-right:20px;}
 header button{
   background:none;
   border:none;
@@ -89,22 +89,24 @@ footer{
 }
 .block{
   display:grid;
-  grid-template-rows:repeat(auto,40px);
-  position:relative;
+  grid-template-columns:auto;
   cursor:pointer;
+  user-select:none;
 }
 .block-cell{
   width:40px;
   height:40px;
-  background:#2563eb;
   border-radius:3px;
   border:1px solid #020617;
 }
-.ghost{
+.ghost-cell{
   position:absolute;
+  width:40px;
+  height:40px;
+  border-radius:3px;
+  opacity:0.5;
   pointer-events:none;
-  opacity:0.4;
-  z-index:10;
+  z-index:50;
 }
 </style>
 </head>
@@ -147,12 +149,12 @@ const nextEl = document.getElementById("next-blocks");
 const scoreEl = document.getElementById("score");
 
 let board, score, nextBlocks = [];
-let ghost = null;
+let ghostBlocks = [];
 
 /* ===== INICJALIZACJA ===== */
 function init(){
   score = 0;
-  scoreEl.textContent = "Punkty: " + score;
+  scoreEl.textContent = "Punkty: "+score;
   board = Array.from({length:ROWS},()=>Array(COLS).fill(null));
   boardEl.innerHTML = "";
   for(let r=0;r<ROWS;r++){
@@ -169,20 +171,20 @@ function init(){
 
 /* ===== GENEROWANIE BLOKÓW ===== */
 function generateNext(){
-  nextEl.innerHTML = "";
-  nextBlocks = [];
+  nextEl.innerHTML="";
+  nextBlocks=[];
   for(let i=0;i<3;i++){
     const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
     const color = COLORS[Math.floor(Math.random()*COLORS.length)];
     const blockDiv = document.createElement("div");
     blockDiv.className="block";
-    blockDiv.dataset.shape = JSON.stringify(shape);
-    blockDiv.dataset.color = color;
-    blockDiv.style.gridTemplateColumns = `repeat(${shape[0].length}, ${CELL_SIZE}px)`;
+    blockDiv.dataset.shape=JSON.stringify(shape);
+    blockDiv.dataset.color=color;
+    blockDiv.style.gridTemplateColumns=`repeat(${shape[0].length},${CELL_SIZE}px)`;
     for(let r=0;r<shape.length;r++){
       for(let c=0;c<shape[r].length;c++){
         if(shape[r][c]){
-          const sq = document.createElement("div");
+          const sq=document.createElement("div");
           sq.className="block-cell";
           sq.style.background=color;
           blockDiv.appendChild(sq);
@@ -195,105 +197,111 @@ function generateNext(){
   }
 }
 
-/* ===== DRAG & DROP ===== */
+/* ===== DRAG & DROP Z GHOST ===== */
 function makeDraggable(block){
-  block.onmousedown = function(e){
+  block.onmousedown=function(e){
+    e.preventDefault();
     const shape = JSON.parse(block.dataset.shape);
     const color = block.dataset.color;
-    ghost = document.createElement("div");
-    ghost.className="ghost";
-    ghost.style.width = shape[0].length*CELL_SIZE + "px";
-    ghost.style.height = shape.length*CELL_SIZE + "px";
-    ghost.style.background = "rgba(255,255,255,0.2)";
-    ghost.style.border = "2px dashed #fff";
-    document.body.appendChild(ghost);
+    const ghost = [];
 
-    function move(e){
-      ghost.style.left = e.pageX - CELL_SIZE/2 + "px";
-      ghost.style.top = e.pageY - CELL_SIZE/2 + "px";
+    function createGhost(){
+      shape.forEach((row,r)=>{
+        row.forEach((cell,c)=>{
+          if(cell){
+            const g = document.createElement("div");
+            g.className="ghost-cell";
+            g.style.background=color;
+            document.body.appendChild(g);
+            ghost.push({div:g,r,c});
+          }
+        });
+      });
     }
-    move(e);
+    createGhost();
 
-    function onMove(e){
-      move(e);
+    function moveGhost(x,y){
+      const rect=boardEl.getBoundingClientRect();
+      const col=Math.floor((x-rect.left)/CELL_SIZE);
+      const row=Math.floor((y-rect.top)/CELL_SIZE);
+      ghost.forEach(g=>{
+        const gx=(col+g.c)*CELL_SIZE + rect.left;
+        const gy=(row+g.r)*CELL_SIZE + rect.top;
+        g.div.style.left=gx+"px";
+        g.div.style.top=gy+"px";
+      });
     }
 
-    function onUp(e){
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-      if(placeBlock(e,shape,color)){
+    function onMove(ev){
+      moveGhost(ev.clientX,ev.clientY);
+    }
+
+    function onUp(ev){
+      document.removeEventListener("mousemove",onMove);
+      document.removeEventListener("mouseup",onUp);
+      let rect=boardEl.getBoundingClientRect();
+      let col=Math.floor((ev.clientX-rect.left)/CELL_SIZE);
+      let row=Math.floor((ev.clientY-rect.top)/CELL_SIZE);
+      if(canPlace(row,col,shape)){
+        placeBlock(row,col,shape,color);
         block.remove();
-        nextBlocks = nextBlocks.filter(b=>b.div!==block);
+        nextBlocks=nextBlocks.filter(b=>b.div!==block);
         if(nextBlocks.length===0) generateNext();
       }
-      ghost.remove();
-      ghost=null;
+      ghost.forEach(g=>g.div.remove());
     }
 
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
+    document.addEventListener("mousemove",onMove);
+    document.addEventListener("mouseup",onUp);
   }
 }
 
-/* ===== SPRAWDZENIE I POŁOŻENIE BLOKU ===== */
+/* ===== SPRAWDZENIE I POŁOŻENIE ===== */
 function canPlace(r,c,shape){
-  for(let dr=0; dr<shape.length; dr++){
-    for(let dc=0; dc<shape[dr].length; dc++){
+  for(let dr=0;dr<shape.length;dr++){
+    for(let dc=0;dc<shape[dr].length;dc++){
       if(shape[dr][dc]){
-        if(r+dr>=ROWS || c+dc>=COLS || board[r+dr][c+dc]) return false;
+        if(r+dr>=ROWS||c+dc>=COLS||board[r+dr][c+dc]) return false;
       }
     }
   }
   return true;
 }
 
-function placeBlock(e,shape,color){
-  const rect = boardEl.getBoundingClientRect();
-  const c = Math.floor((e.clientX - rect.left)/CELL_SIZE);
-  const r = Math.floor((e.clientY - rect.top)/CELL_SIZE);
-  if(canPlace(r,c,shape)){
-    for(let dr=0; dr<shape.length; dr++){
-      for(let dc=0; dc<shape[dr].length; dc++){
-        if(shape[dr][dc]){
-          board[r+dr][c+dc] = color;
-        }
-      }
-    }
-    updateBoard();
-    removeFull();
-    scoreEl.textContent = "Punkty: "+score;
-    return true;
-  }
-  return false;
+function placeBlock(r,c,shape,color){
+  shape.forEach((row,dr)=>{
+    row.forEach((cell,dc)=>{
+      if(cell) board[r+dr][c+dc]=color;
+    });
+  });
+  updateBoard();
+  removeFull();
+  scoreEl.textContent="Punkty: "+score;
 }
 
-/* ===== UPDATE PLANSZY ===== */
 function updateBoard(){
   [...boardEl.children].forEach(cell=>{
     const r=parseInt(cell.dataset.r);
     const c=parseInt(cell.dataset.c);
-    cell.style.background = board[r][c] || "#334155";
+    cell.style.background=board[r][c]||"#334155";
   });
 }
 
-/* ===== USUWANIE PEŁNYCH LINII ===== */
 function removeFull(){
   let lines=0;
-  // wiersze
   for(let r=0;r<ROWS;r++){
     if(board[r].every(v=>v)){
       lines++;
       board[r]=Array(COLS).fill(null);
     }
   }
-  // kolumny
   for(let c=0;c<COLS;c++){
     if(board.every(row=>row[c])){
       lines++;
       for(let r=0;r<ROWS;r++) board[r][c]=null;
     }
   }
-  score += lines*10;
+  score+=lines*10;
   updateBoard();
 }
 
