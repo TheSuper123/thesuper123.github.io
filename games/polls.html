@@ -2,63 +2,87 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Sondaże – SpinnerRealYT Games</title>
-<link rel="icon" href="../Logo.png">
+
+<link rel="icon" type="image/png" href="../Logo.png?v=2">
+<link rel="apple-touch-icon" href="../Logo.png?v=2">
 
 <style>
 :root{
---bg:#020617;
---card:#0f172a;
---accent:#38bdf8;
---text:#e5e7eb;
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
 }
 *{box-sizing:border-box}
 body{
-margin:0;
-font-family:Inter,system-ui,sans-serif;
-background:radial-gradient(circle at top,#020617,#000);
-color:var(--text);
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
+  min-height: 100vh;
 }
 header{
-display:flex;
-align-items:center;
-gap:15px;
-padding:15px 20px;
-background:rgba(15,23,42,.9);
-backdrop-filter:blur(10px);
-position:sticky;
-top:0;
-z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding:10px 20px;
+  background:rgba(15,23,42,.9);
+  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:100;
 }
-header img{height:42px}
+header img{height:32px} /* Zmniejszono nieco wysokość dla lepszego balansu */
+
 nav button{
-background:none;
-border:none;
-color:var(--text);
-font-size:15px;
-padding:8px 14px;
-border-radius:10px;
-cursor:pointer;
+  background:rgba(56,189,248,.1);
+  border:1px solid var(--accent);
+  color:var(--text);
+  font-size:14px;
+  padding:6px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  transition: 0.2s;
 }
-nav button:hover,
-nav button.active{
-background:rgba(56,189,248,.15);
-color:var(--accent);
+nav button:hover{
+  background:rgba(56,189,248,.2);
 }
-main{max-width:1100px;margin:auto;padding:25px}
+
+main{
+  max-width:900px; /* Nieco węższy dla lepszej czytelności na desktopie */
+  margin:auto;
+  padding:15px;
+}
 .card{
-background:linear-gradient(180deg,#0f172a,#020617);
-border-radius:20px;
-padding:20px;
-box-shadow:0 20px 60px rgba(0,0,0,.6);
-margin-bottom:25px;
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  margin-bottom:25px;
+  border: 1px solid rgba(255,255,255,0.05);
 }
-h1,h2{text-align:center}
+h2{
+  text-align:center;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  margin-bottom: 20px;
+  color: var(--accent);
+}
+
+/* Stylizacja kontenera Flourish dla lepszego wyglądu na mobile */
+.flourish-embed {
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  padding: 10px;
+  min-height: 400px; /* Rezerwacja miejsca podczas ładowania */
+}
+
 footer{
-text-align:center;
-opacity:.6;
-padding:25px 10px;
+  text-align:center;
+  opacity:.6;
+  padding:25px 10px;
+  font-size: 12px;
 }
 </style>
 </head>
@@ -66,30 +90,29 @@ padding:25px 10px;
 <body>
 
 <header>
-<img src="../Logo.png" alt="SpinnerRealYT">
-<nav id="nav"></nav>
+  <img src="../Logo.png" alt="SpinnerRealYT">
+  <nav id="nav"></nav>
 </header>
 
 <main>
+  <div class="card">
+    <h2>📊 Średnie* sondaże Partii</h2>
 
-<div class="card">
-<h2>📊 Średnie* sondaże Partii Politycznych w Polsce</h2>
+    <div class="flourish-embed flourish-chart" data-src="visualisation/27035462"></div>
+    <script src="https://public.flourish.studio/resources/embed.js"></script>
 
-<div class="flourish-embed flourish-chart" data-src="visualisation/27035462"></div>
-<script src="https://public.flourish.studio/resources/embed.js"></script>
-
-<p style="font-size:13px;opacity:.7;text-align:center;margin-top:10px">
-* Sondaże uśrednione na podstawie wielu badań opinii publicznej.
-</p>
-</div>
-
+    <p style="font-size:12px; opacity:.6; text-align:center; margin-top:15px; line-height: 1.4;">
+      * Sondaże uśrednione na podstawie bieżących badań opinii publicznej z różnych ośrodków badawczych.
+    </p>
+  </div>
 </main>
 
 <footer>
-© 2026 SpinnerRealYT Games
+  © 2026 SpinnerRealYT Games
 </footer>
 
 <script>
+// Menu nawigacyjne
 const games = [
   { file: "../index.html", name: "Menu" },
 ];
@@ -99,7 +122,6 @@ const nav = document.getElementById("nav");
 games.forEach(g=>{
   const b=document.createElement("button");
   b.textContent=g.name;
-  if(g.name==="Sondaże") b.classList.add("active");
   b.onclick=()=>location.href=g.file;
   nav.appendChild(b);
 });
