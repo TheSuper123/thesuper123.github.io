@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Neon Maze – SpinnerRealYT Games</title>
+
+<link rel="icon" type="image/png" href="../Logo.png?v=2">
+<link rel="apple-touch-icon" href="../Logo.png?v=2">
+
+<style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
+  --danger:#f87171;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
+  overflow: hidden; /* Blokada przewijania podczas gry */
+  touch-action: none;
+}
+header{
+  display:flex; align-items:center; justify-content: space-between;
+  padding:10px 20px; background:rgba(15,23,42,.9);
+  backdrop-filter:blur(10px); position:sticky; top:0; z-index:100;
+}
+header img{height:32px}
+
+nav button{
+  background:rgba(56,189,248,.1); border:1px solid var(--accent);
+  color:var(--text); padding:6px 15px; border-radius:8px; cursor:pointer;
+}
+
+main{ max-width:600px; margin:auto; padding:15px; }
+.card{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border-radius:24px; padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+}
+
+#game-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #000;
+  border-radius: 15px;
+  border: 2px solid #1e293b;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.stats {
+  display: flex; justify-content: space-around; margin-bottom: 10px;
+  font-weight: bold; color: var(--accent);
+}
+
+#controls-hint {
+  font-size: 12px; opacity: 0.6; margin-top: 10px;
+}
+
+.btn-start {
+  background: var(--accent); color: var(--bg);
+  border: none; padding: 12px 30px; border-radius: 12px;
+  font-weight: bold; cursor: pointer; font-size: 1.1rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="../Logo.png" alt="SpinnerRealYT">
+  <nav><button onclick="location.href='../index.html'">Menu</button></nav>
+</header>
+
+<main>
+  <div class="card">
+    <h2>✨ Neon Maze</h2>
+    
+    <div class="stats">
+      <div id="level-display">Poziom: 1</div>
+      <div id="death-display">Skuchy: 0</div>
+    </div>
+
+    <div id="game-container">
+      <canvas id="mazeCanvas"></canvas>
+    </div>
+
+    <button class="btn-start" id="start-btn">Zacznij Grę</button>
+    <p id="controls-hint">Przeciągaj palcem/myszką, aby sterować kulką!</p>
+  </div>
+</main>
+
+<footer>© 2026 SpinnerRealYT Games</footer>
+
+<script>
+const canvas = document.getElementById('mazeCanvas');
+const ctx = canvas.getContext('2d');
+const startBtn = document.getElementById('start-btn');
+const levelDisplay = document.getElementById('level-display');
+const deathDisplay = document.getElementById('death-display');
+
+// Ustawienia gry
+let level = 1;
+let deaths = 0;
+let gameActive = false;
+let player = { x: 30, y: 30, size: 10, targetX: 30, targetY: 30 };
+let goal = { x: 0, y: 0, size: 15 };
+let walls = [];
+
+// Dopasowanie canvasu
+function resize() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function initLevel() {
+  player.x = 30; player.y = 30;
+  player.targetX = 30; player.targetY = 30;
+  goal.x = canvas.width - 40; goal.y = canvas.height - 40;
+  
+  walls = [];
+  // Generowanie losowych ścian zależnie od poziomu
+  for(let i = 0; i < level + 3; i++) {
+    walls.push({
+      x: Math.random() * (canvas.width - 60) + 30,
+      y: Math.random() * (canvas.height - 60) + 30,
+      w: Math.random() > 0.5 ? 100 : 10,
+      h: Math.random() > 0.5 ? 10 : 100
+    });
+  }
+  levelDisplay.textContent = `Poziom: ${level}`;
+}
+
+// Sterowanie
+function handleMove(e) {
+  if(!gameActive) return;
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches ? e.touches[0] : e;
+  player.targetX = touch.clientX - rect.left;
+  player.targetY = touch.clientY - rect.top;
+}
+
+canvas.addEventListener('mousemove', handleMove);
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  handleMove(e);
+}, {passive: false});
+
+function update() {
+  if(!gameActive) return;
+
+  // Płynne podążanie kulki za kursorem
+  player.x += (player.targetX - player.x) * 0.1;
+  player.y += (player.targetY - player.y) * 0.1;
+
+  // Kolizje ze ścianami
+  walls.forEach(w => {
+    if(player.x + player.size > w.x && player.x - player.size < w.x + w.w &&
+       player.y + player.size > w.y && player.y - player.size < w.y + w.h) {
+       deaths++;
+       deathDisplay.textContent = `Skuchy: ${deaths}`;
+       player.x = 30; player.y = 30;
+       player.targetX = 30; player.targetY = 30;
+    }
+  });
+
+  // Wygrana (dotarcie do celu)
+  const dist = Math.hypot(player.x - goal.x, player.y - goal.y);
+  if(dist < player.size + goal.size) {
+    level++;
+    initLevel();
+  }
+}
+
+function draw() {
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Rysowanie ścian
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = '#f87171';
+  ctx.fillStyle = '#f87171';
+  walls.forEach(w => ctx.fillRect(w.x, w.y, w.w, w.h));
+
+  // Rysowanie celu
+  ctx.shadowColor = '#4ade80';
+  ctx.fillStyle = '#4ade80';
+  ctx.beginPath();
+  ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI*2);
+  ctx.fill();
+
+  // Rysowanie gracza
+  ctx.shadowColor = '#38bdf8';
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, player.size, 0, Math.PI*2);
+  ctx.fill();
+  
+  ctx.shadowBlur = 0;
+  
+  update();
+  requestAnimationFrame(draw);
+}
+
+startBtn.onclick = () => {
+  gameActive = true;
+  startBtn.style.display = 'none';
+  initLevel();
+  draw();
+};
+</script>
+
+</body>
+</html>
