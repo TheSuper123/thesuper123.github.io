@@ -3,176 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Neon Tree Incremental – SpinnerRealYT Games</title>
+<title>Neon Tree Exploration – SpinnerRealYT</title>
 <link rel="icon" href="../Logo.png">
 <style>
-:root{ --bg:#020617; --card:#0f172a; --accent:#38bdf8; --text:#e5e7eb; --gold:#facc15; }
+:root{ --bg:#020617; --card:#0f172a; --accent:#38bdf8; --text:#e5e7eb; --gold:#facc15; --path:#1e293b; --danger:#f87171;}
 *{box-sizing:border-box}
-body{
-    margin:0; font-family:Inter,sans-serif; background:var(--bg); color:var(--text);
-    overflow: hidden; touch-action: none;
-}
-header{
-    display:flex; align-items:center; justify-content: space-between;
-    padding:10px 20px; background:rgba(15,23,42,.9); backdrop-filter:blur(10px);
-}
-header img{height:30px}
-main{ display: flex; flex-direction: column; align-items: center; padding: 20px; }
+body{ margin:0; font-family:Inter,sans-serif; background:var(--bg); color:var(--text); overflow:hidden; touch-action:none; }
 
+/* VIEWPORT I MAPA */
 #game-viewport {
-    position: relative; width: 500px; height: 500px; background: #000;
-    border: 2px solid var(--accent); border-radius: 15px; overflow: hidden;
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    position: relative; width: 100vw; height: 100vh;
+    overflow: hidden; background: #000;
 }
-#player {
-    position: absolute; width: 22px; height: 22px; background: var(--accent);
-    box-shadow: 0 0 15px var(--accent); border-radius: 6px; z-index: 10;
+#world-map {
+    position: absolute; width: 5000px; height: 5000px;
+    background-image: radial-gradient(circle, #1e293b 1px, transparent 1px);
+    background-size: 50px 50px;
 }
-.node {
-    position: absolute; width: 80px; height: 80px; background: var(--card);
-    border: 2px solid #334155; border-radius: 12px; display: flex;
-    flex-direction: column; align-items: center; justify-content: center;
-    font-size: 11px; text-align: center; padding: 5px; transition: 0.3s;
-}
-.node.unlocked { border-color: var(--gold); background: rgba(250, 204, 21, 0.05); }
-.node.can-afford { border-color: #4ade80; transform: scale(1.05); }
 
-#ui-overlay { margin-bottom: 15px; text-align: center; }
-.currency { font-size: 28px; font-weight: 800; color: var(--accent); text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
-.pps-info { opacity: 0.6; font-size: 14px; }
+#player {
+    position: absolute; width: 24px; height: 24px; background: var(--accent);
+    box-shadow: 0 0 20px var(--accent); border-radius: 6px; z-index: 100;
+    transition: transform 0.1s linear;
+}
+
+/* NODES */
+.node {
+    position: absolute; width: 100px; height: 100px; background: var(--card);
+    border: 3px solid var(--path); border-radius: 15px; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    font-size: 11px; text-align: center; padding: 10px; z-index: 50; transition: 0.3s;
+}
+.node.visible { display: flex; animation: fadeIn 0.5s forwards; }
+.node.can-afford { border-color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
+.node.locked { filter: grayscale(1) opacity(0.3); pointer-events: none; }
+.node.maxed { border-color: var(--gold); }
+
+/* ŚCIEŻKI SVG */
+#path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+line { stroke: var(--path); stroke-width: 4; transition: 0.5s; }
+line.active { stroke: var(--accent); stroke-dasharray: 10; animation: dash 1s linear infinite; }
+
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes dash { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+
+#ui { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 200; pointer-events: none;}
+.currency { font-size: 32px; font-weight: 800; color: var(--accent); text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
 </style>
 </head>
 <body>
 
-<header>
-    <img src="../Logo.png">
-    <div id="user-display">Gracz: Gość</div>
-    <button onclick="location.href='../index.html'" style="background:none; border:1px solid var(--accent); color:var(--accent); padding:5px 15px; border-radius:8px; cursor:pointer;">Menu</button>
-</header>
+<div id="ui">
+    <div class="currency"><span id="points">0</span> Δ</div>
+    <div style="opacity:0.7">Zysk: <span id="pps">0</span>/s</div>
+</div>
 
-<main>
-    <div id="ui-overlay">
-        <div class="currency"><span id="points">0</span> Δ</div>
-        <div class="pps-info">Zysk: <span id="pps">0</span>/s</div>
-    </div>
-
-    <div id="game-viewport">
+<div id="game-viewport">
+    <div id="world-map">
+        <svg id="path-layer"></svg>
         <div id="player"></div>
-    </div>
-    
-    <p style="font-size: 12px; opacity: 0.5; margin-top: 15px;">Poruszaj się: **WSAD / Strzałki** | Dotknij bloku, aby ulepszyć</p>
-</main>
+        </div>
+</div>
 
 <script>
-// Klucz zapisu powiązany z zalogowanym użytkownikiem
 const currentUser = localStorage.getItem("sp_logged") || "guest";
-const SAVE_KEY = `sp_save_incremental_${currentUser}`;
+const SAVE_KEY = `sp_save_neon_tree_${currentUser}`;
 
 let state = {
     points: 0,
     pps: 1,
-    player: { x: 240, y: 240, speed: 4.5 },
-    upgrades: {
-        gen1: { level: 0, cost: 10, ppsAdd: 1, x: 80, y: 80, name: "Generator I" },
-        gen2: { level: 0, cost: 150, ppsAdd: 8, x: 340, y: 80, name: "Generator II" },
-        speed: { level: 0, cost: 50, ppsAdd: 0, x: 80, y: 340, name: "Prędkość" },
-        prestige: { level: 0, cost: 1000, ppsAdd: 50, x: 340, y: 340, name: "Difficulty Up" }
-    }
+    pX: 2500, pY: 2500, // Start na środku mapy
+    speed: 5,
+    unlockedNodes: ["start"],
+    purchasedLevels: { "start": 0 },
+    lockedOut: [] // Tu trafią ulepszenia, których nie wybrano w "Choose"
+};
+
+// Definicja 10 buttonów (Drzewko)
+const nodes = {
+    "start": { x: 2500, y: 2500, name: "Rdzeń Energii", cost: 10, max: 10, pps: 1, next: ["gen_a", "gen_b"] },
+    "gen_a": { x: 2300, y: 2300, name: "Ścieżka Mocy", cost: 100, max: 5, pps: 5, next: ["choose_1"] },
+    "gen_b": { x: 2700, y: 2300, name: "Ścieżka Prędkości", cost: 100, max: 5, speed: 1, next: ["choose_1"] },
+    "choose_1": { x: 2500, y: 2100, name: "WYBÓR: Specjalizacja", type: "choose", options: ["crit", "steady"], cost: 500, next: [] },
+    "crit": { x: 2300, y: 1900, name: "Niestabilny Kryształ", cost: 1000, max: 1, pps: 50, next: ["end_1"] },
+    "steady": { x: 2700, y: 1900, name: "Stabilny Reaktor", cost: 1000, max: 10, pps: 20, next: ["end_2"] },
+    "end_1": { x: 2100, y: 1700, name: "Moc Pustki", cost: 5000, max: 5, pps: 200, next: [] },
+    "end_2": { x: 2900, y: 1700, name: "Harmonia", cost: 5000, max: 5, pps: 150, next: [] },
+    "speed_boost": { x: 2500, y: 2700, name: "Silnik Turbo", cost: 300, max: 3, speed: 2, next: ["final"] },
+    "final": { x: 2500, y: 2900, name: "Brama Wyjścia", cost: 20000, max: 1, pps: 1000, next: [] }
 };
 
 const keys = {};
 window.onkeydown = e => keys[e.key.toLowerCase()] = true;
 window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-function loadGame() {
-    const saved = localStorage.getItem(SAVE_KEY);
-    if(saved) {
-        const parsed = JSON.parse(saved);
-        state = {...state, ...parsed};
-    }
-    document.getElementById('user-display').textContent = `Gracz: ${currentUser}`;
-}
-
-function saveGame() {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-}
-
 function init() {
-    loadGame();
-    const viewport = document.getElementById('game-viewport');
-    for (let id in state.upgrades) {
-        const u = state.upgrades[id];
+    const saved = localStorage.getItem(SAVE_KEY);
+    if(saved) state = JSON.parse(saved);
+
+    const map = document.getElementById('world-map');
+    const svg = document.getElementById('path-layer');
+
+    for (let id in nodes) {
+        const n = nodes[id];
+        // Twórz HTML
         const div = document.createElement('div');
         div.className = 'node';
         div.id = `node-${id}`;
-        div.style.left = u.x + 'px';
-        div.style.top = u.y + 'px';
-        viewport.appendChild(div);
+        div.style.left = n.x - 50 + 'px';
+        div.style.top = n.y - 50 + 'px';
+        map.appendChild(div);
+
+        // Twórz linie ścieżek
+        if (n.next) {
+            n.next.forEach(targetId => {
+                const target = nodes[targetId];
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", n.x); line.setAttribute("y1", n.y);
+                line.setAttribute("x2", target.x); line.setAttribute("y2", target.y);
+                line.id = `path-${id}-${targetId}`;
+                svg.appendChild(line);
+            });
+        }
     }
-    setInterval(saveGame, 5000); // Autozapis co 5 sekund
-    requestAnimationFrame(gameLoop);
+    gameLoop();
 }
 
 function gameLoop() {
-    // Ruch gracza
-    let dx = 0, dy = 0;
-    if (keys['w'] || keys['arrowup']) dy -= state.player.speed;
-    if (keys['s'] || keys['arrowdown']) dy += state.player.speed;
-    if (keys['a'] || keys['arrowleft']) dx -= state.player.speed;
-    if (keys['d'] || keys['arrowright']) dx += state.player.speed;
+    // Ruch i Kamera
+    let moveX = 0, moveY = 0;
+    if (keys['w'] || keys['arrowup']) moveY -= state.speed;
+    if (keys['s'] || keys['arrowdown']) moveY += state.speed;
+    if (keys['a'] || keys['arrowleft']) moveX -= state.speed;
+    if (keys['d'] || keys['arrowright']) moveX += state.speed;
 
-    state.player.x = Math.max(0, Math.min(478, state.player.x + dx));
-    state.player.y = Math.max(0, Math.min(478, state.player.y + dy));
+    state.pX += moveX; state.pY += moveY;
 
-    const pEl = document.getElementById('player');
-    pEl.style.left = state.player.x + 'px';
-    pEl.style.top = state.player.y + 'px';
+    // Centrowanie kamery
+    const v = document.getElementById('game-viewport');
+    const m = document.getElementById('world-map');
+    m.style.left = (v.clientWidth/2 - state.pX) + 'px';
+    m.style.top = (v.clientHeight/2 - state.pY) + 'px';
 
-    // Kolizje i kupowanie
-    for (let id in state.upgrades) {
-        const u = state.upgrades[id];
-        // Sprawdzanie czy środek gracza jest wewnątrz kwadratu ulepszenia
-        if (state.player.x + 11 > u.x && state.player.x + 11 < u.x + 80 &&
-            state.player.y + 11 > u.y && state.player.y + 11 < u.y + 80) {
-            if (state.points >= u.cost) {
-                buyUpgrade(id);
-            }
+    const p = document.getElementById('player');
+    p.style.left = (state.pX - 12) + 'px';
+    p.style.top = (state.pY - 12) + 'px';
+
+    // Interakcja
+    for (let id in nodes) {
+        if (!state.unlockedNodes.includes(id) || state.lockedOut.includes(id)) continue;
+        
+        const n = nodes[id];
+        const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
+        
+        if (dist < 60 && state.points >= n.cost) {
+            buyNode(id);
         }
     }
 
-    // Punkty PPS
     state.points += state.pps / 60;
     updateUI();
     requestAnimationFrame(gameLoop);
 }
 
-function buyUpgrade(id) {
-    const u = state.upgrades[id];
-    state.points -= u.cost;
-    u.level++;
-    
-    if(id === 'speed') state.player.speed += 0.4;
-    else if(id === 'prestige') {
-        state.pps *= 1.5;
-        document.getElementById('game-viewport').style.borderColor = '#c084fc';
-    } else {
-        state.pps += u.ppsAdd;
-    }
+function buyNode(id) {
+    const n = nodes[id];
+    const lvls = state.purchasedLevels[id] || 0;
 
-    u.cost = Math.floor(u.cost * 1.6);
-    saveGame(); // Zapis po zakupie
+    if (lvls >= n.max && n.type !== 'choose') return;
+
+    state.points -= n.cost;
+    
+    if (n.type === 'choose') {
+        // Logika wyboru
+        const choice = prompt(`Wybierz ulepszenie: ${n.options[0]} czy ${n.options[1]}?`).toLowerCase();
+        const selected = n.options.includes(choice) ? choice : n.options[0];
+        const rejected = n.options.filter(o => o !== selected)[0];
+        
+        state.unlockedNodes.push(selected);
+        state.lockedOut.push(rejected);
+        state.purchasedLevels[id] = 1;
+    } else {
+        state.purchasedLevels[id] = lvls + 1;
+        if (n.pps) state.pps += n.pps;
+        if (n.speed) state.speed += n.speed;
+        
+        // Odblokuj następne i linie
+        if (state.purchasedLevels[id] === 1 && n.next) {
+            n.next.forEach(nxt => {
+                if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt);
+            });
+        }
+        n.cost = Math.floor(n.cost * 1.5);
+    }
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
 
 function updateUI() {
-    document.getElementById('points').textContent = Math.floor(state.points).toLocaleString();
-    document.getElementById('pps').textContent = state.pps.toFixed(1);
+    document.getElementById('points').innerText = Math.floor(state.points).toLocaleString();
+    document.getElementById('pps').innerText = state.pps.toFixed(1);
 
-    for (let id in state.upgrades) {
-        const u = state.upgrades[id];
+    for (let id in nodes) {
+        const n = nodes[id];
         const el = document.getElementById(`node-${id}`);
-        if(el) {
-            el.innerHTML = `<strong>${u.name}</strong><br>Lv. ${u.level}<br><span style="color:${state.points >= u.cost ? '#4ade80' : '#f87171'}">${u.cost} Δ</span>`;
-            el.className = 'node' + (u.level > 0 ? ' unlocked' : '') + (state.points >= u.cost ? ' can-afford' : '');
+        if (state.unlockedNodes.includes(id) && !state.lockedOut.includes(id)) {
+            el.classList.add('visible');
+            const lvls = state.purchasedLevels[id] || 0;
+            
+            if (n.type === 'choose') {
+                el.innerHTML = `<b>${n.name}</b><br>KOSZT: ${n.cost}`;
+            } else {
+                el.innerHTML = `<b>${n.name}</b><br>Lvl: ${lvls}/${n.max}<br>Koszt: ${n.cost}`;
+            }
+            
+            if (state.points >= n.cost && lvls < n.max) el.classList.add('can-afford');
+            else el.classList.remove('can-afford');
+            
+            if (lvls >= n.max) el.classList.add('maxed');
+
+            // Aktywuj linie
+            if (lvls > 0 && n.next) {
+                n.next.forEach(nxt => {
+                    const line = document.getElementById(`path-${id}-${nxt}`);
+                    if (line) line.classList.add('active');
+                });
+            }
         }
     }
 }
