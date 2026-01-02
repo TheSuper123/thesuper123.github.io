@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SpinnerRealYT Games - Block Blast</title>
-<link rel="icon" href="Logo.png">
+<title>Block Blast | SpinnerRealYT Games</title>
+<link rel="icon" href="../Logo.png">
+
 <style>
 :root{
 --bg:#020617;
@@ -12,8 +13,9 @@
 --accent:#38bdf8;
 --text:#e5e7eb;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
+*{box-sizing:border-box}
 body{
+margin:0;
 font-family:Inter,system-ui,sans-serif;
 background:radial-gradient(circle at top,#020617,#000);
 color:var(--text);
@@ -29,7 +31,7 @@ position:sticky;
 top:0;
 z-index:100;
 }
-header img{height:42px;cursor:pointer}
+header img{height:42px}
 nav button{
 background:none;
 border:none;
@@ -39,7 +41,8 @@ padding:8px 14px;
 border-radius:10px;
 cursor:pointer;
 }
-nav button:hover, nav button.active{
+nav button:hover,
+nav button.active{
 background:rgba(56,189,248,.15);
 color:var(--accent);
 }
@@ -47,9 +50,6 @@ main{
 max-width:1100px;
 margin:auto;
 padding:25px;
-display:flex;
-flex-direction:column;
-align-items:center;
 }
 .card{
 background:linear-gradient(180deg,#0f172a,#020617);
@@ -57,85 +57,76 @@ border-radius:20px;
 padding:20px;
 box-shadow:0 20px 60px rgba(0,0,0,.6);
 margin-bottom:25px;
-text-align:center;
 }
-h1,h2{text-align:center;margin-bottom:15px;}
+h1,h2{text-align:center}
 footer{
 text-align:center;
 opacity:.6;
 padding:25px 10px;
 }
 
-/* ===== BLOCK BLAST STYLES ===== */
-#board-container{
-display:flex;
-justify-content:center;
-margin:20px 0;
-}
-#board{
+/* ===== BLOCK BLAST ===== */
+#game-board{
 display:grid;
-grid-template-columns:repeat(9,42px);
-grid-template-rows:repeat(9,42px);
+margin:20px auto;
 gap:2px;
-background:#020617;
-padding:5px;
-border-radius:10px;
+background:var(--bg);
 }
 .cell{
-width:42px;height:42px;
 background:#334155;
+width:40px;
+height:40px;
 border-radius:5px;
+display:flex;
+align-items:center;
+justify-content:center;
 }
-.cell.filled{
-background:#38bdf8;
-}
-
-/* NEXT BLOCKS */
-#nextBlocks{
+.block-picker{
 display:flex;
 justify-content:center;
 gap:10px;
 margin-top:15px;
+flex-wrap:wrap;
 }
-.block{
-display:grid;
-gap:2px;
-cursor:pointer;
-}
-.block .cell{
-width:30px;height:30px;
+.block-piece{
 background:#38bdf8;
-border-radius:3px;
+width:40px;
+height:40px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:5px;
+margin:2px;
+user-select:none;
+}
+.block-piece.dragging{
+opacity:0.5;
 }
 #score{
-margin-top:15px;font-size:18px;
-}
-.dragging{
-position:absolute;
-pointer-events:none;
-opacity:0.7;
-z-index:1000;
+text-align:center;
+margin-top:10px;
+font-weight:700;
 }
 </style>
 </head>
 <body>
 
 <header>
-<img src="Logo.png" alt="SpinnerRealYT" onclick="window.location.href='https://spinnerrealyt.pl'">
-<nav id="nav"></nav>
+<img src="../Logo.png" alt="SpinnerRealYT">
 </header>
 
 <main>
 <div class="card">
-<h1>🎮 Block Blast</h1>
-<p>Umieść klocki na planszy tak, aby czyścić linie i zdobywać punkty!</p>
+<h1>🎮 Block Blast!</h1>
+<p style="text-align:center">
+Ułóż bloki na planszy i czyść wiersze lub kolumny, aby zdobywać punkty! Gra kończy się, gdy nie możesz umieścić kolejnych bloków.
+</p>
 
-<div id="board-container">
-<div id="board"></div>
-</div>
-
-<div id="nextBlocks"></div>
 <div id="score">Punkty: 0</div>
+<div id="game-board"></div>
+<div class="block-picker" id="block-picker"></div>
+
 </div>
 </main>
 
@@ -144,156 +135,143 @@ z-index:1000;
 </footer>
 
 <script>
-/* ===== MENU ===== */
-const nav = document.getElementById("nav");
-const menuBtn = document.createElement("button");
-menuBtn.textContent = "Menu";
-menuBtn.classList.add("active");
-menuBtn.onclick = () => window.location.href = "https://spinnerrealyt.pl";
-nav.appendChild(menuBtn);
+// ===== Block Blast Logic =====
+const BOARD_SIZE = 8; // 8x8 plansza
+let board = [];
+let score = 0;
 
-/* ===== GAME LOGIC ===== */
-const ROWS=9,COLS=9;
-const board=document.getElementById("board");
-const nextBlocks=document.getElementById("nextBlocks");
-let score=0;
+const boardEl = document.getElementById("game-board");
+const pickerEl = document.getElementById("block-picker");
+const scoreEl = document.getElementById("score");
 
-// Kształty bloków
-const SHAPES = [
-[[1,1],[0,1],[0,0]], // L
-[[1,1,1,1]], // linia
-[[1,1],[1,1]], // kwadrat
-[[0,1,1],[1,1,0]], // Z
-[[1,1,0],[0,1,1]], // S
-[[1,0],[1,1],[1,0]] // T
+// Kształty bloków (przykładowe, można dodać więcej)
+const BLOCKS = [
+  [[1,1,1]],        // linia pozioma 3
+  [[1],[1],[1]],    // linia pionowa 3
+  [[1,1],[1,0]],    // L kształt
+  [[1,1],[1,1]]     // kwadrat 2x2
 ];
 
-let boardData = Array.from({length:ROWS},()=>Array(COLS).fill(0));
-
-function drawBoard(){
-board.innerHTML='';
-for(let r=0;r<ROWS;r++){
-for(let c=0;c<COLS;c++){
-const cell=document.createElement("div");
-cell.className="cell"+(boardData[r][c]? " filled":"");
-board.appendChild(cell);
-}
-}
+// ===== Inicjalizacja planszy =====
+function initBoard(){
+  boardEl.style.gridTemplateColumns = `repeat(${BOARD_SIZE}, 40px)`;
+  board = Array(BOARD_SIZE).fill(0).map(()=>Array(BOARD_SIZE).fill(0));
+  renderBoard();
 }
 
-function generateBlock(){
-const shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
-return shape.map(r=>[...r]);
+function renderBoard(){
+  boardEl.innerHTML = "";
+  for(let r=0;r<BOARD_SIZE;r++){
+    for(let c=0;c<BOARD_SIZE;c++){
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      if(board[r][c] === 1) cell.style.background="#dc2626"; // zajęty
+      boardEl.appendChild(cell);
+    }
+  }
 }
 
-function drawNextBlocks(){
-nextBlocks.innerHTML='';
-for(let i=0;i<3;i++){
-const shape=generateBlock();
-const div=document.createElement("div");
-div.className="block";
-div.dataset.index=i;
-div.dataset.shape=JSON.stringify(shape);
-div.style.gridTemplateColumns=`repeat(${shape[0].length},30px)`;
-div.style.gridTemplateRows=`repeat(${shape.length},30px)`;
-shape.forEach(row=>{
-row.forEach(cell=>{
-const c=document.createElement("div");
-c.className="cell";
-if(cell)c.style.background="#38bdf8";
-div.appendChild(c);
+// ===== Generowanie bloków =====
+function spawnBlocks(){
+  pickerEl.innerHTML = "";
+  const chosenBlocks = [];
+  for(let i=0;i<3;i++){
+    const shape = BLOCKS[Math.floor(Math.random()*BLOCKS.length)];
+    const div = document.createElement("div");
+    div.classList.add("block-piece");
+    div.dataset.shape = JSON.stringify(shape);
+    drawBlock(div, shape);
+    div.draggable = true;
+
+    // Drag events
+    div.addEventListener("dragstart", e=>{
+      div.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", div.dataset.shape);
+    });
+    div.addEventListener("dragend", e=>{
+      div.classList.remove("dragging");
+    });
+
+    chosenBlocks.push(shape);
+    pickerEl.appendChild(div);
+  }
+}
+
+// ===== Rysowanie bloków w pickerze =====
+function drawBlock(container, shape){
+  container.innerHTML="";
+  for(let r=0;r<shape.length;r++){
+    for(let c=0;c<shape[r].length;c++){
+      if(shape[r][c]===1){
+        const cell = document.createElement("div");
+        cell.style.width="12px";
+        cell.style.height="12px";
+        cell.style.background="#38bdf8";
+        cell.style.margin="1px";
+        cell.style.display="inline-block";
+        container.appendChild(cell);
+      }
+    }
+  }
+}
+
+// ===== Drop na planszy =====
+boardEl.addEventListener("dragover", e=>{
+  e.preventDefault();
 });
+boardEl.addEventListener("drop", e=>{
+  e.preventDefault();
+  const shape = JSON.parse(e.dataTransfer.getData("text/plain"));
+  const rect = boardEl.getBoundingClientRect();
+  const x = Math.floor((e.clientX - rect.left)/40);
+  const y = Math.floor((e.clientY - rect.top)/40);
+  if(placeShape(shape,y,x)){
+    checkLines();
+    scoreEl.textContent=`Punkty: ${score}`;
+    spawnBlocks();
+  }
 });
-nextBlocks.appendChild(div);
 
-makeDraggable(div);
-}
-}
-
-function makeDraggable(div){
-let clone=null;
-let offsetX=0,offsetY=0;
-
-div.addEventListener("mousedown",startDrag);
-div.addEventListener("touchstart",startDrag);
-
-function startDrag(e){
-e.preventDefault();
-const shape=JSON.parse(div.dataset.shape);
-clone=div.cloneNode(true);
-clone.classList.add("dragging");
-document.body.appendChild(clone);
-
-const rect=div.getBoundingClientRect();
-if(e.touches){
-offsetX=e.touches[0].clientX-rect.left;
-offsetY=e.touches[0].clientY-rect.top;
-document.addEventListener("touchmove",drag);
-document.addEventListener("touchend",drop);
-}else{
-offsetX=e.clientX-rect.left;
-offsetY=e.clientY-rect.top;
-document.addEventListener("mousemove",drag);
-document.addEventListener("mouseup",drop);
+// ===== Funkcja umieszczania kształtu =====
+function placeShape(shape, row, col){
+  for(let r=0;r<shape.length;r++){
+    for(let c=0;c<shape[r].length;c++){
+      if(shape[r][c]===1){
+        const br = row+r;
+        const bc = col+c;
+        if(br>=BOARD_SIZE || bc>=BOARD_SIZE || board[br][bc]===1) return false;
+      }
+    }
+  }
+  for(let r=0;r<shape.length;r++){
+    for(let c=0;c<shape[r].length;c++){
+      if(shape[r][c]===1) board[row+r][col+c]=1;
+    }
+  }
+  renderBoard();
+  return true;
 }
 
-function drag(ev){
-let clientX=ev.clientX||ev.touches[0].clientX;
-let clientY=ev.clientY||ev.touches[0].clientY;
-clone.style.left=clientX-offsetX+"px";
-clone.style.top=clientY-offsetY+"px";
-}
-function drop(ev){
-let clientX=ev.clientX||ev.changedTouches[0].clientX;
-let clientY=ev.clientY||ev.changedTouches[0].clientY;
-document.removeEventListener("mousemove",drag);
-document.removeEventListener("mouseup",drop);
-document.removeEventListener("touchmove",drag);
-document.removeEventListener("touchend",drop);
-
-// Oblicz rząd/kolumnę
-const boardRect=board.getBoundingClientRect();
-const x=clientX-boardRect.left;
-const y=clientY-boardRect.top;
-const col=Math.floor(x/44); // 42px+2px gap
-const row=Math.floor(y/44);
-
-const shapeHeight=shape.length;
-const shapeWidth=shape[0].length;
-
-// Sprawdzenie czy można wstawić
-let canPlace=true;
-for(let r=0;r<shapeHeight;r++){
-for(let c=0;c<shapeWidth;c++){
-if(shape[r][c]){
-let br=row+r;
-let bc=col+c;
-if(br<0||br>=ROWS||bc<0||bc>=COLS||boardData[br][bc]){
-canPlace=false;
-}
-}
-}
+// ===== Czyszczenie linii =====
+function checkLines(){
+  for(let r=0;r<BOARD_SIZE;r++){
+    if(board[r].every(cell=>cell===1)){
+      board[r] = Array(BOARD_SIZE).fill(0);
+      score += 10;
+    }
+  }
+  for(let c=0;c<BOARD_SIZE;c++){
+    if(board.every(row=>row[c]===1)){
+      for(let r2=0;r2<BOARD_SIZE;r2++) board[r2][c]=0;
+      score += 10;
+    }
+  }
+  renderBoard();
 }
 
-if(canPlace){
-// wstawienie
-for(let r=0;r<shapeHeight;r++){
-for(let c=0;c<shapeWidth;c++){
-if(shape[r][c]) boardData[row+r][col+c]=1;
-}
-score+=1;
-document.getElementById("score").textContent="Punkty: "+score;
-drawBoard();
-drawNextBlocks();
-}
-clone.remove();
-else clone.remove();
-}
-}
-}
-
-drawBoard();
-drawNextBlocks();
+// ===== Start =====
+initBoard();
+spawnBlocks();
 </script>
 
 </body>
