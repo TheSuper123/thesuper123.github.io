@@ -19,6 +19,7 @@ body{
   color:var(--text);
   overflow: hidden;
   user-select: none; /* blokuje kopiowanie tekstu */
+  touch-action: none; /* blokuje przewijanie przy przeciąganiu */
 }
 header{
   display:flex;
@@ -188,15 +189,14 @@ function generateNext(){
 }
 
 function makeDraggable(blockEl, blockId){
-  blockEl.onmousedown = function(e) {
-    e.preventDefault(); // blokuje kopiowanie
+  function startDrag(clientX, clientY) {
     const blockData = currentBlocks.find(b => b.id === blockId);
     if(!blockData) return;
-
     const {shape, color} = blockData;
+
     const rect = blockEl.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
+    const offsetX = clientX - rect.left;
+    const offsetY = clientY - rect.top;
 
     let localGhosts = [];
     for(let r=0; r<shape.length; r++){
@@ -215,13 +215,16 @@ function makeDraggable(blockEl, blockId){
     blockEl.style.zIndex = "1000";
     blockEl.style.pointerEvents = "none";
 
-    function onMouseMove(ev) {
-      blockEl.style.left = (ev.clientX - offsetX) + "px";
-      blockEl.style.top = (ev.clientY - offsetY) + "px";
+    function move(ev){
+      let x = ev.clientX ?? ev.touches[0].clientX;
+      let y = ev.clientY ?? ev.touches[0].clientY;
+
+      blockEl.style.left = (x - offsetX) + "px";
+      blockEl.style.top = (y - offsetY) + "px";
 
       const boardRect = boardEl.getBoundingClientRect();
-      const col = Math.round((ev.clientX - boardRect.left - offsetX - 10) / GRID_STEP);
-      const row = Math.round((ev.clientY - boardRect.top - offsetY - 10) / GRID_STEP);
+      const col = Math.round((x - boardRect.left - offsetX - 10) / GRID_STEP);
+      const row = Math.round((y - boardRect.top - offsetY - 10) / GRID_STEP);
 
       if(canPlace(row, col, shape)){
         localGhosts.forEach(g => {
@@ -234,13 +237,18 @@ function makeDraggable(blockEl, blockId){
       }
     }
 
-    function onMouseUp(ev) {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
+    function end(ev){
+      let x = ev.clientX ?? ev.changedTouches[0].clientX;
+      let y = ev.clientY ?? ev.changedTouches[0].clientY;
+
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", end);
+      document.removeEventListener("touchmove", move);
+      document.removeEventListener("touchend", end);
 
       const boardRect = boardEl.getBoundingClientRect();
-      const col = Math.round((ev.clientX - boardRect.left - offsetX - 10) / GRID_STEP);
-      const row = Math.round((ev.clientY - boardRect.top - offsetY - 10) / GRID_STEP);
+      const col = Math.round((x - boardRect.left - offsetX - 10) / GRID_STEP);
+      const row = Math.round((y - boardRect.top - offsetY - 10) / GRID_STEP);
 
       if(canPlace(row, col, shape)){
         placeBlock(row, col, shape, color);
@@ -259,9 +267,14 @@ function makeDraggable(blockEl, blockId){
       localGhosts.forEach(g => g.el.remove());
     }
 
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  };
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", end);
+    document.addEventListener("touchmove", move, {passive:false});
+    document.addEventListener("touchend", end);
+  }
+
+  blockEl.addEventListener("mousedown", e => { e.preventDefault(); startDrag(e.clientX, e.clientY); });
+  blockEl.addEventListener("touchstart", e => { e.preventDefault(); startDrag(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
 }
 
 function canPlace(r, c, shape){
