@@ -7,95 +7,132 @@
 <link rel="icon" href="../Logo.png">
 <style>
 :root{ --bg:#020617; --card:#0f172a; --accent:#38bdf8; --text:#e5e7eb; --gold:#facc15; --path:#1e293b; --danger:#f87171;}
-*{box-sizing:border-box}
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
 body{ margin:0; font-family:Inter,sans-serif; background:var(--bg); color:var(--text); overflow:hidden; touch-action:none; }
 
-/* VIEWPORT I MAPA */
-#game-viewport {
-    position: relative; width: 100vw; height: 100vh;
-    overflow: hidden; background: #000;
-}
-#world-map {
-    position: absolute; width: 5000px; height: 5000px;
-    background-image: radial-gradient(circle, #1e293b 1px, transparent 1px);
-    background-size: 50px 50px;
-}
+/* MAPA I KAMERA */
+#game-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #000; }
+#world-map { position: absolute; width: 5000px; height: 5000px; background-image: radial-gradient(circle, #1e293b 1px, transparent 1px); background-size: 60px 60px; }
 
 #player {
-    position: absolute; width: 24px; height: 24px; background: var(--accent);
-    box-shadow: 0 0 20px var(--accent); border-radius: 6px; z-index: 100;
-    transition: transform 0.1s linear;
+    position: absolute; width: 30px; height: 30px; background: var(--accent);
+    box-shadow: 0 0 20px var(--accent); border-radius: 8px; z-index: 100;
 }
 
-/* NODES */
+/* DUŻE KWADRACIKI (NODES) */
 .node {
-    position: absolute; width: 100px; height: 100px; background: var(--card);
-    border: 3px solid var(--path); border-radius: 15px; display: none;
+    position: absolute; width: 140px; height: 140px; background: var(--card);
+    border: 4px solid var(--path); border-radius: 20px; display: none;
     flex-direction: column; align-items: center; justify-content: center;
-    font-size: 11px; text-align: center; padding: 10px; z-index: 50; transition: 0.3s;
+    text-align: center; padding: 10px; z-index: 50; transition: transform 0.2s, border-color 0.2s;
 }
-.node.visible { display: flex; animation: fadeIn 0.5s forwards; }
-.node.can-afford { border-color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
-.node.locked { filter: grayscale(1) opacity(0.3); pointer-events: none; }
+.node.visible { display: flex; animation: fadeIn 0.4s forwards; }
+.node b { font-size: 14px; margin-bottom: 5px; color: var(--accent); }
+.node i { font-size: 11px; opacity: 0.8; font-style: normal; margin-bottom: 8px; line-height: 1.2; }
+.node .cost-txt { font-weight: bold; font-size: 13px; }
+.node.can-afford { border-color: #4ade80; box-shadow: 0 0 20px rgba(74, 222, 128, 0.3); }
 .node.maxed { border-color: var(--gold); }
 
-/* ŚCIEŻKI SVG */
+/* LINIE */
 #path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-line { stroke: var(--path); stroke-width: 4; transition: 0.5s; }
-line.active { stroke: var(--accent); stroke-dasharray: 10; animation: dash 1s linear infinite; }
+line { stroke: var(--path); stroke-width: 6; stroke-linecap: round; }
+line.active { stroke: var(--accent); stroke-dasharray: 12; animation: dash 1.5s linear infinite; }
 
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-@keyframes dash { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+@keyframes dash { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
 
-#ui { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 200; pointer-events: none;}
-.currency { font-size: 32px; font-weight: 800; color: var(--accent); text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+/* UI I STEROWANIE MOBILE */
+#ui { position: fixed; top: 20px; width: 100%; text-align: center; z-index: 200; pointer-events: none; }
+.currency { font-size: 36px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
+
+#mobile-controls {
+    position: fixed; bottom: 30px; left: 20px; display: none; grid-template-areas: ". up ." "left down right"; gap: 10px; z-index: 300;
+}
+.joy-btn {
+    width: 60px; height: 60px; background: rgba(15, 23, 42, 0.8); border: 2px solid var(--accent);
+    border-radius: 15px; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+
+#reset-btn {
+    position: fixed; top: 20px; right: 20px; background: var(--danger); color: white; border: none;
+    padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; display: none; z-index: 400;
+}
 </style>
 </head>
 <body>
 
+<button id="reset-btn" onclick="resetData()">Wyczyść Dane</button>
+
 <div id="ui">
     <div class="currency"><span id="points">0</span> Δ</div>
-    <div style="opacity:0.7">Zysk: <span id="pps">0</span>/s</div>
+    <div style="font-weight: bold;">+<span id="pps">0</span>/s</div>
 </div>
 
 <div id="game-viewport">
     <div id="world-map">
         <svg id="path-layer"></svg>
         <div id="player"></div>
-        </div>
+    </div>
+</div>
+
+<div id="mobile-controls">
+    <div class="joy-btn" style="grid-area: up" id="btn-up">▲</div>
+    <div class="joy-btn" style="grid-area: left" id="btn-left">◀</div>
+    <div class="joy-btn" style="grid-area: down" id="btn-down">▼</div>
+    <div class="joy-btn" style="grid-area: right" id="btn-right">▶</div>
 </div>
 
 <script>
-const currentUser = localStorage.getItem("sp_logged") || "guest";
-const SAVE_KEY = `sp_save_neon_tree_${currentUser}`;
+const currentUser = localStorage.getItem("sp_logged") || null;
+const SAVE_KEY = `sp_save_neon_tree_${currentUser || 'guest'}`;
 
 let state = {
-    points: 0,
-    pps: 1,
-    pX: 2500, pY: 2500, // Start na środku mapy
-    speed: 5,
-    unlockedNodes: ["start"],
-    purchasedLevels: { "start": 0 },
-    lockedOut: [] // Tu trafią ulepszenia, których nie wybrano w "Choose"
+    points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
+    unlockedNodes: ["start"], purchasedLevels: { "start": 0 }, lockedOut: []
 };
 
-// Definicja 10 buttonów (Drzewko)
 const nodes = {
-    "start": { x: 2500, y: 2500, name: "Rdzeń Energii", cost: 10, max: 10, pps: 1, next: ["gen_a", "gen_b"] },
-    "gen_a": { x: 2300, y: 2300, name: "Ścieżka Mocy", cost: 100, max: 5, pps: 5, next: ["choose_1"] },
-    "gen_b": { x: 2700, y: 2300, name: "Ścieżka Prędkości", cost: 100, max: 5, speed: 1, next: ["choose_1"] },
-    "choose_1": { x: 2500, y: 2100, name: "WYBÓR: Specjalizacja", type: "choose", options: ["crit", "steady"], cost: 500, next: [] },
-    "crit": { x: 2300, y: 1900, name: "Niestabilny Kryształ", cost: 1000, max: 1, pps: 50, next: ["end_1"] },
-    "steady": { x: 2700, y: 1900, name: "Stabilny Reaktor", cost: 1000, max: 10, pps: 20, next: ["end_2"] },
-    "end_1": { x: 2100, y: 1700, name: "Moc Pustki", cost: 5000, max: 5, pps: 200, next: [] },
-    "end_2": { x: 2900, y: 1700, name: "Harmonia", cost: 5000, max: 5, pps: 150, next: [] },
-    "speed_boost": { x: 2500, y: 2700, name: "Silnik Turbo", cost: 300, max: 3, speed: 2, next: ["final"] },
-    "final": { x: 2500, y: 2900, name: "Brama Wyjścia", cost: 20000, max: 1, pps: 1000, next: [] }
+    "start": { x: 2500, y: 2500, name: "RDZEŃ", desc: "Zasila Twoje drzewko", cost: 0, max: 1, pps: 1, next: ["gen1"] },
+    "gen1": { x: 2500, y: 2200, name: "GENERATOR I", desc: "Zwiększa zysk punktów", cost: 20, max: 10, pps: 2, next: ["branch_speed", "branch_power"] },
+    "branch_speed": { x: 2200, y: 2000, name: "BUTY", desc: "Szybsze poruszanie się", cost: 100, max: 5, speed: 1.5, next: ["choice1"] },
+    "branch_power": { x: 2800, y: 2000, name: "REAKTOR", desc: "Duży bonus do punktów", cost: 150, max: 10, pps: 10, next: ["choice1"] },
+    "choice1": { x: 2500, y: 1700, name: "BRAMA WYBORU", desc: "Wybierz swoją ścieżkę", type: "choose", options: ["ninja", "tank"], cost: 500, next: [] },
+    "ninja": { x: 2200, y: 1400, name: "NINJA", desc: "Bardzo szybki ruch", cost: 1000, max: 1, speed: 10, next: ["end"] },
+    "tank": { x: 2800, y: 1400, name: "TANK", desc: "Ogromny zysk pasywny", cost: 1000, max: 1, pps: 200, next: ["end"] },
+    "end": { x: 2500, y: 1100, name: "NIESKOŃCZONOŚĆ", desc: "Ostateczny cel", cost: 10000, max: 1, pps: 1000, next: [] }
 };
 
 const keys = {};
 window.onkeydown = e => keys[e.key.toLowerCase()] = true;
 window.onkeyup = e => keys[e.key.toLowerCase()] = false;
+
+// Obsługa Mobile
+if ('ontouchstart' in window) {
+    document.getElementById('mobile-controls').style.display = 'grid';
+    const bind = (id, k) => {
+        const b = document.getElementById(id);
+        b.ontouchstart = (e) => { e.preventDefault(); keys[k] = true; };
+        b.ontouchend = () => keys[k] = false;
+    };
+    bind('btn-up', 'arrowup'); bind('btn-down', 'arrowdown');
+    bind('btn-left', 'arrowleft'); bind('btn-right', 'arrowright');
+}
+
+if(currentUser) document.getElementById('reset-btn').style.display = 'block';
+
+function resetData() {
+    const pass = prompt("Wpisz hasło do konta, aby potwierdzić usunięcie danych:");
+    // W systemie lokalnym pobieramy hasło z bazy użytkowników
+    const users = JSON.parse(localStorage.getItem("sp_users") || "[]");
+    const me = users.find(u => u.u === currentUser);
+    
+    if(me && pass === me.p) {
+        localStorage.removeItem(SAVE_KEY);
+        location.reload();
+    } else {
+        alert("Błędne hasło!");
+    }
+}
 
 function init() {
     const saved = localStorage.getItem(SAVE_KEY);
@@ -106,15 +143,13 @@ function init() {
 
     for (let id in nodes) {
         const n = nodes[id];
-        // Twórz HTML
         const div = document.createElement('div');
         div.className = 'node';
         div.id = `node-${id}`;
-        div.style.left = n.x - 50 + 'px';
-        div.style.top = n.y - 50 + 'px';
+        div.style.left = n.x - 70 + 'px';
+        div.style.top = n.y - 70 + 'px';
         map.appendChild(div);
 
-        // Twórz linie ścieżek
         if (n.next) {
             n.next.forEach(targetId => {
                 const target = nodes[targetId];
@@ -130,34 +165,28 @@ function init() {
 }
 
 function gameLoop() {
-    // Ruch i Kamera
-    let moveX = 0, moveY = 0;
-    if (keys['w'] || keys['arrowup']) moveY -= state.speed;
-    if (keys['s'] || keys['arrowdown']) moveY += state.speed;
-    if (keys['a'] || keys['arrowleft']) moveX -= state.speed;
-    if (keys['d'] || keys['arrowright']) moveX += state.speed;
+    let mx = 0, my = 0;
+    if (keys['w'] || keys['arrowup']) my -= state.speed;
+    if (keys['s'] || keys['arrowdown']) my += state.speed;
+    if (keys['a'] || keys['arrowleft']) mx -= state.speed;
+    if (keys['d'] || keys['arrowright']) mx += state.speed;
 
-    state.pX += moveX; state.pY += moveY;
+    state.pX += mx; state.pY += my;
 
-    // Centrowanie kamery
+    // Kamera na środek
     const v = document.getElementById('game-viewport');
     const m = document.getElementById('world-map');
     m.style.left = (v.clientWidth/2 - state.pX) + 'px';
     m.style.top = (v.clientHeight/2 - state.pY) + 'px';
 
-    const p = document.getElementById('player');
-    p.style.left = (state.pX - 12) + 'px';
-    p.style.top = (state.pY - 12) + 'px';
+    document.getElementById('player').style.left = (state.pX - 15) + 'px';
+    document.getElementById('player').style.top = (state.pY - 15) + 'px';
 
-    // Interakcja
     for (let id in nodes) {
         if (!state.unlockedNodes.includes(id) || state.lockedOut.includes(id)) continue;
-        
         const n = nodes[id];
-        const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
-        
-        if (dist < 60 && state.points >= n.cost) {
-            buyNode(id);
+        if (Math.hypot(state.pX - n.x, state.pY - n.y) < 75) {
+            if (state.points >= n.cost) buyNode(id);
         }
     }
 
@@ -169,32 +198,24 @@ function gameLoop() {
 function buyNode(id) {
     const n = nodes[id];
     const lvls = state.purchasedLevels[id] || 0;
-
     if (lvls >= n.max && n.type !== 'choose') return;
 
     state.points -= n.cost;
-    
     if (n.type === 'choose') {
-        // Logika wyboru
-        const choice = prompt(`Wybierz ulepszenie: ${n.options[0]} czy ${n.options[1]}?`).toLowerCase();
-        const selected = n.options.includes(choice) ? choice : n.options[0];
-        const rejected = n.options.filter(o => o !== selected)[0];
-        
-        state.unlockedNodes.push(selected);
-        state.lockedOut.push(rejected);
-        state.purchasedLevels[id] = 1;
+        const choice = prompt(`Wybierz: ${n.options[0]} lub ${n.options[1]}`);
+        if(n.options.includes(choice)) {
+            state.unlockedNodes.push(choice);
+            state.lockedOut.push(n.options.find(o => o !== choice));
+            state.purchasedLevels[id] = 1;
+        } else { state.points += n.cost; return; }
     } else {
         state.purchasedLevels[id] = lvls + 1;
         if (n.pps) state.pps += n.pps;
         if (n.speed) state.speed += n.speed;
-        
-        // Odblokuj następne i linie
         if (state.purchasedLevels[id] === 1 && n.next) {
-            n.next.forEach(nxt => {
-                if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt);
-            });
+            n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
         }
-        n.cost = Math.floor(n.cost * 1.5);
+        n.cost = Math.floor(n.cost * 1.7);
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
@@ -209,29 +230,15 @@ function updateUI() {
         if (state.unlockedNodes.includes(id) && !state.lockedOut.includes(id)) {
             el.classList.add('visible');
             const lvls = state.purchasedLevels[id] || 0;
-            
-            if (n.type === 'choose') {
-                el.innerHTML = `<b>${n.name}</b><br>KOSZT: ${n.cost}`;
-            } else {
-                el.innerHTML = `<b>${n.name}</b><br>Lvl: ${lvls}/${n.max}<br>Koszt: ${n.cost}`;
-            }
-            
-            if (state.points >= n.cost && lvls < n.max) el.classList.add('can-afford');
-            else el.classList.remove('can-afford');
-            
+            el.innerHTML = `<b>${n.name}</b><i>${n.desc}</i><span class="cost-txt" style="color:${state.points >= n.cost ? '#4ade80' : '#f87171'}">${lvls >= n.max ? 'MAX' : n.cost + ' Δ'}</span>`;
+            if (state.points >= n.cost && lvls < n.max) el.classList.add('can-afford'); else el.classList.remove('can-afford');
             if (lvls >= n.max) el.classList.add('maxed');
-
-            // Aktywuj linie
             if (lvls > 0 && n.next) {
-                n.next.forEach(nxt => {
-                    const line = document.getElementById(`path-${id}-${nxt}`);
-                    if (line) line.classList.add('active');
-                });
+                n.next.forEach(nxt => { const l = document.getElementById(`path-${id}-${nxt}`); if(l) l.classList.add('active'); });
             }
         }
     }
 }
-
 init();
 </script>
 </body>
