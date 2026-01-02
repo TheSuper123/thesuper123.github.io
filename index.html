@@ -64,6 +64,37 @@ text-align:center;
 opacity:.6;
 padding:25px 10px;
 }
+
+/* ===== BANNER COOKIES ===== */
+#cookie-banner{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--card);
+  color:var(--text);
+  padding:15px 20px;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+  display:none;
+  z-index:9999;
+  max-width:90%;
+  text-align:center;
+}
+#cookie-banner button{
+  background:var(--accent);
+  border:none;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  margin:5px 3px 0 3px;
+  color:#020617;
+  font-weight:700;
+}
+#cookie-banner a{
+  color:var(--accent);
+  text-decoration:underline;
+}
 </style>
 </head>
 
@@ -88,8 +119,18 @@ Zero reklam. Zero śmieci. 100% fun.
 © 2026 SpinnerRealYT Games
 </footer>
 
+<!-- ===== BANNER COOKIES ===== -->
+<div id="cookie-banner">
+<p>
+Ta strona używa ciasteczek (cookies) w celu poprawnego działania strony.  
+<a href="privacy.html" target="_blank">Polityka prywatności</a>
+</p>
+<button onclick="acceptCookies()">Akceptuję</button>
+<button onclick="rejectCookies()">Odrzuć</button>
+</div>
+
 <script>
-/* ===== LISTA GIER ===== */
+/* ===== MENU ===== */
 const games = [
   { file: "games/saper.html", name: "Saper" },
   { file: "games/quiz.html", name: "Quiz Polityczny" },
@@ -113,6 +154,26 @@ games.forEach(g => {
   btn.onclick = () => location.href = g.file;
   nav.appendChild(btn);
 });
+
+/* ===== COOKIES ===== */
+const cookieBanner = document.getElementById("cookie-banner");
+
+function acceptCookies(){
+  localStorage.setItem("cookiesAccepted","true");
+  cookieBanner.style.display = "none";
+}
+
+function rejectCookies(){
+  localStorage.setItem("cookiesAccepted","false");
+  cookieBanner.style.display = "none";
+}
+
+window.onload = () => {
+  const consent = localStorage.getItem("cookiesAccepted");
+  if(consent !== "true" && consent !== "false"){
+    cookieBanner.style.display = "block";
+  }
+};
 </script>
 
 </body>
