@@ -2,56 +2,84 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flappy Bird - SpinnerRealYT Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Neon Flappy – SpinnerRealYT Games</title>
+
+<link rel="icon" type="image/png" href="../Logo.png?v=2">
+<link rel="apple-touch-icon" href="../Logo.png?v=2">
+
 <style>
-:root {
-    --bg: #020617;
-    --card: #0f172a;
-    --accent: #38bdf8;
-    --text: #e5e7eb;
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
+  user-select: none;
+  overflow-x: hidden;
 }
 
-body {
-    margin: 0;
-    font-family: 'Inter', system-ui, sans-serif;
-    background: radial-gradient(circle at top, #020617, #000);
-    color: var(--text);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
+/* NAGŁÓWEK IDENTYCZNY JAK W SAPERZE */
+header{
+  display:flex; align-items:center; gap:15px; padding:15px 20px;
+  background:rgba(15,23,42,.9); backdrop-filter:blur(10px);
+  position:sticky; top:0; z-index:100;
 }
+header img{height:32px}
+nav button{
+  background:none; border:none; color:var(--text); font-size:15px;
+  padding:8px 14px; border-radius:10px; cursor:pointer;
+}
+nav button:hover{ background:rgba(56,189,248,.15); color:var(--accent); }
 
-/* KONTENER GRY */
-.game-container {
-    background: var(--card);
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+main{ max-width: 600px; margin:auto; padding:10px; }
+
+/* KARTA GRY */
+.card{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border-radius:20px; padding:15px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  position: relative;
+}
+h2{text-align:center; margin-top:0;}
+
+#ui-score {
     text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+/* KONTENER CANVAS */
+#game-wrapper {
     position: relative;
-    border: 1px solid rgba(255,255,255,0.1);
+    width: fit-content;
+    margin: 10px auto;
 }
 
 canvas {
-    background: #111; /* Ciemne tło gry dla kontrastu neonu */
+    background: #000;
     border-radius: 12px;
     display: block;
-    margin: 15px auto;
     border: 2px solid var(--accent);
     cursor: pointer;
+    max-width: 100%;
+    height: auto;
 }
 
-h1 { margin: 0; color: var(--accent); font-size: 24px; }
-
-/* MENU TRUDNOŚCI */
+/* OVERLAY MENU WYBORU */
 #overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(15, 23, 42, 0.95);
-    border-radius: 20px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -60,56 +88,64 @@ h1 { margin: 0; color: var(--accent); font-size: 24px; }
 }
 
 .diff-btn {
-    background: none;
+    background: var(--card);
     border: 1px solid var(--accent);
     color: var(--accent);
     padding: 10px 20px;
     margin: 5px;
     border-radius: 10px;
     cursor: pointer;
-    width: 150px;
+    width: 160px;
     font-weight: bold;
     transition: 0.2s;
 }
+.diff-btn:active { transform: scale(0.95); }
 
-.diff-btn:hover {
-    background: rgba(56, 189, 248, 0.15);
-    transform: scale(1.05);
-}
-
-#ui-score {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
+/* STOPKA IDENTYCZNA */
+footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 </style>
 </head>
 <body>
 
-<div class="game-container">
-    <h1>NEON FLAPPY</h1>
-    <div id="ui-score">Wynik: 0 | Najlepszy: <span id="high-score">0</span></div>
+<header>
+  <img src="../Logo.png" alt="SpinnerRealYT">
+  <nav><button onclick="location.href='../index.html'">Menu</button></nav>
+</header>
+
+<main>
+  <div class="card">
+    <h2>🚀 Neon Flappy</h2>
+    <div id="ui-score">Score: 0 | Best: <span id="high-score">0</span></div>
     
-    <canvas id="game" width="360" height="500"></canvas>
-    
-    <div id="overlay">
-        <h2>Wybierz trudność</h2>
-        <button class="diff-btn" onclick="startGame('amator')">AMATOR</button>
-        <button class="diff-btn" onclick="startGame('latwy')">ŁATWY</button>
-        <button class="diff-btn" onclick="startGame('sredni')">ŚREDNI</button>
-        <button class="diff-btn" onclick="startGame('trudny')">TRUDNY</button>
-        <p style="font-size: 12px; opacity: 0.6; margin-top: 15px;">Klikaj lub użyj spacji, aby lecieć</p>
+    <div id="game-wrapper">
+        <canvas id="game" width="320" height="480"></canvas>
+        
+        <div id="overlay">
+            <h3 id="msg">Wybierz Poziom</h3>
+            <button class="diff-btn" onclick="startGame('amator')">AMATOR</button>
+            <button class="diff-btn" onclick="startGame('latwy')">ŁATWY</button>
+            <button class="diff-btn" onclick="startGame('sredni')">ŚREDNI</button>
+            <button class="diff-btn" onclick="startGame('trudny')">TRUDNY</button>
+        </div>
     </div>
-</div>
+
+    <div style="text-align:center; margin-top:10px; font-size: 13px; opacity: 0.7;">
+        Klikaj lub Space, aby skoczyć
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 SpinnerRealYT Games</footer>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("ui-score");
 const highScoreEl = document.getElementById("high-score");
+const overlay = document.getElementById("overlay");
+const msg = document.getElementById("msg");
 
-// Stan gry
-let bird = { x: 50, y: 250, w: 25, h: 25, dy: 0 };
+let bird = { x: 50, y: 240, w: 24, h: 24, dy: 0 };
 let pipes = [];
 let score = 0;
 let gameOver = true;
@@ -117,123 +153,94 @@ let frame = 0;
 let highScore = localStorage.getItem("flappy_high") || 0;
 highScoreEl.textContent = highScore;
 
-// Konfiguracja poziomów
 const config = {
-    amator: { gravity: 0.4, jump: -7, gap: 180, speed: 2, pipeFreq: 120 },
-    latwy:  { gravity: 0.5, jump: -8, gap: 160, speed: 2.5, pipeFreq: 100 },
-    sredni: { gravity: 0.6, jump: -9, gap: 140, speed: 3, pipeFreq: 80 },
-    trudny: { gravity: 0.7, jump: -10, gap: 120, speed: 4, pipeFreq: 70 }
+    amator: { gravity: 0.35, jump: -6.5, gap: 170, speed: 2, pipeFreq: 110 },
+    latwy:  { gravity: 0.45, jump: -7.5, gap: 150, speed: 2.5, pipeFreq: 95 },
+    sredni: { gravity: 0.55, jump: -8.5, gap: 135, speed: 3, pipeFreq: 85 },
+    trudny: { gravity: 0.65, jump: -9.5, gap: 120, speed: 3.8, pipeFreq: 75 }
 };
-let currentDiff = config.sredni;
+let cur = config.sredni;
 
 function startGame(diff) {
-    currentDiff = config[diff];
-    resetGame();
-    document.getElementById("overlay").style.display = "none";
-}
-
-function resetGame() {
-    bird.y = 250;
+    cur = config[diff];
+    bird.y = 240;
     bird.dy = 0;
     pipes = [];
     score = 0;
     frame = 0;
     gameOver = false;
-    requestAnimationFrame(update);
+    overlay.style.display = "none";
+    loop();
 }
 
-function handleInput() {
-    if(!gameOver) bird.dy = currentDiff.jump;
-}
+function input() { if(!gameOver) bird.dy = cur.jump; }
+window.addEventListener("keydown", (e) => { if(e.code === "Space") { e.preventDefault(); input(); } });
+canvas.addEventListener("touchstart", (e) => { e.preventDefault(); input(); });
+canvas.addEventListener("mousedown", input);
 
-document.addEventListener("keydown", (e) => { if(e.code === "Space") handleInput(); });
-canvas.addEventListener("mousedown", handleInput);
-
-function generatePipe() {
-    const minHeight = 50;
-    const maxHeight = canvas.height - currentDiff.gap - minHeight;
-    const y = Math.floor(Math.random() * (maxHeight - minHeight)) + minHeight;
-    pipes.push({ x: canvas.width, y: y, passed: false });
-}
-
-function update() {
+function loop() {
     if(gameOver) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Fizyka ptaka
-    bird.dy += currentDiff.gravity;
+    // Ptak
+    bird.dy += cur.gravity;
     bird.y += bird.dy;
-
-    // Rysuj ptaka (Neonowy kwadrat)
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = "#38bdf8";
     ctx.fillStyle = "#38bdf8";
+    ctx.shadowBlur = 10; ctx.shadowColor = "#38bdf8";
     ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
     ctx.shadowBlur = 0;
 
     // Rury
-    if(frame % currentDiff.pipeFreq === 0) generatePipe();
+    if(frame % cur.pipeFreq === 0) {
+        let gapY = Math.random() * (canvas.height - cur.gap - 100) + 50;
+        pipes.push({ x: canvas.width, y: gapY, passed: false });
+    }
 
     for(let i = pipes.length - 1; i >= 0; i--) {
         let p = pipes[i];
-        p.x -= currentDiff.speed;
+        p.x -= cur.speed;
 
-        // Rysuj rury
         ctx.fillStyle = "#1e293b";
         ctx.strokeStyle = "#38bdf8";
         ctx.lineWidth = 2;
-
-        // Górna rura
+        
+        // Góra
         ctx.fillRect(p.x, 0, 50, p.y);
-        ctx.strokeRect(p.x, 0, 50, p.y);
+        ctx.strokeRect(p.x, -2, 50, p.y + 2);
+        
+        // Dół
+        ctx.fillRect(p.x, p.y + cur.gap, 50, canvas.height);
+        ctx.strokeRect(p.x, p.y + cur.gap, 50, canvas.height - (p.y + cur.gap) + 2);
 
-        // Dolna rura
-        const bottomY = p.y + currentDiff.gap;
-        ctx.fillRect(p.x, bottomY, 50, canvas.height - bottomY);
-        ctx.strokeRect(p.x, bottomY, 50, canvas.height - bottomY);
-
-        // Kolizja
-        if (
-            bird.x < p.x + 50 &&
-            bird.x + bird.w > p.x &&
-            (bird.y < p.y || bird.y + bird.h > bottomY)
-        ) {
-            endGame();
+        // Kolizje
+        if (bird.x < p.x + 50 && bird.x + bird.w > p.x && (bird.y < p.y || bird.y + bird.h > p.y + cur.gap)) {
+            die();
         }
-
-        // Punktacja
-        if(!p.passed && p.x + 50 < bird.x) {
+        if (!p.passed && p.x + 50 < bird.x) {
             score++;
             p.passed = true;
         }
-
-        // Usuwanie rur poza ekranem
-        if(p.x < -60) pipes.splice(i, 1);
+        if (p.x < -60) pipes.splice(i, 1);
     }
 
-    // Granice ekranu
-    if(bird.y + bird.h > canvas.height || bird.y < 0) {
-        endGame();
-    }
+    if(bird.y + bird.h > canvas.height || bird.y < 0) die();
 
-    scoreEl.innerHTML = `Wynik: ${score} | Najlepszy: ${highScore}`;
+    scoreEl.innerHTML = `Score: ${score} | Best: ${highScore}`;
     frame++;
-    requestAnimationFrame(update);
+    requestAnimationFrame(loop);
 }
 
-function endGame() {
+function die() {
     gameOver = true;
     if(score > highScore) {
         highScore = score;
         localStorage.setItem("flappy_high", highScore);
         highScoreEl.textContent = highScore;
     }
-    
-    setTimeout(() => {
-        document.getElementById("overlay").style.display = "flex";
-        document.querySelector("#overlay h2").textContent = "Wynik: " + score;
-    }, 500);
+    msg.textContent = "Koniec! Wynik: " + score;
+    overlay.style.display = "flex";
 }
 </script>
 </body>
