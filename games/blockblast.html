@@ -4,93 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Block Blast – SpinnerRealYT Games</title>
-<link rel="icon" href="../Logo.png">
+<link rel="icon" href="../Logo.png"> <!-- LOGO W KARTECIE -->
 
 <style>
 :root{
---bg:#020617;
---card:#0f172a;
---accent:#38bdf8;
---text:#e5e7eb;
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
 }
 *{box-sizing:border-box}
 body{
-margin:0;
-font-family:Inter,system-ui,sans-serif;
-background:radial-gradient(circle at top,#020617,#000);
-color:var(--text);
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
 }
 header{
-display:flex;
-align-items:center;
-gap:15px;
-padding:15px 20px;
-background:rgba(15,23,42,.9);
-backdrop-filter:blur(10px);
-position:sticky;
-top:0;
-z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 20px;
+  background:rgba(15,23,42,.9);
+  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:100;
 }
 header img{height:42px}
-nav button{
-background:none;
-border:none;
-color:var(--text);
-font-size:15px;
-padding:8px 14px;
-border-radius:10px;
-cursor:pointer;
+header button{
+  background:none;
+  border:none;
+  color:var(--text);
+  font-size:15px;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
 }
-nav button:hover,
-nav button.active{
-background:rgba(56,189,248,.15);
-color:var(--accent);
+header button:hover{
+  background:rgba(56,189,248,.15);
+  color:var(--accent);
 }
 main{max-width:1100px;margin:auto;padding:25px}
 .card{
-background:linear-gradient(180deg,#0f172a,#020617);
-border-radius:20px;
-padding:20px;
-box-shadow:0 20px 60px rgba(0,0,0,.6);
-margin-bottom:25px;
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  margin-bottom:25px;
 }
-h2{text-align:center}
+h2{text-align:center;margin:0 0 15px 0;}
 footer{
-text-align:center;
-opacity:.6;
-padding:25px 10px;
+  text-align:center;
+  opacity:.6;
+  padding:25px 10px;
 }
 
 /* BLOCK BLAST */
+#score{
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
 #board{
-display:grid;
-grid-template-columns:repeat(9,40px);
-grid-template-rows:repeat(9,40px);
-gap:2px;
-justify-content:center;
-margin:20px auto;
-position:relative;
+  display:grid;
+  grid-template-columns:repeat(9,40px);
+  grid-template-rows:repeat(9,40px);
+  gap:2px;
+  justify-content:center;
+  position:relative;
 }
 .cell{
-width:40px;
-height:40px;
-background:#334155;
-border-radius:5px;
+  width:40px;
+  height:40px;
+  background:#334155;
+  border-radius:5px;
 }
 #next-blocks{
-display:flex;
-justify-content:center;
-gap:15px;
-margin-top:10px;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-top:15px;
 }
 .block{
-position:absolute;
-pointer-events:none;
-z-index:50;
-opacity:.8;
+  display:grid;
+  grid-template-rows:repeat(auto,40px);
+  position:relative;
+  cursor:pointer;
 }
-#score{text-align:center;margin-top:10px;font-size:18px;font-weight:700;}
-button{cursor:pointer;background:#020617;color:white;border:1px solid #334155;border-radius:10px;padding:6px 10px;margin:5px;}
+.block-cell{
+  width:40px;
+  height:40px;
+  background:#2563eb;
+  border-radius:3px;
+  border:1px solid #020617;
+}
+.ghost{
+  position:absolute;
+  pointer-events:none;
+  opacity:0.4;
+  z-index:10;
+}
 </style>
 </head>
 
@@ -98,25 +113,15 @@ button{cursor:pointer;background:#020617;color:white;border:1px solid #334155;bo
 
 <header>
 <img src="../Logo.png" alt="SpinnerRealYT">
-<nav id="nav"></nav>
+<button onclick="location.href='../index.html'">Menu</button>
 </header>
 
 <main>
 <div class="card">
-<h2>🟦 Block Blast 9×9</h2>
-
-<p style="text-align:center">Przeciągnij klocek na planszę i ułóż tak, żeby wypełnić linię lub kolumnę.</p>
-
-<div id="board"></div>
-
-<div id="next-blocks"></div>
-
+<h2>🟦 Block Blast 9x9</h2>
 <div id="score">Punkty: 0</div>
-
-<div style="text-align:center">
-<button id="restart">Restart</button>
-</div>
-
+<div id="board"></div>
+<div id="next-blocks"></div>
 </div>
 </main>
 
@@ -125,57 +130,34 @@ button{cursor:pointer;background:#020617;color:white;border:1px solid #334155;bo
 </footer>
 
 <script>
-/* MENU */
-const games = [
-  { file: "../index.html", name: "Menu" }
+/* ===== KONFIG ===== */
+const ROWS = 9, COLS = 9, CELL_SIZE = 40;
+const COLORS = ["#2563eb","#16a34a","#dc2626","#f59e0b","#8b5cf6"];
+const SHAPES = [
+  [[1,1,1]],          // pozioma
+  [[1],[1],[1]],      // pionowa
+  [[1,1],[1,1]],      // kwadrat
+  [[1,1,1],[0,1,0]],  // T
+  [[1,1,0],[0,1,1]],  // S
+  [[0,1,1],[1,1,0]],  // Z
 ];
 
-const nav = document.getElementById("nav");
-const menuBtn = document.createElement("button");
-menuBtn.textContent = "Menu";
-menuBtn.classList.add("active");
-menuBtn.onclick = () => location.href = "../index.html";
-nav.appendChild(menuBtn);
+const boardEl = document.getElementById("board");
+const nextEl = document.getElementById("next-blocks");
+const scoreEl = document.getElementById("score");
 
-games.forEach(g=>{
-  const b=document.createElement("button");
-  b.textContent=g.name;
-  if(g.name==="Block Blast") b.classList.add("active");
-  b.onclick=()=>location.href=g.file;
-  nav.appendChild(b);
-});
-</script>
+let board, score, nextBlocks = [];
+let ghost = null;
 
-<script>
-/* ===== LOGIKA ===== */
-
-const ROWS=9, COLS=9;
-const COLORS=["#2563eb","#16a34a","#dc2626","#f59e0b","#8b5cf6"];
-const SHAPES=[
-  [[1,1,1]],              // linia pozioma
-  [[1],[1],[1]],          // linia pionowa
-  [[1,1],[1,1]],          // kwadrat
-  [[1,1,1],[0,1,0]],      // T
-  [[1,1,0],[0,1,1]],      // S
-  [[0,1,1],[1,1,0]],      // Z
-];
-
-const boardEl=document.getElementById("board");
-const nextEl=document.getElementById("next-blocks");
-const scoreEl=document.getElementById("score");
-const restartBtn=document.getElementById("restart");
-
-let board, score, nextShapes;
-let currentDrag=null;
-
+/* ===== INICJALIZACJA ===== */
 function init(){
-  score=0;
-  scoreEl.textContent="Punkty: "+score;
-  board=Array.from({length:ROWS},()=>Array(COLS).fill(null));
-  boardEl.innerHTML="";
+  score = 0;
+  scoreEl.textContent = "Punkty: " + score;
+  board = Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  boardEl.innerHTML = "";
   for(let r=0;r<ROWS;r++){
     for(let c=0;c<COLS;c++){
-      const cell=document.createElement("div");
+      const cell = document.createElement("div");
       cell.className="cell";
       cell.dataset.r=r;
       cell.dataset.c=c;
@@ -185,107 +167,116 @@ function init(){
   generateNext();
 }
 
+/* ===== GENEROWANIE BLOKÓW ===== */
 function generateNext(){
-  nextEl.innerHTML="";
-  nextShapes=[];
+  nextEl.innerHTML = "";
+  nextBlocks = [];
   for(let i=0;i<3;i++){
-    const shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
-    const color=COLORS[Math.floor(Math.random()*COLORS.length)];
-    const div=document.createElement("div");
-    div.className="block";
-    div.dataset.shape=JSON.stringify(shape);
-    div.dataset.color=color;
-    div.style.width=shape[0].length*40+"px";
-    div.style.height=shape.length*40+"px";
-    div.style.background=color;
-    nextEl.appendChild(div);
-    nextShapes.push({shape,color});
-    makeDraggable(div,i);
-  }
-}
-
-function makeDraggable(div,index){
-  div.onmousedown=function(e){
-    currentDrag={div,shape:nextShapes[index].shape,color:nextShapes[index].color};
-    document.body.appendChild(div);
-    moveAt(e.pageX,e.pageY);
-    document.onmousemove=dragMove;
-    div.style.opacity="1";
-    div.style.pointerEvents="none";
-  };
-  document.onmouseup=function(){
-    if(currentDrag){
-      placeOnBoard(currentDrag);
-      currentDrag.div.style.pointerEvents="auto";
-      currentDrag=null;
-      document.onmousemove=null;
+    const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
+    const color = COLORS[Math.floor(Math.random()*COLORS.length)];
+    const blockDiv = document.createElement("div");
+    blockDiv.className="block";
+    blockDiv.dataset.shape = JSON.stringify(shape);
+    blockDiv.dataset.color = color;
+    blockDiv.style.gridTemplateColumns = `repeat(${shape[0].length}, ${CELL_SIZE}px)`;
+    for(let r=0;r<shape.length;r++){
+      for(let c=0;c<shape[r].length;c++){
+        if(shape[r][c]){
+          const sq = document.createElement("div");
+          sq.className="block-cell";
+          sq.style.background=color;
+          blockDiv.appendChild(sq);
+        }
+      }
     }
-  };
-}
-
-function dragMove(e){
-  if(!currentDrag) return;
-  moveAt(e.pageX,e.pageY);
-}
-
-function moveAt(x,y){
-  const {div,shape}=currentDrag;
-  div.style.left=x- (shape[0].length*20) + "px";
-  div.style.top=y- (shape.length*20) + "px";
-}
-
-function placeOnBoard({div,shape,color}){
-  const boardRect=boardEl.getBoundingClientRect();
-  const cx=event.clientX-boardRect.left;
-  const cy=event.clientY-boardRect.top;
-  const cellSize=boardRect.width/COLS;
-
-  const col=Math.floor(cx/cellSize);
-  const row=Math.floor(cy/cellSize);
-
-  if(row>=0 && row<ROWS && col>=0 && col<COLS && canPlace(row,col,shape)){
-    shape.forEach((rArr, dr)=>{
-      rArr.forEach((cellVal, dc)=>{
-        if(cellVal) board[row+dr][col+dc]=color;
-      });
-    });
-    updateBoard();
-    removeFull();
-    scoreEl.textContent="Punkty: "+score;
-    div.remove();
-    nextShapes.shift();
-    if(nextShapes.length===0) generateNext();
-  } else {
-    resetBlockPosition(div);
+    nextEl.appendChild(blockDiv);
+    nextBlocks.push({div:blockDiv,shape,color});
+    makeDraggable(blockDiv);
   }
 }
 
-function resetBlockPosition(div){
-  nextEl.appendChild(div);
-  div.style.position="relative";
-  div.style.left="0";
-  div.style.top="0";
+/* ===== DRAG & DROP ===== */
+function makeDraggable(block){
+  block.onmousedown = function(e){
+    const shape = JSON.parse(block.dataset.shape);
+    const color = block.dataset.color;
+    ghost = document.createElement("div");
+    ghost.className="ghost";
+    ghost.style.width = shape[0].length*CELL_SIZE + "px";
+    ghost.style.height = shape.length*CELL_SIZE + "px";
+    ghost.style.background = "rgba(255,255,255,0.2)";
+    ghost.style.border = "2px dashed #fff";
+    document.body.appendChild(ghost);
+
+    function move(e){
+      ghost.style.left = e.pageX - CELL_SIZE/2 + "px";
+      ghost.style.top = e.pageY - CELL_SIZE/2 + "px";
+    }
+    move(e);
+
+    function onMove(e){
+      move(e);
+    }
+
+    function onUp(e){
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      if(placeBlock(e,shape,color)){
+        block.remove();
+        nextBlocks = nextBlocks.filter(b=>b.div!==block);
+        if(nextBlocks.length===0) generateNext();
+      }
+      ghost.remove();
+      ghost=null;
+    }
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }
 }
 
+/* ===== SPRAWDZENIE I POŁOŻENIE BLOKU ===== */
 function canPlace(r,c,shape){
   for(let dr=0; dr<shape.length; dr++){
     for(let dc=0; dc<shape[dr].length; dc++){
       if(shape[dr][dc]){
-        if(r+dr>=ROWS||c+dc>=COLS||board[r+dr][c+dc]) return false;
+        if(r+dr>=ROWS || c+dc>=COLS || board[r+dr][c+dc]) return false;
       }
     }
   }
   return true;
 }
 
+function placeBlock(e,shape,color){
+  const rect = boardEl.getBoundingClientRect();
+  const c = Math.floor((e.clientX - rect.left)/CELL_SIZE);
+  const r = Math.floor((e.clientY - rect.top)/CELL_SIZE);
+  if(canPlace(r,c,shape)){
+    for(let dr=0; dr<shape.length; dr++){
+      for(let dc=0; dc<shape[dr].length; dc++){
+        if(shape[dr][dc]){
+          board[r+dr][c+dc] = color;
+        }
+      }
+    }
+    updateBoard();
+    removeFull();
+    scoreEl.textContent = "Punkty: "+score;
+    return true;
+  }
+  return false;
+}
+
+/* ===== UPDATE PLANSZY ===== */
 function updateBoard(){
   [...boardEl.children].forEach(cell=>{
     const r=parseInt(cell.dataset.r);
     const c=parseInt(cell.dataset.c);
-    cell.style.background=board[r][c] || "#334155";
+    cell.style.background = board[r][c] || "#334155";
   });
 }
 
+/* ===== USUWANIE PEŁNYCH LINII ===== */
 function removeFull(){
   let lines=0;
   // wiersze
@@ -307,8 +298,6 @@ function removeFull(){
 }
 
 init();
-restartBtn.onclick=init;
-
 </script>
 
 </body>
