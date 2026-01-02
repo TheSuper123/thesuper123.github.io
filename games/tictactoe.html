@@ -14,8 +14,7 @@
   --card:#0f172a;
   --accent:#38bdf8;
   --text:#e5e7eb;
-  /* Responsywny rozmiar komórki: od 60px do 120px */
-  --cell-size: clamp(60px, 25vw, 120px);
+  --cell-size: clamp(65px, 25vw, 120px);
 }
 *{box-sizing:border-box}
 body{
@@ -49,7 +48,7 @@ h2{text-align:center; margin-top:0; color: var(--accent);}
 #controls {
   display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;
 }
-.row-ctrl { display: flex; gap: 10px; align-items: center; }
+.row-ctrl { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
 
 select, button#restart {
   background:#1e293b; color:white; border:1px solid #334155;
@@ -57,7 +56,6 @@ select, button#restart {
 }
 button#restart { background: var(--accent); color: #020617; font-weight: bold; border: none; }
 
-/* TIC TAC TOE BOARD */
 #board{
   display:grid;
   grid-template-columns: repeat(3, var(--cell-size));
@@ -80,7 +78,8 @@ button#restart { background: var(--accent); color: #020617; font-weight: bold; b
 .cell.o-color { color: #f87171; }
 
 #status{
-  text-align:center; font-size: 1.2rem; font-weight: 500; min-height: 1.5em;
+  text-align:center; font-size: 1.3rem; font-weight: 600; min-height: 1.6em;
+  padding: 10px; border-radius: 10px;
 }
 
 footer{ text-align:center; opacity:.6; padding:25px 10px; font-size: 12px; }
@@ -100,19 +99,20 @@ footer{ text-align:center; opacity:.6; padding:25px 10px; font-size: 12px; }
 
     <div id="controls">
       <div class="row-ctrl">
-        <span>Poziom:</span>
+        <span>Tryb:</span>
         <select id="difficulty">
-          <option value="amator">Amator</option>
-          <option value="easy">Łatwy</option>
-          <option value="medium">Średni</option>
-          <option value="hard">Trudny (AI)</option>
+          <option value="pvp">👥 2 Graczy (Lokalnie)</option>
+          <option value="amator">🤖 AI: Amator</option>
+          <option value="easy">🤖 AI: Łatwy</option>
+          <option value="medium">🤖 AI: Średni</option>
+          <option value="hard">🤖 AI: Trudny</option>
         </select>
       </div>
       <button id="restart">Nowa Gra</button>
     </div>
 
     <div id="board"></div>
-    <div id="status">Twój ruch (❌)</div>
+    <div id="status">Zaczyna Gracz 1 (❌)</div>
   </div>
 </main>
 
@@ -124,52 +124,70 @@ const statusEl = document.getElementById("status");
 const restartBtn = document.getElementById("restart");
 const difficultySelect = document.getElementById("difficulty");
 
-let board, gameOver;
+let board, gameOver, currentPlayer;
 
 function init(){
   board = Array(9).fill(null);
   gameOver = false;
+  currentPlayer = "X"; 
   boardEl.innerHTML="";
-  statusEl.textContent="Twój ruch (❌)";
-  statusEl.style.color = "white";
-
+  updateStatus();
+  
   for(let i=0;i<9;i++){
     const cell=document.createElement("div");
     cell.className="cell";
-    cell.dataset.index = i;
-    cell.onclick=()=>playerMove(i);
+    cell.onclick=()=>makeMove(i);
     boardEl.appendChild(cell);
   }
 }
 
-function render(){
-  const cells = boardEl.children;
-  board.forEach((val, i) => {
-    cells[i].textContent = val || "";
-    if(val === "X") cells[i].className = "cell x-color";
-    if(val === "O") cells[i].className = "cell o-color";
-  });
-}
-
-function playerMove(i){
-  if(gameOver || board[i]) return;
-  board[i]="X";
-  render();
-  if(checkWin("X")) return end("🎉 Wygrałeś!");
-  if(board.every(Boolean)) return end("🤝 Remis");
+function updateStatus() {
+  if (gameOver) return;
+  const isPvP = difficultySelect.value === "pvp";
   
-  statusEl.textContent = "Czekam na ruch...";
-  setTimeout(aiMove, 400);
+  if (currentPlayer === "X") {
+    statusEl.textContent = isPvP ? "Tura: Gracz 1 (❌)" : "Twój ruch (❌)";
+    statusEl.style.color = "var(--accent)";
+  } else {
+    statusEl.textContent = isPvP ? "Tura: Gracz 2 (⭕)" : "Ruch AI (⭕)";
+    statusEl.style.color = "#f87171";
+  }
 }
 
-function aiMove(){
+function makeMove(i){
+  if(gameOver || board[i]) return;
+  
+  board[i] = currentPlayer;
+  render();
+  
+  if(checkWin(currentPlayer)){
+    const isPvP = difficultySelect.value === "pvp";
+    const winner = currentPlayer === "X" ? (isPvP ? "Gracz 1 (❌)" : "Wygrałeś!") : (isPvP ? "Gracz 2 (⭕)" : "AI Wygrało!");
+    return end(`🎉 ${winner} wygrywa!`);
+  }
+  
+  if(board.every(Boolean)) return end("🤝 Remis!");
+
+  currentPlayer = currentPlayer === "X" ? "O" : "X";
+  updateStatus();
+
+  // Jeśli nie PvP i kolej na "O", wykonaj ruch AI
+  if (difficultySelect.value !== "pvp" && currentPlayer === "O") {
+    setTimeout(aiTurn, 500);
+  }
+}
+
+function aiTurn(){
   if(gameOver) return;
   const move = getAIMove();
-  board[move]="O";
+  board[move] = "O";
   render();
-  if(checkWin("O")) return end("💀 Przegrałeś");
-  if(board.every(Boolean)) return end("🤝 Remis");
-  statusEl.textContent="Twój ruch (❌)";
+  
+  if(checkWin("O")) return end("💀 Przegrałeś!");
+  if(board.every(Boolean)) return end("🤝 Remis!");
+  
+  currentPlayer = "X";
+  updateStatus();
 }
 
 function getAIMove(){
@@ -184,9 +202,7 @@ function getAIMove(){
     if(win!==null) return win;
   }
 
-  if(level==="hard"){
-    return minimax(board, "O").index;
-  }
+  if(level==="hard") return minimax(board, "O").index;
 
   return empty[Math.floor(Math.random()*empty.length)];
 }
@@ -227,14 +243,22 @@ function checkStatic(b, p){
   return w.some(c=>c.every(i=>b[i]===p));
 }
 
-function end(msg){
-  gameOver=true;
-  statusEl.textContent=msg;
-  if(msg.includes("Wygrałeś")) statusEl.style.color = "#4ade80";
-  if(msg.includes("Przegrałeś")) statusEl.style.color = "#f87171";
+function render(){
+  const cells = boardEl.children;
+  board.forEach((val, i) => {
+    cells[i].textContent = val || "";
+    if(val === "X") cells[i].className = "cell x-color";
+    if(val === "O") cells[i].className = "cell o-color";
+  });
 }
 
-restartBtn.onclick=init;
+function end(msg){
+  gameOver = true;
+  statusEl.textContent = msg;
+  statusEl.style.color = msg.includes("Remis") ? "#e5e7eb" : (currentPlayer === "X" ? "var(--accent)" : "#f87171");
+}
+
+restartBtn.onclick = init;
 init();
 </script>
 
