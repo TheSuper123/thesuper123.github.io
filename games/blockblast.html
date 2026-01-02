@@ -78,17 +78,20 @@ footer{
   height:40px;
   background:#334155;
   border-radius:5px;
+  position:relative;
 }
 #next-blocks{
   display:flex;
   justify-content:center;
   gap:15px;
   margin-top:15px;
+  flex-wrap:wrap;
 }
 .block{
   display:grid;
   cursor:pointer;
   user-select:none;
+  position:relative;
 }
 .block-cell{
   width:40px;
@@ -103,7 +106,7 @@ footer{
   border-radius:3px;
   opacity:0.5;
   pointer-events:none;
-  z-index:50;
+  z-index:10;
 }
 </style>
 </head>
@@ -144,9 +147,10 @@ const boardEl=document.getElementById("board");
 const nextEl=document.getElementById("next-blocks");
 const scoreEl=document.getElementById("score");
 
-let board, score=0, nextBlocks=[];
-let ghostCells=[];
+let board=[], score=0, nextBlocks=[];
+let ghost=[];
 
+/* ===== INICJALIZACJA PLANSZY ===== */
 function init(){
   board=Array.from({length:ROWS},()=>Array(COLS).fill(null));
   boardEl.innerHTML="";
@@ -164,8 +168,9 @@ function init(){
   generateNext();
 }
 
-function updateScore(){scoreEl.textContent="Punkty: "+score;}
+function updateScore(){ scoreEl.textContent="Punkty: "+score; }
 
+/* ===== GENEROWANIE BLOKÓW ===== */
 function generateNext(){
   nextEl.innerHTML="";
   nextBlocks=[];
@@ -193,65 +198,88 @@ function generateNext(){
   }
 }
 
+/* ===== DRAG & DROP Z GHOST NA PLANSZY ===== */
 function makeDraggable(block){
   block.onmousedown=function(e){
     e.preventDefault();
     const shape=JSON.parse(block.dataset.shape);
     const color=block.dataset.color;
-    ghostCells.forEach(g=>g.remove());
-    ghostCells=[];
 
-    shape.forEach((row,r)=>{
-      row.forEach((cell,c)=>{
-        if(cell){
+    // Pozycja startowa myszy
+    const offsetX=e.offsetX;
+    const offsetY=e.offsetY;
+
+    // dodajemy ghost na planszy
+    ghost.forEach(g=>g.div.remove());
+    ghost=[];
+    for(let r=0;r<shape.length;r++){
+      for(let c=0;c<shape[r].length;c++){
+        if(shape[r][c]){
           const g=document.createElement("div");
           g.className="ghost-cell";
           g.style.background=color;
-          document.body.appendChild(g);
-          ghostCells.push({div:g,r,c});
+          boardEl.appendChild(g);
+          ghost.push({div:g, r, c});
         }
-      });
-    });
-
-    function moveGhost(ev){
-      const rect=boardEl.getBoundingClientRect();
-      const col=Math.floor((ev.clientX-rect.left)/CELL_SIZE);
-      const row=Math.floor((ev.clientY-rect.top)/CELL_SIZE);
-      ghostCells.forEach(g=>{
-        const gx=(col+g.c)*CELL_SIZE+rect.left;
-        const gy=(row+g.r)*CELL_SIZE+rect.top;
-        g.div.style.left=gx+"px";
-        g.div.style.top=gy+"px";
-      });
+      }
     }
 
-    function onMove(ev){ moveGhost(ev); }
-    function onUp(ev){
-      document.removeEventListener("mousemove",onMove);
-      document.removeEventListener("mouseup",onUp);
+    function moveBlock(ev){
+      block.style.position="absolute";
+      block.style.left=ev.pageX-offsetX+"px";
+      block.style.top=ev.pageY-offsetY+"px";
+
       const rect=boardEl.getBoundingClientRect();
-      const col=Math.floor((ev.clientX-rect.left)/CELL_SIZE);
-      const row=Math.floor((ev.clientY-rect.top)/CELL_SIZE);
+      let col=Math.floor((ev.clientX-rect.left)/CELL_SIZE);
+      let row=Math.floor((ev.clientY-rect.top)/CELL_SIZE);
+
+      if(canPlace(row,col,shape)){
+        ghost.forEach(g=>{
+          g.div.style.left=(col+g.c)*CELL_SIZE+"px";
+          g.div.style.top=(row+g.r)*CELL_SIZE+"px";
+        });
+      } else {
+        ghost.forEach(g=>{
+          g.div.style.left="-100px"; g.div.style.top="-100px";
+        });
+      }
+    }
+
+    function dropBlock(ev){
+      document.removeEventListener("mousemove",moveBlock);
+      document.removeEventListener("mouseup",dropBlock);
+
+      const rect=boardEl.getBoundingClientRect();
+      let col=Math.floor((ev.clientX-rect.left)/CELL_SIZE);
+      let row=Math.floor((ev.clientY-rect.top)/CELL_SIZE);
+
       if(canPlace(row,col,shape)){
         placeBlock(row,col,shape,color);
         block.remove();
         nextBlocks=nextBlocks.filter(b=>b.div!==block);
         if(nextBlocks.length===0) generateNext();
+      } else {
+        // wraca do panelu
+        block.style.position="";
+        block.style.left="";
+        block.style.top="";
       }
-      ghostCells.forEach(g=>g.div.remove());
-      ghostCells=[];
+
+      ghost.forEach(g=>g.div.remove());
+      ghost=[];
     }
 
-    document.addEventListener("mousemove",onMove);
-    document.addEventListener("mouseup",onUp);
+    document.addEventListener("mousemove",moveBlock);
+    document.addEventListener("mouseup",dropBlock);
   }
 }
 
+/* ===== SPRAWDZENIE I POŁOŻENIE BLOKU ===== */
 function canPlace(r,c,shape){
   for(let dr=0;dr<shape.length;dr++){
     for(let dc=0;dc<shape[dr].length;dc++){
       if(shape[dr][dc]){
-        if(r+dr>=ROWS || c+dc>=COLS || board[r+dr][c+dc]) return false;
+        if(r+dr>=ROWS||c+dc>=COLS||board[r+dr][c+dc]) return false;
       }
     }
   }
