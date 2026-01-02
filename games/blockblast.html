@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Block Blast - SpinnerRealYT Games</title>
 <link rel="icon" href="Logo.png">
-
 <style>
 :root{
   --bg:#020617;
@@ -21,6 +20,9 @@ body{
   font-family:Inter,system-ui,sans-serif;
   background:radial-gradient(circle at top,#020617,#000);
   color:var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 header{
   display:flex;
@@ -29,6 +31,7 @@ header{
   padding:15px 20px;
   background:rgba(15,23,42,.9);
   backdrop-filter:blur(10px);
+  width:100%;
   position:sticky;
   top:0;
   z-index:100;
@@ -48,13 +51,23 @@ nav button.active{
   background:rgba(56,189,248,.15);
   color:var(--accent);
 }
-main{max-width:1100px;margin:auto;padding:25px}
+main{
+  max-width:1100px;
+  width:100%;
+  padding:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
 .card{
   background:linear-gradient(180deg,#0f172a,#020617);
   border-radius:20px;
   padding:20px;
   box-shadow:0 20px 60px rgba(0,0,0,.6);
   margin-bottom:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 h1,h2{text-align:center}
 footer{
@@ -87,6 +100,7 @@ footer{
   display:grid;
   gap:2px;
   cursor:pointer;
+  position:relative;
 }
 .block .cell{
   width:30px;
@@ -164,7 +178,7 @@ const SHAPES=[
   [[0,1],[0,1],[1,1]], // L odwrotne
 ];
 
-// Tworzenie nowych bloków
+// Generowanie nowych bloków
 function generateNextBlocks(){
   nextBlocks = [];
   nextEl.innerHTML='';
@@ -184,11 +198,64 @@ function generateNextBlocks(){
         blockDiv.appendChild(div);
       });
     });
-    blockDiv.draggable = true;
-    blockDiv.ondragstart = e=>{
-      e.dataTransfer.setData("blockIndex",blockDiv.dataset.index);
-    };
     nextEl.appendChild(blockDiv);
+    enableDrag(blockDiv,i);
+  }
+}
+
+// Własne przeciąganie (mysz i dotyk)
+function enableDrag(blockDiv,index){
+  let offsetX=0, offsetY=0, moving=false;
+  blockDiv.addEventListener("mousedown",startDrag);
+  blockDiv.addEventListener("touchstart",startDrag);
+  
+  function startDrag(e){
+    e.preventDefault();
+    moving=true;
+    const rect = blockDiv.getBoundingClientRect();
+    offsetX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    blockDiv.style.position="absolute";
+    blockDiv.style.zIndex=1000;
+    document.body.appendChild(blockDiv);
+    moveDrag(e);
+    window.addEventListener("mousemove",moveDrag);
+    window.addEventListener("touchmove",moveDrag,{passive:false});
+    window.addEventListener("mouseup",drop);
+    window.addEventListener("touchend",drop);
+  }
+
+  function moveDrag(e){
+    if(!moving) return;
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    blockDiv.style.left = (x-offsetX) + "px";
+    blockDiv.style.top = (y-offsetY) + "px";
+  }
+
+  function drop(e){
+    moving=false;
+    const rect = boardEl.getBoundingClientRect();
+    const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+    const c0 = Math.floor((x-rect.left)/42);
+    const r0 = Math.floor((y-rect.top)/42);
+    const shape = nextBlocks[index];
+    if(canPlace(shape,r0,c0)){
+      placeBlock(shape,r0,c0);
+      generateNextBlocks();
+      checkGameOver();
+    } else {
+      // wraca do nextBlocks
+      blockDiv.style.position="relative";
+      blockDiv.style.left="0px";
+      blockDiv.style.top="0px";
+      nextEl.appendChild(blockDiv);
+    }
+    window.removeEventListener("mousemove",moveDrag);
+    window.removeEventListener("touchmove",moveDrag);
+    window.removeEventListener("mouseup",drop);
+    window.removeEventListener("touchend",drop);
   }
 }
 
@@ -237,23 +304,6 @@ function checkLines(){
     }
   }
   scoreEl.textContent = "Punkty: "+score;
-}
-
-// Obsługa upuszczania bloków
-boardEl.ondragover = e=>e.preventDefault();
-boardEl.ondrop = e=>{
-  const index = e.dataTransfer.getData("blockIndex");
-  const shape = nextBlocks[index];
-  const rect = boardEl.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const c0 = Math.floor(x/42); // uwzględnia gap
-  const r0 = Math.floor(y/42);
-  if(canPlace(shape,r0,c0)){
-    placeBlock(shape,r0,c0);
-    generateNextBlocks();
-    checkGameOver();
-  }
 }
 
 // Sprawdzenie końca gry
