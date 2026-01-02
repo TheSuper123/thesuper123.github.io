@@ -5,125 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Block Blast - SpinnerRealYT Games</title>
 <link rel="icon" href="Logo.png">
+
 <style>
 :root{
-  --bg:#020617;
-  --card:#0f172a;
-  --accent:#38bdf8;
-  --text:#e5e7eb;
-  --cell:#334155;
-  --filled:#38bdf8;
-  --preview:#2563eb; /* podgląd podczas przeciągania */
+--bg:#020617;
+--card:#0f172a;
+--accent:#38bdf8;
+--text:#e5e7eb;
+--cell:#334155;
+--filled:#38bdf8;
+--preview:#2563eb;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:radial-gradient(circle at top,#020617,#000);
-  color:var(--text);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+margin:0;
+font-family:Inter,system-ui,sans-serif;
+background:radial-gradient(circle at top,#020617,#000);
+color:var(--text);
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:15px 20px;
-  background:rgba(15,23,42,.9);
-  backdrop-filter:blur(10px);
-  width:100%;
-  position:sticky;
-  top:0;
-  z-index:100;
+display:flex;
+align-items:center;
+gap:15px;
+padding:15px 20px;
+background:rgba(15,23,42,.9);
+backdrop-filter:blur(10px);
+position:sticky;
+top:0;
+z-index:100;
+width:100%;
+justify-content:space-between;
 }
 header img{height:42px; cursor:pointer;}
 nav button{
-  background:none;
-  border:none;
-  color:var(--text);
-  font-size:15px;
-  padding:8px 14px;
-  border-radius:10px;
-  cursor:pointer;
+background:none;
+border:none;
+color:var(--text);
+font-size:15px;
+padding:8px 14px;
+border-radius:10px;
+cursor:pointer;
 }
 nav button:hover,
 nav button.active{
-  background:rgba(56,189,248,.15);
-  color:var(--accent);
+background:rgba(56,189,248,.15);
+color:var(--accent);
 }
 main{
-  max-width:1100px;
-  width:100%;
-  padding:25px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+max-width:1100px;
+margin:auto;
+padding:25px;
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 .card{
-  background:linear-gradient(180deg,#0f172a,#020617);
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-  margin-bottom:25px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+background:linear-gradient(180deg,#0f172a,#020617);
+border-radius:20px;
+padding:20px;
+box-shadow:0 20px 60px rgba(0,0,0,.6);
+margin-bottom:25px;
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 h1,h2{text-align:center}
 footer{
-  text-align:center;
-  opacity:.6;
-  padding:25px 10px;
+text-align:center;
+opacity:.6;
+padding:25px 10px;
 }
 
-/* BLOCK BLAST */
+/* ===== BLOCK BLAST ===== */
 #board{
-  display:grid;
-  margin:20px auto;
-  gap:2px;
-  background:var(--bg);
+display:grid;
+margin:20px auto;
+gap:2px;
+background:var(--bg);
 }
 .cell{
-  width:40px;
-  height:40px;
-  background:var(--cell);
-  border-radius:5px;
-  transition: background 0.2s;
+width:40px;
+height:40px;
+background:var(--cell);
+border-radius:5px;
+transition: background 0.2s;
 }
 .filled{background:var(--filled);}
 .preview{background:var(--preview);}
 #nextBlocks{
-  display:flex;
-  justify-content:center;
-  margin-top:15px;
-  gap:15px;
+display:flex;
+justify-content:center;
+margin-top:15px;
+gap:15px;
 }
 .block{
-  display:grid;
-  gap:2px;
-  cursor:pointer;
-  position:relative;
+display:grid;
+gap:2px;
+cursor:pointer;
+position:relative;
 }
 .block .cell{
-  width:30px;
-  height:30px;
+width:30px;
+height:30px;
 }
 #score{
-  text-align:center;
-  font-size:20px;
-  margin-top:10px;
-  font-weight:bold;
+text-align:center;
+font-size:20px;
+margin-top:10px;
+font-weight:bold;
 }
-</style>
-</head>
+
 <body>
 
 <header>
-<img src="Logo.png" alt="SpinnerRealYT" onclick="window.location='https://spinnerrealyt.pl'">
-<nav>
-<button onclick="window.location='https://spinnerrealyt.pl'">Menu</button>
-</nav>
+<img src="Logo.png" alt="SpinnerRealYT" onclick="window.location='index.html'">
+<nav id="nav"></nav>
 </header>
 
 <main>
@@ -142,27 +141,44 @@ Umieszczaj bloki na planszy i czyść linie! Gra kończy się, gdy nie możesz w
 <footer>
 © 2026 SpinnerRealYT Games
 </footer>
-
+  
 <script>
-const BOARD_SIZE = 9;
-const boardEl = document.getElementById("board");
-const nextEl = document.getElementById("nextBlocks");
-const scoreEl = document.getElementById("score");
-let board = [];
-let score = 0;
-let nextBlocks = [];
+/* ===== MENU ===== */
+const games = [
+  { file: "index.html", name: "Menu" }
+];
 
-boardEl.style.gridTemplateColumns = `repeat(${BOARD_SIZE},40px)`;
-boardEl.style.gridTemplateRows = `repeat(${BOARD_SIZE},40px)`;
+const nav = document.getElementById("nav");
+const menuBtn = document.createElement("button");
+menuBtn.textContent = "Menu";
+menuBtn.classList.add("active");
+menuBtn.onclick = () => window.location.href="index.html";
+nav.appendChild(menuBtn);
 
-// Tworzenie planszy
+games.forEach(g=>{
+  const btn=document.createElement("button");
+  btn.textContent=g.name;
+  btn.onclick=()=>location.href=g.file;
+  nav.appendChild(btn);
+});
+  
+/* ===== BLOCK BLAST ===== */
+const BOARD_SIZE=9;
+const boardEl=document.getElementById("board");
+const nextEl=document.getElementById("nextBlocks");
+const scoreEl=document.getElementById("score");
+let board=[],score=0,nextBlocks=[];
+
+boardEl.style.gridTemplateColumns=`repeat(${BOARD_SIZE},40px)`;
+boardEl.style.gridTemplateRows=`repeat(${BOARD_SIZE},40px)`;
+
 function initBoard(){
-  boardEl.innerHTML = '';
-  board = [];
+  boardEl.innerHTML='';
+  board=[];
   for(let r=0;r<BOARD_SIZE;r++){
     let row=[];
     for(let c=0;c<BOARD_SIZE;c++){
-      const cell = document.createElement("div");
+      const cell=document.createElement("div");
       cell.classList.add("cell");
       boardEl.appendChild(cell);
       row.push(cell);
@@ -172,7 +188,6 @@ function initBoard(){
 }
 initBoard();
 
-// Kształty bloków
 const SHAPES=[
   [[1,1,1,1]], 
   [[1],[1],[1],[1]], 
@@ -187,39 +202,35 @@ function generateNextBlocks(){
   nextBlocks=[];
   nextEl.innerHTML='';
   for(let i=0;i<3;i++){
-    const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
+    const shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
     nextBlocks.push(shape);
-    const blockDiv = document.createElement("div");
+    const blockDiv=document.createElement("div");
     blockDiv.classList.add("block");
     blockDiv.dataset.index=i;
-    blockDiv.style.gridTemplateColumns = `repeat(${shape[0].length},30px)`;
-    blockDiv.style.gridTemplateRows = `repeat(${shape.length},30px)`;
-    shape.forEach(row=>{
-      row.forEach(cell=>{
-        const div = document.createElement("div");
-        div.classList.add("cell");
-        if(cell) div.classList.add("filled");
-        blockDiv.appendChild(div);
-      });
-    });
+    blockDiv.style.gridTemplateColumns=`repeat(${shape[0].length},30px)`;
+    blockDiv.style.gridTemplateRows=`repeat(${shape.length},30px)`;
+    shape.forEach(row=>row.forEach(cell=>{
+      const div=document.createElement("div");
+      div.classList.add("cell");
+      if(cell) div.classList.add("filled");
+      blockDiv.appendChild(div);
+    }));
     nextEl.appendChild(blockDiv);
     enableDrag(blockDiv,i);
   }
 }
 
-// Przeciąganie z podglądem
 function enableDrag(blockDiv,index){
-  let offsetX=0, offsetY=0, moving=false;
-  let previewCells = [];
+  let offsetX=0,offsetY=0,moving=false,previewCells=[];
   blockDiv.addEventListener("mousedown",startDrag);
   blockDiv.addEventListener("touchstart",startDrag);
 
   function startDrag(e){
     e.preventDefault();
     moving=true;
-    const rect = blockDiv.getBoundingClientRect();
-    offsetX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    const rect=blockDiv.getBoundingClientRect();
+    offsetX=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    offsetY=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
     blockDiv.style.position="absolute";
     blockDiv.style.zIndex=1000;
     document.body.appendChild(blockDiv);
@@ -232,32 +243,28 @@ function enableDrag(blockDiv,index){
 
   function moveDrag(e){
     if(!moving) return;
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    blockDiv.style.left = (x-offsetX) + "px";
-    blockDiv.style.top = (y-offsetY) + "px";
-
-    // podgląd na planszy
-    const rect = boardEl.getBoundingClientRect();
-    const r0 = Math.floor((y-rect.top)/42);
-    const c0 = Math.floor((x-rect.left)/42);
+    const x=e.touches?e.touches[0].clientX:e.clientX;
+    const y=e.touches?e.touches[0].clientY:e.clientY;
+    blockDiv.style.left=(x-offsetX)+"px";
+    blockDiv.style.top=(y-offsetY)+"px";
+    const rect=boardEl.getBoundingClientRect();
+    const r0=Math.floor((y-rect.top)/42);
+    const c0=Math.floor((x-rect.left)/42);
     clearPreview();
-    const shape = nextBlocks[index];
+    const shape=nextBlocks[index];
     previewCells=[];
-    for(let r=0;r<shape.length;r++){
-      for(let c=0;c<shape[r].length;c++){
+    for(let r=0;r<shape.length;r++)
+      for(let c=0;c<shape[r].length;c++)
         if(shape[r][c]){
-          const rr = r0+r;
-          const cc = c0+c;
-          if(rr>=0||cc>=0||rr<BOARD_SIZE||cc<BOARD_SIZE){
-            if(board[rr] && board[rr][cc]){
+          const rr=r0+r;
+          const cc=c0+c;
+          if(rr>=0&&cc>=0&&rr<BOARD_SIZE&&cc<BOARD_SIZE){
+            if(board[rr]&&board[rr][cc]){
               board[rr][cc].classList.add("preview");
               previewCells.push(board[rr][cc]);
             }
           }
         }
-      }
-    }
   }
 
   function clearPreview(){
@@ -267,12 +274,12 @@ function enableDrag(blockDiv,index){
 
   function drop(e){
     moving=false;
-    const rect = boardEl.getBoundingClientRect();
-    const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-    const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-    const c0 = Math.floor((x-rect.left)/42);
-    const r0 = Math.floor((y-rect.top)/42);
-    const shape = nextBlocks[index];
+    const rect=boardEl.getBoundingClientRect();
+    const x=e.changedTouches?e.changedTouches[0].clientX:e.clientX;
+    const y=e.changedTouches?e.changedTouches[0].clientY:e.clientY;
+    const c0=Math.floor((x-rect.left)/42);
+    const r0=Math.floor((y-rect.top)/42);
+    const shape=nextBlocks[index];
     clearPreview();
     if(canPlace(shape,r0,c0)){
       placeBlock(shape,r0,c0);
@@ -291,62 +298,49 @@ function enableDrag(blockDiv,index){
   }
 }
 
-// Sprawdzenie czy można umieścić
-function canPlace(shape, r0, c0){
-  for(let r=0;r<shape.length;r++){
+function canPlace(shape,r0,c0){
+  for(let r=0;r<shape.length;r++)
     for(let c=0;c<shape[r].length;c++){
       if(shape[r][c]){
         const rr=r0+r;
         const cc=c0+c;
-        if(rr<0||cc<0||rr>=BOARD_SIZE||cc>=BOARD_SIZE||board[rr][cc].classList.contains("filled")) return false;
+        if(rr<0||cc<0||rr>=BOARD_SIZE||cc>=BOARD_SIZE||board[rr][cc].classList.contains("filled"))
+          return false;
       }
     }
-  }
   return true;
 }
 
-// Umieszczenie klocka
 function placeBlock(shape,r0,c0){
-  for(let r=0;r<shape.length;r++){
-    for(let c=0;c<shape[r].length;c++){
-      if(shape[r][c]){
-        board[r0+r][c0+c].classList.add("filled");
-      }
-    }
-  }
+  for(let r=0;r<shape.length;r++)
+    for(let c=0;c<shape[r].length;c++)
+      if(shape[r][c]) board[r0+r][c0+c].classList.add("filled");
   checkLines();
 }
 
-// Sprawdzenie wypełnionych linii
 function checkLines(){
-  for(let r=0;r<BOARD_SIZE;r++){
+  for(let r=0;r<BOARD_SIZE;r++)
     if(board[r].every(cell=>cell.classList.contains("filled"))){
       board[r].forEach(cell=>cell.classList.remove("filled"));
       score+=10;
     }
-  }
   for(let c=0;c<BOARD_SIZE;c++){
     let full=true;
-    for(let r=0;r<BOARD_SIZE;r++){
+    for(let r=0;r<BOARD_SIZE;r++)
       if(!board[r][c].classList.contains("filled")) full=false;
-    }
     if(full){
       for(let r=0;r<BOARD_SIZE;r++) board[r][c].classList.remove("filled");
       score+=10;
     }
   }
-  scoreEl.textContent = "Punkty: "+score;
+  scoreEl.textContent="Punkty: "+score;
 }
 
-// Koniec gry
 function checkGameOver(){
-  for(const shape of nextBlocks){
-    for(let r=0;r<BOARD_SIZE;r++){
-      for(let c=0;c<BOARD_SIZE;c++){
+  for(const shape of nextBlocks)
+    for(let r=0;r<BOARD_SIZE;r++)
+      for(let c=0;c<BOARD_SIZE;c++)
         if(canPlace(shape,r,c)) return;
-      }
-    }
-  }
   alert("Koniec gry! Wynik: "+score);
   location.reload();
 }
