@@ -13,6 +13,7 @@
   --text:#e5e7eb;
   --cell:#334155;
   --filled:#38bdf8;
+  --preview:#2563eb; /* podgląd podczas przeciągania */
 }
 *{box-sizing:border-box}
 body{
@@ -27,7 +28,7 @@ body{
 header{
   display:flex;
   align-items:center;
-  gap:15px;
+  justify-content:space-between;
   padding:15px 20px;
   background:rgba(15,23,42,.9);
   backdrop-filter:blur(10px);
@@ -36,7 +37,7 @@ header{
   top:0;
   z-index:100;
 }
-header img{height:42px}
+header img{height:42px; cursor:pointer;}
 nav button{
   background:none;
   border:none;
@@ -88,8 +89,10 @@ footer{
   height:40px;
   background:var(--cell);
   border-radius:5px;
+  transition: background 0.2s;
 }
 .filled{background:var(--filled);}
+.preview{background:var(--preview);}
 #nextBlocks{
   display:flex;
   justify-content:center;
@@ -117,8 +120,10 @@ footer{
 <body>
 
 <header>
-<img src="Logo.png" alt="SpinnerRealYT">
-<nav id="nav"></nav>
+<img src="Logo.png" alt="SpinnerRealYT" onclick="window.location='https://spinnerrealyt.pl'">
+<nav>
+<button onclick="window.location='https://spinnerrealyt.pl'">Menu</button>
+</nav>
 </header>
 
 <main>
@@ -167,27 +172,26 @@ function initBoard(){
 }
 initBoard();
 
-// Definicja bloków (różne kształty)
+// Kształty bloków
 const SHAPES=[
-  [[1,1,1,1]], // linia pozioma
-  [[1],[1],[1],[1]], // linia pionowa
-  [[1,1],[1,1]], // kwadrat
-  [[1,1,0],[0,1,1]], // zygzak
-  [[0,1,1],[1,1,0]], // zygzak odwrotny
-  [[1,0],[1,0],[1,1]], // L
-  [[0,1],[0,1],[1,1]], // L odwrotne
+  [[1,1,1,1]], 
+  [[1],[1],[1],[1]], 
+  [[1,1],[1,1]], 
+  [[1,1,0],[0,1,1]], 
+  [[0,1,1],[1,1,0]], 
+  [[1,0],[1,0],[1,1]], 
+  [[0,1],[0,1],[1,1]], 
 ];
 
-// Generowanie nowych bloków
 function generateNextBlocks(){
-  nextBlocks = [];
+  nextBlocks=[];
   nextEl.innerHTML='';
   for(let i=0;i<3;i++){
     const shape = SHAPES[Math.floor(Math.random()*SHAPES.length)];
     nextBlocks.push(shape);
     const blockDiv = document.createElement("div");
     blockDiv.classList.add("block");
-    blockDiv.dataset.index = i;
+    blockDiv.dataset.index=i;
     blockDiv.style.gridTemplateColumns = `repeat(${shape[0].length},30px)`;
     blockDiv.style.gridTemplateRows = `repeat(${shape.length},30px)`;
     shape.forEach(row=>{
@@ -203,12 +207,13 @@ function generateNextBlocks(){
   }
 }
 
-// Własne przeciąganie (mysz i dotyk)
+// Przeciąganie z podglądem
 function enableDrag(blockDiv,index){
   let offsetX=0, offsetY=0, moving=false;
+  let previewCells = [];
   blockDiv.addEventListener("mousedown",startDrag);
   blockDiv.addEventListener("touchstart",startDrag);
-  
+
   function startDrag(e){
     e.preventDefault();
     moving=true;
@@ -231,6 +236,33 @@ function enableDrag(blockDiv,index){
     const y = e.touches ? e.touches[0].clientY : e.clientY;
     blockDiv.style.left = (x-offsetX) + "px";
     blockDiv.style.top = (y-offsetY) + "px";
+
+    // podgląd na planszy
+    const rect = boardEl.getBoundingClientRect();
+    const r0 = Math.floor((y-rect.top)/42);
+    const c0 = Math.floor((x-rect.left)/42);
+    clearPreview();
+    const shape = nextBlocks[index];
+    previewCells=[];
+    for(let r=0;r<shape.length;r++){
+      for(let c=0;c<shape[r].length;c++){
+        if(shape[r][c]){
+          const rr = r0+r;
+          const cc = c0+c;
+          if(rr>=0||cc>=0||rr<BOARD_SIZE||cc<BOARD_SIZE){
+            if(board[rr] && board[rr][cc]){
+              board[rr][cc].classList.add("preview");
+              previewCells.push(board[rr][cc]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function clearPreview(){
+    previewCells.forEach(cell=>cell.classList.remove("preview"));
+    previewCells=[];
   }
 
   function drop(e){
@@ -241,12 +273,12 @@ function enableDrag(blockDiv,index){
     const c0 = Math.floor((x-rect.left)/42);
     const r0 = Math.floor((y-rect.top)/42);
     const shape = nextBlocks[index];
+    clearPreview();
     if(canPlace(shape,r0,c0)){
       placeBlock(shape,r0,c0);
       generateNextBlocks();
       checkGameOver();
     } else {
-      // wraca do nextBlocks
       blockDiv.style.position="relative";
       blockDiv.style.left="0px";
       blockDiv.style.top="0px";
@@ -259,21 +291,21 @@ function enableDrag(blockDiv,index){
   }
 }
 
-// Sprawdzenie, czy blok pasuje
+// Sprawdzenie czy można umieścić
 function canPlace(shape, r0, c0){
   for(let r=0;r<shape.length;r++){
     for(let c=0;c<shape[r].length;c++){
       if(shape[r][c]){
-        const rr = r0+r;
-        const cc = c0+c;
-        if(rr>=BOARD_SIZE || cc>=BOARD_SIZE || board[rr][cc].classList.contains("filled")) return false;
+        const rr=r0+r;
+        const cc=c0+c;
+        if(rr<0||cc<0||rr>=BOARD_SIZE||cc>=BOARD_SIZE||board[rr][cc].classList.contains("filled")) return false;
       }
     }
   }
   return true;
 }
 
-// Umieszczenie bloku
+// Umieszczenie klocka
 function placeBlock(shape,r0,c0){
   for(let r=0;r<shape.length;r++){
     for(let c=0;c<shape[r].length;c++){
@@ -306,7 +338,7 @@ function checkLines(){
   scoreEl.textContent = "Punkty: "+score;
 }
 
-// Sprawdzenie końca gry
+// Koniec gry
 function checkGameOver(){
   for(const shape of nextBlocks){
     for(let r=0;r<BOARD_SIZE;r++){
