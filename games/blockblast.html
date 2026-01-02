@@ -117,6 +117,8 @@ font-size:20px;
 margin-top:10px;
 font-weight:bold;
 }
+</style>
+</head>
 
 <body>
 
@@ -141,27 +143,16 @@ Umieszczaj bloki na planszy i czyść linie! Gra kończy się, gdy nie możesz w
 <footer>
 © 2026 SpinnerRealYT Games
 </footer>
-  
+
 <script>
 /* ===== MENU ===== */
-const games = [
-  { file: "index.html", name: "Menu" }
-];
-
-const nav = document.getElementById("nav");
-const menuBtn = document.createElement("button");
-menuBtn.textContent = "Menu";
+const nav=document.getElementById("nav");
+const menuBtn=document.createElement("button");
+menuBtn.textContent="Menu";
 menuBtn.classList.add("active");
-menuBtn.onclick = () => window.location.href="index.html";
+menuBtn.onclick=()=>window.location.href="index.html";
 nav.appendChild(menuBtn);
 
-games.forEach(g=>{
-  const btn=document.createElement("button");
-  btn.textContent=g.name;
-  btn.onclick=()=>location.href=g.file;
-  nav.appendChild(btn);
-});
-  
 /* ===== BLOCK BLAST ===== */
 const BOARD_SIZE=9;
 const boardEl=document.getElementById("board");
@@ -195,7 +186,7 @@ const SHAPES=[
   [[1,1,0],[0,1,1]], 
   [[0,1,1],[1,1,0]], 
   [[1,0],[1,0],[1,1]], 
-  [[0,1],[0,1],[1,1]], 
+  [[0,1],[0,1],[1,1]]
 ];
 
 function generateNextBlocks(){
@@ -223,7 +214,7 @@ function generateNextBlocks(){
 function enableDrag(blockDiv,index){
   let offsetX=0,offsetY=0,moving=false,previewCells=[];
   blockDiv.addEventListener("mousedown",startDrag);
-  blockDiv.addEventListener("touchstart",startDrag);
+  blockDiv.addEventListener("touchstart",startDrag,{passive:false});
 
   function startDrag(e){
     e.preventDefault();
@@ -247,6 +238,8 @@ function enableDrag(blockDiv,index){
     const y=e.touches?e.touches[0].clientY:e.clientY;
     blockDiv.style.left=(x-offsetX)+"px";
     blockDiv.style.top=(y-offsetY)+"px";
+
+    // preview
     const rect=boardEl.getBoundingClientRect();
     const r0=Math.floor((y-rect.top)/42);
     const c0=Math.floor((x-rect.left)/42);
@@ -259,10 +252,8 @@ function enableDrag(blockDiv,index){
           const rr=r0+r;
           const cc=c0+c;
           if(rr>=0&&cc>=0&&rr<BOARD_SIZE&&cc<BOARD_SIZE){
-            if(board[rr]&&board[rr][cc]){
-              board[rr][cc].classList.add("preview");
-              previewCells.push(board[rr][cc]);
-            }
+            board[rr][cc].classList.add("preview");
+            previewCells.push(board[rr][cc]);
           }
         }
   }
@@ -277,20 +268,20 @@ function enableDrag(blockDiv,index){
     const rect=boardEl.getBoundingClientRect();
     const x=e.changedTouches?e.changedTouches[0].clientX:e.clientX;
     const y=e.changedTouches?e.changedTouches[0].clientY:e.clientY;
-    const c0=Math.floor((x-rect.left)/42);
     const r0=Math.floor((y-rect.top)/42);
+    const c0=Math.floor((x-rect.left)/42);
     const shape=nextBlocks[index];
     clearPreview();
     if(canPlace(shape,r0,c0)){
       placeBlock(shape,r0,c0);
       generateNextBlocks();
       checkGameOver();
-    } else {
-      blockDiv.style.position="relative";
-      blockDiv.style.left="0px";
-      blockDiv.style.top="0px";
-      nextEl.appendChild(blockDiv);
     }
+    // reset block
+    blockDiv.style.position="relative";
+    blockDiv.style.left="0px";
+    blockDiv.style.top="0px";
+    nextEl.appendChild(blockDiv);
     window.removeEventListener("mousemove",moveDrag);
     window.removeEventListener("touchmove",moveDrag);
     window.removeEventListener("mouseup",drop);
@@ -347,6 +338,5 @@ function checkGameOver(){
 
 generateNextBlocks();
 </script>
-
 </body>
 </html>
