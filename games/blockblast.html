@@ -150,7 +150,6 @@ const scoreEl=document.getElementById("score");
 let board=[], score=0, nextBlocks=[];
 let ghost=[];
 
-/* ===== INICJALIZACJA PLANSZY ===== */
 function init(){
   board=Array.from({length:ROWS},()=>Array(COLS).fill(null));
   boardEl.innerHTML="";
@@ -170,7 +169,6 @@ function init(){
 
 function updateScore(){ scoreEl.textContent="Punkty: "+score; }
 
-/* ===== GENEROWANIE BLOKÓW ===== */
 function generateNext(){
   nextEl.innerHTML="";
   nextBlocks=[];
@@ -198,18 +196,15 @@ function generateNext(){
   }
 }
 
-/* ===== DRAG & DROP Z GHOST NA PLANSZY ===== */
 function makeDraggable(block){
   block.onmousedown=function(e){
     e.preventDefault();
     const shape=JSON.parse(block.dataset.shape);
     const color=block.dataset.color;
-
-    // Pozycja startowa myszy
     const offsetX=e.offsetX;
     const offsetY=e.offsetY;
 
-    // dodajemy ghost na planszy
+    // Ghost na planszy
     ghost.forEach(g=>g.div.remove());
     ghost=[];
     for(let r=0;r<shape.length;r++){
@@ -219,16 +214,18 @@ function makeDraggable(block){
           g.className="ghost-cell";
           g.style.background=color;
           boardEl.appendChild(g);
-          ghost.push({div:g, r, c});
+          ghost.push({div:g,r,c});
         }
       }
     }
 
     function moveBlock(ev){
+      // normalny blok przy myszce
       block.style.position="absolute";
       block.style.left=ev.pageX-offsetX+"px";
       block.style.top=ev.pageY-offsetY+"px";
 
+      // oblicz pozycję względem planszy
       const rect=boardEl.getBoundingClientRect();
       let col=Math.floor((ev.clientX-rect.left)/CELL_SIZE);
       let row=Math.floor((ev.clientY-rect.top)/CELL_SIZE);
@@ -240,7 +237,8 @@ function makeDraggable(block){
         });
       } else {
         ghost.forEach(g=>{
-          g.div.style.left="-100px"; g.div.style.top="-100px";
+          g.div.style.left="-100px";
+          g.div.style.top="-100px";
         });
       }
     }
@@ -259,7 +257,6 @@ function makeDraggable(block){
         nextBlocks=nextBlocks.filter(b=>b.div!==block);
         if(nextBlocks.length===0) generateNext();
       } else {
-        // wraca do panelu
         block.style.position="";
         block.style.left="";
         block.style.top="";
@@ -274,7 +271,6 @@ function makeDraggable(block){
   }
 }
 
-/* ===== SPRAWDZENIE I POŁOŻENIE BLOKU ===== */
 function canPlace(r,c,shape){
   for(let dr=0;dr<shape.length;dr++){
     for(let dc=0;dc<shape[dr].length;dc++){
