@@ -26,11 +26,12 @@ body{ margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); co
     text-align: center; padding: 15px; z-index: 50; transition: 0.2s;
 }
 .node.visible { display: flex; animation: fadeIn 0.4s forwards; }
-.node b { font-size: 14px; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
-.node .type-tag { font-size: 9px; background: rgba(56,189,248,0.2); padding: 2px 6px; border-radius: 10px; margin-bottom: 5px; }
-.node i { font-size: 11px; opacity: 0.7; font-style: normal; margin-bottom: 5px; line-height: 1.2; min-height: 26px; }
-.node small { font-size: 12px; font-weight: bold; margin-bottom: 5px; }
-.node .cost-txt { font-weight: 800; font-size: 14px; }
+.node .up-number { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 2px; }
+.node b { font-size: 13px; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+.node .type-tag { font-size: 9px; background: rgba(56,189,248,0.15); padding: 2px 6px; border-radius: 10px; margin-bottom: 5px; color: #fff; }
+.node i { font-size: 11px; opacity: 0.7; font-style: normal; margin-bottom: 5px; line-height: 1.1; min-height: 24px; }
+.node small { font-size: 11px; font-weight: bold; margin-bottom: 5px; color: var(--text); }
+.node .cost-txt { font-weight: 800; font-size: 14px; margin-top: auto; }
 
 .node.can-afford { border-color: #4ade80; box-shadow: 0 0 20px rgba(74, 222, 128, 0.2); }
 .node.maxed { border-color: var(--gold); }
@@ -48,34 +49,34 @@ line.active { stroke: var(--accent); stroke-dasharray: 15; animation: dash 1.5s 
 #ui { position: fixed; top: 25px; width: 100%; text-align: center; z-index: 200; pointer-events: none; }
 .currency { font-size: 38px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
 
+#account-info {
+    position: fixed; top: 20px; left: 20px; background: rgba(15,23,42,0.8);
+    padding: 10px 15px; border-radius: 12px; border-left: 4px solid var(--accent);
+    font-size: 13px; z-index: 400; backdrop-filter: blur(5px);
+}
+
 /* TELEPORT MENU */
-#tp-menu {
-    position: fixed; bottom: 120px; right: 20px; display: none;
-    flex-direction: column; gap: 10px; z-index: 500;
-}
-.tp-btn {
-    background: var(--card); border: 2px solid var(--gold); color: white;
-    padding: 12px; border-radius: 12px; cursor: pointer; font-size: 12px;
-}
+#tp-menu { position: fixed; bottom: 120px; right: 20px; display: none; flex-direction: column; gap: 10px; z-index: 500; }
+.tp-btn { background: var(--card); border: 2px solid var(--gold); color: white; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 12px; }
 #tp-toggle {
     position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px;
     background: var(--gold); color: #000; border-radius: 50%; border: none;
     font-weight: 900; font-size: 24px; cursor: pointer; display: none; z-index: 501;
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
 }
 
 #mobile-controls { position: fixed; bottom: 30px; left: 20px; display: none; grid-template-areas: ". up ." "left down right"; gap: 12px; z-index: 300; }
 .joy-btn { width: 60px; height: 60px; background: rgba(15, 23, 42, 0.85); border: 2px solid var(--accent); border-radius: 15px; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 24px; }
-#reset-btn { position: fixed; top: 20px; right: 20px; background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; display: none; z-index: 400; }
+#reset-btn { position: fixed; top: 20px; right: 20px; background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; display: none; z-index: 400; font-size: 12px;}
 </style>
 </head>
 <body>
 
-<button id="reset-btn" onclick="resetData()">Wyczyść Dane</button>
+<div id="account-info">Zalogowano: <b id="user-display">Gość</b></div>
+<button id="reset-btn" onclick="resetData()">RESET DATA</button>
 
 <div id="ui">
     <div class="currency"><span id="points">0</span> Δ</div>
-    <div style="font-weight:bold;">+<span id="pps">0</span>/s</div>
+    <div style="font-weight:bold; opacity: 0.8;">+<span id="pps">0</span>/s</div>
 </div>
 
 <div id="game-viewport">
@@ -101,21 +102,23 @@ const SAVE_KEY = `sp_save_neon_tree_${currentUser || 'guest'}`;
 
 let state = {
     points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
-    unlockedNodes: ["start"], purchasedLevels: { "start": 0 }, lockedOut: [],
-    teleports: [] // IDs kupionych teleporterów
+    unlockedNodes: ["up1"], purchasedLevels: { "up1": 0 }, lockedOut: [],
+    teleports: []
 };
 
+// Zdefiniowałem 10 przykładowych ulepszeń z numeracją
 const nodes = {
-    "start": { x: 2500, y: 2500, name: "Rdzeń", type: "Generacja", desc: "Zasila system", cost: 0, max: 1, pps: 1, next: ["up1"] },
-    "up1": { x: 2500, y: 2200, name: "Generator I", type: "Generacja", desc: "Zysk punktów", cost: 20, max: 10, pps: 2, next: ["up2"] },
-    "up2": { x: 2200, y: 2200, name: "Turbo Buty", type: "Prędkość", desc: "Szybszy ruch", cost: 100, max: 5, speed: 1.5, next: ["tp10"] },
-    // TP Node - Upgrade 10 (Teleporter)
-    "tp10": { x: 1900, y: 2200, name: "Teleporter Alpha", type: "Teleportacja", desc: "Odblokowuje skok tutaj", cost: 1500, max: 1, next: ["up3"] },
-    "up3": { x: 1900, y: 1900, name: "Reaktor", type: "Generacja", desc: "Duża moc", cost: 500, max: 10, pps: 20, next: ["up4"] },
-    "up4": { x: 2200, y: 1900, name: "Wiertło", type: "Generacja", desc: "Wydobywa Deltę", cost: 1200, max: 10, pps: 50, next: ["tp20"] },
-    // TP Node - Upgrade 20
-    "tp20": { x: 2500, y: 1900, name: "Teleporter Beta", type: "Teleportacja", desc: "Odblokowuje skok tutaj", cost: 5000, max: 1, next: ["end"] },
-    "end": { x: 2500, y: 1500, name: "Koniec Drzewka", type: "Finał", desc: "To nie koniec...", cost: 100000, max: 1, pps: 5000, next: [] }
+    "up1": { num: 1, x: 2500, y: 2500, name: "Rdzeń Startowy", type: "Generacja", desc: "Twoje pierwsze źródło Δ", cost: 0, max: 1, pps: 1, next: ["up2"] },
+    "up2": { num: 2, x: 2500, y: 2200, name: "Szybki Przesył", type: "Generacja", desc: "Zwiększa wydajność", cost: 20, max: 10, pps: 3, next: ["up3"] },
+    "up3": { num: 3, x: 2200, y: 2200, name: "Lekkie Buty", type: "Prędkość", desc: "Poruszaj się szybciej", cost: 100, max: 5, speed: 2, next: ["up4", "up5"] },
+    "up4": { num: 4, x: 1900, y: 2200, name: "Kolektor Many", type: "Generacja", desc: "Zbiera energię z otoczenia", cost: 400, max: 10, pps: 15, next: ["up6"] },
+    "up5": { num: 5, x: 2200, y: 1900, name: "Stabilizator", type: "Wzmocnienie", desc: "Wzmacnia bazowy zysk", cost: 500, max: 5, pps: 25, next: ["up6"] },
+    "up6": { num: 6, x: 1900, y: 1900, name: "Ciężki Reaktor", type: "Generacja", desc: "Masywna produkcja Δ", cost: 1500, max: 20, pps: 100, next: ["up7"] },
+    "up7": { num: 7, x: 2200, y: 1600, name: "Wybór Ścieżki", type: "Wybór", desc: "Zaryzykuj lub graj bezpiecznie", type: "choose", options: ["up8", "up9"], cost: 2500, next: [] },
+    "up8": { num: 8, x: 1900, y: 1300, name: "Niestabilna Moc", type: "Generacja", desc: "Ryzykowny zysk", cost: 5000, max: 1, pps: 1000, next: ["up10"] },
+    "up9": { num: 9, x: 2500, y: 1300, name: "Stały Przepływ", type: "Generacja", desc: "Pewny i solidny zysk", cost: 5000, max: 10, pps: 300, next: ["up10"] },
+    "up10": { num: 10, x: 2200, y: 1000, name: "Teleport Alpha", type: "Teleportacja", desc: "Kup, aby odblokować skok tutaj", cost: 10000, max: 1, next: ["end"] },
+    "end": { num: 11, x: 2200, y: 700, name: "Wrota Wymiaru", type: "Finał", desc: "Czy jesteś gotowy?", cost: 500000, max: 1, pps: 10000, next: [] }
 };
 
 const keys = {};
@@ -136,10 +139,13 @@ if ('ontouchstart' in window) {
     bind('btn-left', 'arrowleft'); bind('btn-right', 'arrowright');
 }
 
-if(currentUser) document.getElementById('reset-btn').style.display = 'block';
+if(currentUser) {
+    document.getElementById('reset-btn').style.display = 'block';
+    document.getElementById('user-display').innerText = currentUser;
+}
 
 function resetData() {
-    const pass = prompt("Hasło konta:");
+    const pass = prompt("Wpisz hasło konta:");
     const users = JSON.parse(localStorage.getItem("sp_users") || "[]");
     const me = users.find(u => u.u === currentUser);
     if(me && pass === me.p) { localStorage.removeItem(SAVE_KEY); location.reload(); }
@@ -190,9 +196,9 @@ function updateTPMenu() {
         state.teleports.forEach(id => {
             const btn = document.createElement('button');
             btn.className = 'tp-btn';
-            btn.innerText = nodes[id].name;
+            btn.innerText = `Skok: ${nodes[id].name}`;
             btn.onclick = () => {
-                state.pX = nodes[id].x + 100; // Teleport obok, nie na button
+                state.pX = nodes[id].x + 100;
                 state.pY = nodes[id].y;
                 toggleTP();
             };
@@ -237,20 +243,26 @@ function buyNode(id) {
     if (lvls >= n.max) return;
 
     state.points -= n.cost;
-    state.purchasedLevels[id] = lvls + 1;
-    
-    if (n.pps) state.pps += n.pps;
-    if (n.speed) state.speed += n.speed;
-    if (n.type === "Teleportacja") {
-        state.teleports.push(id);
-        updateTPMenu();
+    if (n.type === "choose") {
+        const choice = prompt(`Wybierz: ${n.options[0]} lub ${n.options[1]}`);
+        if(n.options.includes(choice)) {
+            state.unlockedNodes.push(choice);
+            state.lockedOut.push(n.options.find(o => o !== choice));
+            state.purchasedLevels[id] = 1;
+        } else { state.points += n.cost; return; }
+    } else {
+        state.purchasedLevels[id] = lvls + 1;
+        if (n.pps) state.pps += n.pps;
+        if (n.speed) state.speed += n.speed;
+        if (n.type === "Teleportacja") {
+            state.teleports.push(id);
+            updateTPMenu();
+        }
+        if (state.purchasedLevels[id] === 1 && n.next) {
+            n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
+        }
+        if(n.max > 1) n.cost = Math.floor(n.cost * 1.8);
     }
-
-    if (state.purchasedLevels[id] === 1 && n.next) {
-        n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
-    }
-    
-    if(n.max > 1) n.cost = Math.floor(n.cost * 1.7);
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
 
@@ -264,15 +276,15 @@ function updateUI() {
         if (state.unlockedNodes.includes(id) && !state.lockedOut.includes(id)) {
             el.classList.add('visible');
             const lvls = state.purchasedLevels[id] || 0;
-            const isTP = n.type === "Teleportacja";
             
             el.innerHTML = `
+                <div class="up-number">Upgrade #${n.num}</div>
                 <div class="type-tag">${n.type}</div>
                 <b>${n.name}</b>
                 <i>${n.desc}</i>
                 ${n.max > 1 ? `<small>Level ${lvls}/${n.max}</small>` : ""}
                 <span class="cost-txt" style="color:${state.points >= n.cost ? '#4ade80' : '#f87171'}">
-                    ${lvls >= n.max ? (isTP ? 'ACTIVE' : 'MAX') : n.cost + ' Δ'}
+                    ${lvls >= n.max ? 'ACTIVE' : n.cost + ' Δ'}
                 </span>
             `;
 
