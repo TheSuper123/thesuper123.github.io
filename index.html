@@ -41,13 +41,16 @@ padding:8px 14px;
 border-radius:10px;
 cursor:pointer;
 }
-nav button:hover,nav button.active{
+nav button:hover,
+nav button.active{
 background:rgba(56,189,248,.15);
 color:var(--accent);
 }
-main{max-width:1100px;margin:auto;padding:25px}
-.section{display:none}
-.section.active{display:block}
+main{
+max-width:1100px;
+margin:auto;
+padding:25px;
+}
 .card{
 background:linear-gradient(180deg,#0f172a,#020617);
 border-radius:20px;
@@ -61,46 +64,6 @@ text-align:center;
 opacity:.6;
 padding:25px 10px;
 }
-
-/* SAPER */
-#game{
-display:grid;
-justify-content:center;
-margin:15px auto;
-gap:2px;
-background:#020617;
-touch-action:none;
-}
-.cell{
-background:#334155;
-display:flex;
-justify-content:center;
-align-items:center;
-cursor:pointer;
-user-select:none;
-font-weight:700;
-border-radius:5px;
-}
-.open{background:#e5e7eb;color:#020617}
-.mine{background:#dc2626;color:white}
-.flagged{background:#facc15;color:#020617}
-.number1{color:#2563eb}
-.number2{color:#16a34a}
-.number3{color:#dc2626}
-.number4{color:#1e3a8a}
-.number5{color:#7c2d12}
-.number6{color:#0f766e}
-.number7{color:black}
-.number8{color:#4b5563}
-input,button{
-background:#020617;
-color:white;
-border:1px solid #334155;
-border-radius:10px;
-padding:6px 10px;
-margin:4px;
-}
-button{cursor:pointer}
 </style>
 </head>
 
@@ -108,17 +71,10 @@ button{cursor:pointer}
 
 <header>
 <img src="Logo.png" alt="SpinnerRealYT">
-<nav>
-<button class="active" onclick="openTab('home',this)">Menu</button>
-<button onclick="openTab('saper',this)">Saper</button>
-<button onclick="openTab('quiz',this)">Quiz</button>
-<button onclick="openTab('polls',this)">Sondaże</button>
-</nav>
+<nav id="nav"></nav>
 </header>
 
 <main>
-
-<section id="home" class="section active">
 <div class="card">
 <h1>🎮 SpinnerRealYT Games</h1>
 <p style="text-align:center">
@@ -126,60 +82,6 @@ Kolekcja gier HTML + projekty społeczno-polityczne.<br>
 Zero reklam. Zero śmieci. 100% fun.
 </p>
 </div>
-</section>
-
-<!-- SAPER -->
-<section id="saper" class="section">
-<div class="card">
-
-<h2>💣 Saper</h2>
-
-<div id="menu">
-Rozmiar:
-<input type="number" id="grid-size" value="9" min="5" max="100">
-Bomby:
-<input type="number" id="bomb-count" value="10" min="5">
-<button id="start-btn">Start</button>
-<button id="reset-btn">Reset</button>
-<button id="mode-toggle">Flag Mode: OFF</button>
-<button id="hint-btn">Hint (1 free)</button>
-<div id="info">Flags: 0 / 0</div>
-<div id="points-info">Points: 0 | Hints: 1</div>
-</div>
-
-<div id="game"></div>
-
-<div>
-<button id="btn-open">Otwórz</button>
-<button id="btn-flag">Flaga</button>
-</div>
-
-</div>
-</section>
-
-<!-- QUIZ -->
-<section id="quiz" class="section">
-<div class="card">
-<h2>🗳️ Quiz Polityczny</h2>
-<p style="text-align:center">W budowie – już wkrótce 35 pytań.</p>
-</div>
-</section>
-
-<!-- SONDAŻE -->
-<section id="polls" class="section">
-<div class="card">
-<h2>📊 Średnie* sondaże Partii Politycznych w Polsce</h2>
-
-<div class="flourish-embed flourish-chart" data-src="visualisation/27035462">
-<script src="https://public.flourish.studio/resources/embed.js"></script>
-</div>
-
-<p style="font-size:13px;opacity:.7;text-align:center;margin-top:10px">
-* Sondaże uśrednione na podstawie wielu badań opinii publicznej.
-</p>
-</div>
-</section>
-
 </main>
 
 <footer>
@@ -187,150 +89,30 @@ Bomby:
 </footer>
 
 <script>
-function openTab(id,btn){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-btn.classList.add('active');
-}
-</script>
+/* ===== LISTA GIER ===== */
+/* Dodajesz nową grę = 1 linijka */
+const games = [
+  { file: "games/saper.html", name: "Saper" },
+  { file: "games/quiz.html", name: "Quiz" },
+  { file: "games/polls.html", name: "Sondaże" }
+];
 
-<!-- SAPER SCRIPT -->
-<script>
-(() => {
-let ROWS=9,COLS=9,MINES_COUNT=10;
-const gameEl=document.getElementById('game');
-const infoEl=document.getElementById('info');
-const modeToggleBtn=document.getElementById('mode-toggle');
-const resetBtn=document.getElementById('reset-btn');
-const startBtn=document.getElementById('start-btn');
-const gridSizeInput=document.getElementById('grid-size');
-const bombCountInput=document.getElementById('bomb-count');
-const btnOpen=document.getElementById('btn-open');
-const btnFlag=document.getElementById('btn-flag');
-const hintBtn=document.getElementById('hint-btn');
-const pointsInfoEl=document.getElementById('points-info');
+const nav = document.getElementById("nav");
 
-let cells=[],minePositions=new Set(),flags=new Set(),opened=new Set();
-let gameOver=false,flagMode=false,firstClick=true,points=0,hints=1;
+/* MENU */
+const menuBtn = document.createElement("button");
+menuBtn.textContent = "Menu";
+menuBtn.classList.add("active");
+menuBtn.onclick = () => location.href = "index.html";
+nav.appendChild(menuBtn);
 
-function updatePointsInfo(){
-pointsInfoEl.textContent=`Points: ${points} | Hints: ${hints}`;
-}
-
-function createGrid(){
-gameEl.innerHTML='';
-cells=[];
-const size=Math.floor(Math.min(420/COLS,420/ROWS));
-gameEl.style.gridTemplateColumns=`repeat(${COLS},${size}px)`;
-for(let i=0;i<ROWS*COLS;i++){
-const c=document.createElement('div');
-c.className='cell';
-c.dataset.index=i;
-c.style.width=c.style.height=size+'px';
-c.style.fontSize=Math.floor(size*0.6)+'px';
-gameEl.appendChild(c);
-cells.push(c);
-}
-}
-
-function neighbors(i){
-const r=Math.floor(i/COLS),c=i%COLS,res=[];
-for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
-if(!dr&&!dc)continue;
-const nr=r+dr,nc=c+dc;
-if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS)res.push(nr*COLS+nc);
-}
-return res;
-}
-
-function placeMines(first){
-minePositions.clear();
-while(minePositions.size<MINES_COUNT){
-const p=Math.floor(Math.random()*ROWS*COLS);
-if(p===first||neighbors(first).includes(p))continue;
-minePositions.add(p);
-}
-}
-
-function countMines(i){
-return neighbors(i).filter(n=>minePositions.has(n)).length;
-}
-
-function openCell(i){
-if(gameOver||opened.has(i)||flags.has(i))return;
-if(firstClick){firstClick=false;placeMines(i);}
-opened.add(i);
-const c=cells[i];
-c.classList.add('open');
-if(minePositions.has(i)){
-c.textContent='💣';
-c.classList.add('mine');
-return lose();
-}
-const n=countMines(i);
-if(n){c.textContent=n;c.classList.add(`number${n}`);}
-else neighbors(i).forEach(openCell);
-checkWin();
-}
-
-function toggleFlag(i){
-if(gameOver||opened.has(i))return;
-const c=cells[i];
-if(flags.has(i)){flags.delete(i);c.textContent='';c.classList.remove('flagged');}
-else if(flags.size<MINES_COUNT){flags.add(i);c.textContent='🚩';c.classList.add('flagged');}
-infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
-checkWin();
-}
-
-function lose(){
-gameOver=true;
-infoEl.textContent='💥 Game Over';
-minePositions.forEach(i=>{
-if(!opened.has(i)){
-cells[i].textContent='💣';
-cells[i].classList.add('mine','open');
-}
+/* AUTOMATYCZNE BUTTONY */
+games.forEach(g => {
+  const btn = document.createElement("button");
+  btn.textContent = g.name;
+  btn.onclick = () => location.href = g.file;
+  nav.appendChild(btn);
 });
-}
-
-function checkWin(){
-if(opened.size===ROWS*COLS-MINES_COUNT){
-gameOver=true;
-infoEl.textContent='🎉 You Win!';
-points++;updatePointsInfo();
-}
-}
-
-function reset(){
-gameOver=false;firstClick=true;
-flags.clear();opened.clear();
-infoEl.textContent=`Flags: 0 / ${MINES_COUNT}`;
-createGrid();bind();updatePointsInfo();
-}
-
-function bind(){
-cells.forEach(c=>{
-c.onclick=()=>flagMode?toggleFlag(+c.dataset.index):openCell(+c.dataset.index);
-c.oncontextmenu=e=>{e.preventDefault();toggleFlag(+c.dataset.index);}
-});
-}
-
-startBtn.onclick=()=>{
-ROWS=COLS=+gridSizeInput.value;
-MINES_COUNT=+bombCountInput.value;
-reset();
-};
-resetBtn.onclick=reset;
-modeToggleBtn.onclick=()=>{
-flagMode=!flagMode;
-modeToggleBtn.textContent=`Flag Mode: ${flagMode?'ON':'OFF'}`;
-};
-btnOpen.onclick=()=>flagMode=false;
-btnFlag.onclick=()=>flagMode=true;
-
-reset();
-})();
 </script>
 
 </body>
