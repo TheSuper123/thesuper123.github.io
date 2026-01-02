@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Block Blast – SpinnerRealYT Games</title>
+
+<link rel="icon" type="image/png" href="../Logo.png">
+<link rel="apple-touch-icon" href="../Logo.png">
+
 <style>
 :root {
   --bg: #020617;
   --card: #0f172a;
   --accent: #38bdf8;
   --text: #e5e7eb;
-  /* Elastyczny rozmiar komórki */
   --cell-size: clamp(32px, 9vw, 45px);
   --gap: 4px;
 }
@@ -61,7 +64,8 @@ main { max-width: 500px; margin: auto; padding: 10px; }
   display: flex; justify-content: space-around; align-items: center;
   margin-top: 25px; min-height: 120px;
 }
-.block { display: grid; cursor: grab; touch-action: none; transform: scale(0.85); }
+/* Klocki w menu są lekko mniejsze, żeby zmieścić 3 obok siebie */
+.block { display: grid; cursor: grab; touch-action: none; transform: scale(0.7); transition: transform 0.1s; }
 .block-cell { width: var(--cell-size); height: var(--cell-size); border-radius: 4px; }
 
 .ghost-cell {
@@ -104,9 +108,9 @@ const scoreEl = document.getElementById("score");
 
 let board = [], score = 0, currentBlocks = [];
 
-// Funkcja pomocnicza do pobierania aktualnych wymiarów planszy (ważne przy skalowaniu)
 function getBoardMetrics() {
   const firstCell = boardEl.querySelector('.cell');
+  if(!firstCell) return { left: 0, top: 0, step: 0, padding: 0 };
   const rect = boardEl.getBoundingClientRect();
   const cellSize = firstCell.getBoundingClientRect().width;
   const gap = parseFloat(getComputedStyle(boardEl).gap) || 0;
@@ -171,10 +175,10 @@ function makeDraggable(blockEl, blockId) {
     const metrics = getBoardMetrics();
     const rect = blockEl.getBoundingClientRect();
     
-    // Zapamiętujemy punkt złapania klocka
     const offsetX = clientX - rect.left;
     const offsetY = clientY - rect.top;
 
+    // Po podniesieniu powiększamy klocek do skali 1:1 z planszą
     blockEl.style.transform = "scale(1)";
     blockEl.style.position = "fixed";
     blockEl.style.zIndex = "1000";
@@ -197,13 +201,13 @@ function makeDraggable(blockEl, blockId) {
       const x = ev.clientX ?? (ev.touches ? ev.touches[0].clientX : 0);
       const y = ev.clientY ?? (ev.touches ? ev.touches[0].clientY : 0);
 
-      // Wizualne przesuwanie klocka (nieco nad palcem dla wygody)
+      // Przesunięcie klocka w górę o 70px (więcej niż poprzednio dla lepszej widoczności)
+      const visualYOffset = 70;
       blockEl.style.left = (x - offsetX) + "px";
-      blockEl.style.top = (y - offsetY - 60) + "px";
+      blockEl.style.top = (y - offsetY - visualYOffset) + "px";
 
-      // Obliczanie kolumny i wiersza na podstawie aktualnych metryk planszy
       const col = Math.round((x - metrics.left - offsetX - metrics.padding) / metrics.step);
-      const row = Math.round((y - metrics.top - offsetY - 60 - metrics.padding) / metrics.step);
+      const row = Math.round((y - metrics.top - offsetY - visualYOffset - metrics.padding) / metrics.step);
 
       if(canPlace(row, col, shape)) {
         ghosts.forEach(g => {
@@ -225,8 +229,9 @@ function makeDraggable(blockEl, blockId) {
       document.removeEventListener("touchmove", move);
       document.removeEventListener("touchend", end);
 
+      const visualYOffset = 70;
       const col = Math.round((x - metrics.left - offsetX - metrics.padding) / metrics.step);
-      const row = Math.round((y - metrics.top - offsetY - 60 - metrics.padding) / metrics.step);
+      const row = Math.round((y - metrics.top - offsetY - visualYOffset - metrics.padding) / metrics.step);
 
       if(canPlace(row, col, shape)) {
         placeBlock(row, col, shape, color);
@@ -238,7 +243,7 @@ function makeDraggable(blockEl, blockId) {
         blockEl.style.position = "";
         blockEl.style.zIndex = "";
         blockEl.style.pointerEvents = "auto";
-        blockEl.style.transform = "scale(0.85)";
+        blockEl.style.transform = "scale(0.7)";
       }
       ghosts.forEach(g => g.el.remove());
     }
