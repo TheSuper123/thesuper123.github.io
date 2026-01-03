@@ -8,6 +8,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 
     <style>
         :root {
@@ -163,6 +164,7 @@
             background: #0f172a; border: 1px solid var(--card-border);
             border-radius: 30px; padding: 40px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
         }
 
         .auth-input {
@@ -176,7 +178,7 @@
         .error { color: var(--danger); font-size: 14px; }
         .success { color: #4ade80; font-size: 14px; }
 
-        footer { border-top: 1px solid var(--card-border); margin-top: 80px; }
+        footer { border-top: 1px solid var(--card-border); margin-top: 80px; text-align: center; padding: 40px; opacity: 0.6;}
 
         #cookie-banner {
             position: fixed; bottom: 30px; left: 30px; right: 30px; max-width: 400px;
@@ -188,7 +190,7 @@
         @media (max-width: 600px) {
             header { padding: 15px 20px; }
             .hero h1 { font-size: 3rem; }
-            nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #020617; padding: 10px; border-top: 1px solid var(--card-border); justify-content: center; }
+            nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #020617; padding: 10px; border-top: 1px solid var(--card-border); justify-content: center; z-index: 1001;}
             main { padding-bottom: 100px; }
         }
     </style>
@@ -209,20 +211,24 @@
         <p>Najlepsza kolekcja gier arkadowych i projektów politycznych w Twojej przeglądarce. Zaloguj się, aby zapisywać postępy.</p>
     </section>
 
-    <div class="game-grid" id="game-grid">
-        </div>
+    <div class="game-grid" id="game-grid"></div>
 </main>
 
 <div id="auth-overlay">
-    <div class="auth-modal">
+    <div class="auth-modal" id="auth-modal-content">
         <h2 id="auth-title" style="margin-top:0; font-size: 1.8rem;">Zaloguj się</h2>
+        
         <input type="text" id="auth-user" class="auth-input" placeholder="Nazwa użytkownika">
         <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło">
+        
         <button class="btn-submit btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: var(--bg); height: 50px;">Zaloguj</button>
+        
         <div id="auth-msg" style="text-align:center; margin-top:15px; min-height: 20px;"></div>
+        
         <div class="auth-switch" id="auth-toggle-box" style="text-align:center; margin-top:20px; font-size: 14px;">
             Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); cursor:pointer; font-weight:bold">Zarejestruj się</span>
         </div>
+        
         <button onclick="closeAuth()" style="background:none; border:none; color:var(--text-dim); width:100%; margin-top:20px; cursor:pointer; font-size: 14px;">Wróć do przeglądania</button>
     </div>
 </div>
@@ -237,10 +243,13 @@
 </div>
 
 <script>
-// --- FIREBASE KONFIG (Bez zmian) ---
-const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
+// --- FIREBASE KONFIG ---
+const firebaseConfig = { 
+    databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
+};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const auth = firebase.auth();
 
 let isLoginMode = true;
 
@@ -249,11 +258,11 @@ const games = [
     { file: "games/tetris.html", name: "Tetris", tag: "Puzzle" },
     { file: "games/neonmaze.html", name: "Neonowy Labirynt", tag: "Skill" },
     { file: "games/tictactoe.html", name: "Kółko i Krzyżyk", tag: "Casual" },
-    { file: "games/soon.html", name: "Flappy Bird", tag: "Arcade" },
+    { file: "games/flappy.html", name: "Flappy Bird", tag: "Arcade" },
     { file: "games/blockblast.html", name: "Block Blast", tag: "Puzzle" },
     { file: "games/quiz.html", name: "Quiz Polityczny", tag: "Logic" },
     { file: "games/polls.html", name: "Sondaże", tag: "Community" },
-    { file: "games/soon.html", name: "Neon Tree", tag: "Idle/Soon" }
+    { file: "games/incremental.html", name: "Neon Tree", tag: "Idle" }
 ];
 
 function openAuth() { document.getElementById('auth-overlay').classList.add('active'); }
@@ -261,44 +270,96 @@ function closeAuth() { document.getElementById('auth-overlay').classList.remove(
 
 function toggleAuth() {
     isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Stwórz konto";
-    document.getElementById('auth-submit').textContent = isLoginMode ? "Zaloguj" : "Zarejestruj się";
-    document.getElementById('auth-toggle-box').innerHTML = isLoginMode ? 
+    const title = document.getElementById('auth-title');
+    const submit = document.getElementById('auth-submit');
+    const toggleBox = document.getElementById('auth-toggle-box');
+    const modal = document.getElementById('auth-modal-content');
+
+    title.textContent = isLoginMode ? "Zaloguj się" : "Stwórz konto";
+    submit.textContent = isLoginMode ? "Zaloguj" : "Zarejestruj się";
+    
+    // Zarządzanie polem email
+    let emailInput = document.getElementById('auth-email');
+    if (!isLoginMode) {
+        if (!emailInput) {
+            emailInput = document.createElement('input');
+            emailInput.id = 'auth-email';
+            emailInput.type = 'email';
+            emailInput.placeholder = 'Adres E-mail';
+            emailInput.className = 'auth-input';
+            modal.insertBefore(emailInput, document.getElementById('auth-pass'));
+        }
+    } else {
+        if (emailInput) emailInput.remove();
+    }
+
+    toggleBox.innerHTML = isLoginMode ? 
         'Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); font-weight:bold; cursor:pointer">Zarejestruj się</span>' : 
         'Masz już konto? <span onclick="toggleAuth()" style="color:var(--accent); font-weight:bold; cursor:pointer">Zaloguj się</span>';
 }
 
 document.getElementById('auth-submit').onclick = async () => {
-    const user = document.getElementById('auth-user').value.trim().toLowerCase();
+    const user = document.getElementById('auth-user').value.trim();
     const pass = document.getElementById('auth-pass').value.trim();
+    const emailField = document.getElementById('auth-email');
+    const email = emailField ? emailField.value.trim() : null;
     const msg = document.getElementById('auth-msg');
 
-    if(!user || !pass) { msg.textContent = "Wypełnij wszystkie pola!"; msg.className = "error"; return; }
+    if(!user || !pass || (!isLoginMode && !email)) {
+        msg.textContent = "Wypełnij wszystkie pola!";
+        msg.className = "error";
+        return;
+    }
 
-    const userRef = db.ref('users/' + user);
+    msg.textContent = "Przetwarzanie...";
+    msg.className = "";
+
     try {
-        const snapshot = await userRef.once('value');
-        const userData = snapshot.val();
-
         if(isLoginMode) {
-            if(userData && userData.p === pass) {
-                localStorage.setItem("sp_logged", user);
-                localStorage.setItem("sp_pass", pass);
-                msg.textContent = "Witamy z powrotem!"; msg.className = "success";
-                setTimeout(() => location.reload(), 800);
-            } else {
-                msg.textContent = "Błędne dane logowania."; msg.className = "error";
+            // Logowanie: Nick -> Email -> Auth
+            const userSnap = await db.ref('users_map/' + user.toLowerCase()).once('value');
+            if(!userSnap.exists()) {
+                msg.textContent = "Użytkownik nie istnieje.";
+                msg.className = "error";
+                return;
             }
+            const userEmail = userSnap.val().email;
+            const userCred = await auth.signInWithEmailAndPassword(userEmail, pass);
+            
+            if(!userCred.user.emailVerified) {
+                msg.textContent = "Potwierdź e-mail przed zalogowaniem!";
+                msg.className = "error";
+                return;
+            }
+
+            localStorage.setItem("sp_logged", user);
+            msg.textContent = "Zalogowano!";
+            msg.className = "success";
+            setTimeout(() => location.reload(), 800);
         } else {
-            if(userData) {
-                msg.textContent = "Ten użytkownik już istnieje."; msg.className = "error";
-            } else {
-                await userRef.set({ p: pass, stats: { joined: Date.now() } });
-                msg.textContent = "Konto gotowe! Możesz się zalogować."; msg.className = "success";
-                setTimeout(toggleAuth, 1200);
+            // Rejestracja
+            const nickCheck = await db.ref('users_map/' + user.toLowerCase()).once('value');
+            if(nickCheck.exists()) {
+                msg.textContent = "Ten nick jest zajęty!";
+                msg.className = "error";
+                return;
             }
+
+            const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+            await userCred.user.sendEmailVerification();
+
+            // Zapisz mapowanie i profil
+            await db.ref('users_map/' + user.toLowerCase()).set({ email: email, uid: userCred.user.uid });
+            await db.ref('users/' + user.toLowerCase()).set({ stats: { joined: Date.now() } });
+
+            msg.textContent = "Wysłano link weryfikacyjny! Sprawdź pocztę.";
+            msg.className = "success";
+            setTimeout(toggleAuth, 2500);
         }
-    } catch (e) { msg.textContent = "Błąd sieci."; msg.className = "error"; }
+    } catch (e) {
+        msg.textContent = "Błąd: " + e.message;
+        msg.className = "error";
+    }
 };
 
 function renderContent() {
@@ -306,7 +367,6 @@ function renderContent() {
     const navAuth = document.getElementById("nav-auth-container");
     const loggedUser = localStorage.getItem("sp_logged");
 
-    // Renderowanie przycisku profilu/logowania
     navAuth.innerHTML = "";
     const authBtn = document.createElement("button");
     authBtn.className = "btn-base";
@@ -320,24 +380,17 @@ function renderContent() {
     }
     navAuth.appendChild(authBtn);
 
-    // Renderowanie kafelków gier
     grid.innerHTML = "";
     games.forEach(g => {
         const card = document.createElement("div");
         card.className = "game-card";
-        card.innerHTML = `
-            <span class="tag">${g.tag}</span>
-            <h3>${g.name}</h3>
-        `;
+        card.innerHTML = `<span class="tag">${g.tag}</span><h3>${g.name}</h3>`;
         card.onclick = () => location.href = g.file;
-        
-        // Efekt "Spotlight" na karcie
         card.onmousemove = e => {
             const rect = card.getBoundingClientRect();
             card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
             card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
         };
-        
         grid.appendChild(card);
     });
 }
@@ -351,6 +404,5 @@ window.onload = () => {
     }
 };
 </script>
-
 </body>
 </html>
