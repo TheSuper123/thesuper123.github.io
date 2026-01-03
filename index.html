@@ -1,253 +1,333 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpinnerRealYT Games | Premium Gaming</title>
-    <link rel="icon" href="Logo.png">
+<!DOCTYPE html> 
+<html lang="pl"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>SpinnerRealYT Games | Premium Gaming</title> 
+    <link rel="icon" href="Logo.png"> 
 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script> 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 
-    <style>
-        :root {
-            --bg: #020617;
-            --card: rgba(15, 23, 42, 0.7);
-            --card-border: rgba(56, 189, 248, 0.2);
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.4);
-            --text: #f1f5f9;
-            --text-dim: #94a3b8;
-            --danger: #fb7185;
-            --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-        }
+    <style> 
+        :root { 
+            --bg: #020617; 
+            --card: rgba(15, 23, 42, 0.7); 
+            --card-border: rgba(56, 189, 248, 0.2); 
+            --accent: #38bdf8; 
+            --accent-glow: rgba(56, 189, 248, 0.4); 
+            --text: #f1f5f9; 
+            --text-dim: #94a3b8; 
+            --danger: #fb7185; 
+            --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
+        } 
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
         
-        body {
-            margin: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
-            background-image: 
-                radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 40%);
-            min-height: 100vh;
-        }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.5; 
+            overflow-x: hidden; 
+            background-image:  
+                radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%), 
+                radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 40%); 
+            min-height: 100vh; 
+        } 
 
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 5%;
-            background: rgba(2, 6, 23, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--card-border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+        ::-webkit-scrollbar { width: 8px; } 
+        ::-webkit-scrollbar-track { background: var(--bg); } 
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; } 
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); } 
 
-        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .logo-area img { height: 38px; }
-        .logo-area span { font-weight: 800; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 15px 5%; 
+            background: rgba(2, 6, 23, 0.8); 
+            backdrop-filter: blur(12px); 
+            border-bottom: 1px solid var(--card-border); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        } 
 
-        nav { display: flex; gap: 8px; }
+        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; } 
+        .logo-area img { height: 38px; filter: drop-shadow(0 0 8px var(--accent-glow)); } 
+        .logo-area span { font-weight: 800; letter-spacing: -0.5px; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } 
 
-        .btn-base {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text);
-            padding: 8px 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
+        nav { display: flex; gap: 8px; } 
 
-        .btn-base:hover { background: rgba(56, 189, 248, 0.1); border-color: var(--accent); color: var(--accent); }
+        .btn-base { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            color: var(--text); 
+            padding: 8px 16px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: 500; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        } 
 
-        #auth-nav-btn { background: var(--grad); color: var(--bg); border: none; }
+        .btn-base:hover { background: rgba(56, 189, 248, 0.1); border-color: var(--accent); color: var(--accent); transform: translateY(-1px); } 
+        
+        #auth-nav-btn { 
+            background: var(--grad); 
+            color: var(--bg); 
+            border: none; 
+            font-weight: 700; 
+            box-shadow: 0 4px 15px var(--accent-glow); 
+        } 
 
-        main { max-width: 1200px; margin: auto; padding: 40px 20px; }
+        main { max-width: 1200px; margin: auto; padding: 40px 20px; } 
 
-        .hero { text-align: center; margin-bottom: 50px; }
-        .hero h1 { font-size: clamp(2rem, 8vw, 3.5rem); margin: 0; }
+        .hero { text-align: center; margin-bottom: 60px; animation: fadeIn 0.8s ease-out; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
 
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; font-weight: 900; letter-spacing: -2px; line-height: 1; } 
+        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 20px auto; } 
 
-        .game-card {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 30px 20px;
-            transition: 0.3s;
-            cursor: pointer;
-            text-align: center;
-        }
+        .game-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+        } 
 
-        .game-card:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
-        .tag { font-size: 10px; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .game-card { 
+            background: var(--card); 
+            border: 1px solid var(--card-border); 
+            border-radius: 24px; 
+            padding: 24px; 
+            position: relative; 
+            overflow: hidden; 
+            transition: all 0.4s ease; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            min-height: 160px; 
+        } 
 
-        #auth-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            display: none; align-items: center; justify-content: center; z-index: 9999;
-        }
-        #auth-overlay.active { display: flex; }
-        .auth-modal { width: 90%; max-width: 380px; background: #0f172a; padding: 35px; border-radius: 25px; border: 1px solid var(--card-border); }
+        .game-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.4); } 
+        .game-card h3 { margin: 0; font-size: 1.5rem; position: relative; z-index: 2; } 
+        .game-card .tag { position: absolute; top: 20px; right: 20px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; } 
 
-        .auth-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; background: #1e293b; border: 1px solid #334155; color: white; }
-        .error { color: var(--danger); font-size: 13px; margin-bottom: 10px; text-align: center; }
-        .success { color: #4ade80; font-size: 13px; margin-bottom: 10px; text-align: center; }
+        #auth-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px); 
+            display: none; align-items: center; justify-content: center; z-index: 10000; 
+        } 
+        #auth-overlay.active { display: flex; } 
+        
+        .auth-modal { 
+            width: 95%; max-width: 400px; 
+            background: #0f172a; border: 1px solid var(--card-border); 
+            border-radius: 30px; padding: 40px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+        } 
 
-        #cookie-banner { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #1e293b; padding: 15px; border-radius: 15px; display: none; z-index: 1000; border: 1px solid var(--accent); }
-    </style>
-</head>
-<body>
+        .auth-input { 
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; 
+            background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: white; 
+            font-size: 16px; transition: 0.3s; 
+        } 
+        .auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); outline: none; } 
 
-<header>
-    <div class="logo-area" onclick="location.reload()">
-        <img src="Logo.png" alt="Logo">
-        <span>SPINNER GAMES</span>
-    </div>
-    <nav id="nav-auth-container"></nav>
-</header>
+        .error { color: var(--danger); font-size: 14px; text-align: center; margin-bottom: 10px; } 
+        .success { color: #4ade80; font-size: 14px; text-align: center; margin-bottom: 10px; } 
 
-<main>
-    <section class="hero">
-        <h1>Graj i <span style="color: var(--accent)">Wygrywaj</span></h1>
-        <p style="color: var(--text-dim)">Zaloguj się, aby zapisywać swoje rekordy w chmurze.</p>
-    </section>
-    <div class="game-grid" id="game-grid"></div>
-</main>
+        footer { border-top: 1px solid var(--card-border); margin-top: 80px; padding: 20px; text-align: center; } 
 
-<div id="auth-overlay">
-    <div class="auth-modal">
-        <h2 id="auth-title" style="margin-top:0">Zaloguj się</h2>
-        <div id="auth-msg"></div>
-        <input type="text" id="auth-user" class="auth-input" placeholder="Nazwa użytkownika">
+        #cookie-banner { 
+            position: fixed; bottom: 30px; left: 30px; right: 30px; max-width: 400px; 
+            background: #1e293b; border: 1px solid var(--accent); padding: 20px; 
+            border-radius: 20px; z-index: 9999; display: none; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+        } 
+
+        @media (max-width: 600px) { 
+            header { padding: 15px 20px; } 
+            .hero h1 { font-size: 3rem; } 
+            nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #020617; padding: 10px; border-top: 1px solid var(--card-border); justify-content: center; } 
+            main { padding-bottom: 100px; } 
+        } 
+    </style> 
+</head> 
+<body> 
+
+<header> 
+    <div class="logo-area" onclick="location.reload()"> 
+        <img src="Logo.png" alt="SpinnerRealYT"> 
+        <span>SPINNER GAMES</span> 
+    </div> 
+    <nav id="nav-auth-container"></nav> 
+</header> 
+
+<main> 
+    <section class="hero"> 
+        <h1>Graj. Rywalizuj.<br><span style="color: var(--accent)">Wygrywaj.</span></h1> 
+        <p>Najlepsza kolekcja gier arkadowych w Twojej przeglądarce. Zaloguj się, aby zapisywać postępy.</p> 
+    </section> 
+
+    <div class="game-grid" id="game-grid"></div> 
+</main> 
+
+<div id="auth-overlay"> 
+    <div class="auth-modal"> 
+        <h2 id="auth-title" style="margin-top:0; font-size: 1.8rem;">Zaloguj się</h2> 
+        <div id="auth-msg"></div> 
+        <input type="text" id="auth-user" class="auth-input" placeholder="Nazwa użytkownika (Nick)"> 
         <div id="email-container"></div>
-        <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło">
-        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000; margin-top: 10px;">Potwierdź</button>
-        <div id="auth-toggle-box" style="margin-top:20px; text-align:center; font-size: 13px;">
-            Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); cursor:pointer">Zarejestruj się</span>
-        </div>
-        <button onclick="closeAuth()" style="background:none; border:none; color:gray; width:100%; margin-top:15px; cursor:pointer">Zamknij</button>
-    </div>
-</div>
+        <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
+        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: var(--bg); height: 50px; font-weight: bold;">Zaloguj</button> 
+        <div id="auth-toggle-box" style="text-align:center; margin-top:20px; font-size: 14px;"> 
+            Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); cursor:pointer; font-weight:bold">Zarejestruj się</span> 
+        </div> 
+        <button onclick="closeAuth()" style="background:none; border:none; color:var(--text-dim); width:100%; margin-top:20px; cursor:pointer; font-size: 14px;">Wróć do przeglądania</button> 
+    </div> 
+</div> 
 
-<div id="cookie-banner">
-    Ta strona używa ciasteczek. <button class="btn-base" onclick="acceptCookies()">OK</button>
-</div>
+<footer> 
+    <p>© 2026 SpinnerRealYT Games. Wszelkie prawa zastrzeżone.</p> 
+</footer> 
 
-<script>
-// --- KONFIGURACJA ---
-const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+<div id="cookie-banner"> 
+    <p style="margin:0 0 15px 0">Używamy ciasteczek dla Twojej wygody. <a href="#" style="color:var(--accent)">Szczegóły</a></p> 
+    <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: var(--bg)">Akceptuję</button> 
+</div> 
+
+<script> 
+// --- FIREBASE KONFIG --- 
+const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" }; 
+firebase.initializeApp(firebaseConfig); 
+const db = firebase.database(); 
 const auth = firebase.auth();
 
-let isLoginMode = true;
+let isLoginMode = true; 
 
-const games = [
-    { file: "games/saper.html", name: "Saper", tag: "Classic" },
-    { file: "games/tetris.html", name: "Tetris", tag: "Puzzle" },
-    { file: "games/neonmaze.html", name: "Neonowy Labirynt", tag: "Skill" },
-    { file: "games/tictactoe.html", name: "Kółko i Krzyżyk", tag: "Casual" },
-    { file: "games/flappy.html", name: "Flappy Bird", tag: "Arcade" },
-    { file: "games/blockblast.html", name: "Block Blast", tag: "Puzzle" },
-    { file: "games/quiz.html", name: "Quiz Polityczny", tag: "Logic" },
-    { file: "games/polls.html", name: "Sondaże", tag: "Community" }
-];
+const games = [ 
+    { file: "games/saper.html", name: "Saper", tag: "Classic" }, 
+    { file: "games/tetris.html", name: "Tetris", tag: "Puzzle" }, 
+    { file: "games/neonmaze.html", name: "Neonowy Labirynt", tag: "Skill" }, 
+    { file: "games/tictactoe.html", name: "Kółko i Krzyżyk", tag: "Casual" }, 
+    { file: "games/soon.html", name: "Flappy Bird", tag: "Arcade" }, 
+    { file: "games/blockblast.html", name: "Block Blast", tag: "Puzzle" }, 
+    { file: "games/quiz.html", name: "Quiz Polityczny", tag: "Logic" }, 
+    { file: "games/polls.html", name: "Sondaże", tag: "Community" }, 
+    { file: "games/soon.html", name: "Neon Tree", tag: "Soon" } 
+]; 
 
-function openAuth() { document.getElementById('auth-overlay').classList.add('active'); }
-function closeAuth() { document.getElementById('auth-overlay').classList.remove('active'); }
+function openAuth() { document.getElementById('auth-overlay').classList.add('active'); } 
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('active'); } 
 
-function toggleAuth() {
-    isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Stwórz konto";
+function toggleAuth() { 
+    isLoginMode = !isLoginMode; 
+    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Stwórz konto"; 
+    document.getElementById('auth-submit').textContent = isLoginMode ? "Zaloguj" : "Zarejestruj się"; 
     const emailCont = document.getElementById('email-container');
+    
     emailCont.innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="Adres E-mail">';
-    document.getElementById('auth-toggle-box').innerHTML = isLoginMode ? 
-        'Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); cursor:pointer">Zarejestruj się</span>' : 
-        'Masz już konto? <span onclick="toggleAuth()" style="color:var(--accent); cursor:pointer">Zaloguj się</span>';
-}
+    
+    document.getElementById('auth-toggle-box').innerHTML = isLoginMode ?  
+        'Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); font-weight:bold; cursor:pointer">Zarejestruj się</span>' :  
+        'Masz już konto? <span onclick="toggleAuth()" style="color:var(--accent); font-weight:bold; cursor:pointer">Zaloguj się</span>'; 
+} 
 
-// --- LOGIKA LOGOWANIA ---
-document.getElementById('auth-submit').onclick = async () => {
-    const user = document.getElementById('auth-user').value.trim();
-    const pass = document.getElementById('auth-pass').value.trim();
+document.getElementById('auth-submit').onclick = async () => { 
+    const user = document.getElementById('auth-user').value.trim().toLowerCase(); 
+    const pass = document.getElementById('auth-pass').value.trim(); 
+    const msg = document.getElementById('auth-msg'); 
     const emailInput = document.getElementById('auth-email');
-    const msg = document.getElementById('auth-msg');
 
-    try {
-        if (isLoginMode) {
-            const snap = await db.ref('users_map/' + user.toLowerCase()).once('value');
-            if (!snap.exists()) throw new Error("Nie znaleziono użytkownika.");
+    if(!user || !pass || (!isLoginMode && !emailInput.value)) { 
+        msg.innerHTML = '<p class="error">Wypełnij wszystkie pola!</p>'; 
+        return; 
+    } 
+
+    try { 
+        if(isLoginMode) { 
+            // 1. Znajdź email przypisany do nicku
+            const snap = await db.ref('users_map/' + user).once('value');
+            if(!snap.exists()) throw new Error("Nie ma takiego użytkownika.");
+            
             const email = snap.val().email;
+            
+            // 2. Logowanie Firebase Auth
             const userCred = await auth.signInWithEmailAndPassword(email, pass);
-            if (!userCred.user.emailVerified) throw new Error("Zweryfikuj e-mail! Sprawdź pocztę.");
             
-            localStorage.setItem("sp_logged", user);
-            location.reload();
-        } else {
+            // 3. Sprawdź czy mail zweryfikowany
+            if(!userCred.user.emailVerified) {
+                msg.innerHTML = '<p class="error">Potwierdź e-mail przed logowaniem!</p>';
+                return;
+            }
+
+            localStorage.setItem("sp_logged", user); 
+            msg.innerHTML = '<p class="success">Zalogowano!</p>'; 
+            setTimeout(() => location.reload(), 800); 
+        } else { 
             const email = emailInput.value.trim();
-            const nickCheck = await db.ref('users_map/' + user.toLowerCase()).once('value');
-            if (nickCheck.exists()) throw new Error("Nick jest zajęty.");
             
+            // 1. Sprawdź czy nick wolny
+            const nickSnap = await db.ref('users_map/' + user).once('value');
+            if(nickSnap.exists()) throw new Error("Ten nick jest już zajęty.");
+
+            // 2. Stwórz konto w Auth
             const userCred = await auth.createUserWithEmailAndPassword(email, pass);
-            await userCred.user.sendEmailVerification();
-            await db.ref('users_map/' + user.toLowerCase()).set({ email: email, uid: userCred.user.uid });
             
-            msg.innerHTML = "<p class='success'>Wysłano link weryfikacyjny!</p>";
-        }
-    } catch (e) {
-        msg.innerHTML = `<p class="error">${e.message}</p>`;
-    }
-};
+            // 3. Wyślij maila weryfikacyjnego
+            await userCred.user.sendEmailVerification();
+            
+            // 4. Zapisz mapowanie Nick -> Email w bazie
+            await db.ref('users_map/' + user).set({ email: email, uid: userCred.user.uid });
+            await db.ref('users/' + user).set({ stats: { joined: Date.now() } });
 
-function renderUI() {
-    const grid = document.getElementById("game-grid");
-    const navCont = document.getElementById("nav-auth-container");
-    const loggedUser = localStorage.getItem("sp_logged");
+            msg.innerHTML = '<p class="success">Wysłano link weryfikacyjny na e-mail!</p>'; 
+            setTimeout(toggleAuth, 2500); 
+        } 
+    } catch (e) { 
+        msg.innerHTML = `<p class="error">${e.message}</p>`; 
+    } 
+}; 
 
-    // Gry
-    grid.innerHTML = games.map(g => `
-        <div class="game-card" onclick="location.href='${g.file}'">
-            <span class="tag">${g.tag}</span>
-            <h3 style="margin:0">${g.name}</h3>
-        </div>
-    `).join('');
+function renderContent() { 
+    const grid = document.getElementById("game-grid"); 
+    const navAuth = document.getElementById("nav-auth-container"); 
+    const loggedUser = localStorage.getItem("sp_logged"); 
 
-    // Menu
-    navCont.innerHTML = "";
-    const btn = document.createElement("button");
-    btn.className = "btn-base";
-    if (loggedUser) {
-        btn.id = "auth-nav-btn";
-        btn.textContent = loggedUser.toUpperCase();
-        btn.onclick = () => { if(confirm("Wylogować?")) { localStorage.clear(); location.reload(); } };
-    } else {
-        btn.textContent = "Logowanie";
-        btn.onclick = openAuth;
-    }
-    navCont.appendChild(btn);
-}
+    navAuth.innerHTML = ""; 
+    const authBtn = document.createElement("button"); 
+    authBtn.className = "btn-base"; 
+    if(loggedUser) { 
+        authBtn.id = "auth-nav-btn"; 
+        authBtn.textContent = loggedUser.toUpperCase(); 
+        authBtn.onclick = () => { if(confirm("Wylogować się?")) { localStorage.clear(); location.reload(); } }; 
+    } else { 
+        authBtn.textContent = "Logowanie"; 
+        authBtn.onclick = openAuth; 
+    } 
+    navAuth.appendChild(authBtn); 
 
-function acceptCookies() { localStorage.setItem("cookiesAccepted","true"); document.getElementById("cookie-banner").style.display = "none"; }
+    grid.innerHTML = games.map(g => ` 
+        <div class="game-card" onclick="location.href='${g.file}'"> 
+            <span class="tag">${g.tag}</span> 
+            <h3>${g.name}</h3> 
+        </div> 
+    `).join(''); 
+} 
 
-window.onload = () => {
-    renderUI();
-    if(localStorage.getItem("cookiesAccepted") !== "true") document.getElementById("cookie-banner").style.display = "block";
-};
-</script>
-</body>
+function acceptCookies() { localStorage.setItem("cookiesAccepted","true"); document.getElementById("cookie-banner").style.display = "none"; } 
+
+window.onload = () => { 
+    renderContent(); 
+    if(localStorage.getItem("cookiesAccepted") !== "true") { 
+        setTimeout(() => document.getElementById("cookie-banner").style.display = "block", 1000); 
+    } 
+}; 
+</script> 
+</body> 
 </html>
