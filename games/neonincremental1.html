@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Tree Exploration – SpinnerRealYT Ultimate</title>
+    <title>Neon Tree Exploration: Ultimate Edition – SpinnerRealYT</title>
     <link rel="icon" href="../Logo.png">
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
+        /* --- SYSTEM ZMIENNYCH I TEMATÓW --- */
         :root {
             --bg: #020617;
             --card: #0f172a;
@@ -21,537 +22,679 @@
             --success: #22c55e;
             --void: #6d28d9;
             --neon: #2dd4bf;
-            --panel: rgba(15, 23, 42, 0.95);
+            --panel: rgba(15, 23, 42, 0.98);
+            --glow: 0 0 20px rgba(56, 189, 248, 0.4);
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
+        /* --- RESET I BAZA --- */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            scrollbar-width: thin;
+            scrollbar-color: var(--path) var(--bg);
+        }
+
         body {
             margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--font-main);
             background: var(--bg);
             color: var(--text);
             overflow: hidden;
             touch-action: none;
             user-select: none;
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* TŁO VOID - ANIMOWANE */
-        body.zone-void #world-map {
+        /* --- ANIMOWANE TŁA PRZESTRZENNE --- */
+        #game-viewport { 
+            position: relative; 
+            width: 100vw; 
+            height: 100vh; 
+            overflow: hidden; 
+            perspective: 1000px;
+        }
+
+        #world-map { 
+            position: absolute; 
+            width: 12000px; 
+            height: 12000px; 
+            transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
             background-color: #050510;
             background-image: 
-                radial-gradient(var(--void) 0.5px, transparent 0.5px),
-                linear-gradient(rgba(109, 40, 217, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(109, 40, 217, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px, 100px 100px, 100px 100px;
-            animation: backgroundScroll 60s linear infinite;
+                radial-gradient(var(--void) 1px, transparent 1px),
+                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px, 200px 200px, 200px 200px;
         }
 
-        @keyframes backgroundScroll {
-            from { background-position: 0 0; }
-            to { background-position: 500px 500px; }
-        }
-
-        #game-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-        #world-map { position: absolute; width: 8000px; height: 8000px; transition: transform 0.1s ease-out; }
-
-        /* GRACZ */
+        /* --- GRACZ I EFEKTY --- */
         #player {
             position: absolute;
-            width: 36px;
-            height: 36px;
+            width: 42px;
+            height: 42px;
             background: var(--accent);
-            box-shadow: 0 0 30px var(--accent), inset 0 0 10px rgba(255,255,255,0.8);
-            border-radius: 12px;
-            z-index: 100;
-            border: 2px solid white;
+            box-shadow: var(--glow), inset 0 0 12px rgba(255,255,255,0.9);
+            border-radius: 14px;
+            z-index: 1000;
+            border: 3px solid white;
             transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* WĘZŁY (NODES) */
+        #player::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--accent);
+            border-radius: 14px;
+            animation: playerPulse 2s infinite;
+        }
+
+        /* --- WĘZŁY (NODES) - ROZBUDOWANE --- */
         .node {
             position: absolute;
-            width: 200px;
-            height: 200px;
+            width: 260px;
+            height: 260px;
             background: var(--panel);
             border: 4px solid var(--path);
-            border-radius: 35px;
+            border-radius: 40px;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             z-index: 50;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.6);
         }
 
-        .node.visible { display: flex; animation: nodeSpawn 0.6s forwards; }
-        .node.can-afford { border-color: var(--success); box-shadow: 0 0 25px rgba(34, 197, 94, 0.3); }
-        .node.maxed { border-color: var(--gold); box-shadow: 0 0 30px rgba(250, 204, 21, 0.4); }
+        .node.visible { display: flex; animation: nodeSpawn 0.7s cubic-bezier(0.5, 0, 0.5, 1.5) forwards; }
+        .node:hover { transform: scale(1.05); border-color: var(--accent); z-index: 60; }
+        .node.can-afford { border-color: var(--success); box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); }
+        .node.maxed { border-color: var(--gold); background: linear-gradient(135deg, var(--card), #1e1b4b); }
 
-        .up-num { font-size: 11px; font-weight: 900; color: var(--gold); opacity: 0.8; margin-bottom: 5px; }
-        .node b { font-size: 16px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .node i { font-size: 12px; opacity: 0.7; font-style: normal; margin: 8px 0; height: 32px; overflow: hidden; line-height: 1.2; }
+        .up-num { font-size: 10px; font-weight: 900; color: var(--gold); letter-spacing: 2px; margin-bottom: 8px; opacity: 0.8; }
+        .node b { font-size: 18px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .node i { font-size: 13px; opacity: 0.7; font-style: normal; height: 48px; line-height: 1.3; overflow: hidden; margin-bottom: 15px; }
         
         .lvl-badge {
-            font-size: 12px;
-            background: rgba(255,255,255,0.07);
-            padding: 4px 12px;
+            font-size: 11px;
+            background: rgba(255,255,255,0.08);
+            padding: 5px 15px;
             border-radius: 20px;
-            margin-bottom: 10px;
             font-weight: 800;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
         }
 
         .cost-txt {
             font-weight: 900;
-            font-size: 18px;
+            font-size: 20px;
             margin-top: auto;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
 
-        /* INTERFEJS GÓRNY */
-        #ui-top {
+        /* --- INTERFEJS UI --- */
+        #hud {
             position: fixed;
-            top: 40px;
-            width: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .top-center {
+            position: absolute;
+            top: 40px; left: 50%;
+            transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 200;
-            pointer-events: none;
+            pointer-events: auto;
         }
 
-        .currency-container {
-            background: rgba(15, 23, 42, 0.8);
-            padding: 15px 40px;
-            border-radius: 60px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(56, 189, 248, 0.4);
+        .main-currency-box {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 20px 50px;
+            border-radius: 80px;
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--accent);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
 
-        .currency { font-size: 50px; font-weight: 900; color: var(--accent); text-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
-        .pps-counter { font-size: 18px; font-weight: 800; color: var(--success); margin-top: -5px; }
+        .delta-amount { font-size: 58px; font-weight: 900; color: var(--accent); text-shadow: 0 0 30px rgba(56, 189, 248, 0.7); line-height: 1; }
+        .pps-label { font-size: 18px; font-weight: 800; color: var(--success); margin-top: 5px; }
 
-        /* NOWY SYSTEM STATYSTYK W LEWYM DOLNYM ROGU */
-        #stats-trigger {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
+        /* --- LEWY PANEL (KONTO) --- */
+        #account-hud {
+            position: absolute;
+            top: 30px; left: 30px;
+            background: var(--card);
+            padding: 18px 25px;
+            border-radius: 25px;
+            border-left: 8px solid var(--accent);
+            pointer-events: auto;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        #account-hud:hover { transform: translateX(10px); background: #1e293b; }
+
+        /* --- STATYSTYKI I OSIĄGNIĘCIA (LEWY DÓŁ) --- */
+        .bottom-left-controls {
+            position: absolute;
+            bottom: 30px; left: 30px;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .ctrl-btn {
             background: var(--card);
             color: var(--accent);
             border: 2px solid var(--path);
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-weight: 900;
-            cursor: pointer;
-            z-index: 800;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        #stats-trigger:hover { transform: scale(1.05); border-color: var(--accent); }
-
-        #stats-menu {
-            position: fixed;
-            bottom: 85px;
-            left: 25px;
-            width: 260px;
-            background: var(--panel);
-            border: 2px solid var(--path);
-            border-radius: 25px;
-            padding: 20px;
-            display: none;
-            flex-direction: column;
-            z-index: 799;
-            backdrop-filter: blur(15px);
-            animation: slideIn 0.4s ease-out;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .stats-header h3 { margin: 0; font-size: 14px; letter-spacing: 1px; color: var(--text); opacity: 0.8; }
-        
-        .admin-btn-small {
-            width: 24px; height: 24px; background: var(--void); border: none; 
-            border-radius: 6px; color: white; font-weight: 900; cursor: pointer; 
-            display: none; transition: 0.2s;
-        }
-        .admin-btn-small:hover { background: var(--accent); transform: rotate(15deg); }
-
-        .stat-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
-        .stat-line span:last-child { color: var(--accent); }
-
-        /* PROFIL / KONTO */
-        #account-trigger {
-            position: fixed;
-            top: 25px;
-            left: 25px;
-            background: var(--card);
             padding: 15px 25px;
             border-radius: 20px;
-            border-left: 6px solid var(--accent);
+            font-weight: 900;
             cursor: pointer;
-            z-index: 400;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            transition: 0.3s;
-            pointer-events: auto;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        #account-trigger:hover { transform: translateX(10px); background: #1e293b; }
+        .ctrl-btn:hover { transform: scale(1.05) translateY(-5px); border-color: var(--accent); background: var(--path); }
 
-        /* MODALE I OKNA */
-        .modal-overlay {
+        .side-menu {
+            position: absolute;
+            bottom: 100px; left: 30px;
+            width: 320px;
+            background: var(--panel);
+            border: 2px solid var(--path);
+            border-radius: 30px;
+            padding: 25px;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .stat-row span:last-child { color: var(--accent); }
+
+        /* --- SYSTEM POWIADOMIEŃ --- */
+        #notifier {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--card);
+            border-right: 5px solid var(--accent);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            animation: toastIn 0.5s forwards;
+        }
+
+        /* --- MODALE --- */
+        .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; justify-content: center;
-            align-items: center; z-index: 2000; backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.92); display: none; justify-content: center;
+            align-items: center; z-index: 4000; backdrop-filter: blur(12px);
         }
 
-        .modal-box {
-            background: var(--card); padding: 40px; border-radius: 35px;
-            border: 2px solid var(--path); width: 100%; max-width: 450px; text-align: center;
+        .modal-content {
+            background: var(--card); padding: 50px; border-radius: 45px;
+            border: 2px solid var(--path); width: 90%; max-width: 600px; text-align: center;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
         }
 
-        .input-field {
-            width: 100%; padding: 15px; background: #020617; border: 2px solid var(--path);
-            border-radius: 12px; color: white; font-size: 18px; margin: 20px 0; text-align: center;
+        .input-box {
+            width: 100%; padding: 18px; background: #020617; border: 2px solid var(--path);
+            border-radius: 15px; color: white; font-size: 20px; margin: 25px 0; text-align: center;
         }
 
-        /* ADMIN PANEL GRID */
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .admin-btn {
-            background: var(--path); color: white; border: none; padding: 12px;
-            border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 12px;
-        }
-        .admin-btn:hover { background: var(--void); }
+        /* --- LINIE POŁĄCZEŃ (SVG) --- */
+        #svg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .connector { stroke: var(--path); stroke-width: 14; stroke-linecap: round; transition: 0.8s; }
+        .connector.active { stroke: var(--accent); stroke-dasharray: 30; animation: dash 1.5s linear infinite; stroke-width: 16; }
 
-        /* LINIE POŁĄCZEŃ */
-        #path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        line { stroke: var(--path); stroke-width: 12; stroke-linecap: round; transition: 0.8s; }
-        line.active { stroke: var(--accent); stroke-dasharray: 25; animation: flowAnim 2s linear infinite; stroke-width: 14; }
+        /* --- ANIMACJE --- */
+        @keyframes dash { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
+        @keyframes playerPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.6); opacity: 0; } }
+        @keyframes nodeSpawn { 0% { opacity: 0; transform: scale(0.3) rotate(-15deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        @keyframes flowAnim { from { stroke-dashoffset: 50; } to { stroke-dashoffset: 0; } }
-        @keyframes nodeSpawn {
-            0% { opacity: 0; transform: scale(0.4) rotate(-10deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
     </style>
 </head>
 <body class="zone-void">
 
-<div id="ui-top">
-    <div class="currency-container">
-        <div class="currency"><span id="points-val">0</span> Δ</div>
-        <div class="pps-counter">+<span id="pps-val">0.0</span> / SEKUNDĘ</div>
-    </div>
-</div>
+    <div id="hud">
+        <div id="account-hud" onclick="toggleMenu('profile')">
+            <small style="opacity:0.6; display:block; font-size:11px; font-weight: 900; letter-spacing: 1px;">OPERATOR SIECI:</small>
+            <b id="user-display">WCZYTYWANIE...</b>
+            <div id="status-dot" style="font-size:11px; margin-top:5px; color:var(--success); font-weight: bold;">● POŁĄCZONO Z BAZĄ</div>
+        </div>
 
-<div id="account-trigger" onclick="toggleProfile(true)">
-    <small style="opacity:0.6; display:block; font-size:10px; font-weight: 800;">ZALOGOWANO JAKO:</small>
-    <b id="display-name" style="font-size: 18px; letter-spacing: 1px;">WCZYTYWANIE...</b>
-    <div id="sync-indicator" style="font-size:11px; margin-top:6px; color:var(--success); font-weight: bold;">● SYNCHRONIZACJA OK</div>
-</div>
+        <div class="top-center">
+            <div class="main-currency-box">
+                <div class="delta-amount"><span id="points-val">0</span> Δ</div>
+                <div class="pps-label">+<span id="pps-val">0.0</span> / SEK</div>
+            </div>
+        </div>
 
-<button id="stats-trigger" onclick="toggleStats()">STATYSTYKI</button>
-<div id="stats-menu">
-    <div class="stats-header">
-        <h3>SYSTEM MONITORINGU</h3>
-        <button id="admin-question-btn" class="admin-btn-small" onclick="openAdminAuth()">?</button>
-    </div>
-    <div class="stat-line"><span>Waluta Delta:</span> <span id="st-val-delta">0</span></div>
-    <div class="stat-line"><span>Waluta Neon:</span> <span id="st-val-neon">0</span></div>
-    <div class="stat-line"><span>Cząstki Void:</span> <span id="st-val-void">0</span></div>
-    <div class="stat-line"><span>Prędkość:</span> <span id="st-val-speed">0</span></div>
-    <div class="stat-line"><span>Węzły:</span> <span id="st-val-nodes">0</span></div>
-</div>
+        <div class="bottom-left-controls">
+            <button class="ctrl-btn" onclick="toggleMenu('stats')">STATYSTYKI</button>
+            <button class="ctrl-btn" onclick="toggleMenu('achievements')">OSIĄGNIĘCIA</button>
+        </div>
 
-<div id="modal-admin-auth" class="modal-overlay">
-    <div class="modal-box">
-        <h2 style="color:var(--gold)">AUTORYZACJA NADZORCY</h2>
-        <p style="opacity:0.7">Wprowadź klucz bezpieczeństwa SpinnerRealYT</p>
-        <input type="password" id="admin-pass-input" class="input-field" placeholder="KOD DOSTĘPU...">
-        <div style="display:flex; gap:10px;">
-            <button class="admin-btn" style="flex:1; background:var(--success)" onclick="checkAdminPass()">WEJDŹ</button>
-            <button class="admin-btn" style="flex:1; background:var(--danger)" onclick="closeModals()">ANULUJ</button>
+        <div id="stats-menu" class="side-menu">
+            <h3 style="margin-top:0; color:var(--accent); letter-spacing: 2px;">MONITOR SYSTEMU</h3>
+            <div class="stat-row"><span>Całkowita Delta:</span> <span id="st-total">0</span></div>
+            <div class="stat-row"><span>Prędkość Silnika:</span> <span id="st-speed">0</span></div>
+            <div class="stat-row"><span>Aktywne Systemy:</span> <span id="st-nodes">0</span></div>
+            <div class="stat-row"><span>Mnożnik Void:</span> <span id="st-void">1.0x</span></div>
+            <button class="ctrl-btn" style="width:100%; margin-top:15px; background:var(--void); color:white; border:none;" onclick="openAdmin()">KONSOLA NADZORCY</button>
         </div>
     </div>
-</div>
 
-<div id="modal-admin-panel" class="modal-overlay">
-    <div class="modal-box" style="max-width:550px">
-        <h1 style="color:var(--accent); margin:0;">ADMIN PANEL</h1>
-        <p style="font-size:12px; margin-bottom:20px;">Witaj Spinner! Zarządzaj światem gry.</p>
-        
-        <div class="admin-grid">
-            <button class="admin-btn" onclick="adminAddPoints(100000)">+100K DELTA</button>
-            <button class="admin-btn" onclick="adminAddPoints(1000000)">+1M DELTA</button>
-            <button class="admin-btn" onclick="adminUnlockAll()">ODBLOKUJ WSZYSTKO</button>
-            <button class="admin-btn" onclick="adminSuperSpeed()">SUPER PRĘDKOŚĆ</button>
-            <button class="admin-btn" onclick="adminResetData()" style="background:var(--danger)">RESETUJ MOJE DANE</button>
-            <button class="admin-btn" onclick="saveData()" style="background:var(--success)">WYMUŚ ZAPIS DB</button>
+    <div id="notifier"></div>
+
+    <div id="modal-admin" class="overlay">
+        <div class="modal-content">
+            <h2 style="color:var(--gold); margin:0;">AUTORYZACJA POZIOMU 5</h2>
+            <p style="opacity:0.7">Wprowadź kod dostępu SpinnerRealYT</p>
+            <input type="password" id="admin-input" class="input-box" placeholder="********">
+            <div style="display:flex; gap:15px;">
+                <button class="ctrl-btn" style="flex:1; background:var(--success); color:white;" onclick="checkAdmin()">WEJDŹ</button>
+                <button class="ctrl-btn" style="flex:1; background:var(--danger); color:white;" onclick="closeModals()">ANULUJ</button>
+            </div>
         </div>
-        
-        <button class="admin-btn" style="width:100%; margin-top:20px; padding:15px;" onclick="closeModals()">ZAMKNIJ PANEL</button>
     </div>
-</div>
 
-<div id="profile-modal" class="modal-overlay">
-    <div class="modal-box">
-        <h2 style="margin:0; font-size:32px; color: var(--accent);">PROFIL GRACZA</h2>
-        <div style="margin: 20px 0; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
-            <div>Użytkownik: <b id="prof-user">...</b></div>
-            <div>Prędkość silnika: <b id="prof-speed">...</b></div>
-            <div>Aktywne węzły: <b id="prof-nodes">...</b></div>
+    <div id="game-viewport">
+        <div id="world-map">
+            <svg id="svg-canvas"></svg>
+            <div id="player"></div>
         </div>
-        <button class="admin-btn" style="width:100%; padding:15px; background:var(--path)" onclick="toggleProfile(false)">POWRÓT</button>
     </div>
-</div>
-
-<div id="game-viewport">
-    <div id="world-map">
-        <svg id="path-layer"></svg>
-        <div id="player"></div>
-    </div>
-</div>
-
-<script>
-    // --- KONFIGURACJA BAZY ---
-    const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
+    <script>
+    // --- KONFIGURACJA FIREBASE ---
+    const firebaseConfig = { 
+        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const user = localStorage.getItem("sp_logged") || "Gosc";
     const pass = localStorage.getItem("sp_pass") || "";
 
-    // Stan gry
+    // --- STAN GRY (STATE) ---
     let state = {
-        points: 0, 
+        points: 0,
+        totalPoints: 0,
         neon: 0,
         void: 0,
-        pps: 0, 
-        pX: 4000, 
-        pY: 4000, 
-        speed: 8,
-        unlockedNodes: ["up1"], 
-        purchasedLevels: { "up1": 0 }
+        pps: 0,
+        pX: 6000, // Środek mapy 12000x12000
+        pY: 6000,
+        speed: 10,
+        unlockedNodes: ["n1"],
+        purchasedLevels: { "n1": 0 },
+        achievements: [],
+        lastSave: Date.now()
     };
 
+    // --- DEFINICJA 40 WĘZŁÓW (NEON TREE STRUCTURE) ---
+    // Struktura: x, y (koatynaty na mapie 12000x12000)
     const nodes = {
-        "up1": { num: 1, x: 4000, y: 4000, name: "Rdzeń Startowy", desc: "Podstawowy generator cząsteczek Δ.", cost: 0, max: 1, pps: 1, next: ["up2"] },
-        "up2": { num: 2, x: 4000, y: 3650, name: "Przekaźnik Mocy", desc: "Zwiększa wydajność przesyłu energii.", cost: 25, max: 50, pps: 2.5, next: ["up3", "up4"] },
-        "up3": { num: 3, x: 3650, y: 3400, name: "Napęd Kwantowy", desc: "Ulepsza silniki Twojego awatara.", cost: 150, max: 15, speed: 1.2, next: ["up5"] },
-        "up4": { num: 4, x: 4350, y: 3400, name: "Kolektor Próżni", desc: "Wysysa energię z otaczającego voidu.", cost: 450, max: 30, pps: 18, next: ["up5"] },
-        "up5": { num: 5, x: 4000, y: 3100, name: "Stabilizator", desc: "Mnoży zysk z poprzednich węzłów.", cost: 1500, max: 40, pps: 65, next: ["up6", "up7"] },
-        "up6": { num: 6, x: 3600, y: 2800, name: "Wzmacniacz", desc: "Czysta moc obliczeniowa.", cost: 5000, max: 50, pps: 180, next: ["up8"] },
-        "up7": { num: 7, x: 4400, y: 2800, name: "Sztuczna Gwiazda", desc: "Miniaturowe słońce wewnątrz sieci.", cost: 12000, max: 30, pps: 500, next: ["up8"] },
-        "up8": { num: 8, x: 4000, y: 2400, name: "Brama Wymiaru", desc: "Ostateczny cel strefy pierwszej.", cost: 50000, max: 1, pps: 2000, next: [] }
+        "n1": { id: 1, x: 6000, y: 6000, name: "Rdzeń Alfa", desc: "Początek wszystkiego. Generuje stabilną Deltę.", cost: 0, max: 1, pps: 2, next: ["n2", "n3"] },
+        "n2": { id: 2, x: 6000, y: 5700, name: "Przekaźnik Sygnału", desc: "Wzmacnia częstotliwość wydobycia.", cost: 50, max: 25, pps: 4, next: ["n4"] },
+        "n3": { id: 3, x: 6300, y: 6100, name: "Kolektor Energii", desc: "Zbiera rozproszone cząstki z otoczenia.", cost: 120, max: 20, pps: 6, next: ["n5"] },
+        "n4": { id: 4, x: 5700, y: 5500, name: "Turbina Spinowa", desc: "Zwiększa prędkość poruszania się operatora.", cost: 300, max: 15, speed: 1.5, next: ["n6"] },
+        "n5": { id: 5, x: 6600, y: 5900, name: "Akcelerator Cząstek", desc: "Drastycznie przyspiesza generację Delty.", cost: 800, max: 30, pps: 25, next: ["n7"] },
+        "n6": { id: 6, x: 5400, y: 5200, name: "Most Kwantowy", desc: "Tunelowanie danych między wymiarami.", cost: 2500, max: 40, pps: 70, next: ["n8", "n9"] },
+        "n7": { id: 7, x: 7000, y: 5700, name: "Reaktor Fuzji", desc: "Potężne źródło energii neonowej.", cost: 6000, max: 50, pps: 150, next: ["n10"] },
+        "n8": { id: 8, x: 5100, y: 4900, name: "Skaner Głębinowy", desc: "Wykrywa ukryte złoża w strukturze drzewa.", cost: 15000, max: 35, pps: 450, next: ["n11"] },
+        "n9": { id: 9, x: 5500, y: 4600, name: "Silnik Warp", desc: "Zoptymalizowane skoki w przestrzeni mapy.", cost: 25000, max: 10, speed: 3.0, next: ["n12"] },
+        "n10": { id: 10, x: 7400, y: 5400, name: "Sztuczna Inteligencja", desc: "Automatyzuje procesy optymalizacji sieci.", cost: 50000, max: 60, pps: 1200, next: ["n13"] },
+        "n11": { id: 11, x: 4800, y: 4500, name: "Brama Void", desc: "Pierwszy kontakt z ciemną materią.", cost: 120000, max: 20, pps: 3500, next: ["n14", "n15"] },
+        "n12": { id: 12, x: 5800, y: 4200, name: "Pryzmat Neonowy", desc: "Rozszczepia światło na czystą walutę.", cost: 250000, max: 45, pps: 8000, next: ["n16"] },
+        "n13": { id: 13, x: 7800, y: 5100, name: "Działo Orbitalne", desc: "Pobiera energię bezpośrednio z gwiazd.", cost: 600000, max: 40, pps: 18000, next: ["n17"] },
+        "n14": { id: 14, x: 4400, y: 4200, name: "Katalizator Mroku", desc: "Zmienia void w stabilną energię Δ.", cost: 1500000, max: 50, pps: 45000, next: ["n18"] },
+        "n15": { id: 15, x: 4900, y: 3900, name: "Pętla Czasowa", desc: "Generuje zysk z przyszłych transakcji.", cost: 4000000, max: 30, pps: 120000, next: ["n19"] },
+        "n16": { id: 16, x: 6200, y: 3800, name: "Rdzeń Galaktyki", desc: "Serce lokalnego sektora sieci.", cost: 10000000, max: 55, pps: 350000, next: ["n20"] },
+        "n17": { id: 17, x: 8200, y: 4800, name: "Nadajnik Międzygalaktyczny", desc: "Łączność z innymi światami Spinnera.", cost: 25000000, max: 40, pps: 900000, next: ["n21"] },
+        "n18": { id: 18, x: 4000, y: 3800, name: "Osobliwość", desc: "Punkt o nieskończonej gęstości zysku.", cost: 75000000, max: 25, pps: 2500000, next: ["n22"] },
+        "n19": { id: 19, x: 5000, y: 3400, name: "Koncepcja Chaosu", desc: "Nieprzewidywalne, ale potężne skoki mocy.", cost: 200000000, max: 35, pps: 7000000, next: ["n23"] },
+        "n20": { id: 20, x: 6500, y: 3300, name: "Słońce Cyfrowe", desc: "Wieczne źródło fotonów neonowych.", cost: 500000000, max: 50, pps: 15000000, next: ["n24"] },
+        "n21": { id: 21, x: 8600, y: 4400, name: "Archiwum Przodków", desc: "Wiedza zwiększająca bazową prędkość.", cost: 1200000000, max: 20, speed: 5.0, next: ["n25"] },
+        "n22": { id: 22, x: 3500, y: 3500, name: "Otchłań Zapomnienia", desc: "Miejsce, gdzie Delta nie zna granic.", cost: 3000000000, max: 45, pps: 50000000, next: ["n26"] },
+        "n23": { id: 23, x: 4800, y: 2900, name: "Fabryka Antymaterii", desc: "Produkcja najdroższych cząstek w grze.", cost: 8000000000, max: 40, pps: 120000000, next: ["n27"] },
+        "n24": { id: 24, x: 6800, y: 2800, name: "Kopuła Dysona", desc: "Całkowite przejęcie energii gwiazdy.", cost: 20000000000, max: 50, pps: 350000000, next: ["n28"] },
+        "n25": { id: 25, x: 9000, y: 4000, name: "Stacja Alpha Centauri", desc: "Przyczółek w nowym układzie gwiezdnym.", cost: 50000000000, max: 35, pps: 800000000, next: ["n29"] },
+        "n26": { id: 26, x: 3000, y: 3200, name: "Wymiar Cienia", desc: "Wydobycie z samego dna rzeczywistości.", cost: 150000000000, max: 40, pps: 2000000000, next: ["n30"] },
+        "n27": { id: 27, x: 4500, y: 2400, name: "Laboratorium Czasu", desc: "Sekunda trwa tu wieczność zysku.", cost: 400000000000, max: 30, pps: 5000000000, next: ["n31"] },
+        "n28": { id: 28, x: 7200, y: 2400, name: "Matryca Przeznaczenia", desc: "Kodowanie sukcesu w strukturze DNA.", cost: 1000000000000, max: 50, pps: 15000000000, next: ["n32"] },
+        "n29": { id: 29, x: 9500, y: 3500, name: "Kolonia Mars", desc: "Ekspansja poza macierzystą planetę.", cost: 3000000000000, max: 40, pps: 40000000000, next: ["n33"] },
+        "n30": { id: 30, x: 2500, y: 2800, name: "Serce Pustki", desc: "Ostateczny generator w sektorze mroku.", cost: 8000000000000, max: 30, pps: 100000000000, next: ["n34"] },
+        "n31": { id: 31, x: 4200, y: 1900, name: "Syntezator Bytu", desc: "Tworzenie materii z czystej myśli.", cost: 20000000000000, max: 45, pps: 300000000000, next: ["n35"] },
+        "n32": { id: 32, x: 7600, y: 1900, name: "Gwiezdne Wrota", desc: "Skrót do krańców wszechświata.", cost: 60000000000000, max: 20, speed: 10.0, next: ["n36"] },
+        "n33": { id: 33, x: 10000, y: 3000, name: "Imperium Spinnera", desc: "Twoja własna galaktyka zysku.", cost: 150000000000000, max: 50, pps: 1000000000000, next: ["n37"] },
+        "n34": { id: 34, x: 2000, y: 2400, name: "Kod Źródłowy", desc: "Dostęp do zmiennych samej gry.", cost: 500000000000000, max: 40, pps: 4000000000000, next: ["n38"] },
+        "n35": { id: 35, x: 4000, y: 1400, name: "Nieskończoność", desc: "Zrozumienie natury nieskończonego wzrostu.", cost: 1200000000000000, max: 30, pps: 10000000000000, next: ["n39"] },
+        "n36": { id: 36, x: 8000, y: 1400, name: "Supernowa", desc: "Eksplozywny przyrost cząstek Delta.", cost: 4000000000000000, max: 50, pps: 35000000000000, next: ["n39"] },
+        "n37": { id: 37, x: 10500, y: 2500, name: "Nexus Wymiarów", desc: "Punkt zborny wszystkich rzeczywistości.", cost: 10000000000000000, max: 40, pps: 100000000000000, next: ["n40"] },
+        "n38": { id: 38, x: 1500, y: 2000, name: "Głos Twórcy", desc: "Usłysz szept samego SpinnerRealYT.", cost: 50000000000000000, max: 1, pps: 500000000000000, next: ["n40"] },
+        "n39": { id: 39, x: 6000, y: 800, name: "Piramida Światła", desc: "Konstrukcja wieńcząca północne drzewo.", cost: 200000000000000000, max: 50, pps: 2000000000000000, next: ["n40"] },
+        "n40": { id: 40, x: 6000, y: 200, name: "OMEGA", desc: "Ostateczny węzeł. Koniec i nowy początek.", cost: 1000000000000000000, max: 1, pps: 10000000000000000, next: [] }
     };
 
+    // --- LOGIKA PORUSZANIA I STEROWANIA ---
     const keys = {};
     window.onkeydown = e => keys[e.key.toLowerCase()] = true;
     window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-    // --- LOGIKA GUI ---
-    function toggleStats() {
-        const menu = document.getElementById('stats-menu');
-        const isOpen = menu.style.display === 'flex';
-        menu.style.display = isOpen ? 'none' : 'flex';
+    function handleMovement() {
+        let dx = 0, dy = 0;
+        const s = state.speed;
+
+        if (keys['w'] || keys['arrowup']) dy -= s;
+        if (keys['s'] || keys['arrowdown']) dy += s;
+        if (keys['a'] || keys['arrowleft']) dx -= s;
+        if (keys['d'] || keys['arrowright']) dx += s;
+
+        // Ograniczenia mapy (12000x12000)
+        state.pX = Math.max(0, Math.min(12000, state.pX + dx));
+        state.pY = Math.max(0, Math.min(12000, state.pY + dy));
+
+        updateCamera();
+    }
+
+    function updateCamera() {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const map = document.getElementById('world-map');
+        const player = document.getElementById('player');
+
+        // Kamera śledząca gracza
+        map.style.transform = `translate(${vw/2 - state.pX}px, ${vh/2 - state.pY}px)`;
         
-        // Sprawdzanie czy użytkownik to spinneryt
-        if(user.toLowerCase() === "spinneryt") {
-            document.getElementById('admin-question-btn').style.display = 'block';
-        }
+        // Pozycja gracza względem mapy
+        player.style.left = (state.pX - 21) + 'px';
+        player.style.top = (state.pY - 21) + 'px';
     }
 
-    function toggleProfile(val) {
-        document.getElementById('profile-modal').style.display = val ? 'flex' : 'none';
-        if(val) {
-            document.getElementById('prof-user').innerText = user;
-            document.getElementById('prof-speed').innerText = state.speed.toFixed(1);
-            document.getElementById('prof-nodes').innerText = state.unlockedNodes.length;
-        }
-    }
-
-    function openAdminAuth() {
-        document.getElementById('modal-admin-auth').style.display = 'flex';
-    }
-
-    function closeModals() {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-    }
-
-    function checkAdminPass() {
-        const input = document.getElementById('admin-pass-input').value;
-        // Hasło admina (możesz zmienić na własne)
-        if(input === "spinner123" || input === pass) {
-            closeModals();
-            document.getElementById('modal-admin-panel').style.display = 'flex';
-        } else {
-            alert("BŁĘDNE HASŁO!");
-        }
-    }
-
-    // --- FUNKCJE ADMINA ---
-    function adminAddPoints(amt) { state.points += amt; }
-    function adminUnlockAll() {
-        for(let key in nodes) if(!state.unlockedNodes.includes(key)) state.unlockedNodes.push(key);
-    }
-    function adminSuperSpeed() { state.speed = 40; }
-    function adminResetData() {
-        if(confirm("Czy na pewno wyczyścić dane z Firebase?")) {
-            db.ref('users/' + user + '/stats/neon_tree').remove();
-            location.reload();
-        }
-    }
-
-    // --- SYSTEM ZAPISU / ODCZYTU ---
-    async function loadData() {
-        if(user === "Gosc") {
-            document.getElementById('display-name').innerText = "TRYB GOŚCIA";
-            return;
-        }
-        document.getElementById('display-name').innerText = user.toUpperCase();
-        try {
-            const snap = await db.ref('users/' + user + '/stats/neon_tree').once('value');
-            if(snap.exists()) {
-                state = Object.assign({}, state, snap.val());
-            }
-        } catch(e) { console.error(e); }
-    }
-
-    function saveData() {
-        if(user !== "Gosc") db.ref('users/' + user + '/stats/neon_tree').set(state);
-    }
-
-    // --- INICJALIZACJA MAPY ---
+    // --- INICJALIZACJA ELEMENTÓW MAPY ---
     function initMap() {
         const map = document.getElementById('world-map');
-        const svg = document.getElementById('path-layer');
+        const svg = document.getElementById('svg-canvas');
 
         for (let id in nodes) {
             const n = nodes[id];
+            
+            // Tworzenie wizualnego węzła
             const div = document.createElement('div');
             div.className = 'node';
             div.id = `node-${id}`;
-            div.style.left = (n.x - 100) + 'px';
-            div.style.top = (n.y - 100) + 'px';
+            div.style.left = (n.x - 130) + 'px';
+            div.style.top = (n.y - 130) + 'px';
             map.appendChild(div);
 
+            // Tworzenie linii połączeń
             if(n.next) {
-                n.next.forEach(nxt => {
-                    const target = nodes[nxt];
+                n.next.forEach(nxtId => {
+                    const target = nodes[nxtId];
+                    if(!target) return;
+
                     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                    line.setAttribute("x1", n.x); line.setAttribute("y1", n.y);
-                    line.setAttribute("x2", target.x); line.setAttribute("y2", target.y);
-                    line.id = `path-${id}-${nxt}`;
+                    line.setAttribute("x1", n.x);
+                    line.setAttribute("y1", n.y);
+                    line.setAttribute("x2", target.x);
+                    line.setAttribute("y2", target.y);
+                    line.setAttribute("class", "connector");
+                    line.id = `line-${id}-${nxtId}`;
                     svg.appendChild(line);
                 });
             }
         }
-        requestAnimationFrame(mainLoop);
+    }
+        // --- SYSTEM POWIADOMIEŃ (TOASTS) ---
+    function notify(text, color = 'var(--accent)') {
+        const container = document.getElementById('notifier');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.borderRightColor = color;
+        toast.innerText = text;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
     }
 
-    // --- GŁÓWNA PĘTLA GRY ---
-    function mainLoop() {
-        let dx = 0, dy = 0;
-        if (keys['w'] || keys['arrowup']) dy -= state.speed;
-        if (keys['s'] || keys['arrowdown']) dy += state.speed;
-        if (keys['a'] || keys['arrowleft']) dx -= state.speed;
-        if (keys['d'] || keys['arrowright']) dx += state.speed;
+    // --- FORMATOWANIE LICZB (System Inżynieryjny) ---
+    function formatNum(num) {
+        if (num < 1000) return num.toFixed(1);
+        const suffixes = ["", "k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "Ud", "Dd", "Td"];
+        const i = Math.floor(Math.log10(num) / 3);
+        return (num / Math.pow(10, i * 3)).toFixed(2) + suffixes[i];
+    }
 
-        state.pX += dx; state.pY += dy;
-        
-        const vw = window.innerWidth, vh = window.innerHeight;
-        document.getElementById('world-map').style.transform = `translate(${vw/2 - state.pX}px, ${vh/2 - state.pY}px)`;
-        
-        const pEl = document.getElementById('player');
-        pEl.style.left = (state.pX - 18) + 'px';
-        pEl.style.top = (state.pY - 18) + 'px';
-
+    // --- LOGIKA ZAKUPÓW I AKTUALIZACJA WĘZŁÓW ---
+    function processNodeInteractions() {
         for (let id in nodes) {
             if (!state.unlockedNodes.includes(id)) continue;
+
             const n = nodes[id];
             const lvl = state.purchasedLevels[id] || 0;
-            const currentCost = Math.floor(n.cost * Math.pow(1.15, lvl));
-            const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
+            const cost = Math.floor(n.cost * Math.pow(1.22, lvl));
             
-            if (dist < 100 && state.points >= currentCost && lvl < n.max) {
-                state.points -= currentCost;
+            // Dystans gracza od węzła
+            const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
+            const el = document.getElementById(`node-${id}`);
+
+            // Jeśli gracz jest blisko i ma fundusze
+            if (dist < 120 && lvl < n.max && state.points >= cost) {
+                // Automatyczny zakup przy kolizji
+                state.points -= cost;
                 state.purchasedLevels[id] = lvl + 1;
+                
+                // Aplikowanie bonusów
                 if (n.pps) state.pps += n.pps;
                 if (n.speed) state.speed += n.speed;
+
+                // Odblokowanie kolejnych węzłów
                 if (state.purchasedLevels[id] === 1 && n.next) {
                     n.next.forEach(nxt => {
-                        if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt);
+                        if (!state.unlockedNodes.includes(nxt)) {
+                            state.unlockedNodes.push(nxt);
+                            notify(`ODBLOKOWANO: ${nodes[nxt].name}`, 'var(--success)');
+                        }
                     });
                 }
+                
+                // Efekt wizualny zakupu
+                el.style.transform = "scale(1.2)";
+                setTimeout(() => el.style.transform = "", 200);
                 saveData();
             }
         }
+    }
 
-        state.points += state.pps / 60;
-        updateInterface();
+    // --- GŁÓWNA PĘTLA GRY (60 FPS) ---
+    function mainLoop() {
+        // 1. Ruch
+        handleMovement();
+
+        // 2. Generowanie punktów (Delta)
+        const income = state.pps / 60;
+        state.points += income;
+        state.totalPoints += income;
+
+        // 3. Interakcje z węzłami
+        processNodeInteractions();
+
+        // 4. Odświeżanie UI
+        renderUI();
+
         requestAnimationFrame(mainLoop);
     }
 
-    function updateInterface() {
-        // UI Główne
-        document.getElementById('points-val').innerText = Math.floor(state.points).toLocaleString();
-        document.getElementById('pps-val').innerText = state.pps.toFixed(1);
+    function renderUI() {
+        // Górny pasek
+        document.getElementById('points-val').innerText = formatNum(state.points);
+        document.getElementById('pps-val').innerText = formatNum(state.pps);
 
-        // UI Statystyk
-        document.getElementById('st-val-delta').innerText = Math.floor(state.points).toLocaleString();
-        document.getElementById('st-val-neon').innerText = (state.neon || 0).toLocaleString();
-        document.getElementById('st-val-void').innerText = (state.void || 0).toLocaleString();
-        document.getElementById('st-val-speed').innerText = state.speed.toFixed(1);
-        document.getElementById('st-val-nodes').innerText = state.unlockedNodes.length;
+        // Menu statystyk
+        if (document.getElementById('stats-menu').style.display === 'flex') {
+            document.getElementById('st-total').innerText = formatNum(state.totalPoints);
+            document.getElementById('st-speed').innerText = state.speed.toFixed(1) + " j/s";
+            document.getElementById('st-nodes').innerText = `${state.unlockedNodes.length} / 40`;
+            document.getElementById('st-void').innerText = (1 + (state.void * 0.1)).toFixed(2) + "x";
+        }
 
-        for (let id in nodes) {
+        // Aktualizacja wizualna węzłów na mapie
+        state.unlockedNodes.forEach(id => {
             const el = document.getElementById(`node-${id}`);
-            if (state.unlockedNodes.includes(id)) {
-                el.classList.add('visible');
-                const n = nodes[id];
-                const lvl = state.purchasedLevels[id] || 0;
-                const cost = Math.floor(n.cost * Math.pow(1.15, lvl));
+            if (!el) return;
+            
+            el.classList.add('visible');
+            const n = nodes[id];
+            const lvl = state.purchasedLevels[id] || 0;
+            const cost = Math.floor(n.cost * Math.pow(1.22, lvl));
+            const isMax = lvl >= n.max;
 
-                el.innerHTML = `
-                    <div class="up-num">SYSTEM #${n.num}</div>
-                    <b>${n.name}</b>
-                    <i>${n.desc}</i>
-                    <div class="lvl-badge">POZIOM: ${lvl} / ${n.max}</div>
-                    <div class="cost-txt" style="color:${lvl >= n.max ? 'var(--gold)' : (state.points >= cost ? 'var(--success)' : 'var(--danger)')}">
-                        ${lvl >= n.max ? 'MAKSYMALNY' : cost.toLocaleString() + ' Δ'}
-                    </div>
-                `;
+            // Update zawartości węzła tylko jeśli jest widoczny na ekranie (optymalizacja)
+            el.innerHTML = `
+                <div class="up-num">SEKTOR ID: 00${n.id}</div>
+                <b>${n.name}</b>
+                <i>${n.desc}</i>
+                <div class="lvl-badge">STATUS: ${lvl} / ${n.max}</div>
+                <div class="cost-txt" style="color:${isMax ? 'var(--gold)' : (state.points >= cost ? 'var(--success)' : 'var(--danger)')}">
+                    ${isMax ? 'SYSTEM SCALONY' : formatNum(cost) + ' Δ'}
+                </div>
+            `;
 
-                if(state.points >= cost && lvl < n.max) el.classList.add('can-afford');
-                else el.classList.remove('can-afford');
-                
-                if(lvl >= n.max) el.classList.add('maxed');
+            if (state.points >= cost && !isMax) el.classList.add('can-afford');
+            else el.classList.remove('can-afford');
 
-                if (lvl > 0 && n.next) {
-                    n.next.forEach(nxt => {
-                        const l = document.getElementById(`path-${id}-${nxt}`);
-                        if(l) l.classList.add('active');
-                    });
-                }
+            if (isMax) el.classList.add('maxed');
+
+            // Aktywacja linii
+            if (lvl > 0 && n.next) {
+                n.next.forEach(nxt => {
+                    const line = document.getElementById(`line-${id}-${nxt}`);
+                    if (line) line.classList.add('active');
+                });
             }
+        });
+    }
+
+    // --- ZARZĄDZANIE OKNAMI ---
+    function toggleMenu(type) {
+        const menu = document.getElementById('stats-menu');
+        if (type === 'stats') {
+            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+        } else if (type === 'profile') {
+            alert(`Zalogowany jako: ${user}\nOstatni zapis: ${new Date(state.lastSave).toLocaleString()}`);
+        } else if (type === 'achievements') {
+            notify("System osiągnięć wkrótce!", "var(--gold)");
         }
     }
 
+    function openAdmin() {
+        if (user.toLowerCase() === "spinneryt" || user.toLowerCase() === "spinnerrealyt") {
+            document.getElementById('modal-admin').style.display = 'flex';
+        } else {
+            notify("BRAK UPRAWNIEŃ NADZORCY", "var(--danger)");
+        }
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none');
+    }
+
+    // --- FUNKCJE ADMINA (SPINNER CONSOLE) ---
+    function checkAdmin() {
+        const pin = document.getElementById('admin-input').value;
+        if (pin === "spinner123" || pin === pass) {
+            closeModals();
+            runAdminPanel();
+        } else {
+            alert("ODMOWA DOSTĘPU!");
+        }
+    }
+
+    function runAdminPanel() {
+        const action = prompt("KONSOLA SPINNERA:\n1. Dodaj 1B Delta\n2. Max Speed\n3. Unlock All Nodes\n4. Reset Game\n5. Force Save");
+        switch(action) {
+            case "1": state.points += 1000000000; notify("DODANO 1B Δ"); break;
+            case "2": state.speed = 100; notify("PRĘDKOŚĆ ŚWIATŁA AKTYWNA"); break;
+            case "3": 
+                for(let k in nodes) if(!state.unlockedNodes.includes(k)) state.unlockedNodes.push(k);
+                notify("WSZYSTKIE WĘZŁY ODBLOKOWANE");
+                break;
+            case "4": 
+                if(confirm("ZRESETOWAĆ WSZYSTKO?")) {
+                    db.ref('users/' + user + '/stats/neon_tree').remove();
+                    location.reload();
+                }
+                break;
+            case "5": saveData(); notify("ZAPISANO W CHMURZE"); break;
+        }
+    }
+
+    // --- KOMUNIKACJA Z FIREBASE ---
+    async function loadData() {
+        if (user === "Gosc") {
+            document.getElementById('user-display').innerText = "TRYB GOŚCIA";
+            return;
+        }
+        document.getElementById('user-display').innerText = user.toUpperCase();
+        
+        try {
+            const snap = await db.ref('users/' + user + '/stats/neon_tree').once('value');
+            if (snap.exists()) {
+                const saved = snap.val();
+                // Merge zapisu ze stanem domyślnym
+                state = { ...state, ...saved };
+                notify("DANE ZSYNCHRONIZOWANE");
+            }
+        } catch (e) {
+            console.error("Błąd ładowania:", e);
+            notify("BŁĄD SYNCHRONIZACJI", "var(--danger)");
+        }
+    }
+
+    function saveData() {
+        if (user !== "Gosc") {
+            state.lastSave = Date.now();
+            db.ref('users/' + user + '/stats/neon_tree').set(state);
+        }
+    }
+
+    // --- START ---
     window.onload = async () => {
         await loadData();
         initMap();
-        setInterval(saveData, 20000); 
+        updateCamera();
+        requestAnimationFrame(mainLoop);
+        
+        // Auto-zapis co 30 sekund
+        setInterval(saveData, 30000);
     };
+
+    // Obsługa zmiany rozmiaru okna
+    window.onresize = updateCamera;
+
 </script>
 </body>
 </html>
