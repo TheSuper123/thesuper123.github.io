@@ -8,13 +8,15 @@
 <link rel="icon" type="image/png" href="../Logo.png?v=2">
 <link rel="apple-touch-icon" href="../Logo.png?v=2">
 
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
 <style>
 :root{
   --bg:#020617;
   --card:#0f172a;
   --accent:#38bdf8;
   --text:#e5e7eb;
-  /* Dynamiczny rozmiar komórki: min 20px, max 45px, idealnie 8% szerokości ekranu */
   --cell-size: clamp(20px, 8vw, 45px);
 }
 *{box-sizing:border-box}
@@ -56,7 +58,6 @@ input, button {
 button { cursor:pointer; background: var(--card); border-color: var(--accent); color: var(--accent); font-weight: bold;}
 button:active { transform: scale(0.95); }
 
-/* KONTENER GRY - SKALOWANIE */
 #game {
   display: grid;
   justify-content: center;
@@ -65,7 +66,7 @@ button:active { transform: scale(0.95); }
   background: rgba(0,0,0,0.2);
   padding: 5px;
   border-radius: 8px;
-  width: fit-content; /* Ważne: dopasuj do zawartości */
+  width: fit-content;
   max-width: 100%;
 }
 
@@ -82,7 +83,6 @@ button:active { transform: scale(0.95); }
 .mine { background:#dc2626; color:white; }
 .flagged { background:#facc15; color:#020617; }
 
-/* Kolory cyferek */
 .number1{color:#2563eb} .number2{color:#16a34a} .number3{color:#dc2626}
 .number4{color:#1e3a8a} .number5{color:#7c2d12} .number6{color:#0f766e}
 
@@ -121,7 +121,8 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
       <button id="btn-flag" class="btn-mode">Flaga</button>
     </div>
     
-    <div id="points-info" style="text-align:center; margin-top:10px;">Points: 0</div>
+    <div id="points-info" style="text-align:center; margin-top:10px; font-weight: bold; color: var(--accent);">Points: 0</div>
+    <p style="text-align: center; font-size: 10px; color: #64748b; margin-top: 5px;">* Wygrana na rozmiarze 9 daje 1 punkt.</p>
   </div>
 </main>
 
@@ -129,6 +130,12 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 
 <script>
 (() => {
+    // --- FIREBASE SETUP ---
+    const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const loggedUser = localStorage.getItem("sp_logged");
+
     let ROWS=9, COLS=9, MINES_COUNT=10;
     const gameEl=document.getElementById('game');
     const infoEl=document.getElementById('info');
@@ -142,10 +149,25 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
     let gameOver=false, flagMode=false, firstClick=true, points=0;
 
+    // Pobieranie punktów z bazy
+    async function loadPoints() {
+        if(!loggedUser) return;
+        const snap = await db.ref('users/' + loggedUser + '/points').once('value');
+        if(snap.exists()) {
+            points = snap.val();
+            pointsInfoEl.textContent = `Points: ${points}`;
+        }
+    }
+
+    // Zapisywanie punktów do bazy
+    async function savePoints() {
+        if(!loggedUser) return;
+        await db.ref('users/' + loggedUser).update({ points: points });
+    }
+
     function createGrid(){
         gameEl.innerHTML='';
         cells=[];
-        // Ustawienie liczby kolumn w CSS Grid
         gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
         
         for(let i=0; i<ROWS*COLS; i++){
@@ -235,13 +257,21 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         if(opened.size === ROWS*COLS - MINES_COUNT){
             gameOver=true;
             infoEl.textContent='🎉 Wygrana!';
-            points += 10;
+            
+            // Punkt tylko za rozmiar 9
+            if(ROWS === 9) {
+                points += 1;
+                savePoints();
+                alert("Zdobywasz 1 punkt!");
+            } else {
+                alert("Wygrana! Ale punkty dostaje się tylko za rozmiar 9x9.");
+            }
             pointsInfoEl.textContent = `Points: ${points}`;
         }
     }
 
     function reset(){
-        ROWS = Math.min(parseInt(gridSizeInput.value) || 9, 15); // limit dla mobile
+        ROWS = Math.min(parseInt(gridSizeInput.value) || 9, 15);
         COLS = ROWS;
         MINES_COUNT = Math.min(parseInt(bombCountInput.value) || 10, Math.floor(ROWS*COLS*0.3));
         gameOver=false; firstClick=true;
@@ -264,6 +294,7 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         btnOpen.classList.remove('active-mode');
     };
 
+    loadPoints();
     reset();
 })();
 </script>
