@@ -10,6 +10,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 
 <style>
 :root{
@@ -21,11 +22,9 @@
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
+  margin:0; font-family:Inter,sans-serif;
   background:radial-gradient(circle at top,#020617,#000);
-  color:var(--text);
-  user-select: none;
+  color:var(--text); user-select: none;
 }
 header{
   display:flex; align-items:center; justify-content: space-between; gap:15px; padding:15px 20px;
@@ -36,7 +35,7 @@ header img{height:32px}
 
 .account-box { text-align: right; }
 .user-info { font-size: 13px; color: var(--accent); font-weight: bold; }
-.sync-status { font-size: 10px; color: #64748b; margin-top: 2px; text-transform: uppercase; }
+.sync-status { font-size: 9px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 1px;}
 
 nav button{
   background:none; border:none; color:var(--text); font-size:15px;
@@ -61,28 +60,18 @@ input, button {
   border-radius:8px; padding:6px 10px;
 }
 button { cursor:pointer; background: var(--card); border-color: var(--accent); color: var(--accent); font-weight: bold;}
-button:active { transform: scale(0.95); }
 
 #game {
-  display: grid;
-  justify-content: center;
-  margin: 10px auto;
-  gap: 3px;
-  background: rgba(0,0,0,0.2);
-  padding: 5px;
-  border-radius: 8px;
-  width: fit-content;
-  max-width: 100%;
+  display: grid; justify-content: center; margin: 10px auto;
+  gap: 3px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 8px;
+  width: fit-content; max-width: 100%;
 }
 
 .cell {
-  width: var(--cell-size);
-  height: var(--cell-size);
-  background: #334155;
-  display: flex; justify-content: center; align-items: center;
+  width: var(--cell-size); height: var(--cell-size);
+  background: #334155; display: flex; justify-content: center; align-items: center;
   cursor: pointer; font-weight: 700; border-radius: 4px;
-  transition: background 0.2s;
-  font-size: calc(var(--cell-size) * 0.5);
+  transition: background 0.2s; font-size: calc(var(--cell-size) * 0.5);
 }
 .open { background:#e5e7eb; color:#020617; }
 .mine { background:#dc2626; color:white; }
@@ -91,9 +80,7 @@ button:active { transform: scale(0.95); }
 .number1{color:#2563eb} .number2{color:#16a34a} .number3{color:#dc2626}
 .number4{color:#1e3a8a} .number5{color:#7c2d12} .number6{color:#0f766e}
 
-#controls-mobile {
-  display: flex; justify-content: center; gap: 10px; margin-top: 15px;
-}
+#controls-mobile { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
 .btn-mode { padding: 12px 20px; flex: 1; max-width: 150px; }
 .active-mode { background: var(--accent); color: #020617; }
 
@@ -109,7 +96,7 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
   </div>
   <div class="account-box">
     <div id="user-display" class="user-info">GUEST</div>
-    <div id="sync-display" class="sync-status">Offline</div>
+    <div id="sync-display" class="sync-status">No Session</div>
   </div>
 </header>
 
@@ -133,7 +120,6 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     </div>
     
     <div id="points-info" style="text-align:center; margin-top:10px; font-weight: bold; color: var(--accent);">Points: 0</div>
-    <p style="text-align: center; font-size: 10px; color: #64748b; margin-top: 5px;">* Wygrana na rozmiarze 9 daje 1 punkt.</p>
   </div>
 </main>
 
@@ -141,71 +127,66 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 
 <script>
 (() => {
-    // --- KONFIGURACJA FIREBASE ---
     const firebaseConfig = { 
-        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo", // <--- UPEWNIJ SIĘ ŻE TEN KLUCZ JEST TU WPISANY
+        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
         authDomain: "spinnerrealyt-games.firebaseapp.com",
         databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
     };
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
     const loggedUser = localStorage.getItem("sp_logged");
     const syncEl = document.getElementById('sync-display');
+    const pointsInfoEl = document.getElementById('points-info');
 
-    if(loggedUser) {
-        document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-        syncEl.textContent = "Synced";
-    }
-
-    let ROWS=9, COLS=9, MINES_COUNT=10;
-    const gameEl=document.getElementById('game');
-    const infoEl=document.getElementById('info');
-    const startBtn=document.getElementById('start-btn');
-    const gridSizeInput=document.getElementById('grid-size');
-    const bombCountInput=document.getElementById('bomb-count');
-    const btnOpen=document.getElementById('btn-open');
-    const btnFlag=document.getElementById('btn-flag');
-    const pointsInfoEl=document.getElementById('points-info');
-
+    let ROWS=9, COLS=9, MINES_COUNT=10, points=0, gameOver=false, flagMode=false, firstClick=true;
     let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
-    let gameOver=false, flagMode=false, firstClick=true, points=0;
 
-    async function loadPoints() {
-        if(!loggedUser) return;
-        syncEl.textContent = "Loading...";
+    // 1. MONITOROWANIE SESJI I ŁADOWANIE
+    auth.onAuthStateChanged((user) => {
+        if(user && loggedUser) {
+            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+            loadData();
+        } else {
+            syncEl.textContent = "Sign in required";
+            syncEl.style.color = "#fb7185";
+        }
+    });
+
+    async function loadData() {
+        syncEl.textContent = "Connecting...";
         try {
             const snap = await db.ref('users/' + loggedUser + '/points').once('value');
-            if(snap.exists()) {
-                points = snap.val();
-                pointsInfoEl.textContent = `Points: ${points}`;
-            }
-            syncEl.textContent = "Cloud Active";
+            points = snap.exists() ? snap.val() : 0;
+            pointsInfoEl.textContent = `Points: ${points}`;
+            syncEl.textContent = "Synced";
             syncEl.style.color = "#4ade80";
-        } catch(e) { 
-            syncEl.textContent = "Sync Error"; 
+        } catch(e) {
+            syncEl.textContent = "Sync Error";
             syncEl.style.color = "#fb7185";
         }
     }
 
     async function savePoints() {
-        if(!loggedUser) return;
+        if(!loggedUser || !auth.currentUser) return;
         syncEl.textContent = "Saving...";
         syncEl.style.color = var(--accent);
         try {
             await db.ref('users/' + loggedUser).update({ points: points });
-            syncEl.textContent = "Saved to Cloud";
+            syncEl.textContent = "Synced";
             syncEl.style.color = "#4ade80";
-            setTimeout(() => { syncEl.textContent = "Cloud Active"; }, 2000);
-        } catch(e) { 
-            syncEl.textContent = "Save Failed"; 
+        } catch(e) {
+            syncEl.textContent = "Permission Denied";
             syncEl.style.color = "#fb7185";
+            console.error(e);
         }
     }
 
+    // --- LOGIKA GRY ---
     function createGrid(){
-        gameEl.innerHTML='';
-        cells=[];
+        const gameEl=document.getElementById('game');
+        gameEl.innerHTML=''; cells=[];
         gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
         for(let i=0; i<ROWS*COLS; i++){
             const c=document.createElement('div');
@@ -249,14 +230,12 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         const c=cells[i];
         c.classList.add('open');
         if(minePositions.has(i)){
-            c.textContent='💣';
-            c.classList.add('mine');
+            c.textContent='💣'; c.classList.add('mine');
             return lose();
         }
         const n = neighbors(i).filter(idx => minePositions.has(idx)).length;
         if(n > 0){
-            c.textContent = n;
-            c.classList.add(`number${n}`);
+            c.textContent = n; c.classList.add(`number${n}`);
         } else {
             neighbors(i).forEach(openCell);
         }
@@ -265,22 +244,18 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 
     function toggleFlag(i){
         if(gameOver || opened.has(i)) return;
-        const c=cells[i];
+        const c=cells[i], infoEl=document.getElementById('info');
         if(flags.has(i)){
-            flags.delete(i);
-            c.textContent='';
-            c.classList.remove('flagged');
+            flags.delete(i); c.textContent=''; c.classList.remove('flagged');
         } else if(flags.size < MINES_COUNT){
-            flags.add(i);
-            c.textContent='🚩';
-            c.classList.add('flagged');
+            flags.add(i); c.textContent='🚩'; c.classList.add('flagged');
         }
         infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
     }
 
     function lose(){
         gameOver=true;
-        infoEl.textContent='💥 Przegrana!';
+        document.getElementById('info').textContent='💥 Przegrana!';
         minePositions.forEach(i => {
             cells[i].classList.add('mine', 'open');
             cells[i].textContent='💣';
@@ -290,30 +265,39 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     function checkWin(){
         if(opened.size === ROWS*COLS - MINES_COUNT){
             gameOver=true;
-            infoEl.textContent='🎉 Wygrana!';
+            document.getElementById('info').textContent='🎉 Wygrana!';
             if(ROWS === 9) {
                 points += 1;
+                pointsInfoEl.textContent = `Points: ${points}`;
                 savePoints();
             }
-            pointsInfoEl.textContent = `Points: ${points}`;
         }
     }
 
     function reset(){
+        const gridSizeInput=document.getElementById('grid-size');
+        const bombCountInput=document.getElementById('bomb-count');
         ROWS = Math.min(parseInt(gridSizeInput.value) || 9, 15);
         COLS = ROWS;
         MINES_COUNT = Math.min(parseInt(bombCountInput.value) || 10, Math.floor(ROWS*COLS*0.3));
         gameOver=false; firstClick=true;
         flags.clear(); opened.clear();
-        infoEl.textContent=`Flags: 0 / ${MINES_COUNT}`;
+        document.getElementById('info').textContent=`Flags: 0 / ${MINES_COUNT}`;
         createGrid();
     }
 
-    startBtn.onclick = reset;
-    btnOpen.onclick = () => { flagMode = false; btnOpen.classList.add('active-mode'); btnFlag.classList.remove('active-mode'); };
-    btnFlag.onclick = () => { flagMode = true; btnFlag.classList.add('active-mode'); btnOpen.classList.remove('active-mode'); };
+    document.getElementById('start-btn').onclick = reset;
+    document.getElementById('btn-open').onclick = () => { 
+        flagMode = false; 
+        document.getElementById('btn-open').classList.add('active-mode'); 
+        document.getElementById('btn-flag').classList.remove('active-mode'); 
+    };
+    document.getElementById('btn-flag').onclick = () => { 
+        flagMode = true; 
+        document.getElementById('btn-flag').classList.add('active-mode'); 
+        document.getElementById('btn-open').classList.remove('active-mode'); 
+    };
 
-    loadPoints();
     reset();
 })();
 </script>
