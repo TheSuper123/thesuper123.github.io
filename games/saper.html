@@ -33,7 +33,10 @@ header{
   position:sticky; top:0; z-index:100;
 }
 header img{height:32px}
-.user-info { font-size: 13px; color: var(--accent); font-weight: bold; background: rgba(56,189,248,0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--accent); }
+
+.account-box { text-align: right; }
+.user-info { font-size: 13px; color: var(--accent); font-weight: bold; }
+.sync-status { font-size: 10px; color: #64748b; margin-top: 2px; text-transform: uppercase; }
 
 nav button{
   background:none; border:none; color:var(--text); font-size:15px;
@@ -104,7 +107,10 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     <img src="../Logo.png" alt="SpinnerRealYT">
     <nav><button onclick="location.href='../index.html'">Menu</button></nav>
   </div>
-  <div id="user-display" class="user-info">GUEST</div>
+  <div class="account-box">
+    <div id="user-display" class="user-info">GUEST</div>
+    <div id="sync-display" class="sync-status">Offline</div>
+  </div>
 </header>
 
 <main>
@@ -137,15 +143,19 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 (() => {
     // --- KONFIGURACJA FIREBASE ---
     const firebaseConfig = { 
+        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo", // <--- UPEWNIJ SIĘ ŻE TEN KLUCZ JEST TU WPISANY
+        authDomain: "spinnerrealyt-games.firebaseapp.com",
         databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
     };
+    
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const loggedUser = localStorage.getItem("sp_logged");
+    const syncEl = document.getElementById('sync-display');
 
-    // Wyświetlanie nazwy konta
     if(loggedUser) {
         document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+        syncEl.textContent = "Synced";
     }
 
     let ROWS=9, COLS=9, MINES_COUNT=10;
@@ -161,24 +171,36 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
     let gameOver=false, flagMode=false, firstClick=true, points=0;
 
-    // Pobieranie punktów - Zmieniona ścieżka na /users/[nick]/points
     async function loadPoints() {
         if(!loggedUser) return;
+        syncEl.textContent = "Loading...";
         try {
             const snap = await db.ref('users/' + loggedUser + '/points').once('value');
             if(snap.exists()) {
                 points = snap.val();
                 pointsInfoEl.textContent = `Points: ${points}`;
             }
-        } catch(e) { console.error("Błąd ładowania:", e); }
+            syncEl.textContent = "Cloud Active";
+            syncEl.style.color = "#4ade80";
+        } catch(e) { 
+            syncEl.textContent = "Sync Error"; 
+            syncEl.style.color = "#fb7185";
+        }
     }
 
-    // Zapisywanie punktów - Upewniamy się, że zapisuje do folderu użytkownika
     async function savePoints() {
         if(!loggedUser) return;
+        syncEl.textContent = "Saving...";
+        syncEl.style.color = var(--accent);
         try {
             await db.ref('users/' + loggedUser).update({ points: points });
-        } catch(e) { console.error("Błąd zapisu:", e); }
+            syncEl.textContent = "Saved to Cloud";
+            syncEl.style.color = "#4ade80";
+            setTimeout(() => { syncEl.textContent = "Cloud Active"; }, 2000);
+        } catch(e) { 
+            syncEl.textContent = "Save Failed"; 
+            syncEl.style.color = "#fb7185";
+        }
     }
 
     function createGrid(){
@@ -272,9 +294,6 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
             if(ROWS === 9) {
                 points += 1;
                 savePoints();
-                alert("Punkty zapisane!");
-            } else {
-                alert("Wygrana! (Punkty tylko za rozmiar 9x9)");
             }
             pointsInfoEl.textContent = `Points: ${points}`;
         }
