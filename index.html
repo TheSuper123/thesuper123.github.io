@@ -23,186 +23,93 @@
             --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
         } 
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
+        * { box-sizing: border-box; } 
         
         body { 
             margin: 0; 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            font-family: 'Inter', sans-serif; 
             background: var(--bg); 
             color: var(--text); 
-            line-height: 1.5; 
-            overflow-x: hidden; 
-            background-image:  
-                radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%), 
-                radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 40%); 
+            background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%);
             min-height: 100vh; 
         } 
 
-        ::-webkit-scrollbar { width: 8px; } 
-        ::-webkit-scrollbar-track { background: var(--bg); } 
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; } 
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); } 
-
         header { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 15px 5%; 
-            background: rgba(2, 6, 23, 0.8); 
-            backdrop-filter: blur(12px); 
-            border-bottom: 1px solid var(--card-border); 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 15px 5%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px); 
+            border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 1000; 
         } 
 
         .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; } 
-        .logo-area img { height: 38px; filter: drop-shadow(0 0 8px var(--accent-glow)); } 
-        .logo-area span { font-weight: 800; letter-spacing: -0.5px; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } 
-
-        nav { display: flex; gap: 8px; } 
+        .logo-area img { height: 38px; } 
+        .logo-area span { font-weight: 800; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } 
 
         .btn-base { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.05); 
-            color: var(--text); 
-            padding: 8px 16px; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: 500; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
+            color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.3s; 
         } 
-
-        .btn-base:hover { background: rgba(56, 189, 248, 0.1); border-color: var(--accent); color: var(--accent); transform: translateY(-1px); } 
+        .btn-base:hover { border-color: var(--accent); color: var(--accent); } 
         
-        #auth-nav-btn { 
-            background: var(--grad); 
-            color: var(--bg); 
-            border: none; 
-            font-weight: 700; 
-            box-shadow: 0 4px 15px var(--accent-glow); 
-        } 
+        #auth-nav-btn { background: var(--grad); color: var(--bg); border: none; } 
 
         main { max-width: 1200px; margin: auto; padding: 40px 20px; } 
-
-        .hero { text-align: center; margin-bottom: 60px; animation: fadeIn 0.8s ease-out; } 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
-
-        .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; font-weight: 900; letter-spacing: -2px; line-height: 1; } 
-        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 20px auto; } 
-
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; 
-        } 
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; } 
 
         .game-card { 
-            background: var(--card); 
-            border: 1px solid var(--card-border); 
-            border-radius: 24px; 
-            padding: 24px; 
-            position: relative; 
-            overflow: hidden; 
-            transition: all 0.4s ease; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            min-height: 160px; 
+            background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; 
+            padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; 
         } 
-
-        .game-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.4); } 
-        .game-card h3 { margin: 0; font-size: 1.5rem; position: relative; z-index: 2; } 
-        .game-card .tag { position: absolute; top: 20px; right: 20px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; } 
+        .game-card:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); } 
 
         #auth-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px); 
-            display: none; align-items: center; justify-content: center; z-index: 10000; 
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); 
+            display: none; align-items: center; justify-content: center; z-index: 9999; 
         } 
         #auth-overlay.active { display: flex; } 
-        
-        .auth-modal { 
-            width: 95%; max-width: 400px; 
-            background: #0f172a; border: 1px solid var(--card-border); 
-            border-radius: 30px; padding: 40px; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
-        } 
+        .auth-modal { width: 90%; max-width: 400px; background: #0f172a; padding: 40px; border-radius: 30px; border: 1px solid var(--card-border); } 
 
-        .auth-input { 
-            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; 
-            background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: white; 
-            font-size: 16px; transition: 0.3s; 
-        } 
-        .auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); outline: none; } 
+        .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; background: #1e293b; border: 1px solid #334155; color: white; } 
+        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 10px; } 
+        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 10px; } 
 
-        .error { color: var(--danger); font-size: 14px; text-align: center; margin-bottom: 10px; } 
-        .success { color: #4ade80; font-size: 14px; text-align: center; margin-bottom: 10px; } 
-
-        footer { border-top: 1px solid var(--card-border); margin-top: 80px; padding: 20px; text-align: center; } 
-
-        #cookie-banner { 
-            position: fixed; bottom: 30px; left: 30px; right: 30px; max-width: 400px; 
-            background: #1e293b; border: 1px solid var(--accent); padding: 20px; 
-            border-radius: 20px; z-index: 9999; display: none; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
-        } 
-
-        @media (max-width: 600px) { 
-            header { padding: 15px 20px; } 
-            .hero h1 { font-size: 3rem; } 
-            nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #020617; padding: 10px; border-top: 1px solid var(--card-border); justify-content: center; } 
-            main { padding-bottom: 100px; } 
-        } 
+        #cookie-banner { position: fixed; bottom: 20px; left: 20px; background: #1e293b; padding: 20px; border-radius: 15px; border: 1px solid var(--accent); display: none; }
     </style> 
 </head> 
 <body> 
 
 <header> 
     <div class="logo-area" onclick="location.reload()"> 
-        <img src="Logo.png" alt="SpinnerRealYT"> 
+        <img src="Logo.png" alt="Logo"> 
         <span>SPINNER GAMES</span> 
     </div> 
     <nav id="nav-auth-container"></nav> 
 </header> 
 
 <main> 
-    <section class="hero"> 
-        <h1>Graj. Rywalizuj.<br><span style="color: var(--accent)">Wygrywaj.</span></h1> 
-        <p>Najlepsza kolekcja gier arkadowych w Twojej przeglądarce. Zaloguj się, aby zapisywać postępy.</p> 
-    </section> 
-
+    <h1 style="text-align:center; font-size: 3rem;">Wybierz <span style="color:var(--accent)">Grę</span></h1>
     <div class="game-grid" id="game-grid"></div> 
 </main> 
 
 <div id="auth-overlay"> 
     <div class="auth-modal"> 
-        <h2 id="auth-title" style="margin-top:0; font-size: 1.8rem;">Zaloguj się</h2> 
+        <h2 id="auth-title">Zaloguj się</h2> 
         <div id="auth-msg"></div> 
-        <input type="text" id="auth-user" class="auth-input" placeholder="Nazwa użytkownika (Nick)"> 
-        <div id="email-container"></div>
+        <input type="text" id="auth-user" class="auth-input" placeholder="Nick"> 
+        <div id="reg-fields"></div>
         <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
-        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: var(--bg); height: 50px; font-weight: bold;">Zaloguj</button> 
-        <div id="auth-toggle-box" style="text-align:center; margin-top:20px; font-size: 14px;"> 
-            Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); cursor:pointer; font-weight:bold">Zarejestruj się</span> 
-        </div> 
-        <button onclick="closeAuth()" style="background:none; border:none; color:var(--text-dim); width:100%; margin-top:20px; cursor:pointer; font-size: 14px;">Wróć do przeglądania</button> 
+        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000;">Potwierdź</button> 
+        <p id="auth-toggle-box" style="text-align:center; cursor:pointer; font-size: 14px; margin-top: 20px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p> 
+        <button onclick="closeAuth()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Zamknij</button>
     </div> 
 </div> 
 
-<footer> 
-    <p>© 2026 SpinnerRealYT Games. Wszelkie prawa zastrzeżone.</p> 
-</footer> 
-
 <div id="cookie-banner"> 
-    <p style="margin:0 0 15px 0">Używamy ciasteczek dla Twojej wygody. <a href="#" style="color:var(--accent)">Szczegóły</a></p> 
-    <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: var(--bg)">Akceptuję</button> 
+    Ta strona używa cookies. <button class="btn-base" onclick="acceptCookies()">OK</button> 
 </div> 
 
 <script> 
-// --- FIREBASE KONFIG --- 
+// 1. Inicjalizacja Firebase (OD RAZU)
 const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" }; 
 firebase.initializeApp(firebaseConfig); 
 const db = firebase.database(); 
@@ -210,124 +117,94 @@ const auth = firebase.auth();
 
 let isLoginMode = true; 
 
+// 2. Lista gier
 const games = [ 
-    { file: "games/saper.html", name: "Saper", tag: "Classic" }, 
-    { file: "games/tetris.html", name: "Tetris", tag: "Puzzle" }, 
-    { file: "games/neonmaze.html", name: "Neonowy Labirynt", tag: "Skill" }, 
-    { file: "games/tictactoe.html", name: "Kółko i Krzyżyk", tag: "Casual" }, 
-    { file: "games/soon.html", name: "Flappy Bird", tag: "Arcade" }, 
-    { file: "games/blockblast.html", name: "Block Blast", tag: "Puzzle" }, 
-    { file: "games/quiz.html", name: "Quiz Polityczny", tag: "Logic" }, 
-    { file: "games/polls.html", name: "Sondaże", tag: "Community" }, 
-    { file: "games/soon.html", name: "Neon Tree", tag: "Soon" } 
+    { file: "games/saper.html", name: "Saper" }, 
+    { file: "games/tetris.html", name: "Tetris" }, 
+    { file: "games/neonmaze.html", name: "Neonowy Labirynt" }, 
+    { file: "games/tictactoe.html", name: "Kółko i Krzyżyk" }, 
+    { file: "games/soon.html", name: "Flappy Bird" }, 
+    { file: "games/blockblast.html", name: "Block Blast" }, 
+    { file: "games/quiz.html", name: "Quiz Polityczny" }, 
+    { file: "games/polls.html", name: "Sondaże" } 
 ]; 
 
-function openAuth() { document.getElementById('auth-overlay').classList.add('active'); } 
-function closeAuth() { document.getElementById('auth-overlay').classList.remove('active'); } 
+// 3. Renderowanie interfejsu (Ta funkcja MUSI się wykonać)
+function renderUI() {
+    // Gry
+    const grid = document.getElementById("game-grid");
+    if(grid) {
+        grid.innerHTML = games.map(g => `
+            <div class="game-card" onclick="location.href='${g.file}'">
+                <h3>${g.name}</h3>
+            </div>
+        `).join('');
+    }
 
-function toggleAuth() { 
-    isLoginMode = !isLoginMode; 
-    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Stwórz konto"; 
-    document.getElementById('auth-submit').textContent = isLoginMode ? "Zaloguj" : "Zarejestruj się"; 
-    const emailCont = document.getElementById('email-container');
-    
-    emailCont.innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="Adres E-mail">';
-    
-    document.getElementById('auth-toggle-box').innerHTML = isLoginMode ?  
-        'Nie masz konta? <span onclick="toggleAuth()" style="color:var(--accent); font-weight:bold; cursor:pointer">Zarejestruj się</span>' :  
-        'Masz już konto? <span onclick="toggleAuth()" style="color:var(--accent); font-weight:bold; cursor:pointer">Zaloguj się</span>'; 
-} 
+    // Menu logowania
+    const nav = document.getElementById("nav-auth-container");
+    if(nav) {
+        const user = localStorage.getItem("sp_logged");
+        nav.innerHTML = "";
+        const btn = document.createElement("button");
+        btn.className = "btn-base";
+        if(user) {
+            btn.id = "auth-nav-btn";
+            btn.textContent = user.toUpperCase();
+            btn.onclick = () => { if(confirm("Wylogować?")) { localStorage.clear(); location.reload(); } };
+        } else {
+            btn.textContent = "Zaloguj się";
+            btn.onclick = () => { document.getElementById('auth-overlay').classList.add('active'); };
+        }
+        nav.appendChild(btn);
+    }
+}
 
-document.getElementById('auth-submit').onclick = async () => { 
-    const user = document.getElementById('auth-user').value.trim().toLowerCase(); 
-    const pass = document.getElementById('auth-pass').value.trim(); 
-    const msg = document.getElementById('auth-msg'); 
-    const emailInput = document.getElementById('auth-email');
+// 4. Obsługa logowania/rejestracji
+function toggleAuth() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
+    document.getElementById('reg-fields').innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="Email">';
+    document.getElementById('auth-toggle-box').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
+}
 
-    if(!user || !pass || (!isLoginMode && !emailInput.value)) { 
-        msg.innerHTML = '<p class="error">Wypełnij wszystkie pola!</p>'; 
-        return; 
-    } 
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('active'); }
 
-    try { 
-        if(isLoginMode) { 
-            // 1. Znajdź email przypisany do nicku
+document.getElementById('auth-submit').onclick = async () => {
+    const user = document.getElementById('auth-user').value.trim().toLowerCase();
+    const pass = document.getElementById('auth-pass').value.trim();
+    const msg = document.getElementById('auth-msg');
+
+    try {
+        if(isLoginMode) {
             const snap = await db.ref('users_map/' + user).once('value');
-            if(!snap.exists()) throw new Error("Nie ma takiego użytkownika.");
-            
+            if(!snap.exists()) throw new Error("Użytkownik nie istnieje");
             const email = snap.val().email;
-            
-            // 2. Logowanie Firebase Auth
             const userCred = await auth.signInWithEmailAndPassword(email, pass);
-            
-            // 3. Sprawdź czy mail zweryfikowany
-            if(!userCred.user.emailVerified) {
-                msg.innerHTML = '<p class="error">Potwierdź e-mail przed logowaniem!</p>';
-                return;
-            }
-
-            localStorage.setItem("sp_logged", user); 
-            msg.innerHTML = '<p class="success">Zalogowano!</p>'; 
-            setTimeout(() => location.reload(), 800); 
-        } else { 
-            const email = emailInput.value.trim();
-            
-            // 1. Sprawdź czy nick wolny
-            const nickSnap = await db.ref('users_map/' + user).once('value');
-            if(nickSnap.exists()) throw new Error("Ten nick jest już zajęty.");
-
-            // 2. Stwórz konto w Auth
+            if(!userCred.user.emailVerified) throw new Error("Potwierdź email!");
+            localStorage.setItem("sp_logged", user);
+            location.reload();
+        } else {
+            const email = document.getElementById('auth-email').value.trim();
+            const snap = await db.ref('users_map/' + user).once('value');
+            if(snap.exists()) throw new Error("Nick zajęty");
             const userCred = await auth.createUserWithEmailAndPassword(email, pass);
-            
-            // 3. Wyślij maila weryfikacyjnego
             await userCred.user.sendEmailVerification();
-            
-            // 4. Zapisz mapowanie Nick -> Email w bazie
-            await db.ref('users_map/' + user).set({ email: email, uid: userCred.user.uid });
-            await db.ref('users/' + user).set({ stats: { joined: Date.now() } });
+            await db.ref('users_map/' + user).set({ email: email });
+            msg.innerHTML = '<p class="success">Link wysłany na maila!</p>';
+        }
+    } catch(e) {
+        msg.innerHTML = `<p class="error">${e.message}</p>`;
+    }
+};
 
-            msg.innerHTML = '<p class="success">Wysłano link weryfikacyjny na e-mail!</p>'; 
-            setTimeout(toggleAuth, 2500); 
-        } 
-    } catch (e) { 
-        msg.innerHTML = `<p class="error">${e.message}</p>`; 
-    } 
-}; 
+function acceptCookies() { localStorage.setItem("cookiesAccepted", "true"); document.getElementById("cookie-banner").style.display = "none"; }
 
-function renderContent() { 
-    const grid = document.getElementById("game-grid"); 
-    const navAuth = document.getElementById("nav-auth-container"); 
-    const loggedUser = localStorage.getItem("sp_logged"); 
-
-    navAuth.innerHTML = ""; 
-    const authBtn = document.createElement("button"); 
-    authBtn.className = "btn-base"; 
-    if(loggedUser) { 
-        authBtn.id = "auth-nav-btn"; 
-        authBtn.textContent = loggedUser.toUpperCase(); 
-        authBtn.onclick = () => { if(confirm("Wylogować się?")) { localStorage.clear(); location.reload(); } }; 
-    } else { 
-        authBtn.textContent = "Logowanie"; 
-        authBtn.onclick = openAuth; 
-    } 
-    navAuth.appendChild(authBtn); 
-
-    grid.innerHTML = games.map(g => ` 
-        <div class="game-card" onclick="location.href='${g.file}'"> 
-            <span class="tag">${g.tag}</span> 
-            <h3>${g.name}</h3> 
-        </div> 
-    `).join(''); 
-} 
-
-function acceptCookies() { localStorage.setItem("cookiesAccepted","true"); document.getElementById("cookie-banner").style.display = "none"; } 
-
-window.onload = () => { 
-    renderContent(); 
-    if(localStorage.getItem("cookiesAccepted") !== "true") { 
-        setTimeout(() => document.getElementById("cookie-banner").style.display = "block", 1000); 
-    } 
-}; 
+// WYWOŁANIE STARTOWE
+window.onload = () => {
+    renderUI();
+    if(localStorage.getItem("cookiesAccepted") !== "true") document.getElementById("cookie-banner").style.display = "block";
+};
 </script> 
 </body> 
 </html>
