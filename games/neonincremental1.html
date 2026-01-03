@@ -1,127 +1,236 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Neon Tree Exploration – SpinnerRealYT</title>
-<link rel="icon" href="../Logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Tree Exploration – SpinnerRealYT</title>
+    <link rel="icon" href="../Logo.png">
 
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
-<style>
-/* --- CSS: STYLIZACJA --- */
-:root { 
-    --bg: #020617; 
-    --card: #0f172a; 
-    --accent: #38bdf8; 
-    --text: #e5e7eb; 
-    --gold: #facc15; 
-    --path: #1e293b; 
-    --danger: #f87171; 
-    --void-color: #6d28d9; 
-}
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #0f172a;
+            --accent: #38bdf8;
+            --text: #e5e7eb;
+            --gold: #facc15;
+            --path: #1e293b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --void: #6d28d9;
+        }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { 
-    margin: 0; 
-    font-family: 'Inter', sans-serif; 
-    background: #000; 
-    color: var(--text); 
-    overflow: hidden; 
-    touch-action: none; 
-}
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+        }
 
-/* STREFA 1: VOID (Upgrade 1-40) */
-body.zone-void #world-map { 
-    background-color: #050510;
-    background-image: 
-        linear-gradient(rgba(109, 40, 217, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(109, 40, 217, 0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-}
+        /* TŁO VOID */
+        body.zone-void #world-map {
+            background-color: #050510;
+            background-image: 
+                radial-gradient(var(--void) 0.5px, transparent 0.5px),
+                linear-gradient(rgba(109, 40, 217, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(109, 40, 217, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px, 100px 100px, 100px 100px;
+        }
 
-#game-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-#world-map { position: absolute; width: 5000px; height: 5000px; transition: 0.3s; }
+        #game-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        #world-map { position: absolute; width: 5000px; height: 5000px; transition: transform 0.1s ease-out; }
 
-#player {
-    position: absolute; width: 32px; height: 32px; background: var(--accent);
-    box-shadow: 0 0 25px var(--accent); border-radius: 10px; z-index: 100;
-    transition: transform 0.1s;
-}
+        #player {
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            background: var(--accent);
+            box-shadow: 0 0 30px var(--accent), inset 0 0 10px rgba(255,255,255,0.5);
+            border-radius: 10px;
+            z-index: 100;
+            border: 2px solid white;
+        }
 
-.node {
-    position: absolute; width: 160px; height: 160px; background: var(--card);
-    border: 4px solid var(--path); border-radius: 24px; display: none;
-    flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 15px; z-index: 50; transition: 0.3s;
-}
-.node.visible { display: flex; animation: fadeIn 0.5s ease-out forwards; }
-.node .up-number { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 5px; }
-.node b { font-size: 13px; color: var(--accent); text-transform: uppercase; }
-.node .cost-txt { font-weight: 800; font-size: 14px; margin-top: auto; padding: 5px 10px; border-radius: 8px; }
+        /* STYLISTYKA WĘZŁÓW */
+        .node {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 4px solid var(--path);
+            border-radius: 30px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(5px);
+        }
 
-/* UI */
-#ui { position: fixed; top: 25px; width: 100%; text-align: center; z-index: 200; pointer-events: none; }
-.currency { font-size: 42px; font-weight: 900; color: var(--accent); text-shadow: 0 0 20px rgba(56, 189, 248, 0.4); }
+        .node.visible { display: flex; animation: nodeSpawn 0.5s forwards; }
+        
+        .node.can-afford { border-color: var(--success); box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+        .node.maxed { border-color: var(--gold); box-shadow: 0 0 25px rgba(250, 204, 21, 0.3); }
 
-/* PANEL PROFILU (MODAL) */
-#account-info {
-    position: fixed; top: 20px; left: 20px; background: rgba(15, 23, 42, 0.85);
-    padding: 12px 18px; border-radius: 15px; border-left: 4px solid var(--accent);
-    font-size: 14px; z-index: 400; backdrop-filter: blur(8px); cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-#account-info:hover { background: var(--card); border-left-color: var(--gold); }
+        .up-num { font-size: 11px; font-weight: 900; color: var(--gold); opacity: 0.8; margin-bottom: 2px; }
+        .node b { font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+        .node i { font-size: 11px; opacity: 0.6; font-style: normal; margin: 5px 0; height: 24px; overflow: hidden; }
+        
+        .lvl-badge {
+            font-size: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #fff;
+        }
 
-#profile-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); display: none; justify-content: center;
-    align-items: center; z-index: 1000; backdrop-filter: blur(10px);
-}
-#profile-card {
-    background: var(--card); border: 2px solid var(--path); width: 320px;
-    padding: 30px; border-radius: 28px; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,1);
-}
-.profile-stat { margin: 15px 0; font-size: 15px; display: flex; justify-content: space-between; }
-#reset-btn {
-    background: var(--danger); color: white; border: none; padding: 14px;
-    border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%;
-    margin-top: 20px; transition: 0.2s;
-}
-#reset-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .cost-txt {
+            font-weight: 900;
+            font-size: 16px;
+            margin-top: auto;
+            transition: 0.2s;
+        }
 
-/* ŚCIEŻKI */
-#path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-line { stroke: var(--path); stroke-width: 8; stroke-linecap: round; transition: 0.5s; }
-line.active { stroke: var(--accent); stroke-dasharray: 15; animation: dash 1.5s linear infinite; }
+        /* INTERFEJS */
+        #ui-top {
+            position: fixed;
+            top: 30px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 200;
+            pointer-events: none;
+        }
 
-@keyframes dash { from { stroke-dashoffset: 30; } to { stroke-dashoffset: 0; } }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-</style>
+        .currency-container {
+            background: rgba(15, 23, 42, 0.7);
+            padding: 10px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .currency { font-size: 44px; font-weight: 900; color: var(--accent); text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); }
+        .pps-counter { font-size: 16px; font-weight: bold; color: var(--success); opacity: 0.9; }
+
+        /* PROFIL */
+        #account-trigger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--card);
+            padding: 12px 20px;
+            border-radius: 15px;
+            border-left: 5px solid var(--accent);
+            cursor: pointer;
+            z-index: 400;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.2s;
+        }
+        #account-trigger:hover { transform: scale(1.05); }
+
+        #profile-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+        }
+
+        .modal-content {
+            background: var(--card);
+            width: 350px;
+            padding: 40px;
+            border-radius: 35px;
+            border: 2px solid var(--path);
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 20px;
+        }
+        .stat-box small { display: block; font-size: 10px; opacity: 0.5; text-transform: uppercase; }
+        .stat-box b { font-size: 18px; color: var(--accent); }
+
+        .btn-action {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-close { background: var(--path); color: white; }
+        .btn-reset { background: var(--danger); color: white; margin-top: 25px; font-size: 12px; }
+
+        /* LINIE */
+        #path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        line { stroke: var(--path); stroke-width: 10; stroke-linecap: round; transition: 0.5s; }
+        line.active { stroke: var(--accent); stroke-dasharray: 20; animation: dashMove 2s linear infinite; }
+
+        @keyframes dashMove { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+        @keyframes nodeSpawn {
+            0% { opacity: 0; transform: scale(0.5) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
 </head>
 <body class="zone-void">
 
-<div id="account-info" onclick="openProfile()">
-    👤 <b id="user-display">Ładowanie...</b>
-    <span id="sync-status" style="display:block; font-size:10px; opacity:0.6; margin-top:3px;">Synchronizacja...</span>
+<div id="account-trigger" onclick="toggleModal(true)">
+    <small style="opacity:0.5; display:block; font-size:9px;">OPERATOR:</small>
+    <b id="display-name">Wczytywanie...</b>
+    <div id="sync-indicator" style="font-size:10px; margin-top:4px; color:var(--success)">● Połączono</div>
 </div>
 
-<div id="profile-overlay" onclick="if(event.target===this) closeProfile()">
-    <div id="profile-card">
-        <h2 style="margin:0; color:var(--accent);">Profil Eksploratora</h2>
-        <p id="prof-user" style="opacity:0.6; margin: 5px 0 20px 0;"></p>
-        <div class="profile-stat"><span>Postęp:</span> <b id="prof-nodes">0/40</b></div>
-        <div class="profile-stat"><span>Szybkość:</span> <b id="prof-speed">0</b></div>
-        <div class="profile-stat"><span>Punkty:</span> <b id="prof-pts">0</b></div>
-        <button id="reset-btn" onclick="resetData()">RESETUJ POSTĘP I WYLOGUJ</button>
-        <button onclick="closeProfile()" style="margin-top:15px; background:none; border:none; color:var(--text); opacity:0.5; cursor:pointer;">Zamknij</button>
+<div id="profile-modal" onclick="if(event.target===this) toggleModal(false)">
+    <div class="modal-content">
+        <h2 style="margin:0; font-size:28px;">STATUS</h2>
+        <div class="stat-grid">
+            <div class="stat-box"><small>Punkty</small><b id="st-pts">0</b></div>
+            <div class="stat-box"><small>PPS</small><b id="st-pps">0</b></div>
+            <div class="stat-box"><small>Prędkość</small><b id="st-spd">0</b></div>
+            <div class="stat-box"><small>Węzły</small><b id="st-nod">0</b></div>
+        </div>
+        <button class="btn-action btn-close" onclick="toggleModal(false)">POWRÓT DO GRY</button>
+        <button class="btn-action btn-reset" onclick="secureReset()">ZRESETUJ CAŁY POSTĘP</button>
     </div>
 </div>
 
-<div id="ui">
-    <div class="currency"><span id="points">0</span> Δ</div>
-    <div style="font-weight:bold; opacity: 0.8; font-size:14px;">ZYSK: +<span id="pps">0</span>/s</div>
+<div id="ui-top">
+    <div class="currency-container">
+        <div class="currency"><span id="points-val">0</span> Δ</div>
+        <div class="pps-counter">+<span id="pps-val">0</span>/s</div>
+    </div>
 </div>
 
 <div id="game-viewport">
@@ -132,183 +241,194 @@ line.active { stroke: var(--accent); stroke-dasharray: 15; animation: dash 1.5s 
 </div>
 
 <script>
-/* --- JS: LOGIKA --- */
-const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+    // --- KONFIGURACJA ---
+    const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-const currentUser = localStorage.getItem("sp_logged") || "Gość";
+    const user = localStorage.getItem("sp_logged") || "Gosc";
+    const pass = localStorage.getItem("sp_pass") || "";
 
-let state = {
-    points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
-    unlockedNodes: ["up1"], purchasedLevels: { "up1": 0 }, lockedOut: [],
-    teleports: []
-};
+    let state = {
+        points: 0, pps: 0, pX: 2500, pY: 2500, speed: 7,
+        unlockedNodes: ["up1"], 
+        purchasedLevels: { "up1": 0 }, 
+        lockedOut: []
+    };
 
-// Przykładowe ulepszenia (Zalążek strefy 1-40)
-const nodes = {
-    "up1": { num: 1, x: 2500, y: 2500, name: "Rdzeń Voidu", desc: "Start", cost: 0, max: 1, pps: 1, next: ["up2"] },
-    "up2": { num: 2, x: 2500, y: 2200, name: "Szybki Impuls", desc: "Zysk", cost: 25, max: 10, pps: 2, next: ["up3"] },
-    "up3": { num: 3, x: 2200, y: 2200, name: "Zwinność", desc: "Prędkość", cost: 150, max: 5, speed: 1.5, next: ["up4"] },
-    "up4": { num: 4, x: 1900, y: 2200, name: "Ciemna Materia", desc: "Masa", cost: 500, max: 10, pps: 12, next: [] } 
-    // Dodaj tutaj kolejne ulepszenia aż do num: 40
-};
+    const nodes = {
+        "up1": { num: 1, x: 2500, y: 2500, name: "Rdzeń Startowy", desc: "Twoje pierwsze źródło Δ", cost: 0, max: 1, pps: 1, next: ["up2"] },
+        "up2": { num: 2, x: 2500, y: 2200, name: "Przekaźnik Mocy", desc: "Zwiększa wydajność przesyłu", cost: 20, max: 20, pps: 3, next: ["up3", "up4"] },
+        "up3": { num: 3, x: 2250, y: 2000, name: "Napęd Kwantowy", desc: "Szybsze poruszanie się", cost: 150, max: 10, speed: 1.5, next: ["up5"] },
+        "up4": { num: 4, x: 2750, y: 2000, name: "Kolektor Próżni", desc: "Zbieranie Δ z otoczenia", cost: 400, max: 15, pps: 12, next: ["up5"] },
+        "up5": { num: 5, x: 2500, y: 1750, name: "Stabilizator", desc: "Większy zysk bazowy", cost: 1200, max: 25, pps: 45, next: ["up6"] },
+        "up6": { num: 6, x: 2500, y: 1450, name: "Brama Voidu", desc: "Otwiera przejście dalej", cost: 5000, max: 1, pps: 250, next: [] }
+    };
 
-const keys = {};
-window.onkeydown = e => keys[e.key.toLowerCase()] = true;
-window.onkeyup = e => keys[e.key.toLowerCase()] = false;
+    const keys = {};
+    window.onkeydown = e => keys[e.key.toLowerCase()] = true;
+    window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-// PROFIL
-function openProfile() {
-    document.getElementById('profile-overlay').style.display = 'flex';
-    document.getElementById('prof-user').innerText = currentUser;
-    document.getElementById('prof-nodes').innerText = `${state.unlockedNodes.length}/40`;
-    document.getElementById('prof-speed').innerText = state.speed;
-    document.getElementById('prof-pts').innerText = Math.floor(state.points);
-}
-function closeProfile() { document.getElementById('profile-overlay').style.display = 'none'; }
-
-// FIREBASE
-async function saveToCloud() {
-    if(currentUser === "Gość") return;
-    try {
-        await db.ref('users/' + currentUser + '/stats/neon_tree').set(state);
-        document.getElementById('sync-status').innerText = "Zsynchronizowano ✅";
-    } catch(e) { document.getElementById('sync-status').innerText = "Błąd zapisu ❌"; }
-}
-
-async function loadFromCloud() {
-    if(currentUser === "Gość") {
-        document.getElementById('user-display').innerText = "GOŚĆ (Brak zapisu)";
-        return;
+    // --- LOGIKA MODALA ---
+    function toggleModal(val) {
+        document.getElementById('profile-modal').style.display = val ? 'flex' : 'none';
+        if(val) {
+            document.getElementById('st-pts').innerText = Math.floor(state.points);
+            document.getElementById('st-pps').innerText = state.pps;
+            document.getElementById('st-spd').innerText = state.speed;
+            document.getElementById('st-nod').innerText = state.unlockedNodes.length;
+        }
     }
-    document.getElementById('user-display').innerText = currentUser.toUpperCase();
-    try {
-        const snap = await db.ref('users/' + currentUser + '/stats/neon_tree').once('value');
+
+    // --- RESET Z HASŁEM ---
+    function secureReset() {
+        const confirmPass = prompt("Weryfikacja tożsamości: Wpisz hasło do konta, aby zresetować dane:");
+        if (confirmPass === pass && pass !== "") {
+            if(confirm("Jesteś PEWIEN? Stracisz wszystkie Δ i ulepszenia.")) {
+                db.ref('users/' + user + '/stats/neon_tree').remove().then(() => {
+                    location.reload();
+                });
+            }
+        } else {
+            alert("Błędne hasło! Reset przerwany.");
+        }
+    }
+
+    // --- LOGIKA GRY ---
+    async function load() {
+        if(user === "Gosc") return;
+        document.getElementById('display-name').innerText = user.toUpperCase();
+        const snap = await db.ref('users/' + user + '/stats/neon_tree').once('value');
         if(snap.exists()) {
             state = Object.assign({}, state, snap.val());
-            document.getElementById('sync-status').innerText = "Dane wczytane ☁️";
-        }
-    } catch(e) { document.getElementById('sync-status').innerText = "Błąd połączenia"; }
-}
-
-function resetData() {
-    if(confirm("UWAGA: Wszystkie dane zostaną usunięte z chmury, a Ty zostaniesz wylogowany. Kontynuować?")) {
-        db.ref('users/' + currentUser + '/stats/neon_tree').remove().then(() => {
-            localStorage.clear();
-            location.href = "../index.html"; 
-        });
-    }
-}
-
-// SILNIK GRY
-function init() {
-    const map = document.getElementById('world-map');
-    const svg = document.getElementById('path-layer');
-    
-    for (let id in nodes) {
-        const n = nodes[id];
-        const div = document.createElement('div');
-        div.className = 'node';
-        div.id = `node-${id}`;
-        div.style.left = (n.x - 80) + 'px'; div.style.top = (n.y - 80) + 'px';
-        map.appendChild(div);
-        
-        if (n.next) {
-            n.next.forEach(nxt => {
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                line.setAttribute("x1", n.x); line.setAttribute("y1", n.y);
-                line.setAttribute("x2", nodes[nxt].x); line.setAttribute("y2", nodes[nxt].y);
-                line.id = `path-${id}-${nxt}`;
-                svg.appendChild(line);
-            });
-        }
-    }
-    requestAnimationFrame(gameLoop);
-}
-
-function gameLoop() {
-    let mx = 0, my = 0;
-    if (keys['w'] || keys['arrowup']) my -= state.speed;
-    if (keys['s'] || keys['arrowdown']) my += state.speed;
-    if (keys['a'] || keys['arrowleft']) mx -= state.speed;
-    if (keys['d'] || keys['arrowright']) mx += state.speed;
-    
-    state.pX += mx; state.pY += my;
-    
-    // Kamera i gracz
-    document.getElementById('world-map').style.left = (window.innerWidth/2 - state.pX) + 'px';
-    document.getElementById('world-map').style.top = (window.innerHeight/2 - state.pY) + 'px';
-    const p = document.getElementById('player');
-    p.style.left = (state.pX - 16) + 'px';
-    p.style.top = (state.pY - 16) + 'px';
-
-    // Zakupy przez dotyk (kolizja)
-    for (let id in nodes) {
-        if (!state.unlockedNodes.includes(id) || state.lockedOut.includes(id)) continue;
-        const n = nodes[id];
-        if (Math.hypot(state.pX - n.x, state.pY - n.y) < 70) {
-            if (state.points >= n.cost && (state.purchasedLevels[id]||0) < n.max) {
-                buyNode(id);
-            }
         }
     }
 
-    state.points += state.pps / 60;
-    updateUI();
-    requestAnimationFrame(gameLoop);
-}
-
-function buyNode(id) {
-    const n = nodes[id];
-    state.points -= n.cost;
-    state.purchasedLevels[id] = (state.purchasedLevels[id] || 0) + 1;
-    if (n.pps) state.pps += n.pps;
-    if (n.speed) state.speed += n.speed;
-    
-    // Odblokowanie kolejnych
-    if (state.purchasedLevels[id] === 1 && n.next) {
-        n.next.forEach(nxt => { if(!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
+    function save() {
+        if(user === "Gosc") return;
+        db.ref('users/' + user + '/stats/neon_tree').set(state);
     }
-    saveToCloud();
-}
 
-function updateUI() {
-    document.getElementById('points').innerText = Math.floor(state.points).toLocaleString();
-    document.getElementById('pps').innerText = state.pps.toFixed(1);
-    
-    for (let id in nodes) {
-        const el = document.getElementById(`node-${id}`);
-        if (state.unlockedNodes.includes(id)) {
-            el.classList.add('visible');
+    function initMap() {
+        const map = document.getElementById('world-map');
+        const svg = document.getElementById('path-layer');
+        for (let id in nodes) {
             const n = nodes[id];
-            const lvls = state.purchasedLevels[id] || 0;
-            const canAfford = state.points >= n.cost;
-            
-            el.innerHTML = `
-                <div class="up-number">#${n.num}</div>
-                <b>${n.name}</b>
-                <div class="cost-txt" style="color:${lvls >= n.max ? 'var(--gold)' : (canAfford ? '#4ade80' : '#f87171')}">
-                    ${lvls >= n.max ? 'AKTYWNE' : n.cost + ' Δ'}
-                </div>
-            `;
-            
-            if (lvls > 0 && n.next) {
+            const div = document.createElement('div');
+            div.className = 'node';
+            div.id = `node-${id}`;
+            div.style.left = (n.x - 90) + 'px';
+            div.style.top = (n.y - 90) + 'px';
+            map.appendChild(div);
+            if(n.next) {
                 n.next.forEach(nxt => {
-                    const l = document.getElementById(`path-${id}-${nxt}`);
-                    if(l) l.classList.add('active');
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", n.x); line.setAttribute("y1", n.y);
+                    line.setAttribute("x2", nodes[nxt].x); line.setAttribute("y2", nodes[nxt].y);
+                    line.id = `path-${id}-${nxt}`;
+                    svg.appendChild(line);
                 });
             }
         }
+        loop();
     }
-}
 
-// Start
-window.onload = async () => {
-    await loadFromCloud();
-    init();
-    setInterval(saveToCloud, 10000);
-};
+    function loop() {
+        let mx = 0, my = 0;
+        const s = state.speed;
+        if (keys['w'] || keys['arrowup']) my -= s;
+        if (keys['s'] || keys['arrowdown']) my += s;
+        if (keys['a'] || keys['arrowleft']) mx -= s;
+        if (keys['d'] || keys['arrowright']) mx += s;
+
+        state.pX += mx; state.pY += my;
+        
+        const vw = window.innerWidth, vh = window.innerHeight;
+        document.getElementById('world-map').style.transform = `translate(${vw/2 - state.pX}px, ${vh/2 - state.pY}px)`;
+        document.getElementById('player').style.left = (state.pX - 17) + 'px';
+        document.getElementById('player').style.top = (state.pY - 17) + 'px';
+
+        // Kolizja i kupowanie
+        for (let id in nodes) {
+            if (!state.unlockedNodes.includes(id)) continue;
+            const n = nodes[id];
+            const currentLvl = state.purchasedLevels[id] || 0;
+            
+            // Oblicz aktualną cenę (skalowanie 1.5x na level)
+            const currentCost = Math.floor(n.cost * Math.pow(1.5, currentLvl));
+
+            if (Math.hypot(state.pX - n.x, state.pY - n.y) < 90) {
+                if (state.points >= currentCost && currentLvl < n.max) {
+                    buy(id, currentCost);
+                }
+            }
+        }
+
+        state.points += state.pps / 60;
+        updateUI();
+        requestAnimationFrame(loop);
+    }
+
+    function buy(id, cost) {
+        const n = nodes[id];
+        state.points -= cost;
+        state.purchasedLevels[id] = (state.purchasedLevels[id] || 0) + 1;
+        
+        if (n.pps) state.pps += n.pps;
+        if (n.speed) state.speed += n.speed;
+
+        // Odblokowanie następnych przy 1 levelu
+        if (state.purchasedLevels[id] === 1 && n.next) {
+            n.next.forEach(nxt => {
+                if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt);
+            });
+        }
+        save();
+    }
+
+    function updateUI() {
+        document.getElementById('points-val').innerText = Math.floor(state.points).toLocaleString();
+        document.getElementById('pps-val').innerText = state.pps.toFixed(1);
+
+        for (let id in nodes) {
+            const el = document.getElementById(`node-${id}`);
+            if (state.unlockedNodes.includes(id)) {
+                el.classList.add('visible');
+                const n = nodes[id];
+                const lvl = state.purchasedLevels[id] || 0;
+                const cost = Math.floor(n.cost * Math.pow(1.5, lvl));
+
+                el.innerHTML = `
+                    <div class="up-num">#${n.num}</div>
+                    <b>${n.name}</b>
+                    <i>${n.desc}</i>
+                    <div class="lvl-badge">LVL ${lvl} / ${n.max}</div>
+                    <div class="cost-txt" style="color:${lvl >= n.max ? 'var(--gold)' : (state.points >= cost ? 'var(--success)' : 'var(--danger)')}">
+                        ${lvl >= n.max ? 'MAXED' : cost + ' Δ'}
+                    </div>
+                `;
+
+                if(state.points >= cost && lvl < n.max) el.classList.add('can-afford');
+                else el.classList.remove('can-afford');
+                
+                if(lvl >= n.max) el.classList.add('maxed');
+
+                // Linie
+                if (lvl > 0 && n.next) {
+                    n.next.forEach(nxt => {
+                        const l = document.getElementById(`path-${id}-${nxt}`);
+                        if(l) l.classList.add('active');
+                    });
+                }
+            }
+        }
+    }
+
+    window.onload = async () => {
+        await load();
+        initMap();
+        setInterval(save, 10000);
+    };
 </script>
 </body>
 </html>
