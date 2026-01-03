@@ -136,38 +136,27 @@ const games = [
 ]; 
 
 let isLoginMode = true; 
-let db, auth;
 
-// --- INITIALIZE FIREBASE ---
-try {
-    const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" }; 
-    firebase.initializeApp(firebaseConfig); 
-    db = firebase.database(); 
-    auth = firebase.auth();
-} catch(e) { console.error("Firebase fail:", e); }
+// --- INICJALIZACJA GLOBALNA ---
+const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" }; 
+firebase.initializeApp(firebaseConfig); 
+const db = firebase.database(); 
+const auth = firebase.auth();
 
-// --- RENDER ENGINE ---
+// --- RENDEROWANIE ---
 function renderUI() {
     const grid = document.getElementById("game-grid");
-    grid.innerHTML = "";
-    
-    games.forEach(g => {
-        const card = document.createElement("div");
-        card.className = "game-card";
-        card.innerHTML = `<span class="tag">${g.tag}</span><h3>${g.name}</h3>`;
-        card.onclick = () => location.href = g.file;
-        
-        // Spotlight Effect
-        card.onmousemove = (e) => {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-            card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-        };
-        grid.appendChild(card);
-    });
+    if (!grid) return;
+    grid.innerHTML = games.map(g => `
+        <div class="game-card" onclick="location.href='${g.file}'" onmousemove="handleMouseMove(event, this)">
+            <span class="tag">${g.tag}</span>
+            <h3>${g.name}</h3>
+        </div>
+    `).join('');
 
     const nav = document.getElementById("nav-auth-container");
     const user = localStorage.getItem("sp_logged");
+    if (!nav) return;
     nav.innerHTML = "";
     const btn = document.createElement("button");
     btn.className = "btn-base";
@@ -180,6 +169,12 @@ function renderUI() {
         btn.onclick = () => document.getElementById('auth-overlay').classList.add('active');
     }
     nav.appendChild(btn);
+}
+
+function handleMouseMove(e, card) {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
 }
 
 function toggleAuth() {
@@ -202,7 +197,7 @@ document.getElementById('auth-submit').onclick = async () => {
             if(!snap.exists()) throw new Error("Nie znaleziono użytkownika.");
             const email = snap.val().email;
             const cred = await auth.signInWithEmailAndPassword(email, pass);
-            if(!cred.user.emailVerified) throw new Error("Zweryfikuj e-mail!");
+            if(!cred.user.emailVerified) throw new Error("Zweryfikuj e-mail! Sprawdź skrzynkę.");
             localStorage.setItem("sp_logged", user);
             location.reload();
         } else {
