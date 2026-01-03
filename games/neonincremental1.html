@@ -84,7 +84,7 @@ line.hidden { display: none; }
 
 <div id="account-info">
     Zalogowano: <b id="user-display">Gość</b>
-    <span id="sync-status">Lokalny zapis</span>
+    <span id="sync-status">Wczytywanie...</span>
 </div>
 
 <div id="sync-bar">
@@ -115,7 +115,6 @@ line.hidden { display: none; }
 </div>
 
 <script>
-// --- KONFIGURACJA FIREBASE ---
 const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -123,7 +122,6 @@ const db = firebase.database();
 const currentUser = localStorage.getItem("sp_logged") || null;
 const currentPass = localStorage.getItem("sp_pass") || null;
 
-// --- STAN GRY ---
 let state = {
     points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
     unlockedNodes: ["up1"], purchasedLevels: { "up1": 0 }, lockedOut: [],
@@ -145,55 +143,40 @@ const nodes = {
 };
 
 const keys = {};
-window.onkeydown = e => {
-    keys[e.key.toLowerCase()] = true;
-    if(e.key === "1" && state.teleports.length > 0) toggleTP();
-};
+window.onkeydown = e => keys[e.key.toLowerCase()] = true;
 window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-// --- FUNKCJE SYNCHRONIZACJI ---
 async function saveToCloud() {
-    if(!currentUser || !currentPass) return;
+    if(!currentUser) return;
     try {
-        await db.ref('users/' + currentUser).update({
-            p: currentPass,
-            "stats/neon_tree": state
-        });
+        await db.ref('users/' + currentUser + '/stats/neon_tree').set(state);
         document.getElementById('sync-status').innerText = "Zsynchronizowano ✅";
-    } catch(e) {
-        document.getElementById('sync-status').innerText = "Błąd zapisu ❌";
-    }
+    } catch(e) { document.getElementById('sync-status').innerText = "Błąd zapisu ❌"; }
 }
 
 async function loadFromCloud() {
     if(!currentUser) return;
     document.getElementById('user-display').innerText = currentUser.toUpperCase();
-    document.getElementById('sync-status').innerText = "Wczytywanie...";
-    
     try {
         const snap = await db.ref('users/' + currentUser + '/stats/neon_tree').once('value');
         if(snap.exists()) {
-            state = snap.val();
-            document.getElementById('sync-status').innerText = "Wczytano z chmury ☁️";
+            const cloudData = snap.val();
+            // SCALANIE: bierze dane z bazy, ale zachowuje strukturę
+            state = Object.assign({}, state, cloudData);
+            document.getElementById('sync-status').innerText = "Wczytano zapis ☁️";
+        } else {
+            document.getElementById('sync-status').innerText = "Nowy profil";
         }
-    } catch(e) {
-        document.getElementById('sync-status').innerText = "Błąd wczytywania ❌";
-    }
+    } catch(e) { document.getElementById('sync-status').innerText = "Błąd bazy"; }
 }
 
 function resetData() {
-    if(confirm("Czy na pewno chcesz zresetować postęp?")) {
-        state = {
-            points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
-            unlockedNodes: ["up1"], purchasedLevels: { "up1": 0 }, lockedOut: [],
-            teleports: []
-        };
-        saveToCloud();
-        location.reload();
+    if(confirm("Reset?")) {
+        state = { points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6, unlockedNodes: ["up1"], purchasedLevels: {"up1":0}, lockedOut: [], teleports: [] };
+        saveToCloud().then(() => location.reload());
     }
 }
 
-// --- LOGIKA GRY ---
 function toggleTP() {
     const menu = document.getElementById('tp-menu');
     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
@@ -202,23 +185,19 @@ function toggleTP() {
 function init() {
     const map = document.getElementById('world-map');
     const svg = document.getElementById('path-layer');
-    
-    // Generowanie mapy
     for (let id in nodes) {
         const n = nodes[id];
         const div = document.createElement('div');
         div.className = 'node' + (n.type === "Teleportacja" ? " teleport-node" : "");
         div.id = `node-${id}`;
-        div.style.left = n.x - 80 + 'px';
-        div.style.top = n.y - 80 + 'px';
+        div.style.left = (n.x - 80) + 'px'; div.style.top = (n.y - 80) + 'px';
         map.appendChild(div);
         if (n.next) {
-            n.next.forEach(targetId => {
-                const target = nodes[targetId];
+            n.next.forEach(nxt => {
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                 line.setAttribute("x1", n.x); line.setAttribute("y1", n.y);
-                line.setAttribute("x2", target.x); line.setAttribute("y2", target.y);
-                line.id = `path-${id}-${targetId}`;
+                line.setAttribute("x2", nodes[nxt].x); line.setAttribute("y2", nodes[nxt].y);
+                line.id = `path-${id}-${nxt}`;
                 svg.appendChild(line);
             });
         }
@@ -235,9 +214,8 @@ function updateTPMenu() {
         toggle.style.display = 'block';
         state.teleports.forEach(id => {
             const btn = document.createElement('button');
-            btn.className = 'tp-btn';
-            btn.innerText = `Skok: ${nodes[id].name}`;
-            btn.onclick = () => { state.pX = nodes[id].x + 100; state.pY = nodes[id].y; toggleTP(); };
+            btn.className = 'tp-btn'; btn.innerText = nodes[id].name;
+            btn.onclick = () => { state.pX = nodes[id].x; state.pY = nodes[id].y; toggleTP(); };
             menu.appendChild(btn);
         });
     }
@@ -245,17 +223,14 @@ function updateTPMenu() {
 
 function gameLoop() {
     let mx = 0, my = 0;
-    const s = state.speed;
-    if (keys['w'] || keys['arrowup']) my -= s;
-    if (keys['s'] || keys['arrowdown']) my += s;
-    if (keys['a'] || keys['arrowleft']) mx -= s;
-    if (keys['d'] || keys['arrowright']) mx += s;
-    
+    if (keys['w'] || keys['arrowup']) my -= state.speed;
+    if (keys['s'] || keys['arrowdown']) my += state.speed;
+    if (keys['a'] || keys['arrowleft']) mx -= state.speed;
+    if (keys['d'] || keys['arrowright']) mx += state.speed;
     state.pX += mx; state.pY += my;
-    const v = document.getElementById('game-viewport');
-    const m = document.getElementById('world-map');
-    m.style.left = (v.clientWidth/2 - state.pX) + 'px';
-    m.style.top = (v.clientHeight/2 - state.pY) + 'px';
+    
+    document.getElementById('world-map').style.left = (window.innerWidth/2 - state.pX) + 'px';
+    document.getElementById('world-map').style.top = (window.innerHeight/2 - state.pY) + 'px';
     document.getElementById('player').style.left = (state.pX - 15) + 'px';
     document.getElementById('player').style.top = (state.pY - 15) + 'px';
 
@@ -263,7 +238,7 @@ function gameLoop() {
         if (!state.unlockedNodes.includes(id) || state.lockedOut.includes(id)) continue;
         const n = nodes[id];
         if (Math.hypot(state.pX - n.x, state.pY - n.y) < 80) {
-            if (state.points >= n.cost) buyNode(id);
+            if (state.points >= n.cost && (state.purchasedLevels[id]||0) < n.max) buyNode(id);
         }
     }
     state.points += state.pps / 60;
@@ -274,73 +249,38 @@ function gameLoop() {
 function buyNode(id) {
     const n = nodes[id];
     const lvls = state.purchasedLevels[id] || 0;
-    if (lvls >= n.max) return;
-
-    if (n.partOfChoice) {
-        n.partOfChoice.forEach(altId => { if (!state.lockedOut.includes(altId)) state.lockedOut.push(altId); });
-    }
-
     state.points -= n.cost;
     state.purchasedLevels[id] = lvls + 1;
     if (n.pps) state.pps += n.pps;
     if (n.speed) state.speed += n.speed;
-    if (n.type === "Teleportacja" && !state.teleports.includes(id)) {
-        state.teleports.push(id);
-        updateTPMenu();
-    }
+    if (n.type === "Teleportacja" && !state.teleports.includes(id)) { state.teleports.push(id); updateTPMenu(); }
     if (state.purchasedLevels[id] === 1 && n.next) {
         n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
     }
-    if(n.max > 1 && lvls < n.max) n.cost = Math.floor(n.cost * 1.5);
-    
-    saveToCloud(); // Zapisuj przy każdym zakupie
+    saveToCloud();
 }
 
 function updateUI() {
     document.getElementById('points').innerText = Math.floor(state.points).toLocaleString();
     document.getElementById('pps').innerText = state.pps.toFixed(1);
-
     for (let id in nodes) {
-        const n = nodes[id];
         const el = document.getElementById(`node-${id}`);
-        const isLocked = state.lockedOut.includes(id);
-
-        if (state.unlockedNodes.includes(id) && !isLocked) {
+        if (state.unlockedNodes.includes(id) && !state.lockedOut.includes(id)) {
             el.classList.add('visible');
-            const lvls = state.purchasedLevels[id] || 0;
-            el.innerHTML = `
-                <div class="up-number">Upgrade #${n.num}</div>
-                <div class="type-tag">${n.type}</div>
-                <b>${n.name}</b>
-                <i>${n.desc}</i>
-                ${n.max > 1 ? `<small>Level ${lvls}/${n.max}</small>` : ""}
-                <span class="cost-txt" style="color:${state.points >= n.cost ? '#4ade80' : '#f87171'}">
-                    ${lvls >= n.max ? 'ACTIVE' : n.cost + ' Δ'}
-                </span>
-            `;
-            if (state.points >= n.cost && lvls < n.max) el.classList.add('can-afford'); else el.classList.remove('can-afford');
-            if (lvls >= n.max) el.classList.add('maxed');
-            
-            if (lvls > 0 && n.next) {
-                n.next.forEach(nxt => { 
-                    const l = document.getElementById(`path-${id}-${nxt}`);
-                    if(l) {
-                        if(state.lockedOut.includes(nxt)) l.classList.add('hidden');
-                        else l.classList.add('active');
-                    }
-                });
-            }
-        } else {
-            el.classList.remove('visible');
+            const n = nodes[id]; const lvls = state.purchasedLevels[id] || 0;
+            el.innerHTML = `<div class="up-number">#${n.num}</div><b>${n.name}</b><i>${n.desc}</i><span class="cost-txt">${lvls >= n.max ? 'MAX' : n.cost+' Δ'}</span>`;
+            if (lvls > 0 && n.next) n.next.forEach(nxt => {
+                const l = document.getElementById(`path-${id}-${nxt}`);
+                if(l) l.classList.add('active');
+            });
         }
     }
 }
 
-// Start gry
 window.onload = async () => {
     await loadFromCloud();
     init();
-    setInterval(saveToCloud, 10000); // Auto-zapis co 10 sekund
+    setInterval(saveToCloud, 10000);
 };
 </script>
 </body>
