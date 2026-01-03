@@ -64,7 +64,7 @@ button { cursor:pointer; background: var(--card); border-color: var(--accent); c
 #game {
   display: grid; justify-content: center; margin: 10px auto;
   gap: 3px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 8px;
-  width: fit-content; max-width: 100%;
+  width: fit-content; max-width: 100%; min-height: 50px;
 }
 
 .cell {
@@ -96,7 +96,7 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
   </div>
   <div class="account-box">
     <div id="user-display" class="user-info">GUEST</div>
-    <div id="sync-display" class="sync-status">No Session</div>
+    <div id="sync-display" class="sync-status">OFFLINE</div>
   </div>
 </header>
 
@@ -143,19 +143,22 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     let ROWS=9, COLS=9, MINES_COUNT=10, points=0, gameOver=false, flagMode=false, firstClick=true;
     let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
 
-    // 1. MONITOROWANIE SESJI I ŁADOWANIE
+    // 1. MONITOROWANIE SESJI
     auth.onAuthStateChanged((user) => {
         if(user && loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
             loadData();
+        } else if (loggedUser) {
+            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+            syncEl.textContent = "Connecting Auth...";
         } else {
-            syncEl.textContent = "Sign in required";
-            syncEl.style.color = "#fb7185";
+            syncEl.textContent = "Guest Mode";
         }
     });
 
     async function loadData() {
-        syncEl.textContent = "Connecting...";
+        if(!loggedUser) return;
+        syncEl.textContent = "Syncing...";
         try {
             const snap = await db.ref('users/' + loggedUser + '/points').once('value');
             points = snap.exists() ? snap.val() : 0;
@@ -171,21 +174,21 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     async function savePoints() {
         if(!loggedUser || !auth.currentUser) return;
         syncEl.textContent = "Saving...";
-        syncEl.style.color = var(--accent);
+        syncEl.style.color = "#38bdf8";
         try {
             await db.ref('users/' + loggedUser).update({ points: points });
             syncEl.textContent = "Synced";
             syncEl.style.color = "#4ade80";
         } catch(e) {
-            syncEl.textContent = "Permission Denied";
+            syncEl.textContent = "Permission Error";
             syncEl.style.color = "#fb7185";
-            console.error(e);
         }
     }
 
     // --- LOGIKA GRY ---
     function createGrid(){
-        const gameEl=document.getElementById('game');
+        const gameEl = document.getElementById('game');
+        if(!gameEl) return;
         gameEl.innerHTML=''; cells=[];
         gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
         for(let i=0; i<ROWS*COLS; i++){
@@ -228,6 +231,7 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         if(firstClick){ firstClick=false; placeMines(i); }
         opened.add(i);
         const c=cells[i];
+        if(!c) return;
         c.classList.add('open');
         if(minePositions.has(i)){
             c.textContent='💣'; c.classList.add('mine');
@@ -244,7 +248,9 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 
     function toggleFlag(i){
         if(gameOver || opened.has(i)) return;
-        const c=cells[i], infoEl=document.getElementById('info');
+        const c=cells[i];
+        if(!c) return;
+        const infoEl=document.getElementById('info');
         if(flags.has(i)){
             flags.delete(i); c.textContent=''; c.classList.remove('flagged');
         } else if(flags.size < MINES_COUNT){
@@ -257,8 +263,10 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         gameOver=true;
         document.getElementById('info').textContent='💥 Przegrana!';
         minePositions.forEach(i => {
-            cells[i].classList.add('mine', 'open');
-            cells[i].textContent='💣';
+            if(cells[i]) {
+                cells[i].classList.add('mine', 'open');
+                cells[i].textContent='💣';
+            }
         });
     }
 
@@ -298,6 +306,7 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         document.getElementById('btn-open').classList.remove('active-mode'); 
     };
 
+    // Start gry
     reset();
 })();
 </script>
