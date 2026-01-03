@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Tree Exploration – SpinnerRealYT</title>
+    <title>Neon Tree Exploration – SpinnerRealYT Ultimate</title>
     <link rel="icon" href="../Logo.png">
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
@@ -20,6 +20,7 @@
             --danger: #ef4444;
             --success: #22c55e;
             --void: #6d28d9;
+            --neon: #2dd4bf;
             --panel: rgba(15, 23, 42, 0.95);
         }
 
@@ -137,6 +138,59 @@
         .currency { font-size: 50px; font-weight: 900; color: var(--accent); text-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
         .pps-counter { font-size: 18px; font-weight: 800; color: var(--success); margin-top: -5px; }
 
+        /* NOWY SYSTEM STATYSTYK W LEWYM DOLNYM ROGU */
+        #stats-trigger {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: var(--card);
+            color: var(--accent);
+            border: 2px solid var(--path);
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            z-index: 800;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #stats-trigger:hover { transform: scale(1.05); border-color: var(--accent); }
+
+        #stats-menu {
+            position: fixed;
+            bottom: 85px;
+            left: 25px;
+            width: 260px;
+            background: var(--panel);
+            border: 2px solid var(--path);
+            border-radius: 25px;
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            z-index: 799;
+            backdrop-filter: blur(15px);
+            animation: slideIn 0.4s ease-out;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stats-header h3 { margin: 0; font-size: 14px; letter-spacing: 1px; color: var(--text); opacity: 0.8; }
+        
+        .admin-btn-small {
+            width: 24px; height: 24px; background: var(--void); border: none; 
+            border-radius: 6px; color: white; font-weight: 900; cursor: pointer; 
+            display: none; transition: 0.2s;
+        }
+        .admin-btn-small:hover { background: var(--accent); transform: rotate(15deg); }
+
+        .stat-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
+        .stat-line span:last-child { color: var(--accent); }
+
         /* PROFIL / KONTO */
         #account-trigger {
             position: fixed;
@@ -154,59 +208,30 @@
         }
         #account-trigger:hover { transform: translateX(10px); background: #1e293b; }
 
-        #profile-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(20px);
+        /* MODALE I OKNA */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none; justify-content: center;
+            align-items: center; z-index: 2000; backdrop-filter: blur(10px);
         }
 
-        .modal-content {
-            background: var(--card);
-            width: 400px;
-            padding: 50px;
-            border-radius: 45px;
-            border: 2px solid var(--path);
-            text-align: center;
-            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        .modal-box {
+            background: var(--card); padding: 40px; border-radius: 35px;
+            border: 2px solid var(--path); width: 100%; max-width: 450px; text-align: center;
         }
 
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 30px 0;
+        .input-field {
+            width: 100%; padding: 15px; background: #020617; border: 2px solid var(--path);
+            border-radius: 12px; color: white; font-size: 18px; margin: 20px 0; text-align: center;
         }
 
-        .stat-box {
-            background: rgba(255,255,255,0.04);
-            padding: 20px;
-            border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.05);
+        /* ADMIN PANEL GRID */
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .admin-btn {
+            background: var(--path); color: white; border: none; padding: 12px;
+            border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 12px;
         }
-        .stat-box small { display: block; font-size: 11px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .stat-box b { font-size: 22px; color: var(--accent); }
-
-        .btn-action {
-            width: 100%;
-            padding: 18px;
-            border-radius: 20px;
-            border: none;
-            font-weight: 900;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 16px;
-            transition: 0.2s;
-        }
-
-        .btn-close { background: var(--path); color: white; }
-        .btn-close:hover { background: #334155; }
-        .btn-reset { background: var(--danger); color: white; margin-top: 35px; font-size: 13px; opacity: 0.8; }
-        .btn-reset:hover { opacity: 1; transform: scale(1.02); }
+        .admin-btn:hover { background: var(--void); }
 
         /* LINIE POŁĄCZEŃ */
         #path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -222,30 +247,71 @@
 </head>
 <body class="zone-void">
 
-<div id="account-trigger" onclick="toggleModal(true)">
+<div id="ui-top">
+    <div class="currency-container">
+        <div class="currency"><span id="points-val">0</span> Δ</div>
+        <div class="pps-counter">+<span id="pps-val">0.0</span> / SEKUNDĘ</div>
+    </div>
+</div>
+
+<div id="account-trigger" onclick="toggleProfile(true)">
     <small style="opacity:0.6; display:block; font-size:10px; font-weight: 800;">ZALOGOWANO JAKO:</small>
     <b id="display-name" style="font-size: 18px; letter-spacing: 1px;">WCZYTYWANIE...</b>
     <div id="sync-indicator" style="font-size:11px; margin-top:6px; color:var(--success); font-weight: bold;">● SYNCHRONIZACJA OK</div>
 </div>
 
-<div id="profile-modal" onclick="if(event.target===this) toggleModal(false)">
-    <div class="modal-content">
-        <h2 style="margin:0; font-size:32px; letter-spacing: 2px; color: var(--accent);">STATUS SESJI</h2>
-        <div class="stat-grid">
-            <div class="stat-box"><small>Punkty</small><b id="st-pts">0</b></div>
-            <div class="stat-box"><small>Zysk Δ/s</small><b id="st-pps">0</b></div>
-            <div class="stat-box"><small>Silniki</small><b id="st-spd">0</b></div>
-            <div class="stat-box"><small>Węzły</small><b id="st-nod">0</b></div>
+<button id="stats-trigger" onclick="toggleStats()">STATYSTYKI</button>
+<div id="stats-menu">
+    <div class="stats-header">
+        <h3>SYSTEM MONITORINGU</h3>
+        <button id="admin-question-btn" class="admin-btn-small" onclick="openAdminAuth()">?</button>
+    </div>
+    <div class="stat-line"><span>Waluta Delta:</span> <span id="st-val-delta">0</span></div>
+    <div class="stat-line"><span>Waluta Neon:</span> <span id="st-val-neon">0</span></div>
+    <div class="stat-line"><span>Cząstki Void:</span> <span id="st-val-void">0</span></div>
+    <div class="stat-line"><span>Prędkość:</span> <span id="st-val-speed">0</span></div>
+    <div class="stat-line"><span>Węzły:</span> <span id="st-val-nodes">0</span></div>
+</div>
+
+<div id="modal-admin-auth" class="modal-overlay">
+    <div class="modal-box">
+        <h2 style="color:var(--gold)">AUTORYZACJA NADZORCY</h2>
+        <p style="opacity:0.7">Wprowadź klucz bezpieczeństwa SpinnerRealYT</p>
+        <input type="password" id="admin-pass-input" class="input-field" placeholder="KOD DOSTĘPU...">
+        <div style="display:flex; gap:10px;">
+            <button class="admin-btn" style="flex:1; background:var(--success)" onclick="checkAdminPass()">WEJDŹ</button>
+            <button class="admin-btn" style="flex:1; background:var(--danger)" onclick="closeModals()">ANULUJ</button>
         </div>
-        <button class="btn-action btn-close" onclick="toggleModal(false)">POWRÓT DO EKSPLORACJI</button>
-        <button class="btn-action btn-reset" onclick="secureReset()">ZRESETUJ DANE (WYMAGA HASŁA)</button>
     </div>
 </div>
 
-<div id="ui-top">
-    <div class="currency-container">
-        <div class="currency"><span id="points-val">0</span> Δ</div>
-        <div class="pps-counter">+<span id="pps-val">0.0</span> / SEKUNDĘ</div>
+<div id="modal-admin-panel" class="modal-overlay">
+    <div class="modal-box" style="max-width:550px">
+        <h1 style="color:var(--accent); margin:0;">ADMIN PANEL</h1>
+        <p style="font-size:12px; margin-bottom:20px;">Witaj Spinner! Zarządzaj światem gry.</p>
+        
+        <div class="admin-grid">
+            <button class="admin-btn" onclick="adminAddPoints(100000)">+100K DELTA</button>
+            <button class="admin-btn" onclick="adminAddPoints(1000000)">+1M DELTA</button>
+            <button class="admin-btn" onclick="adminUnlockAll()">ODBLOKUJ WSZYSTKO</button>
+            <button class="admin-btn" onclick="adminSuperSpeed()">SUPER PRĘDKOŚĆ</button>
+            <button class="admin-btn" onclick="adminResetData()" style="background:var(--danger)">RESETUJ MOJE DANE</button>
+            <button class="admin-btn" onclick="saveData()" style="background:var(--success)">WYMUŚ ZAPIS DB</button>
+        </div>
+        
+        <button class="admin-btn" style="width:100%; margin-top:20px; padding:15px;" onclick="closeModals()">ZAMKNIJ PANEL</button>
+    </div>
+</div>
+
+<div id="profile-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h2 style="margin:0; font-size:32px; color: var(--accent);">PROFIL GRACZA</h2>
+        <div style="margin: 20px 0; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
+            <div>Użytkownik: <b id="prof-user">...</b></div>
+            <div>Prędkość silnika: <b id="prof-speed">...</b></div>
+            <div>Aktywne węzły: <b id="prof-nodes">...</b></div>
+        </div>
+        <button class="admin-btn" style="width:100%; padding:15px; background:var(--path)" onclick="toggleProfile(false)">POWRÓT</button>
     </div>
 </div>
 
@@ -268,6 +334,8 @@
     // Stan gry
     let state = {
         points: 0, 
+        neon: 0,
+        void: 0,
         pps: 0, 
         pX: 4000, 
         pY: 4000, 
@@ -276,7 +344,6 @@
         purchasedLevels: { "up1": 0 }
     };
 
-    // --- BAZA WĘZŁÓW (Współczynnik ceny: 1.15) ---
     const nodes = {
         "up1": { num: 1, x: 4000, y: 4000, name: "Rdzeń Startowy", desc: "Podstawowy generator cząsteczek Δ.", cost: 0, max: 1, pps: 1, next: ["up2"] },
         "up2": { num: 2, x: 4000, y: 3650, name: "Przekaźnik Mocy", desc: "Zwiększa wydajność przesyłu energii.", cost: 25, max: 50, pps: 2.5, next: ["up3", "up4"] },
@@ -292,29 +359,56 @@
     window.onkeydown = e => keys[e.key.toLowerCase()] = true;
     window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-    // --- FUNKCJE MODALA ---
-    function toggleModal(val) {
-        document.getElementById('profile-modal').style.display = val ? 'flex' : 'none';
-        if(val) {
-            document.getElementById('st-pts').innerText = Math.floor(state.points).toLocaleString();
-            document.getElementById('st-pps').innerText = state.pps.toFixed(1);
-            document.getElementById('st-spd').innerText = state.speed.toFixed(1);
-            document.getElementById('st-nod').innerText = state.unlockedNodes.length + " / 40";
+    // --- LOGIKA GUI ---
+    function toggleStats() {
+        const menu = document.getElementById('stats-menu');
+        const isOpen = menu.style.display === 'flex';
+        menu.style.display = isOpen ? 'none' : 'flex';
+        
+        // Sprawdzanie czy użytkownik to spinneryt
+        if(user.toLowerCase() === "spinneryt") {
+            document.getElementById('admin-question-btn').style.display = 'block';
         }
     }
 
-    // --- RESETOWANIE DANYCH Z WERYFIKACJĄ HASŁA ---
-    function secureReset() {
-        const confirmPass = prompt("Weryfikacja: Wpisz HASŁO do swojego konta (" + user + "):");
-        if (confirmPass === pass && pass !== "") {
-            if(confirm("CZY NA PEWNO? Cały postęp zostanie bezpowrotnie usunięty z bazy danych.")) {
-                db.ref('users/' + user + '/stats/neon_tree').remove().then(() => {
-                    alert("Dane zostały wyczyszczone.");
-                    location.reload();
-                });
-            }
+    function toggleProfile(val) {
+        document.getElementById('profile-modal').style.display = val ? 'flex' : 'none';
+        if(val) {
+            document.getElementById('prof-user').innerText = user;
+            document.getElementById('prof-speed').innerText = state.speed.toFixed(1);
+            document.getElementById('prof-nodes').innerText = state.unlockedNodes.length;
+        }
+    }
+
+    function openAdminAuth() {
+        document.getElementById('modal-admin-auth').style.display = 'flex';
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    function checkAdminPass() {
+        const input = document.getElementById('admin-pass-input').value;
+        // Hasło admina (możesz zmienić na własne)
+        if(input === "spinner123" || input === pass) {
+            closeModals();
+            document.getElementById('modal-admin-panel').style.display = 'flex';
         } else {
-            alert("BŁĄD: Niepoprawne hasło. Reset zablokowany.");
+            alert("BŁĘDNE HASŁO!");
+        }
+    }
+
+    // --- FUNKCJE ADMINA ---
+    function adminAddPoints(amt) { state.points += amt; }
+    function adminUnlockAll() {
+        for(let key in nodes) if(!state.unlockedNodes.includes(key)) state.unlockedNodes.push(key);
+    }
+    function adminSuperSpeed() { state.speed = 40; }
+    function adminResetData() {
+        if(confirm("Czy na pewno wyczyścić dane z Firebase?")) {
+            db.ref('users/' + user + '/stats/neon_tree').remove();
+            location.reload();
         }
     }
 
@@ -322,24 +416,19 @@
     async function loadData() {
         if(user === "Gosc") {
             document.getElementById('display-name').innerText = "TRYB GOŚCIA";
-            document.getElementById('sync-indicator').style.color = "orange";
-            document.getElementById('sync-indicator').innerText = "● BRAK ZAPISU W CHMURZE";
             return;
         }
         document.getElementById('display-name').innerText = user.toUpperCase();
         try {
             const snap = await db.ref('users/' + user + '/stats/neon_tree').once('value');
             if(snap.exists()) {
-                const cloudState = snap.val();
-                state = Object.assign({}, state, cloudState);
-                console.log("Dane wczytane pomyślnie.");
+                state = Object.assign({}, state, snap.val());
             }
-        } catch(e) { console.error("Błąd wczytywania:", e); }
+        } catch(e) { console.error(e); }
     }
 
     function saveData() {
-        if(user === "Gosc") return;
-        db.ref('users/' + user + '/stats/neon_tree').set(state);
+        if(user !== "Gosc") db.ref('users/' + user + '/stats/neon_tree').set(state);
     }
 
     // --- INICJALIZACJA MAPY ---
@@ -349,8 +438,6 @@
 
         for (let id in nodes) {
             const n = nodes[id];
-            
-            // Tworzenie wizualne węzła
             const div = document.createElement('div');
             div.className = 'node';
             div.id = `node-${id}`;
@@ -358,7 +445,6 @@
             div.style.top = (n.y - 100) + 'px';
             map.appendChild(div);
 
-            // Tworzenie linii połączeń
             if(n.next) {
                 n.next.forEach(nxt => {
                     const target = nodes[nxt];
@@ -375,7 +461,6 @@
 
     // --- GŁÓWNA PĘTLA GRY ---
     function mainLoop() {
-        // Ruch gracza
         let dx = 0, dy = 0;
         if (keys['w'] || keys['arrowup']) dy -= state.speed;
         if (keys['s'] || keys['arrowdown']) dy += state.speed;
@@ -384,7 +469,6 @@
 
         state.pX += dx; state.pY += dy;
         
-        // Kamera i transformacje
         const vw = window.innerWidth, vh = window.innerHeight;
         document.getElementById('world-map').style.transform = `translate(${vw/2 - state.pX}px, ${vh/2 - state.pY}px)`;
         
@@ -392,66 +476,52 @@
         pEl.style.left = (state.pX - 18) + 'px';
         pEl.style.top = (state.pY - 18) + 'px';
 
-        // Detekcja kolizji z ulepszeniami
         for (let id in nodes) {
             if (!state.unlockedNodes.includes(id)) continue;
-            
             const n = nodes[id];
             const lvl = state.purchasedLevels[id] || 0;
             const currentCost = Math.floor(n.cost * Math.pow(1.15, lvl));
-
             const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
             
-            if (dist < 100) { // Gracz jest wewnątrz węzła
-                if (state.points >= currentCost && lvl < n.max) {
-                    processPurchase(id, currentCost);
+            if (dist < 100 && state.points >= currentCost && lvl < n.max) {
+                state.points -= currentCost;
+                state.purchasedLevels[id] = lvl + 1;
+                if (n.pps) state.pps += n.pps;
+                if (n.speed) state.speed += n.speed;
+                if (state.purchasedLevels[id] === 1 && n.next) {
+                    n.next.forEach(nxt => {
+                        if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt);
+                    });
                 }
+                saveData();
             }
         }
 
-        // Przyrost pasywny
         state.points += state.pps / 60;
-        
         updateInterface();
         requestAnimationFrame(mainLoop);
     }
 
-    // --- OBSŁUGA ZAKUPU ---
-    function processPurchase(id, cost) {
-        const n = nodes[id];
-        state.points -= cost;
-        state.purchasedLevels[id] = (state.purchasedLevels[id] || 0) + 1;
-        
-        // Zastosowanie efektów
-        if (n.pps) state.pps += n.pps;
-        if (n.speed) state.speed += n.speed;
-
-        // Odblokowanie kolejnych gałęzi
-        if (state.purchasedLevels[id] === 1 && n.next) {
-            n.next.forEach(nxt => {
-                if (!state.unlockedNodes.includes(nxt)) {
-                    state.unlockedNodes.push(nxt);
-                }
-            });
-        }
-        saveData();
-    }
-
-    // --- AKTUALIZACJA UI ---
     function updateInterface() {
+        // UI Główne
         document.getElementById('points-val').innerText = Math.floor(state.points).toLocaleString();
         document.getElementById('pps-val').innerText = state.pps.toFixed(1);
+
+        // UI Statystyk
+        document.getElementById('st-val-delta').innerText = Math.floor(state.points).toLocaleString();
+        document.getElementById('st-val-neon').innerText = (state.neon || 0).toLocaleString();
+        document.getElementById('st-val-void').innerText = (state.void || 0).toLocaleString();
+        document.getElementById('st-val-speed').innerText = state.speed.toFixed(1);
+        document.getElementById('st-val-nodes').innerText = state.unlockedNodes.length;
 
         for (let id in nodes) {
             const el = document.getElementById(`node-${id}`);
             if (state.unlockedNodes.includes(id)) {
                 el.classList.add('visible');
-                
                 const n = nodes[id];
                 const lvl = state.purchasedLevels[id] || 0;
                 const cost = Math.floor(n.cost * Math.pow(1.15, lvl));
 
-                // Dynamiczna treść węzła
                 el.innerHTML = `
                     <div class="up-num">SYSTEM #${n.num}</div>
                     <b>${n.name}</b>
@@ -462,13 +532,11 @@
                     </div>
                 `;
 
-                // Klasy pomocnicze
                 if(state.points >= cost && lvl < n.max) el.classList.add('can-afford');
                 else el.classList.remove('can-afford');
                 
                 if(lvl >= n.max) el.classList.add('maxed');
 
-                // Aktywacja linii
                 if (lvl > 0 && n.next) {
                     n.next.forEach(nxt => {
                         const l = document.getElementById(`path-${id}-${nxt}`);
@@ -479,11 +547,10 @@
         }
     }
 
-    // --- START ---
     window.onload = async () => {
         await loadData();
         initMap();
-        setInterval(saveData, 15000); // Autozapis co 15s
+        setInterval(saveData, 20000); 
     };
 </script>
 </body>
