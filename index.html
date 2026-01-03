@@ -124,14 +124,6 @@
 </div> 
 
 <script> 
-// --- CONFIG & FIREBASE INIT ---
-const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" }; 
-
-// Inicjalizacja stałych globalnych
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
-
 const games = [ 
     { file: "games/saper.html", name: "Saper", tag: "Classic" }, 
     { file: "games/tetris.html", name: "Tetris", tag: "Puzzle" }, 
@@ -144,11 +136,19 @@ const games = [
 ]; 
 
 let isLoginMode = true; 
+let db, auth;
 
-// --- RENDER FUNCTIONS ---
+// --- INITIALIZE FIREBASE ---
+try {
+    const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" }; 
+    firebase.initializeApp(firebaseConfig); 
+    db = firebase.database(); 
+    auth = firebase.auth();
+} catch(e) { console.error("Firebase fail:", e); }
+
+// --- RENDER ENGINE ---
 function renderUI() {
     const grid = document.getElementById("game-grid");
-    if(!grid) return;
     grid.innerHTML = "";
     
     games.forEach(g => {
@@ -157,6 +157,7 @@ function renderUI() {
         card.innerHTML = `<span class="tag">${g.tag}</span><h3>${g.name}</h3>`;
         card.onclick = () => location.href = g.file;
         
+        // Spotlight Effect
         card.onmousemove = (e) => {
             const rect = card.getBoundingClientRect();
             card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
@@ -190,51 +191,30 @@ function toggleAuth() {
         'Masz już konto? <span style="color:var(--accent); font-weight:bold;">Zaloguj się</span>';
 }
 
-// --- AUTH LOGIC ---
 document.getElementById('auth-submit').onclick = async () => {
     const user = document.getElementById('auth-user').value.trim().toLowerCase();
     const pass = document.getElementById('auth-pass').value.trim();
     const msg = document.getElementById('auth-msg');
     
-    if (!user || !pass) {
-        msg.innerHTML = '<p class="error">Wypełnij wszystkie pola!</p>';
-        return;
-    }
-
     try {
         if(isLoginMode) {
-            // LOGOWANIE
             const snap = await db.ref('users_map/' + user).once('value');
-            if(!snap.exists()) throw new Error("Użytkownik o takim nicku nie istnieje.");
-            
+            if(!snap.exists()) throw new Error("Nie znaleziono użytkownika.");
             const email = snap.val().email;
             const cred = await auth.signInWithEmailAndPassword(email, pass);
-            
-            if(!cred.user.emailVerified) {
-                throw new Error("Zweryfikuj swój adres e-mail, aby się zalogować!");
-            }
-            
+            if(!cred.user.emailVerified) throw new Error("Zweryfikuj e-mail!");
             localStorage.setItem("sp_logged", user);
             location.reload();
         } else {
-            // REJESTRACJA
             const email = document.getElementById('auth-email').value.trim();
-            if(!email) throw new Error("Podaj adres e-mail!");
-            
             const snap = await db.ref('users_map/' + user).once('value');
-            if(snap.exists()) throw new Error("Ten nick jest już zajęty.");
-            
+            if(snap.exists()) throw new Error("Nick zajęty.");
             const cred = await auth.createUserWithEmailAndPassword(email, pass);
             await cred.user.sendEmailVerification();
-            
-            // Zapisz Nick -> Email w bazie
             await db.ref('users_map/' + user).set({ email: email });
-            
-            msg.innerHTML = '<p class="success">Konto utworzone! Wysłaliśmy link aktywacyjny na Twój e-mail.</p>';
+            msg.innerHTML = '<p class="success">Link weryfikacyjny wysłany!</p>';
         }
-    } catch(e) { 
-        msg.innerHTML = `<p class="error">${e.message}</p>`; 
-    }
+    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 };
 
 window.onload = renderUI;
