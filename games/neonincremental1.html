@@ -681,19 +681,158 @@
         }
     }
 
-    // --- START ---
-    window.onload = async () => {
-        await loadData();
-        initMap();
-        updateCamera();
-        requestAnimationFrame(mainLoop);
-        
-        // Auto-zapis co 30 sekund
-        setInterval(saveData, 30000);
-    };
+// --- SYSTEM TELEPORTACJI (ZINTEGROWANY) ---
 
-    // Obsługa zmiany rozmiaru okna
-    window.onresize = updateCamera;
+function initTeleporterUI() {
+    // Dodanie przycisku do UI
+    const controls = document.querySelector('.bottom-left-controls');
+    if (controls && !document.getElementById('tele-btn')) {
+        const teleBtn = document.createElement('button');
+        teleBtn.id = 'tele-btn';
+        teleBtn.className = 'ctrl-btn';
+        teleBtn.innerHTML = 'TELEPORTER';
+        teleBtn.style.background = 'var(--void)';
+        teleBtn.style.color = 'white';
+        teleBtn.onclick = () => toggleTeleportMenu();
+        controls.appendChild(teleBtn);
+    }
+
+    // Tworzenie menu jeśli nie istnieje
+    if (!document.getElementById('teleport-menu')) {
+        const teleMenu = document.createElement('div');
+        teleMenu.id = 'teleport-menu';
+        teleMenu.className = 'side-menu';
+        teleMenu.style.left = '360px'; 
+        teleMenu.innerHTML = `
+            <h3 style="margin-top:0; color:var(--neon); letter-spacing: 2px;">SKOK KWANTOWY</h3>
+            <p style="font-size:11px; opacity:0.7; margin-bottom:15px;">Dostęp do węzłów milowych sieci.</p>
+            <div id="tele-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        `;
+        document.getElementById('hud').appendChild(teleMenu);
+    }
+
+    // Dodanie styli teleportera (tylko raz)
+    if (!document.getElementById('tele-styles')) {
+        const teleStyle = document.createElement('style');
+        teleStyle.id = 'tele-styles';
+        teleStyle.innerHTML = `
+            .tele-item {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid var(--path);
+                padding: 12px;
+                border-radius: 12px;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: 0.2s;
+            }
+            .tele-item.locked {
+                opacity: 0.4;
+                cursor: not-allowed;
+                filter: grayscale(1);
+            }
+            .tele-item:not(.locked):hover {
+                background: rgba(45, 212, 191, 0.2);
+                border-color: var(--neon);
+                transform: scale(1.02);
+            }
+            .tele-name { font-weight: 800; font-size: 13px; color: #fff; }
+            .tele-dist { font-size: 10px; color: var(--neon); font-weight: bold; }
+        `;
+        document.head.appendChild(teleStyle);
+    }
+}
+
+function toggleTeleportMenu() {
+    const m = document.getElementById('teleport-menu');
+    const isVisible = m.style.display === 'flex';
+    document.getElementById('stats-menu').style.display = 'none';
+    m.style.display = isVisible ? 'none' : 'flex';
+    if (!isVisible) updateTeleportList();
+}
+
+function updateTeleportList() {
+    const list = document.getElementById('tele-list');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    const milestones = ["n1", "n10", "n20", "n30", "n40"];
+    
+    milestones.forEach(id => {
+        const n = nodes[id];
+        if (!n) return;
+        const lvl = state.purchasedLevels[id] || 0;
+        const isUnlocked = id === "n1" || lvl > 0;
+        
+        const item = document.createElement('div');
+        item.className = `tele-item ${isUnlocked ? '' : 'locked'}`;
+        const dist = Math.round(Math.hypot(state.pX - n.x, state.pY - n.y));
+        
+        item.innerHTML = `
+            <div>
+                <div class="tele-name">${n.name}</div>
+                <div style="font-size:9px; opacity:0.6; color: #fff;">WĘZEŁ #${n.id}</div>
+            </div>
+            <div class="tele-dist">${isUnlocked ? dist + 'm' : 'ZABLOKOWANE'}</div>
+        `;
+        
+        if (isUnlocked) {
+            item.onclick = () => {
+                executeTeleport(n.x, n.y, n.name);
+                toggleTeleportMenu();
+            };
+        } else {
+            item.onclick = () => notify("NAJPIERW ULEPSZ TEN WĘZEŁ!", "var(--danger)");
+        }
+        list.appendChild(item);
+    });
+}
+
+function executeTeleport(targetX, targetY, name) {
+    const map = document.getElementById('world-map');
+    map.style.transition = "transform 0.5s cubic-bezier(0.7, 0, 0.3, 1), filter 0.5s";
+    map.style.filter = "blur(20px) brightness(2)";
+    
+    setTimeout(() => {
+        state.pX = targetX;
+        state.pY = targetY;
+        updateCamera();
+        
+        setTimeout(() => {
+            map.style.filter = "none";
+            setTimeout(() => {
+                map.style.transition = "transform 0.15s cubic-bezier(0.2, 0, 0.2, 1)";
+            }, 100);
+        }, 200);
+        
+        notify(`SKOK WYKONANY: ${name}`, "var(--neon)");
+    }, 400);
+}
+
+// --- FINALNY START GRY (ZINTEGROWANY) ---
+
+window.onload = async () => {
+    // 1. Ładowanie danych z bazy
+    await loadData();
+    
+    // 2. Inicjalizacja mapy i interfejsu
+    initMap();
+    initTeleporterUI();
+    updateCamera();
+    
+    // 3. Start pętli
+    requestAnimationFrame(mainLoop);
+    
+    // 4. Interwały (zapis i odświeżanie listy teleportera jeśli otwarta)
+    setInterval(saveData, 30000);
+    setInterval(() => {
+        const m = document.getElementById('teleport-menu');
+        if (m && m.style.display === 'flex') updateTeleportList();
+    }, 1000);
+};
+
+window.onresize = updateCamera;
 
 </script>
 </body>
