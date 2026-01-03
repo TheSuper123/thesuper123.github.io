@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Neon Tree Exploration – SpinnerRealYT</title>
 <link rel="icon" href="../Logo.png">
+
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
 <style>
 :root{ --bg:#020617; --card:#0f172a; --accent:#38bdf8; --text:#e5e7eb; --gold:#facc15; --path:#1e293b; --danger:#f87171;}
 *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
@@ -53,6 +57,8 @@ line.hidden { display: none; }
     font-size: 13px; z-index: 400; backdrop-filter: blur(5px);
 }
 
+#sync-status { font-size: 10px; opacity: 0.6; display: block; margin-top: 2px; }
+
 #sync-bar {
     position: fixed; top: 20px; right: 20px; z-index: 400; display: flex; gap: 5px;
 }
@@ -76,11 +82,13 @@ line.hidden { display: none; }
 </head>
 <body>
 
-<div id="account-info">Zalogowano: <b id="user-display">Gość</b></div>
+<div id="account-info">
+    Zalogowano: <b id="user-display">Gość</b>
+    <span id="sync-status">Lokalny zapis</span>
+</div>
 
 <div id="sync-bar">
-    <button class="sync-btn" onclick="exportProgress()">EKSPORT</button>
-    <button class="sync-btn" onclick="importProgress()">IMPORT</button>
+    <button class="sync-btn" onclick="location.href='../index.html'">MENU</button>
     <button id="reset-btn" onclick="resetData()">RESET</button>
 </div>
 
@@ -107,9 +115,15 @@ line.hidden { display: none; }
 </div>
 
 <script>
-const currentUser = localStorage.getItem("sp_logged") || null;
-const SAVE_KEY = `sp_save_neon_tree_${currentUser || 'guest'}`;
+// --- KONFIGURACJA FIREBASE ---
+const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
+const currentUser = localStorage.getItem("sp_logged") || null;
+const currentPass = localStorage.getItem("sp_pass") || null;
+
+// --- STAN GRY ---
 let state = {
     points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
     unlockedNodes: ["up1"], purchasedLevels: { "up1": 0 }, lockedOut: [],
@@ -123,11 +137,11 @@ const nodes = {
     "up4": { num: 4, x: 1900, y: 2200, name: "Kolektor Many", type: "Generacja", desc: "Zbiera energię z otoczenia", cost: 400, max: 10, pps: 15, next: ["up6"] },
     "up5": { num: 5, x: 2200, y: 1900, name: "Stabilizator", type: "Wzmocnienie", desc: "Wzmacnia bazowy zysk", cost: 500, max: 5, pps: 25, next: ["up6"] },
     "up6": { num: 6, x: 1900, y: 1900, name: "Ciężki Reaktor", type: "Generacja", desc: "Masywna produkcja Δ", cost: 1500, max: 20, pps: 100, next: ["up7"] },
-    "up7": { num: 7, x: 2200, y: 1600, name: "Węzeł Decyzyjny", type: "Wybór", desc: "Odblokowuje rozwidlenie", cost: 2500, max: 1, next: ["up8", "up9"], isSplitter: true },
+    "up7": { num: 7, x: 2200, y: 1600, name: "Węzeł Decyzyjny", type: "Wybór", desc: "Odblokowuje rozwidlenie", cost: 2500, max: 1, next: ["up8", "up9"] },
     "up8": { num: 8, x: 1900, y: 1300, name: "Niestabilna Moc", type: "Generacja", desc: "Ryzykowny zysk", cost: 5000, max: 1, pps: 1000, next: ["up10"], partOfChoice: ["up9"] },
     "up9": { num: 9, x: 2500, y: 1300, name: "Stały Przepływ", type: "Generacja", desc: "Pewny i solidny zysk", cost: 5000, max: 10, pps: 300, next: ["up10"], partOfChoice: ["up8"] },
-    "up10": { num: 10, x: 2200, y: 1000, name: "Teleport Alpha", type: "Teleportacja", desc: "Kup, aby odblokować skok tutaj", cost: 10000, max: 1, next: ["end"] },
-    "end": { num: 11, x: 2200, y: 700, name: "Wrota Wymiaru", type: "Finał", desc: "Czy jesteś gotowy?", cost: 500000, max: 1, pps: 10000, next: [] }
+    "up10": { num: 10, x: 2200, y: 1000, name: "Teleport Alpha", type: "Teleportacja", desc: "Odblokuj skok tutaj", cost: 10000, max: 1, next: ["end"] },
+    "end": { num: 11, x: 2200, y: 700, name: "Wrota Wymiaru", type: "Finał", desc: "Koniec?", cost: 500000, max: 1, pps: 10000, next: [] }
 };
 
 const keys = {};
@@ -137,52 +151,59 @@ window.onkeydown = e => {
 };
 window.onkeyup = e => keys[e.key.toLowerCase()] = false;
 
-if ('ontouchstart' in window) {
-    document.getElementById('mobile-controls').style.display = 'grid';
-    const bind = (id, k) => {
-        const b = document.getElementById(id);
-        b.ontouchstart = (e) => { e.preventDefault(); keys[k] = true; };
-        b.ontouchend = () => keys[k] = false;
-    };
-    bind('btn-up', 'arrowup'); bind('btn-down', 'arrowdown');
-    bind('btn-left', 'arrowleft'); bind('btn-right', 'arrowright');
-}
-
-if(currentUser) document.getElementById('user-display').innerText = currentUser;
-
-function exportProgress() {
-    const code = btoa(JSON.stringify(state)).split('').reverse().join('');
-    prompt("Twój Kod Zapisu (Skopiuj go):", "SP-SAVE-" + code);
-}
-
-function importProgress() {
-    const code = prompt("Wklej Kod Zapisu:");
-    if(!code || !code.startsWith("SP-SAVE-")) return;
+// --- FUNKCJE SYNCHRONIZACJI ---
+async function saveToCloud() {
+    if(!currentUser || !currentPass) return;
     try {
-        const raw = code.replace("SP-SAVE-", "").split('').reverse().join('');
-        state = JSON.parse(atob(raw));
-        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-        location.reload();
-    } catch(e) { alert("Błąd!"); }
+        await db.ref('users/' + currentUser).update({
+            p: currentPass,
+            "stats/neon_tree": state
+        });
+        document.getElementById('sync-status').innerText = "Zsynchronizowano ✅";
+    } catch(e) {
+        document.getElementById('sync-status').innerText = "Błąd zapisu ❌";
+    }
+}
+
+async function loadFromCloud() {
+    if(!currentUser) return;
+    document.getElementById('user-display').innerText = currentUser.toUpperCase();
+    document.getElementById('sync-status').innerText = "Wczytywanie...";
+    
+    try {
+        const snap = await db.ref('users/' + currentUser + '/stats/neon_tree').once('value');
+        if(snap.exists()) {
+            state = snap.val();
+            document.getElementById('sync-status').innerText = "Wczytano z chmury ☁️";
+        }
+    } catch(e) {
+        document.getElementById('sync-status').innerText = "Błąd wczytywania ❌";
+    }
 }
 
 function resetData() {
-    const pass = prompt("Wpisz hasło konta:");
-    const users = JSON.parse(localStorage.getItem("sp_users") || "[]");
-    const me = users.find(u => u.u === currentUser);
-    if(me && pass === me.p) { localStorage.removeItem(SAVE_KEY); location.reload(); }
+    if(confirm("Czy na pewno chcesz zresetować postęp?")) {
+        state = {
+            points: 0, pps: 0, pX: 2500, pY: 2500, speed: 6,
+            unlockedNodes: ["up1"], purchasedLevels: { "up1": 0 }, lockedOut: [],
+            teleports: []
+        };
+        saveToCloud();
+        location.reload();
+    }
 }
 
+// --- LOGIKA GRY ---
 function toggleTP() {
     const menu = document.getElementById('tp-menu');
     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
 function init() {
-    const saved = localStorage.getItem(SAVE_KEY);
-    if(saved) state = JSON.parse(saved);
     const map = document.getElementById('world-map');
     const svg = document.getElementById('path-layer');
+    
+    // Generowanie mapy
     for (let id in nodes) {
         const n = nodes[id];
         const div = document.createElement('div');
@@ -210,7 +231,7 @@ function updateTPMenu() {
     const menu = document.getElementById('tp-menu');
     const toggle = document.getElementById('tp-toggle');
     menu.innerHTML = "";
-    if(state.teleports.length > 0) {
+    if(state.teleports && state.teleports.length > 0) {
         toggle.style.display = 'block';
         state.teleports.forEach(id => {
             const btn = document.createElement('button');
@@ -224,10 +245,12 @@ function updateTPMenu() {
 
 function gameLoop() {
     let mx = 0, my = 0;
-    if (keys['w'] || keys['arrowup']) my -= state.speed;
-    if (keys['s'] || keys['arrowdown']) my += state.speed;
-    if (keys['a'] || keys['arrowleft']) mx -= state.speed;
-    if (keys['d'] || keys['arrowright']) mx += state.speed;
+    const s = state.speed;
+    if (keys['w'] || keys['arrowup']) my -= s;
+    if (keys['s'] || keys['arrowdown']) my += s;
+    if (keys['a'] || keys['arrowleft']) mx -= s;
+    if (keys['d'] || keys['arrowright']) mx += s;
+    
     state.pX += mx; state.pY += my;
     const v = document.getElementById('game-viewport');
     const m = document.getElementById('world-map');
@@ -253,26 +276,24 @@ function buyNode(id) {
     const lvls = state.purchasedLevels[id] || 0;
     if (lvls >= n.max) return;
 
-    // Logika wyboru: jeśli kupujesz ulepszenie, które jest częścią wyboru, zablokuj alternatywy
     if (n.partOfChoice) {
-        n.partOfChoice.forEach(altId => {
-            if (!state.lockedOut.includes(altId)) state.lockedOut.push(altId);
-        });
+        n.partOfChoice.forEach(altId => { if (!state.lockedOut.includes(altId)) state.lockedOut.push(altId); });
     }
 
     state.points -= n.cost;
     state.purchasedLevels[id] = lvls + 1;
     if (n.pps) state.pps += n.pps;
     if (n.speed) state.speed += n.speed;
-    if (n.type === "Teleportacja") {
+    if (n.type === "Teleportacja" && !state.teleports.includes(id)) {
         state.teleports.push(id);
         updateTPMenu();
     }
     if (state.purchasedLevels[id] === 1 && n.next) {
         n.next.forEach(nxt => { if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt); });
     }
-    if(n.max > 1) n.cost = Math.floor(n.cost * 1.8);
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    if(n.max > 1 && lvls < n.max) n.cost = Math.floor(n.cost * 1.5);
+    
+    saveToCloud(); // Zapisuj przy każdym zakupie
 }
 
 function updateUI() {
@@ -311,15 +332,16 @@ function updateUI() {
             }
         } else {
             el.classList.remove('visible');
-            // Ukrywamy też linie prowadzące do zablokowanych nodów
-            if (n.next) n.next.forEach(nxt => {
-                const l = document.getElementById(`path-${id}-${nxt}`);
-                if(l) l.classList.add('hidden');
-            });
         }
     }
 }
-init();
+
+// Start gry
+window.onload = async () => {
+    await loadFromCloud();
+    init();
+    setInterval(saveToCloud, 10000); // Auto-zapis co 10 sekund
+};
 </script>
 </body>
 </html>
