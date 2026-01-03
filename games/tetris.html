@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tetris – SpinnerRealYT Games</title>
+
+<link rel="icon" type="image/png" href="../Logo.png?v=2">
+<link rel="apple-touch-icon" href="../Logo.png?v=2">
+
+<style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
+  --cell-size: clamp(20px, 6vw, 30px); /* Nieco mniejsze niż w saperze, by zmieścić 20 rzędów */
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
+  user-select: none;
+  overflow-x: hidden;
+}
+header{
+  display:flex; align-items:center; gap:15px; padding:15px 20px;
+  background:rgba(15,23,42,.9); backdrop-filter:blur(10px);
+  position:sticky; top:0; z-index:100;
+}
+header img{height:32px}
+nav button{
+  background:none; border:none; color:var(--text); font-size:15px;
+  padding:8px 14px; border-radius:10px; cursor:pointer;
+}
+nav button:hover{ background:rgba(56,189,248,.15); color:var(--accent); }
+
+main{ max-width: 600px; margin:auto; padding:10px; }
+.card{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border-radius:20px; padding:15px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+h2{text-align:center; margin-top:0;}
+
+#menu {
+  display: flex; justify-content: center; gap: 15px;
+  margin-bottom: 15px; font-size: 16px; font-weight: bold;
+}
+button { 
+    cursor:pointer; background: var(--card); border: 1px solid var(--accent); 
+    color: var(--accent); font-weight: bold; border-radius:8px; padding:8px 15px;
+}
+button:active { transform: scale(0.95); }
+
+/* KONTENER TETRISA */
+#game-container {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+    background: #000;
+    border: 3px solid #1e293b;
+    border-radius: 8px;
+    line-height: 0;
+}
+
+#tetris-canvas {
+    display: block;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* STEROWANIE MOBILNE */
+#controls-mobile {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.ctrl-btn {
+    padding: 15px;
+    background: #1e293b;
+    color: var(--accent);
+    border: 1px solid #334155;
+    font-size: 20px;
+}
+.full-width { grid-column: span 3; }
+
+footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
+
+/* Kolory klocków */
+.color-I { color: #00f0f0; }
+.color-J { color: #0000f0; }
+.color-L { color: #f0a000; }
+.color-O { color: #f0f000; }
+.color-S { color: #00f000; }
+.color-T { color: #a000f0; }
+.color-Z { color: #f00000; }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../Logo.png" alt="SpinnerRealYT">
+  <nav><button onclick="location.href='../index.html'">Menu</button></nav>
+</header>
+
+<main>
+  <div class="card">
+    <h2>🧩 Tetris</h2>
+    
+    <div id="menu">
+      <div id="score">Score: 0</div>
+      <div id="level">Level: 1</div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="tetris-canvas"></canvas>
+    </div>
+
+    <div id="controls-mobile">
+      <button class="ctrl-btn" id="move-left">◀</button>
+      <button class="ctrl-btn" id="rotate">↻</button>
+      <button class="ctrl-btn" id="move-right">▶</button>
+      <button class="ctrl-btn full-width" id="move-down">DÓŁ</button>
+      <button class="ctrl-btn full-width" id="start-btn">NOWA GRA</button>
+    </div>
+    
+    <div id="status-info" style="text-align:center; margin-top:15px; color: var(--accent); font-weight: bold;"></div>
+  </div>
+</main>
+
+<footer>© 2026 SpinnerRealYT Games</footer>
+
+<script>
+const canvas = document.getElementById('tetris-canvas');
+const context = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
+const startBtn = document.getElementById('start-btn');
+const statusEl = document.getElementById('status-info');
+
+const ROW = 20;
+const COL = 10;
+const SQ = 25; // Rozmiar kwadratu w pikselach
+const VACANT = "#0f172a"; // Kolor pustego pola
+
+canvas.width = COL * SQ;
+canvas.height = ROW * SQ;
+
+function drawSquare(x, y, color) {
+    context.fillStyle = color;
+    context.fillRect(x * SQ, y * SQ, SQ, SQ);
+    context.strokeStyle = "#020617";
+    context.strokeRect(x * SQ, y * SQ, SQ, SQ);
+}
+
+// Plansza
+let board = [];
+for (let r = 0; r < ROW; r++) {
+    board[r] = [];
+    for (let c = 0; c < COL; c++) {
+        board[r][c] = VACANT;
+    }
+}
+
+function drawBoard() {
+    for (let r = 0; r < ROW; r++) {
+        for (let c = 0; c < COL; c++) {
+            drawSquare(c, r, board[r][c]);
+        }
+    }
+}
+
+const PIECES = [
+    [ [ [1,1,1,1] ], "#00f0f0"], // I
+    [ [ [1,1,1], [0,0,1] ], "#0000f0"], // J
+    [ [ [1,1,1], [1,0,0] ], "#f0a000"], // L
+    [ [ [1,1], [1,1] ], "#f0f000"], // O
+    [ [ [0,1,1], [1,1,0] ], "#00f000"], // S
+    [ [ [1,1,1], [0,1,0] ], "#a000f0"], // T
+    [ [ [1,1,0], [0,1,1] ], "#f00000"]  // Z
+];
+
+function randomPiece() {
+    let r = Math.floor(Math.random() * PIECES.length);
+    return new Piece(PIECES[r][0], PIECES[r][1]);
+}
+
+let score = 0;
+let level = 1;
+let gameActive = false;
+
+function Piece(tetromino, color) {
+    this.tetromino = tetromino;
+    this.color = color;
+    this.x = 3;
+    this.y = -2;
+}
+
+Piece.prototype.fill = function(color) {
+    for (let r = 0; r < this.tetromino.length; r++) {
+        for (let c = 0; c < this.tetromino[r].length; c++) {
+            if (this.tetromino[r][c]) {
+                drawSquare(this.x + c, this.y + r, color);
+            }
+        }
+    }
+}
+
+Piece.prototype.draw = function() { this.fill(this.color); }
+Piece.prototype.unDraw = function() { this.fill(VACANT); }
+
+Piece.prototype.moveDown = function() {
+    if (!this.collision(0, 1, this.tetromino)) {
+        this.unDraw();
+        this.y++;
+        this.draw();
+    } else {
+        this.lock();
+        p = randomPiece();
+    }
+}
+
+Piece.prototype.moveRight = function() {
+    if (!this.collision(1, 0, this.tetromino)) {
+        this.unDraw();
+        this.x++;
+        this.draw();
+    }
+}
+
+Piece.prototype.moveLeft = function() {
+    if (!this.collision(-1, 0, this.tetromino)) {
+        this.unDraw();
+        this.x--;
+        this.draw();
+    }
+}
+
+Piece.prototype.rotate = function() {
+    let nextPattern = [];
+    for (let c = 0; c < this.tetromino[0].length; c++) {
+        nextPattern[c] = [];
+        for (let r = 0; r < this.tetromino.length; r++) {
+            nextPattern[c][r] = this.tetromino[this.tetromino.length - 1 - r][c];
+        }
+    }
+    
+    if (!this.collision(0, 0, nextPattern)) {
+        this.unDraw();
+        this.tetromino = nextPattern;
+        this.draw();
+    }
+}
+
+Piece.prototype.lock = function() {
+    for (let r = 0; r < this.tetromino.length; r++) {
+        for (let c = 0; c < this.tetromino[r].length; c++) {
+            if (!this.tetromino[r][c]) continue;
+            if (this.y + r < 0) {
+                gameOver();
+                return;
+            }
+            board[this.y + r][this.x + c] = this.color;
+        }
+    }
+    // Usuwanie linii
+    for (let r = 0; r < ROW; r++) {
+        let isFull = true;
+        for (let c = 0; c < COL; c++) {
+            if (board[r][c] == VACANT) isFull = false;
+        }
+        if (isFull) {
+            for (let y = r; y > 1; y--) {
+                for (let c = 0; c < COL; c++) {
+                    board[y][c] = board[y - 1][c];
+                }
+            }
+            for (let c = 0; c < COL; c++) board[0][c] = VACANT;
+            score += 10;
+        }
+    }
+    drawBoard();
+    scoreEl.innerHTML = "Score: " + score;
+}
+
+Piece.prototype.collision = function(x, y, piece) {
+    for (let r = 0; r < piece.length; r++) {
+        for (let c = 0; c < piece[r].length; c++) {
+            if (!piece[r][c]) continue;
+            let newX = this.x + c + x;
+            let newY = this.y + r + y;
+            if (newX < 0 || newX >= COL || newY >= ROW) return true;
+            if (newY < 0) continue;
+            if (board[newY][newX] != VACANT) return true;
+        }
+    }
+    return false;
+}
+
+let p = randomPiece();
+let dropStart = Date.now();
+
+function drop() {
+    let now = Date.now();
+    let delta = now - dropStart;
+    if (delta > 800) {
+        p.moveDown();
+        dropStart = Date.now();
+    }
+    if (gameActive) requestAnimationFrame(drop);
+}
+
+function gameOver() {
+    gameActive = false;
+    statusEl.innerHTML = "KONIEC GRY!";
+}
+
+function startNewGame() {
+    board = [];
+    for (let r = 0; r < ROW; r++) {
+        board[r] = [];
+        for (let c = 0; c < COL; c++) board[r][c] = VACANT;
+    }
+    score = 0;
+    scoreEl.innerHTML = "Score: 0";
+    statusEl.innerHTML = "";
+    gameActive = true;
+    p = randomPiece();
+    drawBoard();
+    drop();
+}
+
+// Kontrola
+document.addEventListener("keydown", (e) => {
+    if (!gameActive) return;
+    if (e.keyCode == 37) p.moveLeft();
+    else if (e.keyCode == 38) p.rotate();
+    else if (e.keyCode == 39) p.moveRight();
+    else if (e.keyCode == 40) p.moveDown();
+});
+
+// Mobile
+document.getElementById('move-left').onclick = () => gameActive && p.moveLeft();
+document.getElementById('move-right').onclick = () => gameActive && p.moveRight();
+document.getElementById('rotate').onclick = () => gameActive && p.rotate();
+document.getElementById('move-down').onclick = () => gameActive && p.moveDown();
+startBtn.onclick = startNewGame;
+
+drawBoard();
+
+</script>
+</body>
+</html>
