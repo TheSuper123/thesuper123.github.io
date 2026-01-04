@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" style="background-color: #020617;">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Neon Flappy – SpinnerRealYT Games</title>
+<title>Saper – SpinnerRealYT Games</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,22 +22,28 @@
   --card:#0f172a;
   --accent:#38bdf8;
   --text:#e5e7eb;
+  /* Dynamiczny rozmiar komórek dopasowany do telefonów */
+  --cell-size: clamp(20px, 8.5vw, 45px);
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Usuwa szary prostokąt przy kliknięciu w Safari */
+}
 
 body {
   margin: 0; 
   font-family: Inter, sans-serif;
+  /* Gradient rozciągnięty na całą wysokość, uwzględniający safe-area */
   background: radial-gradient(circle at top, #1e293b, #020617);
   background-attachment: fixed;
   color: var(--text); 
   user-select: none;
   min-height: 100vh;
+  /* Paddingi chroniące treść przed notchem i dolną belką iOS */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-/* HEADER IDENTYCZNY JAK W SAPERZE */
 header {
   display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 20px;
   background: rgba(15, 23, 42, 0.9); 
@@ -57,62 +63,72 @@ nav button {
 }
 nav button:hover { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
 
-/* MAIN I CARD */
 main { max-width: 600px; margin: auto; padding: 10px; }
 
 .card {
   background: linear-gradient(180deg, #0f172a, #020617);
-  border-radius: 24px; padding: 20px;
+  border-radius: 24px; padding: 15px;
   box-shadow: 0 20px 60px rgba(0,0,0,.6);
   border: 1px solid rgba(255,255,255,0.05);
 }
 
 h2 { text-align: center; margin-top: 0; font-weight: 800; letter-spacing: -1px; }
 
-/* SEKJA SCORE NAD GRĄ */
-.score-header {
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--text);
-}
-#score-num { color: var(--accent); text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
-
-/* GAME CONTAINER */
-#game-container {
-    position: relative;
-    width: 320px;
-    height: 480px;
-    margin: 0 auto;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 2px solid var(--accent);
+#menu {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  margin-bottom: 20px;
 }
 
-canvas { background: #000; display: block; width: 100%; height: 100%; }
-
-#overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.95);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 10;
+select, button {
+  background: #1e293b; color: white; border: 1px solid #334155;
+  border-radius: 12px; padding: 10px 12px; font-size: 14px; outline: none;
+  -webkit-appearance: none; /* Reset stylu Safari dla selecta */
 }
 
-.diff-btn {
-    background: var(--card);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 12px 20px;
-    margin: 6px;
-    border-radius: 12px;
-    cursor: pointer;
-    width: 180px;
-    font-weight: bold;
-    transition: 0.2s;
+button { 
+    cursor: pointer; background: var(--card); border: 1px solid var(--accent); 
+    color: var(--accent); font-weight: bold; width: 100%; max-width: 220px;
 }
-.diff-btn:active { transform: scale(0.95); }
+button:active { transform: scale(0.96); }
+
+.game-info-bar {
+    display: flex; justify-content: space-between; width: 100%; 
+    font-size: 13px; color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 10px;
+}
+
+#rank-note {
+    font-size: 11px; color: #94a3b8; text-align: center; margin-bottom: 5px;
+}
+.rank-active { color: #4ade80 !important; font-weight: bold; }
+
+#game {
+  display: grid; justify-content: center; margin: 15px auto;
+  gap: 4px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px;
+  width: fit-content; max-width: 100%;
+}
+
+.cell {
+  width: var(--cell-size); height: var(--cell-size);
+  background: #1e293b; display: flex; justify-content: center; align-items: center;
+  cursor: pointer; font-weight: 800; border-radius: 6px;
+  transition: background 0.1s; font-size: calc(var(--cell-size) * 0.5);
+}
+
+.open { background: #e5e7eb; color: #020617; }
+.mine { background: #dc2626 !important; color: white; }
+.flagged { background: #facc15 !important; color: #020617; }
+
+.number1{color:#2563eb} .number2{color:#16a34a} .number3{color:#dc2626}
+.number4{color:#1e3a8a}
+
+#controls-mobile { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+.btn-mode { padding: 14px; flex: 1; max-width: 150px; border-radius: 14px; }
+.active-mode { background: var(--accent) !important; color: #020617 !important; border-color: var(--accent); }
+
+#points-info {
+    text-align: center; margin-top: 15px; font-weight: bold; padding: 10px;
+    border-top: 1px solid #334155; font-size: 1.2rem;
+}
 
 footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
 </style>
@@ -132,172 +148,230 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
 
 <main>
   <div class="card">
-    <h2>🚀 Neon Flappy</h2>
+    <h2>💣 Saper Elite</h2>
+    
+    <div id="menu">
+      <div id="rank-note">Tylko tryb Rankingowy daje punkty!</div>
+      <select id="difficulty-select">
+        <option value="9,10" selected>🏆 Rankingowy (9x9 - 10 bomb)</option>
+        <option value="12,22">Średni (12x12 - 22 bomby)</option>
+        <option value="15,40">Trudny (15x15 - 40 bomb)</option>
+        <option value="7,6">Szybki (7x7 - 6 bomb)</option>
+      </select>
+      <button id="start-btn">NOWA GRA</button>
+      
+      <div class="game-info-bar">
+          <div id="info">🚩 0 / 10</div>
+          <div id="timer">⏱️ 0s</div>
+      </div>
+    </div>
 
-    <div class="score-header">
-        Score: <span id="score-num">0</span>
+    <div id="game"></div>
+
+    <div id="controls-mobile">
+      <button id="btn-open" class="btn-mode active-mode">Odkryj</button>
+      <button id="btn-flag" class="btn-mode">Flaga</button>
     </div>
     
-    <div id="game-container">
-        <canvas id="game" width="320" height="480"></canvas>
-        
-        <div id="overlay">
-            <h3 id="status" style="margin-bottom: 15px;">Wybierz Poziom</h3>
-            <div id="final-stats" style="margin-bottom: 15px; text-align: center; display: none;">
-                <div style="font-size: 11px; opacity: 0.6;">TWÓJ REKORD</div>
-                <div id="best-score" style="font-size: 24px; font-weight: 800; color: var(--accent);">0</div>
-            </div>
-            <button class="diff-btn" onclick="initGame('amator')">AMATOR</button>
-            <button class="diff-btn" onclick="initGame('latwy')">ŁATWY</button>
-            <button class="diff-btn" onclick="initGame('sredni')">ŚREDNI</button>
-            <button class="diff-btn" onclick="initGame('trudny')">HARDCORE</button>
-        </div>
-    </div>
+    <div id="points-info" style="color: var(--accent);">Points: 0</div>
   </div>
 </main>
 
 <footer>© 2026 SpinnerRealYT Games • iOS 26 Optimized</footer>
 
 <script>
-const firebaseConfig = { 
-    apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-    authDomain: "spinnerrealyt-games.firebaseapp.com",
-    databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
-};
+(() => {
+    const firebaseConfig = { 
+        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
+        authDomain: "spinnerrealyt-games.firebaseapp.com",
+        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+    const loggedUser = localStorage.getItem("sp_logged");
+    const syncEl = document.getElementById('sync-display');
+    const pointsInfoEl = document.getElementById('points-info');
+    const rankNote = document.getElementById('rank-note');
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
-const loggedUser = localStorage.getItem("sp_logged");
+    let ROWS=9, COLS=9, MINES_COUNT=10, points=0, gameOver=false, flagMode=false, firstClick=true;
+    let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
+    let seconds = 0, timerInterval = null;
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-const scoreNum = document.getElementById("score-num");
-const overlay = document.getElementById("overlay");
-const syncEl = document.getElementById('sync-display');
-const bestScoreEl = document.getElementById('best-score');
+    auth.onAuthStateChanged((user) => {
+        if(user && loggedUser) {
+            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+            loadData();
+        } else if (loggedUser) {
+            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+            syncEl.textContent = "Connecting...";
+        }
+    });
 
-let bird = { x: 50, y: 240, w: 20, h: 20, dy: 0 };
-let pipes = [];
-let score = 0;
-let isDead = true;
-let frame = 0;
-let highScore = 0;
-
-const levels = {
-    amator: { grav: 0.28, jump: -5.5, gap: 190, speed: 2, freq: 110 },
-    latwy:  { grav: 0.38, jump: -6.5, gap: 160, speed: 2.5, freq: 100 },
-    sredni: { grav: 0.48, jump: -7.5, gap: 140, speed: 3.2, freq: 90 },
-    trudny: { grav: 0.62, jump: -8.8, gap: 120, speed: 4.2, freq: 75 }
-};
-let sets = levels.sredni;
-
-// FIREBASE SYNC
-auth.onAuthStateChanged((user) => {
-    if(user && loggedUser) {
-        document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-        loadBirdScore();
-    } else if (loggedUser) {
-        document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-        syncEl.textContent = "Connecting...";
-    }
-});
-
-async function loadBirdScore() {
-    if(!loggedUser) return;
-    try {
-        const snap = await db.ref('users/' + loggedUser + '/BirdScore').once('value');
-        highScore = snap.exists() ? snap.val() : 0;
-        bestScoreEl.textContent = highScore;
-        syncEl.textContent = "Synced";
-        syncEl.style.color = "#4ade80";
-    } catch(e) { syncEl.textContent = "Error"; }
-}
-
-async function saveBirdScore(newScore) {
-    if(!loggedUser || !auth.currentUser) return;
-    if(newScore > highScore) {
-        highScore = newScore;
-        bestScoreEl.textContent = highScore;
+    async function loadData() {
+        if(!loggedUser) return;
         try {
-            await db.ref('users/' + loggedUser).update({ BirdScore: highScore });
+            const snap = await db.ref('users/' + loggedUser + '/points').once('value');
+            points = snap.exists() ? snap.val() : 0;
+            pointsInfoEl.textContent = `Points: ${points}`;
+            syncEl.textContent = "Synced";
+            syncEl.style.color = "#4ade80";
+        } catch(e) { syncEl.textContent = "Error"; }
+    }
+
+    async function savePoints() {
+        if(!loggedUser || !auth.currentUser) return;
+        try {
+            await db.ref('users/' + loggedUser).update({ points: points });
             syncEl.textContent = "Saved";
             syncEl.style.color = "#4ade80";
         } catch(e) { syncEl.textContent = "Sync Error"; }
     }
-}
 
-// LOGIKA GRY
-function initGame(lvl) {
-    sets = levels[lvl];
-    bird.y = 240; bird.dy = 0; pipes = []; score = 0; frame = 0;
-    scoreNum.textContent = "0";
-    isDead = false;
-    overlay.style.display = "none";
-    gameLoop();
-}
-
-function jump() { if(!isDead) bird.dy = sets.jump; }
-
-window.addEventListener("keydown", (e) => { if(e.code === "Space") { e.preventDefault(); jump(); }});
-canvas.addEventListener("mousedown", jump);
-canvas.addEventListener("touchstart", (e) => { e.preventDefault(); jump(); });
-
-function gameLoop() {
-    if(isDead) return;
-
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    bird.dy += sets.grav;
-    bird.y += bird.dy;
-
-    ctx.fillStyle = "#38bdf8";
-    ctx.shadowBlur = 10; ctx.shadowColor = "#38bdf8";
-    ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
-    ctx.shadowBlur = 0;
-
-    if(frame % sets.freq === 0) {
-        let gapPos = Math.random() * (canvas.height - sets.gap - 100) + 50;
-        pipes.push({ x: canvas.width, y: gapPos, done: false });
-    }
-
-    for(let i = pipes.length - 1; i >= 0; i--) {
-        let p = pipes[i];
-        p.x -= sets.speed;
-
-        ctx.fillStyle = "#1e293b";
-        ctx.strokeStyle = "#38bdf8";
-        ctx.lineWidth = 2;
-        
-        ctx.fillRect(p.x, 0, 50, p.y);
-        ctx.strokeRect(p.x, -2, 50, p.y + 2);
-        ctx.fillRect(p.x, p.y + sets.gap, 50, canvas.height);
-        ctx.strokeRect(p.x, p.y + sets.gap, 50, canvas.height - (p.y + sets.gap) + 2);
-
-        if (bird.x < p.x + 50 && bird.x + bird.w > p.x && (bird.y < p.y || bird.y + bird.h > p.y + sets.gap)) gameOver();
-        
-        if (!p.done && p.x + 50 < bird.x) {
-            score++;
-            p.done = true;
-            scoreNum.textContent = score;
+    function createGrid(){
+        const gameEl = document.getElementById('game');
+        gameEl.innerHTML=''; cells=[];
+        gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
+        for(let i=0; i<ROWS*COLS; i++){
+            const c=document.createElement('div');
+            c.className='cell';
+            c.onclick = () => handleCellClick(i);
+            // Obsługa prawego kliku (dla komputerów)
+            c.oncontextmenu = (e) => { e.preventDefault(); toggleFlag(i); };
+            gameEl.appendChild(c);
+            cells.push(c);
         }
-        if (p.x < -60) pipes.splice(i, 1);
     }
 
-    if(bird.y + bird.h > canvas.height || bird.y < 0) gameOver();
+    function handleCellClick(i) {
+        if(flagMode) toggleFlag(i);
+        else openCell(i);
+    }
 
-    frame++;
-    requestAnimationFrame(gameLoop);
-}
+    function neighbors(i){
+        const r=Math.floor(i/COLS), c=i%COLS, res=[];
+        for(let dr=-1; dr<=1; dr++) for(let dc=-1; dc<=1; dc++){
+            if(!dr && !dc) continue;
+            const nr=r+dr, nc=c+dc;
+            if(nr>=0 && nr<ROWS && nc>=0 && nc<COLS) res.push(nr*COLS+nc);
+        }
+        return res;
+    }
 
-function gameOver() {
-    isDead = true;
-    saveBirdScore(score);
-    document.getElementById("status").textContent = "Wynik: " + score;
-    document.getElementById("final-stats").style.display = "block";
-    overlay.style.display = "flex";
-}
+    function openCell(i){
+        if(gameOver || opened.has(i) || flags.has(i)) return;
+        if(firstClick){ 
+            firstClick=false; 
+            placeMines(i); 
+            startTimer();
+        }
+        opened.add(i);
+        const c=cells[i];
+        c.classList.add('open');
+        if(minePositions.has(i)){
+            c.textContent='💣'; c.classList.add('mine');
+            return lose();
+        }
+        const n = neighbors(i).filter(idx => minePositions.has(idx)).length;
+        if(n > 0){
+            c.textContent = n; c.classList.add(`number${n}`);
+        } else {
+            neighbors(i).forEach(openCell);
+        }
+        checkWin();
+    }
+
+    function placeMines(firstIndex){
+        minePositions.clear();
+        const firstNeighbors = neighbors(firstIndex);
+        while(minePositions.size < MINES_COUNT){
+            const p = Math.floor(Math.random()*ROWS*COLS);
+            // Gwarancja, że pierwszy klik i jego sąsiedzi są puści (Fair Start)
+            if(p === firstIndex || firstNeighbors.includes(p)) continue;
+            minePositions.add(p);
+        }
+    }
+
+    function toggleFlag(i){
+        if(gameOver || opened.has(i)) return;
+        const c=cells[i];
+        if(flags.has(i)){
+            flags.delete(i); c.textContent=''; c.classList.remove('flagged');
+        } else if(flags.size < MINES_COUNT){
+            flags.add(i); c.textContent='🚩'; c.classList.add('flagged');
+        }
+        document.getElementById('info').textContent=`🚩 ${flags.size} / ${MINES_COUNT}`;
+    }
+
+    function startTimer(){
+        seconds = 0;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            seconds++;
+            document.getElementById('timer').textContent = `⏱️ ${seconds}s`;
+        }, 1000);
+    }
+
+    function lose(){
+        gameOver=true;
+        clearInterval(timerInterval);
+        document.getElementById('info').textContent='💥 Przegrana!';
+        minePositions.forEach(i => {
+            cells[i].classList.add('mine', 'open');
+            cells[i].textContent='💣';
+        });
+    }
+
+    function checkWin(){
+        if(opened.size === ROWS*COLS - MINES_COUNT){
+            gameOver=true;
+            clearInterval(timerInterval);
+            document.getElementById('info').textContent='🎉 Wygrana!';
+            if(ROWS === 9 && MINES_COUNT === 10) {
+                points += 1;
+                pointsInfoEl.textContent = `Points: ${points}`;
+                savePoints();
+            }
+        }
+    }
+
+    function reset(){
+        const val = document.getElementById('difficulty-select').value.split(',');
+        ROWS = parseInt(val[0]);
+        COLS = ROWS;
+        MINES_COUNT = parseInt(val[1]);
+        
+        if(ROWS === 9 && MINES_COUNT === 10) {
+            rankNote.textContent = "✓ Tryb Rankingowy Aktywny (+1 pkt)";
+            rankNote.className = "rank-active";
+        } else {
+            rankNote.textContent = "Tryb Treningowy (brak punktów)";
+            rankNote.className = "";
+        }
+
+        gameOver=false; firstClick=true;
+        flags.clear(); opened.clear();
+        document.getElementById('info').textContent=`🚩 0 / ${MINES_COUNT}`;
+        document.getElementById('timer').textContent = `⏱️ 0s`;
+        clearInterval(timerInterval);
+        createGrid();
+    }
+
+    document.getElementById('start-btn').onclick = reset;
+    document.getElementById('btn-open').onclick = () => { 
+        flagMode = false; 
+        document.getElementById('btn-open').classList.add('active-mode'); 
+        document.getElementById('btn-flag').classList.remove('active-mode'); 
+    };
+    document.getElementById('btn-flag').onclick = () => { 
+        flagMode = true; 
+        document.getElementById('btn-flag').classList.add('active-mode'); 
+        document.getElementById('btn-open').classList.remove('active-mode'); 
+    };
+
+    reset();
+})();
 </script>
 </body>
 </html>
