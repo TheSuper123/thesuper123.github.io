@@ -33,7 +33,6 @@
             background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 70%);
         }
 
-        /* HEADER */
         header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 10px 5%; background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(12px);
@@ -51,13 +50,11 @@
         .synced { color: #4ade80; }
         .sync-err { color: var(--danger); }
 
-        /* MAIN */
         main { 
             max-width: 500px; margin: auto; padding: 15px 10px; 
             display: flex; flex-direction: column; align-items: center; 
         }
 
-        /* NOWY SCORE BOARD NAD GRĄ */
         .game-header {
             width: 320px;
             display: flex;
@@ -122,7 +119,7 @@
     </div>
     <div class="user-status">
         <div id="user-nick">GOŚĆ</div>
-        <div id="sync-status">OFFLINE</div>
+        <div id="sync-status">Ładowanie...</div>
     </div>
 </header>
 
@@ -137,7 +134,7 @@
         <div id="overlay">
             <h1 style="margin-bottom:10px; letter-spacing: 2px;">NEON FLAPPY</h1>
             <div id="final-stats" style="margin-bottom: 20px; text-align: center; display:none;">
-                <div style="font-size:12px; opacity:0.6">NAJLEPSZY WYNIK</div>
+                <div style="font-size:12px; opacity:0.6">TWÓJ REKORD (BirdScore)</div>
                 <div id="best-score" style="font-size:32px; font-weight:900; color:var(--accent)">0</div>
             </div>
             <button class="btn-lvl" onclick="initGame('amator')">AMATOR</button>
@@ -151,7 +148,6 @@
 <footer>© 2026 SpinnerRealYT Games</footer>
 
 <script>
-// --- KONFIGURACJA I LOGIKA FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
     authDomain: "spinnerrealyt-games.firebaseapp.com",
@@ -167,6 +163,7 @@ const scoreNum = document.getElementById("score-num");
 const overlay = document.getElementById("overlay");
 const nickEl = document.getElementById("user-nick");
 const syncEl = document.getElementById("sync-status");
+const bestScoreEl = document.getElementById("best-score");
 
 let bird = { x: 50, y: 240, w: 20, h: 20, dy: 0, rot: 0 };
 let pipes = [];
@@ -174,7 +171,7 @@ let particles = [];
 let score = 0;
 let isDead = true;
 let frame = 0;
-let highScore = localStorage.getItem("neon_flap_best") || 0;
+let highScore = 0;
 let currentUser = null;
 
 const levels = {
@@ -185,40 +182,53 @@ const levels = {
 };
 let sets = levels.sredni;
 
+// MONITOROWANIE KONTA I BIRD_SCORE
 auth.onAuthStateChanged(user => {
     if(user) {
         currentUser = localStorage.getItem("sp_logged") || "Gracz";
         nickEl.textContent = currentUser;
         loadCloudScore();
+    } else {
+        syncEl.textContent = "LOCAL ONLY";
+        highScore = localStorage.getItem("neon_flap_best") || 0;
+        bestScoreEl.textContent = highScore;
     }
 });
 
 async function loadCloudScore() {
     try {
-        const snap = await db.ref(`users/${currentUser.toLowerCase()}/scores/flappy`).once('value');
-        if(snap.exists() && snap.val() > highScore) {
+        const snap = await db.ref(`users/${currentUser.toLowerCase()}/BirdScore`).once('value');
+        if(snap.exists()) {
             highScore = snap.val();
-            localStorage.setItem("neon_flap_best", highScore);
+        } else {
+            highScore = localStorage.getItem("neon_flap_best") || 0;
         }
+        bestScoreEl.textContent = highScore;
         syncEl.textContent = "● SYNCED";
         syncEl.className = "synced";
-    } catch(e) { syncEl.textContent = "● ERROR"; syncEl.className = "sync-err"; }
+    } catch(e) { 
+        syncEl.textContent = "● ERROR"; 
+        syncEl.className = "sync-err"; 
+    }
 }
 
-async function saveScore(s) {
+async function updateBirdScore(s) {
     if(s > highScore) {
         highScore = s;
         localStorage.setItem("neon_flap_best", s);
+        bestScoreEl.textContent = s;
+        
         if(currentUser) {
             try {
-                await db.ref(`users/${currentUser.toLowerCase()}/scores/flappy`).set(s);
+                // Zmiana nazwy pola na BirdScore zgodnie z prośbą
+                await db.ref(`users/${currentUser.toLowerCase()}/BirdScore`).set(s);
                 syncEl.textContent = "● SYNCED";
             } catch(e) { syncEl.textContent = "● SYNC ERR"; }
         }
     }
 }
 
-// --- SILNIK GRY ---
+// SILNIK
 function createParticles(x, y) {
     for(let i=0; i<6; i++) {
         particles.push({ x, y, vx: (Math.random()-0.8)*3, vy: (Math.random()-0.5)*3, life: 1 });
@@ -227,11 +237,16 @@ function createParticles(x, y) {
 
 function initGame(lvl) {
     sets = levels[lvl];
-    bird.y = 240; bird.dy = 0; pipes = []; particles = []; score = 0; frame = 0;
+    bird.y = 240; bird.dy = 0; pipes = []; particles = []; 
+    score = 0; // Resetujemy wynik sesji
+    frame = 0;
     scoreNum.textContent = "0";
     isDead = false;
     overlay.style.opacity = "0";
-    setTimeout(() => overlay.style.display = "none", 300);
+    setTimeout(() => {
+        overlay.style.display = "none";
+        document.getElementById("final-stats").style.display = "block";
+    }, 300);
     gameLoop();
 }
 
@@ -251,7 +266,6 @@ function gameLoop() {
     ctx.fillStyle = "#020617";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Cząsteczki
     particles.forEach((p, i) => {
         p.x += p.vx; p.y += p.vy; p.life -= 0.03;
         if(p.life <= 0) particles.splice(i, 1);
@@ -259,7 +273,6 @@ function gameLoop() {
         ctx.fillRect(p.x, p.y, 2, 2);
     });
 
-    // Gracz
     bird.dy += sets.grav;
     bird.y += bird.dy;
     bird.rot = Math.min(Math.PI/6, Math.max(-Math.PI/6, bird.dy * 0.1));
@@ -272,7 +285,6 @@ function gameLoop() {
     ctx.fillRect(-10, -10, 20, 20);
     ctx.restore();
 
-    // Rury
     if(frame % sets.freq === 0) {
         let gapPos = Math.random() * (canvas.height - sets.gap - 120) + 60;
         pipes.push({ x: canvas.width, y: gapPos, done: false });
@@ -290,8 +302,15 @@ function gameLoop() {
         ctx.fillRect(p.x, p.y + sets.gap, 50, canvas.height);
         ctx.strokeRect(p.x, p.y + sets.gap, 50, canvas.height);
 
+        // Kolizja
         if (bird.x < p.x + 50 && bird.x + 20 > p.x && (bird.y < p.y || bird.y + 20 > p.y + sets.gap)) gameOver();
-        if (!p.done && p.x + 50 < bird.x) { score++; p.done = true; scoreNum.textContent = score; }
+        
+        // PUNKTACJA: Za każdy minięty zestaw rur +1
+        if (!p.done && p.x + 50 < bird.x) { 
+            score++; 
+            p.done = true; 
+            scoreNum.textContent = score; 
+        }
         if (p.x < -60) pipes.splice(i, 1);
     });
 
@@ -302,9 +321,7 @@ function gameLoop() {
 
 function gameOver() {
     isDead = true;
-    saveScore(score);
-    document.getElementById("final-stats").style.display = "block";
-    document.getElementById("best-score").textContent = highScore;
+    updateBirdScore(score); // Zapisuje rekord do bazy jako BirdScore
     overlay.style.display = "flex";
     setTimeout(() => overlay.style.opacity = "1", 10);
 }
