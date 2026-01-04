@@ -23,7 +23,7 @@
             --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
         } 
 
-        * { box-sizing: border-box; } 
+        * { box-sizing: border-box; transition: all 0.2s ease; } 
         body { 
             margin: 0; font-family: 'Inter', sans-serif; 
             background: var(--bg); color: var(--text); 
@@ -43,12 +43,23 @@
 
         .btn-base { 
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
-            color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.3s;
+            color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600;
         } 
         .btn-base:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
+
+        /* Styl Username */
+        .user-pill {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+            padding: 5px 15px; border-radius: 20px;
+            cursor: pointer; font-weight: bold;
+            color: var(--accent); text-transform: uppercase;
+            font-size: 13px; letter-spacing: 1px;
+        }
+        .user-pill:hover { background: rgba(56, 189, 248, 0.2); transform: scale(1.05); }
         
         main { max-width: 1200px; margin: auto; padding: 40px 20px; } 
-
         .hero { text-align: center; margin-bottom: 60px; }
         .hero h1 { font-size: 3.5rem; margin: 0; letter-spacing: -2px; }
 
@@ -56,17 +67,39 @@
 
         .game-card { 
             background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; 
-            padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.4s; position: relative;
+            padding: 40px 20px; text-align: center; cursor: pointer; position: relative;
         } 
         .game-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
         .tag { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 6px; }
 
-        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; } 
-        #auth-overlay.active { display: flex; } 
-        .auth-modal { width: 90%; max-width: 400px; background: #0f172a; padding: 40px; border-radius: 30px; border: 1px solid var(--card-border); } 
-        .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; background: #1e293b; border: 1px solid #334155; color: white; } 
-        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 10px; } 
-        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 10px; } 
+        /* Overlay & Modals */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); 
+            display: none; align-items: center; justify-content: center; z-index: 9999; 
+        } 
+        .modal-overlay.active { display: flex; } 
+        .modal { 
+            width: 90%; max-width: 400px; background: #0f172a; 
+            padding: 30px; border-radius: 30px; border: 1px solid var(--card-border); 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        } 
+        .auth-input { 
+            width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; 
+            background: #1e293b; border: 1px solid #334155; color: white; outline: none;
+        }
+        .auth-input:focus { border-color: var(--accent); }
+        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500;} 
+        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500;} 
+
+        /* Profile Styles */
+        .profile-header { text-align: center; margin-bottom: 20px; }
+        .profile-avatar { 
+            width: 80px; height: 80px; background: var(--grad); 
+            border-radius: 50%; margin: 0 auto 15px; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; color: #000; font-weight: 900;
+        }
     </style> 
 </head> 
 <body> 
@@ -87,21 +120,35 @@
     <div class="game-grid" id="game-grid"></div> 
 </main> 
 
-<div id="auth-overlay"> 
-    <div class="auth-modal"> 
-        <h2 id="auth-title">Zaloguj się</h2> 
+<div id="auth-overlay" class="modal-overlay"> 
+    <div class="modal"> 
+        <h2 id="auth-title" style="margin-top:0">Zaloguj się</h2> 
         <div id="auth-msg"></div> 
         <input type="text" id="auth-user" class="auth-input" placeholder="Nick"> 
         <div id="reg-fields"></div>
         <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
-        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000; border:none; font-weight: bold;">POTWIERDŹ</button> 
-        <p id="auth-switch" style="text-align:center; cursor:pointer; font-size: 14px; margin-top: 20px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p> 
-        <button onclick="document.getElementById('auth-overlay').classList.remove('active')" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Zamknij</button>
+        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000; border:none; font-weight: bold; padding:15px; margin-bottom:10px;">POTWIERDŹ</button> 
+        
+        <p id="forgot-pass" style="text-align:center; cursor:pointer; font-size: 12px; color: var(--text-dim);" onclick="resetPassword()">Zapomniałeś hasła?</p>
+        <p id="auth-switch" style="text-align:center; cursor:pointer; font-size: 14px; margin-top: 15px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p> 
+        
+        <button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Zamknij</button>
     </div> 
 </div> 
 
+<div id="profile-overlay" class="modal-overlay">
+    <div class="modal">
+        <div class="profile-header">
+            <div id="prof-avatar" class="profile-avatar">S</div>
+            <h2 id="prof-nick" style="margin: 0; color: var(--accent);">NICK</h2>
+            <p id="prof-email" style="color: var(--text-dim); font-size: 14px; margin: 5px 0 20px;"></p>
+        </div>
+        <button class="btn-base" onclick="logout()" style="width:100%; background: var(--danger); color: white; border:none; font-weight: bold; padding:12px;">WYLOGUJ SIĘ</button>
+        <button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:15px;">Zamknij</button>
+    </div>
+</div>
+
 <script> 
-// --- KONFIGURACJA GIER ---
 const games = [ 
     { file: "games/saper.html", name: "Saper", tag: "CLASSIC" },
     { file: "games/soon.html", name: "Saper OG REVAMP", tag: "OG CLASSIC"},
@@ -115,14 +162,12 @@ const games = [
     { file: "games/polls.html", name: "Sondaże", tag: "POLITYKA" } 
 ]; 
 
-// --- TWOJA KONFIGURACJA FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
     authDomain: "spinnerrealyt-games.firebaseapp.com",
     databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
 };
 
-// Inicjalizacja globalna
 let db, auth;
 try {
     firebase.initializeApp(firebaseConfig);
@@ -132,9 +177,7 @@ try {
 
 let isLoginMode = true;
 
-// --- FUNKCJA RENDERUJĄCA ---
 function render() {
-    // 1. Gry
     const grid = document.getElementById("game-grid");
     grid.innerHTML = games.map(g => `
         <div class="game-card" onclick="window.location.href='${g.file}'">
@@ -143,23 +186,61 @@ function render() {
         </div>
     `).join('');
 
-    // 2. Przycisk nawigacji
     const nav = document.getElementById("nav-auth-container");
     const user = localStorage.getItem("sp_logged");
     if(user) {
-        nav.innerHTML = `<button class="btn-base" style="background:var(--grad); color:#000; border:none;" onclick="logout()">${user.toUpperCase()}</button>`;
+        nav.innerHTML = `<div class="user-pill" onclick="openProfile()">${user}</div>`;
     } else {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
 }
 
-function logout() { if(confirm("Wylogować?")) { localStorage.clear(); location.reload(); } }
+function openProfile() {
+    const nick = localStorage.getItem("sp_logged");
+    document.getElementById('prof-nick').textContent = nick.toUpperCase();
+    document.getElementById('prof-avatar').textContent = nick.charAt(0).toUpperCase();
+    
+    // Pobierz email z bazy dla profilu
+    db.ref('users_map/' + nick.toLowerCase()).once('value').then(snap => {
+        if(snap.exists()) document.getElementById('prof-email').textContent = snap.val().email;
+    });
+
+    document.getElementById('profile-overlay').classList.add('active');
+}
+
+function logout() { 
+    localStorage.clear(); 
+    auth.signOut();
+    location.reload(); 
+}
+
+function closeModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+}
 
 function toggleAuth() {
     isLoginMode = !isLoginMode;
+    const msg = document.getElementById('auth-msg');
+    msg.innerHTML = "";
     document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
     document.getElementById('reg-fields').innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="E-mail">';
     document.getElementById('auth-switch').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
+    document.getElementById('forgot-pass').style.display = isLoginMode ? "block" : "none";
+}
+
+// RESET HASŁA
+async function resetPassword() {
+    const nick = document.getElementById('auth-user').value.trim().toLowerCase();
+    const msg = document.getElementById('auth-msg');
+    if(!nick) { msg.innerHTML = '<p class="error">Podaj Nick, aby zresetować hasło!</p>'; return; }
+
+    try {
+        const snap = await db.ref('users_map/' + nick).once('value');
+        if(!snap.exists()) throw new Error("Taki nick nie istnieje.");
+        const email = snap.val().email;
+        await auth.sendPasswordResetEmail(email);
+        msg.innerHTML = `<p class="success">Link do resetu wysłany na ${email}</p>`;
+    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
 
 document.getElementById('auth-submit').onclick = async () => {
@@ -167,26 +248,26 @@ document.getElementById('auth-submit').onclick = async () => {
     const pass = document.getElementById('auth-pass').value.trim();
     const msg = document.getElementById('auth-msg');
 
-    if(!auth || !db) { msg.innerHTML = '<p class="error">Błąd połączenia. Odśwież stronę.</p>'; return; }
+    if(!auth || !db) { msg.innerHTML = '<p class="error">Błąd połączenia.</p>'; return; }
 
     try {
         if(isLoginMode) {
             const snap = await db.ref('users_map/' + nick).once('value');
-            if(!snap.exists()) throw new Error("Taki gracz nie istnieje.");
+            if(!snap.exists()) throw new Error("Nieprawidłowe dane logowania.");
             const email = snap.val().email;
             const cred = await auth.signInWithEmailAndPassword(email, pass);
-            if(!cred.user.emailVerified) throw new Error("Najpierw potwierdź link wysłany na e-mail!");
+            if(!cred.user.emailVerified) throw new Error("Najpierw potwierdź e-mail!");
             localStorage.setItem("sp_logged", nick);
             location.reload();
         } else {
             const email = document.getElementById('auth-email').value.trim();
             if(!email) throw new Error("Podaj e-mail!");
             const snap = await db.ref('users_map/' + nick).once('value');
-            if(snap.exists()) throw new Error("Ten nick jest już zajęty.");
+            if(snap.exists()) throw new Error("Nick zajęty.");
             const cred = await auth.createUserWithEmailAndPassword(email, pass);
             await cred.user.sendEmailVerification();
             await db.ref('users_map/' + nick).set({ email: email });
-            msg.innerHTML = '<p class="success" style="color:#4ade80">Link wysłany! Sprawdź skrzynkę (i SPAM).</p>';
+            msg.innerHTML = '<p class="success">Link wysłany! Sprawdź skrzynkę.</p>';
         }
     } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 };
