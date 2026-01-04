@@ -1,8 +1,8 @@
 <!DOCTYPE html> 
-<html lang="pl"> 
+<html lang="pl" style="background-color: #020617;"> 
 <head> 
     <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
     <title>SpinnerRealYT Games | Premium Gaming</title> 
     <link rel="icon" href="Logo.png"> 
 
@@ -23,12 +23,13 @@
             --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
         } 
 
-        * { box-sizing: border-box; transition: all 0.2s ease; } 
+        * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; } 
         body { 
             margin: 0; font-family: 'Inter', sans-serif; 
             background: var(--bg); color: var(--text); 
             min-height: 100vh; overflow-x: hidden;
             background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%);
+            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
         } 
 
         header { 
@@ -56,14 +57,12 @@
             color: var(--accent); text-transform: uppercase;
             font-size: 13px; letter-spacing: 1px;
         }
-        .user-pill:hover { background: rgba(56, 189, 248, 0.2); transform: scale(1.05); }
         
         main { max-width: 1200px; margin: auto; padding: 40px 20px; } 
         .hero { text-align: center; margin-bottom: 60px; }
         .hero h1 { font-size: 3.5rem; margin: 0; letter-spacing: -2px; }
 
         .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; } 
-
         .game-card { 
             background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; 
             padding: 40px 20px; text-align: center; cursor: pointer; position: relative;
@@ -78,25 +77,34 @@
         } 
         .modal-overlay.active { display: flex; } 
         .modal { 
-            width: 90%; max-width: 400px; background: #0f172a; 
-            padding: 30px; border-radius: 30px; border: 1px solid var(--card-border); 
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            width: 92%; max-width: 420px; background: #0f172a; 
+            padding: 25px; border-radius: 30px; border: 1px solid var(--card-border); 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
         } 
         .auth-input { 
             width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; 
-            background: #1e293b; border: 1px solid #334155; color: white; outline: none;
+            background: #1e293b; border: 1px solid #334155; color: white; outline: none; font-size: 14px;
         }
         .auth-input:focus { border-color: var(--accent); }
-        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500;} 
-        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500;} 
+        
+        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; background: rgba(251, 113, 133, 0.1); padding: 8px; border-radius: 8px;} 
+        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 8px;} 
 
-        .profile-header { text-align: center; margin-bottom: 20px; }
         .profile-avatar { 
-            width: 80px; height: 80px; background: var(--grad); 
-            border-radius: 50%; margin: 0 auto 15px; 
+            width: 60px; height: 60px; background: var(--grad); 
+            border-radius: 50%; margin: 0 auto 10px; 
             display: flex; align-items: center; justify-content: center;
-            font-size: 30px; color: #000; font-weight: 900;
+            font-size: 24px; color: #000; font-weight: 900;
         }
+
+        .settings-section {
+            border-top: 1px solid #334155; margin-top: 20px; padding-top: 15px;
+        }
+        .settings-section h4 { margin: 0 0 10px; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .btn-small { padding: 8px 12px; font-size: 12px; margin-top: 5px; width: 100%; }
+        .btn-danger { background: rgba(251, 113, 133, 0.1); border: 1px solid var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
     </style> 
 </head> 
 <body> 
@@ -125,23 +133,42 @@
         <div id="reg-fields"></div>
         <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
         <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000; border:none; font-weight: bold; padding:15px; margin-bottom:10px;">POTWIERDŹ</button> 
-        
         <p id="forgot-pass" style="text-align:center; cursor:pointer; font-size: 12px; color: var(--text-dim);" onclick="resetPassword()">Zapomniałeś hasła?</p>
         <p id="auth-switch" style="text-align:center; cursor:pointer; font-size: 14px; margin-top: 15px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p> 
-        
-        <button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Zamknij</button>
+        <button class="btn-base" onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px;">Zamknij</button>
     </div> 
 </div> 
 
 <div id="profile-overlay" class="modal-overlay">
     <div class="modal">
-        <div class="profile-header">
+        <div id="profile-msg"></div>
+        <div style="text-align: center;">
             <div id="prof-avatar" class="profile-avatar">S</div>
             <h2 id="prof-nick" style="margin: 0; color: var(--accent);">NICK</h2>
-            <p id="prof-email" style="color: var(--text-dim); font-size: 14px; margin: 5px 0 20px;"></p>
+            <p id="prof-email" style="color: var(--text-dim); font-size: 13px; margin: 5px 0 15px;"></p>
         </div>
-        <button class="btn-base" onclick="logout()" style="width:100%; background: var(--danger); color: white; border:none; font-weight: bold; padding:12px;">WYLOGUJ SIĘ</button>
-        <button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:15px;">Zamknij</button>
+
+        <div class="settings-section">
+            <h4>Zmień adres E-mail</h4>
+            <input type="email" id="new-email" class="auth-input" placeholder="Nowy e-mail">
+            <button class="btn-base btn-small" onclick="updateEmail()">Zaktualizuj E-mail</button>
+        </div>
+
+        <div class="settings-section">
+            <h4>Zmień Hasło</h4>
+            <input type="password" id="new-pass" class="auth-input" placeholder="Nowe hasło">
+            <button class="btn-base btn-small" onclick="updatePassword()">Zaktualizuj Hasło</button>
+        </div>
+
+        <div class="settings-section" style="background: rgba(251, 113, 133, 0.05); border-radius: 15px; padding: 10px;">
+            <h4 style="color: var(--danger);">Strefa Niebezpieczna</h4>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Aby usunąć konto, wpisz aktualne hasło poniżej i kliknij przycisk 10 razy.</p>
+            <input type="password" id="delete-confirm-pass" class="auth-input" placeholder="Aktualne hasło (potwierdź)">
+            <button class="btn-base btn-small btn-danger" id="delete-btn" onclick="handleDeleteStep()">USUŃ KONTO (<span id="del-counter">10</span>)</button>
+        </div>
+
+        <button class="btn-base" onclick="logout()" style="width:100%; margin-top: 20px;">WYLOGUJ SIĘ</button>
+        <button class="btn-base" onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px;">Zamknij</button>
     </div>
 </div>
 
@@ -165,16 +192,13 @@ const firebaseConfig = {
     databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
 };
 
-let db, auth;
-try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-    auth = firebase.auth();
-} catch(e) { console.error("Firebase fail", e); }
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
 
 let isLoginMode = true;
+let deleteSteps = 10;
 
-// Funkcja maskująca e-mail
 function maskEmail(email) {
     if(!email) return "";
     const [name, domain] = email.split('@');
@@ -203,49 +227,77 @@ function openProfile() {
     const nick = localStorage.getItem("sp_logged");
     document.getElementById('prof-nick').textContent = nick.toUpperCase();
     document.getElementById('prof-avatar').textContent = nick.charAt(0).toUpperCase();
+    deleteSteps = 10;
+    document.getElementById('del-counter').textContent = deleteSteps;
     
     db.ref('users_map/' + nick.toLowerCase()).once('value').then(snap => {
         if(snap.exists()) {
-            const fullEmail = snap.val().email;
-            document.getElementById('prof-email').textContent = maskEmail(fullEmail);
+            document.getElementById('prof-email').textContent = maskEmail(snap.val().email);
         }
     });
-
     document.getElementById('profile-overlay').classList.add('active');
 }
 
-function logout() { 
-    localStorage.clear(); 
-    auth.signOut();
-    location.reload(); 
+async function updateEmail() {
+    const newMail = document.getElementById('new-email').value.trim();
+    const msg = document.getElementById('profile-msg');
+    if(!newMail) return;
+    try {
+        await auth.currentUser.updateEmail(newMail);
+        const nick = localStorage.getItem("sp_logged").toLowerCase();
+        await db.ref('users_map/' + nick).update({ email: newMail });
+        msg.innerHTML = `<p class="success">E-mail został zmieniony!</p>`;
+    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
 
-function closeModals() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-    document.getElementById('auth-msg').innerHTML = "";
+async function updatePassword() {
+    const newPass = document.getElementById('new-pass').value.trim();
+    const msg = document.getElementById('profile-msg');
+    if(!newPass) return;
+    try {
+        await auth.currentUser.updatePassword(newPass);
+        msg.innerHTML = `<p class="success">Hasło zostało zmienione!</p>`;
+    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
+
+async function handleDeleteStep() {
+    const msg = document.getElementById('profile-msg');
+    const pass = document.getElementById('delete-confirm-pass').value;
+    
+    if(!pass) { msg.innerHTML = `<p class="error">Wpisz hasło!</p>`; return; }
+
+    deleteSteps--;
+    document.getElementById('del-counter').textContent = deleteSteps;
+
+    if(deleteSteps <= 0) {
+        try {
+            const user = auth.currentUser;
+            const nick = localStorage.getItem("sp_logged").toLowerCase();
+            // Re-autentykacja (wymagana w Firebase przed usunięciem konta)
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, pass);
+            await user.reauthenticateWithCredential(credential);
+            
+            await db.ref('users_map/' + nick).remove();
+            await db.ref('users/' + nick).remove();
+            await user.delete();
+            
+            logout();
+        } catch(e) { 
+            deleteSteps = 10;
+            document.getElementById('del-counter').textContent = deleteSteps;
+            msg.innerHTML = `<p class="error">Błąd: ${e.message}</p>`; 
+        }
+    }
+}
+
+function logout() { localStorage.clear(); auth.signOut(); location.reload(); }
+function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
 
 function toggleAuth() {
     isLoginMode = !isLoginMode;
-    document.getElementById('auth-msg').innerHTML = "";
     document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
     document.getElementById('reg-fields').innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="E-mail">';
     document.getElementById('auth-switch').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
-    document.getElementById('forgot-pass').style.display = isLoginMode ? "block" : "none";
-}
-
-async function resetPassword() {
-    const nick = document.getElementById('auth-user').value.trim().toLowerCase();
-    const msg = document.getElementById('auth-msg');
-    if(!nick) { msg.innerHTML = '<p class="error">Podaj Nick, aby zresetować hasło!</p>'; return; }
-
-    try {
-        const snap = await db.ref('users_map/' + nick).once('value');
-        if(!snap.exists()) throw new Error("Taki nick nie istnieje.");
-        const email = snap.val().email;
-        await auth.sendPasswordResetEmail(email);
-        msg.innerHTML = `<p class="success">Link do resetu został wysłany na Twój adres e-mail!</p>`;
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
 
 document.getElementById('auth-submit').onclick = async () => {
@@ -256,21 +308,19 @@ document.getElementById('auth-submit').onclick = async () => {
     try {
         if(isLoginMode) {
             const snap = await db.ref('users_map/' + nick).once('value');
-            if(!snap.exists()) throw new Error("Nieprawidłowe dane logowania.");
+            if(!snap.exists()) throw new Error("Nick nie istnieje.");
             const email = snap.val().email;
-            const cred = await auth.signInWithEmailAndPassword(email, pass);
-            if(!cred.user.emailVerified) throw new Error("Najpierw potwierdź e-mail!");
+            await auth.signInWithEmailAndPassword(email, pass);
             localStorage.setItem("sp_logged", nick);
             location.reload();
         } else {
             const email = document.getElementById('auth-email').value.trim();
-            if(!email) throw new Error("Podaj e-mail!");
             const snap = await db.ref('users_map/' + nick).once('value');
             if(snap.exists()) throw new Error("Nick zajęty.");
             const cred = await auth.createUserWithEmailAndPassword(email, pass);
-            await cred.user.sendEmailVerification();
             await db.ref('users_map/' + nick).set({ email: email });
-            msg.innerHTML = '<p class="success">Link wysłany! Sprawdź skrzynkę.</p>';
+            localStorage.setItem("sp_logged", nick);
+            location.reload();
         }
     } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 };
