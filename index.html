@@ -47,7 +47,6 @@
         } 
         .btn-base:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
 
-        /* Styl Username */
         .user-pill {
             display: flex; align-items: center; gap: 10px;
             background: rgba(56, 189, 248, 0.1);
@@ -72,7 +71,6 @@
         .game-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
         .tag { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 6px; }
 
-        /* Overlay & Modals */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); 
@@ -92,7 +90,6 @@
         .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500;} 
         .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500;} 
 
-        /* Profile Styles */
         .profile-header { text-align: center; margin-bottom: 20px; }
         .profile-avatar { 
             width: 80px; height: 80px; background: var(--grad); 
@@ -177,6 +174,13 @@ try {
 
 let isLoginMode = true;
 
+// Funkcja maskująca e-mail
+function maskEmail(email) {
+    if(!email) return "";
+    const [name, domain] = email.split('@');
+    return name[0] + "****" + name[name.length - 1] + "@" + domain;
+}
+
 function render() {
     const grid = document.getElementById("game-grid");
     grid.innerHTML = games.map(g => `
@@ -200,9 +204,11 @@ function openProfile() {
     document.getElementById('prof-nick').textContent = nick.toUpperCase();
     document.getElementById('prof-avatar').textContent = nick.charAt(0).toUpperCase();
     
-    // Pobierz email z bazy dla profilu
     db.ref('users_map/' + nick.toLowerCase()).once('value').then(snap => {
-        if(snap.exists()) document.getElementById('prof-email').textContent = snap.val().email;
+        if(snap.exists()) {
+            const fullEmail = snap.val().email;
+            document.getElementById('prof-email').textContent = maskEmail(fullEmail);
+        }
     });
 
     document.getElementById('profile-overlay').classList.add('active');
@@ -216,19 +222,18 @@ function logout() {
 
 function closeModals() {
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    document.getElementById('auth-msg').innerHTML = "";
 }
 
 function toggleAuth() {
     isLoginMode = !isLoginMode;
-    const msg = document.getElementById('auth-msg');
-    msg.innerHTML = "";
+    document.getElementById('auth-msg').innerHTML = "";
     document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
     document.getElementById('reg-fields').innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="E-mail">';
     document.getElementById('auth-switch').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
     document.getElementById('forgot-pass').style.display = isLoginMode ? "block" : "none";
 }
 
-// RESET HASŁA
 async function resetPassword() {
     const nick = document.getElementById('auth-user').value.trim().toLowerCase();
     const msg = document.getElementById('auth-msg');
@@ -239,7 +244,7 @@ async function resetPassword() {
         if(!snap.exists()) throw new Error("Taki nick nie istnieje.");
         const email = snap.val().email;
         await auth.sendPasswordResetEmail(email);
-        msg.innerHTML = `<p class="success">Link do resetu wysłany na ${email}</p>`;
+        msg.innerHTML = `<p class="success">Link do resetu został wysłany na Twój adres e-mail!</p>`;
     } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
 
@@ -247,8 +252,6 @@ document.getElementById('auth-submit').onclick = async () => {
     const nick = document.getElementById('auth-user').value.trim().toLowerCase();
     const pass = document.getElementById('auth-pass').value.trim();
     const msg = document.getElementById('auth-msg');
-
-    if(!auth || !db) { msg.innerHTML = '<p class="error">Błąd połączenia.</p>'; return; }
 
     try {
         if(isLoginMode) {
