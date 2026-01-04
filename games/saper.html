@@ -52,19 +52,29 @@ main{ max-width: 600px; margin:auto; padding:10px; }
 h2{text-align:center; margin-top:0;}
 
 #menu {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
-  margin-bottom: 15px; font-size: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  margin-bottom: 20px;
 }
-input, button {
+select, button {
   background:#1e293b; color:white; border:1px solid #334155;
-  border-radius:8px; padding:6px 10px;
+  border-radius:8px; padding:8px 12px; font-size: 14px; outline: none;
 }
-button { cursor:pointer; background: var(--card); border-color: var(--accent); color: var(--accent); font-weight: bold;}
+button { cursor:pointer; background: var(--card); border-color: var(--accent); color: var(--accent); font-weight: bold; width: 100%; max-width: 200px;}
+
+.game-info-bar {
+    display: flex; justify-content: space-between; width: 100%; 
+    font-size: 13px; color: var(--text-dim); border-bottom: 1px solid #334155; padding-bottom: 8px;
+}
+
+#rank-note {
+    font-size: 11px; color: #94a3b8; text-align: center; margin-bottom: 5px;
+}
+.rank-active { color: #4ade80 !important; font-weight: bold; }
 
 #game {
-  display: grid; justify-content: center; margin: 10px auto;
+  display: grid; justify-content: center; margin: 15px auto;
   gap: 3px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 8px;
-  width: fit-content; max-width: 100%; min-height: 50px;
+  width: fit-content; max-width: 100%;
 }
 
 .cell {
@@ -78,11 +88,15 @@ button { cursor:pointer; background: var(--card); border-color: var(--accent); c
 .flagged { background:#facc15; color:#020617; }
 
 .number1{color:#2563eb} .number2{color:#16a34a} .number3{color:#dc2626}
-.number4{color:#1e3a8a} .number5{color:#7c2d12} .number6{color:#0f766e}
 
 #controls-mobile { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
 .btn-mode { padding: 12px 20px; flex: 1; max-width: 150px; }
 .active-mode { background: var(--accent); color: #020617; }
+
+#points-info {
+    text-align:center; margin-top:15px; font-weight: bold; padding: 10px;
+    border-top: 1px solid #334155;
+}
 
 footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 </style>
@@ -103,13 +117,21 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
 <main>
   <div class="card">
     <h2>💣 Saper</h2>
+    
     <div id="menu">
-      <div style="display:flex; gap:5px; align-items:center;">
-        Size: <input type="number" id="grid-size" value="9" min="5" max="15" style="width:50px">
-        Bombs: <input type="number" id="bomb-count" value="10" min="5" style="width:50px">
+      <div id="rank-note">Tylko tryb Rankingowy daje punkty!</div>
+      <select id="difficulty-select">
+        <option value="9,10" selected>🏆 Rankingowy (9x9 - 10 bomb)</option>
+        <option value="12,20">Średni (12x12 - 20 bomb)</option>
+        <option value="15,40">Trudny (15x15 - 40 bomb)</option>
+        <option value="7,5">Mały (7x7 - 5 bomb)</option>
+      </select>
+      <button id="start-btn">Zacznij Grę</button>
+      
+      <div class="game-info-bar">
+          <div id="info">Flags: 0 / 10</div>
+          <div id="timer">Czas: 0s</div>
       </div>
-      <button id="start-btn">Nowa Gra</button>
-      <div id="info">Flags: 0 / 10</div>
     </div>
 
     <div id="game"></div>
@@ -119,7 +141,7 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
       <button id="btn-flag" class="btn-mode">Flaga</button>
     </div>
     
-    <div id="points-info" style="text-align:center; margin-top:10px; font-weight: bold; color: var(--accent);">Points: 0</div>
+    <div id="points-info" style="color: var(--accent);">Points: 0</div>
   </div>
 </main>
 
@@ -139,62 +161,49 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     const loggedUser = localStorage.getItem("sp_logged");
     const syncEl = document.getElementById('sync-display');
     const pointsInfoEl = document.getElementById('points-info');
+    const rankNote = document.getElementById('rank-note');
 
     let ROWS=9, COLS=9, MINES_COUNT=10, points=0, gameOver=false, flagMode=false, firstClick=true;
     let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
+    let seconds = 0, timerInterval = null;
 
-    // 1. MONITOROWANIE SESJI
     auth.onAuthStateChanged((user) => {
         if(user && loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
             loadData();
         } else if (loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-            syncEl.textContent = "Connecting Auth...";
-        } else {
-            syncEl.textContent = "Guest Mode";
+            syncEl.textContent = "Connecting...";
         }
     });
 
     async function loadData() {
         if(!loggedUser) return;
-        syncEl.textContent = "Syncing...";
         try {
             const snap = await db.ref('users/' + loggedUser + '/points').once('value');
             points = snap.exists() ? snap.val() : 0;
             pointsInfoEl.textContent = `Points: ${points}`;
             syncEl.textContent = "Synced";
             syncEl.style.color = "#4ade80";
-        } catch(e) {
-            syncEl.textContent = "Sync Error";
-            syncEl.style.color = "#fb7185";
-        }
+        } catch(e) { syncEl.textContent = "Error"; }
     }
 
     async function savePoints() {
         if(!loggedUser || !auth.currentUser) return;
-        syncEl.textContent = "Saving...";
-        syncEl.style.color = "#38bdf8";
         try {
             await db.ref('users/' + loggedUser).update({ points: points });
-            syncEl.textContent = "Synced";
+            syncEl.textContent = "Saved";
             syncEl.style.color = "#4ade80";
-        } catch(e) {
-            syncEl.textContent = "Permission Error";
-            syncEl.style.color = "#fb7185";
-        }
+        } catch(e) { syncEl.textContent = "Sync Error"; }
     }
 
-    // --- LOGIKA GRY ---
     function createGrid(){
         const gameEl = document.getElementById('game');
-        if(!gameEl) return;
         gameEl.innerHTML=''; cells=[];
         gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
         for(let i=0; i<ROWS*COLS; i++){
             const c=document.createElement('div');
             c.className='cell';
-            c.dataset.index=i;
             c.onclick = () => handleCellClick(i);
             c.oncontextmenu = (e) => { e.preventDefault(); toggleFlag(i); };
             gameEl.appendChild(c);
@@ -217,21 +226,15 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         return res;
     }
 
-    function placeMines(firstIndex){
-        minePositions.clear();
-        while(minePositions.size < MINES_COUNT){
-            const p = Math.floor(Math.random()*ROWS*COLS);
-            if(p === firstIndex || neighbors(firstIndex).includes(p)) continue;
-            minePositions.add(p);
-        }
-    }
-
     function openCell(i){
         if(gameOver || opened.has(i) || flags.has(i)) return;
-        if(firstClick){ firstClick=false; placeMines(i); }
+        if(firstClick){ 
+            firstClick=false; 
+            placeMines(i); 
+            startTimer();
+        }
         opened.add(i);
         const c=cells[i];
-        if(!c) return;
         c.classList.add('open');
         if(minePositions.has(i)){
             c.textContent='💣'; c.classList.add('mine');
@@ -246,35 +249,52 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         checkWin();
     }
 
+    function placeMines(firstIndex){
+        minePositions.clear();
+        while(minePositions.size < MINES_COUNT){
+            const p = Math.floor(Math.random()*ROWS*COLS);
+            if(p === firstIndex || neighbors(firstIndex).includes(p)) continue;
+            minePositions.add(p);
+        }
+    }
+
     function toggleFlag(i){
         if(gameOver || opened.has(i)) return;
         const c=cells[i];
-        if(!c) return;
-        const infoEl=document.getElementById('info');
         if(flags.has(i)){
             flags.delete(i); c.textContent=''; c.classList.remove('flagged');
         } else if(flags.size < MINES_COUNT){
             flags.add(i); c.textContent='🚩'; c.classList.add('flagged');
         }
-        infoEl.textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
+        document.getElementById('info').textContent=`Flags: ${flags.size} / ${MINES_COUNT}`;
+    }
+
+    function startTimer(){
+        seconds = 0;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            seconds++;
+            document.getElementById('timer').textContent = `Czas: ${seconds}s`;
+        }, 1000);
     }
 
     function lose(){
         gameOver=true;
-        document.getElementById('info').textContent='💥 Przegrana!';
+        clearInterval(timerInterval);
+        document.getElementById('info').textContent='💥 Bomba!';
         minePositions.forEach(i => {
-            if(cells[i]) {
-                cells[i].classList.add('mine', 'open');
-                cells[i].textContent='💣';
-            }
+            cells[i].classList.add('mine', 'open');
+            cells[i].textContent='💣';
         });
     }
 
     function checkWin(){
         if(opened.size === ROWS*COLS - MINES_COUNT){
             gameOver=true;
+            clearInterval(timerInterval);
             document.getElementById('info').textContent='🎉 Wygrana!';
-            if(ROWS === 9) {
+            // Warunek Rankingowy: 9x9 i 10 bomb
+            if(ROWS === 9 && MINES_COUNT === 10) {
                 points += 1;
                 pointsInfoEl.textContent = `Points: ${points}`;
                 savePoints();
@@ -283,14 +303,25 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
     }
 
     function reset(){
-        const gridSizeInput=document.getElementById('grid-size');
-        const bombCountInput=document.getElementById('bomb-count');
-        ROWS = Math.min(parseInt(gridSizeInput.value) || 9, 15);
+        const val = document.getElementById('difficulty-select').value.split(',');
+        ROWS = parseInt(val[0]);
         COLS = ROWS;
-        MINES_COUNT = Math.min(parseInt(bombCountInput.value) || 10, Math.floor(ROWS*COLS*0.3));
+        MINES_COUNT = parseInt(val[1]);
+        
+        // Aktualizacja informacji o rankingu
+        if(ROWS === 9 && MINES_COUNT === 10) {
+            rankNote.textContent = "✓ Tryb Rankingowy Aktywny (+1 pkt)";
+            rankNote.className = "rank-active";
+        } else {
+            rankNote.textContent = "Tryb Treningowy (brak punktów)";
+            rankNote.className = "";
+        }
+
         gameOver=false; firstClick=true;
         flags.clear(); opened.clear();
         document.getElementById('info').textContent=`Flags: 0 / ${MINES_COUNT}`;
+        document.getElementById('timer').textContent = `Czas: 0s`;
+        clearInterval(timerInterval);
         createGrid();
     }
 
@@ -306,7 +337,6 @@ footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
         document.getElementById('btn-open').classList.remove('active-mode'); 
     };
 
-    // Start gry
     reset();
 })();
 </script>
