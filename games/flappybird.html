@@ -1,242 +1,352 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Neon Flappy – SpinnerRealYT Games</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Neon Flappy – SpinnerRealYT Games</title>
 
-<link rel="icon" type="image/png" href="../Logo.png?v=2">
-<link rel="apple-touch-icon" href="../Logo.png?v=2">
+    <link rel="icon" type="image/png" href="../Logo.png?v=2">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 
-<style>
-:root{
-  --bg:#020617;
-  --card:#0f172a;
-  --accent:#38bdf8;
-  --text:#e5e7eb;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:radial-gradient(circle at top,#020617,#000);
-  color:var(--text);
-  user-select: none;
-}
+    <style>
+        :root {
+            --bg: #020617;
+            --card: rgba(15, 23, 42, 0.8);
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --text: #f1f5f9;
+            --danger: #fb7185;
+        }
 
-/* HEADER IDENTYCZNY JAK W SAPERZE */
-header{
-  display:flex; align-items:center; gap:15px; padding:15px 20px;
-  background:rgba(15,23,42,.9); backdrop-filter:blur(10px);
-  position:sticky; top:0; z-index:100;
-}
-header img{height:32px}
-nav button{
-  background:none; border:none; color:var(--text); font-size:15px;
-  padding:8px 14px; border-radius:10px; cursor:pointer;
-}
-nav button:hover{ background:rgba(56,189,248,.15); color:var(--accent); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            user-select: none;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 70%);
+        }
 
-/* MAIN I CARD IDENTYCZNE */
-main{ max-width: 600px; margin:auto; padding:10px; }
-.card{
-  background:linear-gradient(180deg,#0f172a,#020617);
-  border-radius:20px; padding:15px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-}
-h2{text-align:center; margin-top:0;}
+        /* HEADER */
+        header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px 5%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            position: sticky; top: 0; z-index: 1000;
+        }
 
-/* STYLIZACJA ELEMENTÓW GRY */
-#game-container {
-    position: relative;
-    width: fit-content;
-    margin: 10px auto;
-}
-canvas {
-    background: #000;
-    border-radius: 12px;
-    display: block;
-    border: 2px solid var(--accent);
-    cursor: pointer;
-    max-width: 100%;
-    height: auto;
-}
+        .logo-area { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-area img { height: 32px; }
+        .logo-area span { font-weight: 800; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-#overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.95);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-}
+        /* USER STATUS (PRAWY GÓRNY RÓG) */
+        .user-status {
+            text-align: right;
+            line-height: 1.2;
+        }
+        #user-nick { font-weight: bold; color: var(--accent); font-size: 14px; text-transform: uppercase; }
+        #sync-status { font-size: 10px; font-weight: bold; }
+        .synced { color: #4ade80; }
+        .sync-err { color: var(--danger); }
 
-.diff-btn {
-    background: var(--card);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 160px;
-    font-weight: bold;
-}
-.diff-btn:active { transform: scale(0.95); }
+        /* MAIN AREA */
+        main { 
+            max-width: 500px; margin: auto; padding: 20px 10px; 
+            display: flex; flex-direction: column; align-items: center; 
+        }
 
-#score-board {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: var(--accent);
-}
+        .game-card {
+            background: var(--card);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 24px;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            position: relative;
+        }
 
-/* FOOTER IDENTYCZNY */
-footer { text-align:center; opacity:.6; padding:20px; font-size: 12px;}
-</style>
+        #game-container {
+            position: relative;
+            width: 320px;
+            height: 480px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        canvas { background: #000; display: block; }
+
+        /* OVERLAY / MENU */
+        #overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; transition: opacity 0.3s;
+        }
+
+        .btn-lvl {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--text);
+            padding: 12px 25px; margin: 6px;
+            border-radius: 12px; cursor: pointer;
+            width: 180px; font-weight: 800;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+        .btn-lvl:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
+
+        #score-overlay {
+            position: absolute;
+            top: 15px; width: 100%; text-align: center;
+            font-weight: 900; font-size: 24px;
+            color: var(--accent); text-shadow: 0 0 10px var(--accent);
+            z-index: 50; pointer-events: none;
+        }
+
+        footer { text-align: center; padding: 20px; opacity: 0.4; font-size: 11px; }
+    </style>
 </head>
 <body>
 
 <header>
-  <img src="../Logo.png" alt="SpinnerRealYT">
-  <nav><button onclick="location.href='../index.html'">Menu</button></nav>
+    <div class="logo-area" onclick="location.href='../index.html'">
+        <img src="../Logo.png" alt="Logo">
+        <span>SPINNER GAMES</span>
+    </div>
+    <div class="user-status">
+        <div id="user-nick">GOŚĆ</div>
+        <div id="sync-status">OFFLINE</div>
+    </div>
 </header>
 
 <main>
-  <div class="card">
-    <h2>🚀 Neon Flappy</h2>
-    
-    <div id="score-board">
-        Score: 0 | Best: <span id="best">0</span>
-    </div>
-
-    <div id="game-container">
-        <canvas id="game" width="320" height="480"></canvas>
+    <div class="game-card">
+        <div id="score-overlay">0</div>
         
-        <div id="overlay">
-            <h3 id="status">Wybierz Poziom</h3>
-            <button class="diff-btn" onclick="initGame('amator')">AMATOR</button>
-            <button class="diff-btn" onclick="initGame('latwy')">ŁATWY</button>
-            <button class="diff-btn" onclick="initGame('sredni')">ŚREDNI</button>
-            <button class="diff-btn" onclick="initGame('trudny')">TRUDNY</button>
+        <div id="game-container">
+            <canvas id="game" width="320" height="480"></canvas>
+            
+            <div id="overlay">
+                <h1 style="margin-bottom:20px; font-style:italic">NEON FLAPPY</h1>
+                <div id="final-stats" style="margin-bottom: 20px; text-align: center; display:none;">
+                    <div style="font-size:14px; opacity:0.6">WYNIK</div>
+                    <div id="last-score" style="font-size:40px; font-weight:900; color:var(--accent)">0</div>
+                    <div style="font-size:12px">BEST: <span id="best-score">0</span></div>
+                </div>
+                <button class="btn-lvl" onclick="initGame('amator')">AMATOR</button>
+                <button class="btn-lvl" onclick="initGame('latwy')">ŁATWY</button>
+                <button class="btn-lvl" onclick="initGame('sredni')">ŚREDNI</button>
+                <button class="btn-lvl" onclick="initGame('trudny')">HARDCORE</button>
+            </div>
         </div>
     </div>
-
-    <div style="text-align:center; margin-top:10px; font-size: 13px; opacity: 0.7;">
-        Klikaj lub użyj spacji, aby lecieć
-    </div>
-  </div>
 </main>
 
-<footer>© 2026 SpinnerRealYT Games</footer>
+<footer>© 2026 SpinnerRealYT Games • Płynne 60FPS</footer>
 
 <script>
+// --- FIREBASE CONFIG ---
+const firebaseConfig = {
+    apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
+    authDomain: "spinnerrealyt-games.firebaseapp.com",
+    databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
+
+// --- ZMIENNE GRY ---
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-const scoreBoard = document.getElementById("score-board");
-const bestEl = document.getElementById("best");
+const scoreEl = document.getElementById("score-overlay");
 const overlay = document.getElementById("overlay");
-const statusTxt = document.getElementById("status");
+const nickEl = document.getElementById("user-nick");
+const syncEl = document.getElementById("sync-status");
 
-let bird = { x: 50, y: 240, w: 24, h: 24, dy: 0 };
+let bird = { x: 50, y: 240, w: 20, h: 20, dy: 0, rot: 0 };
 let pipes = [];
+let particles = [];
 let score = 0;
 let isDead = true;
 let frame = 0;
 let highScore = localStorage.getItem("neon_flap_best") || 0;
-bestEl.textContent = highScore;
+let currentUser = null;
 
 const levels = {
-    amator: { grav: 0.35, jump: -6.5, gap: 170, speed: 2, freq: 110 },
-    latwy:  { grav: 0.45, jump: -7.5, gap: 150, speed: 2.5, freq: 95 },
-    sredni: { grav: 0.55, jump: -8.5, gap: 135, speed: 3, freq: 85 },
-    trudny: { grav: 0.65, jump: -9.5, gap: 120, speed: 3.8, freq: 75 }
+    amator: { grav: 0.3, jump: -6, gap: 180, speed: 2, freq: 110 },
+    latwy:  { grav: 0.4, jump: -7, gap: 150, speed: 2.5, freq: 100 },
+    sredni: { grav: 0.5, jump: -8, gap: 135, speed: 3.2, freq: 90 },
+    trudny: { grav: 0.65, jump: -9, gap: 115, speed: 4, freq: 80 }
 };
-let settings = levels.sredni;
+let sets = levels.sredni;
+
+// --- OBSŁUGA KONT ---
+auth.onAuthStateChanged(user => {
+    if(user) {
+        currentUser = localStorage.getItem("sp_logged") || "Gracz";
+        nickEl.textContent = currentUser;
+        loadCloudScore();
+    } else {
+        nickEl.textContent = "GOŚĆ";
+        syncEl.textContent = "LOCAL ONLY";
+    }
+});
+
+async function loadCloudScore() {
+    try {
+        const snap = await db.ref(`users/${currentUser.toLowerCase()}/scores/flappy`).once('value');
+        if(snap.exists()) {
+            if(snap.val() > highScore) {
+                highScore = snap.val();
+                localStorage.setItem("neon_flap_best", highScore);
+            }
+        }
+        syncEl.textContent = "● SYNCED";
+        syncEl.className = "synced";
+    } catch(e) {
+        syncEl.textContent = "● SYNC ERROR";
+        syncEl.className = "sync-err";
+    }
+}
+
+async function saveScore(newScore) {
+    if(newScore > highScore) {
+        highScore = newScore;
+        localStorage.setItem("neon_flap_best", highScore);
+    }
+    if(currentUser) {
+        syncEl.textContent = "● SAVING...";
+        try {
+            await db.ref(`users/${currentUser.toLowerCase()}/scores/flappy`).set(highScore);
+            syncEl.textContent = "● SYNCED";
+            syncEl.className = "synced";
+        } catch(e) {
+            syncEl.textContent = "● SYNC ERROR";
+            syncEl.className = "sync-err";
+        }
+    }
+}
+
+// --- LOGIKA GRY ---
+function createParticles(x, y) {
+    for(let i=0; i<8; i++) {
+        particles.push({
+            x, y, 
+            vx: (Math.random()-0.5)*4, 
+            vy: (Math.random()-0.5)*4, 
+            life: 1, 
+            color: sets.speed > 3 ? '#fb7185' : '#38bdf8'
+        });
+    }
+}
 
 function initGame(lvl) {
-    settings = levels[lvl];
-    bird.y = 240; bird.dy = 0;
-    pipes = []; score = 0; frame = 0;
+    sets = levels[lvl];
+    bird.y = 240; bird.dy = 0; bird.rot = 0;
+    pipes = []; particles = []; score = 0; frame = 0;
     isDead = false;
-    overlay.style.display = "none";
+    overlay.style.opacity = "0";
+    setTimeout(() => overlay.style.display = "none", 300);
     gameLoop();
 }
 
-function jump() { if(!isDead) bird.dy = settings.jump; }
+function jump() { 
+    if(!isDead) {
+        bird.dy = sets.jump;
+        createParticles(bird.x, bird.y + 10);
+    }
+}
 
 window.addEventListener("keydown", (e) => { if(e.code === "Space") { e.preventDefault(); jump(); }});
-canvas.addEventListener("touchstart", (e) => { e.preventDefault(); jump(); });
 canvas.addEventListener("mousedown", jump);
+canvas.addEventListener("touchstart", (e) => { e.preventDefault(); jump(); });
 
 function gameLoop() {
     if(isDead) return;
 
-    ctx.fillStyle = "#000";
+    // TŁO
+    ctx.fillStyle = "#020617";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Grawitacja i ruch
-    bird.dy += settings.grav;
-    bird.y += bird.dy;
     
-    // Rysowanie gracza
-    ctx.fillStyle = "#38bdf8";
-    ctx.shadowBlur = 10; ctx.shadowColor = "#38bdf8";
-    ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
-    ctx.shadowBlur = 0;
+    // RYSOWANIE CZĄSTECZEK
+    particles.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+        if(p.life <= 0) particles.splice(i, 1);
+        ctx.fillStyle = `rgba(56, 189, 248, ${p.life})`;
+        ctx.fillRect(p.x, p.y, 3, 3);
+    });
 
-    // Przeszkody
-    if(frame % settings.freq === 0) {
-        let gapPos = Math.random() * (canvas.height - settings.gap - 100) + 50;
+    // PTAK
+    bird.dy += sets.grav;
+    bird.y += bird.dy;
+    bird.rot = Math.min(Math.PI/4, Math.max(-Math.PI/4, bird.dy * 0.1));
+
+    ctx.save();
+    ctx.translate(bird.x + 10, bird.y + 10);
+    ctx.rotate(bird.rot);
+    ctx.shadowBlur = 15; ctx.shadowColor = varColor();
+    ctx.fillStyle = varColor();
+    ctx.fillRect(-10, -10, bird.w, bird.h);
+    // Oczko
+    ctx.fillStyle = "#000";
+    ctx.fillRect(4, -6, 4, 4);
+    ctx.restore();
+
+    // RURY
+    if(frame % sets.freq === 0) {
+        let gapPos = Math.random() * (canvas.height - sets.gap - 120) + 60;
         pipes.push({ x: canvas.width, y: gapPos, done: false });
     }
 
-    for(let i = pipes.length - 1; i >= 0; i--) {
-        let p = pipes[i];
-        p.x -= settings.speed;
-
-        ctx.fillStyle = "#1e293b";
-        ctx.strokeStyle = "#38bdf8";
-        ctx.lineWidth = 2;
+    pipes.forEach((p, i) => {
+        p.x -= sets.speed;
         
-        // Rysowanie rur
-        ctx.fillRect(p.x, 0, 50, p.y);
-        ctx.strokeRect(p.x, -2, 50, p.y + 2);
-        ctx.fillRect(p.x, p.y + settings.gap, 50, canvas.height);
-        ctx.strokeRect(p.x, p.y + settings.gap, 50, canvas.height - (p.y + settings.gap) + 2);
+        // Styl rur (Neonowe krawędzie)
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#0f172a";
+        ctx.strokeStyle = varColor();
+        ctx.lineWidth = 3;
 
-        // Kolizja
-        if (bird.x < p.x + 50 && bird.x + bird.w > p.x && (bird.y < p.y || bird.y + bird.h > p.y + settings.gap)) {
-            gameOver();
-        }
-        // Punkt
-        if (!p.done && p.x + 50 < bird.x) {
-            score++;
-            p.done = true;
-        }
+        // Góra
+        ctx.fillRect(p.x, 0, 50, p.y);
+        ctx.strokeRect(p.x, -5, 50, p.y + 5);
+        // Dół
+        ctx.fillRect(p.x, p.y + sets.gap, 50, canvas.height);
+        ctx.strokeRect(p.x, p.y + sets.gap, 50, canvas.height);
+
+        if (bird.x + 2 < p.x + 50 && bird.x + bird.w - 2 > p.x && (bird.y + 2 < p.y || bird.y + bird.h - 2 > p.y + sets.gap)) gameOver();
+        if (!p.done && p.x + 50 < bird.x) { score++; p.done = true; scoreEl.textContent = score; }
         if (p.x < -60) pipes.splice(i, 1);
-    }
+    });
 
     if(bird.y + bird.h > canvas.height || bird.y < 0) gameOver();
 
-    scoreBoard.innerHTML = `Score: ${score} | Best: ${highScore}`;
     frame++;
     requestAnimationFrame(gameLoop);
 }
 
+function varColor() { return sets.speed > 3.5 ? "#fb7185" : "#38bdf8"; }
+
 function gameOver() {
     isDead = true;
-    if(score > highScore) {
-        highScore = score;
-        localStorage.setItem("neon_flap_best", highScore);
-        bestEl.textContent = highScore;
-    }
-    statusTxt.textContent = "Wynik: " + score;
+    saveScore(score);
+    
+    document.getElementById("final-stats").style.display = "block";
+    document.getElementById("last-score").textContent = score;
+    document.getElementById("best-score").textContent = highScore;
+    
     overlay.style.display = "flex";
+    setTimeout(() => overlay.style.opacity = "1", 10);
 }
 </script>
 </body>
