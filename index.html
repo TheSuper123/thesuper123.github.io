@@ -70,6 +70,16 @@
         .game-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
         .tag { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 6px; }
 
+        /* SEKCJA STRON NA DOLE */
+        .web-section { margin-top: 50px; text-align: center; border-top: 1px solid var(--card-border); padding-top: 30px; }
+        .web-btn {
+            background: rgba(56, 189, 248, 0.05); border: 1px solid var(--card-border);
+            color: var(--text-dim); padding: 10px 20px; border-radius: 10px;
+            font-weight: 600; font-size: 13px; cursor: pointer; margin: 5px;
+        }
+        .web-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* MODALE */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); 
@@ -97,14 +107,13 @@
             font-size: 24px; color: #000; font-weight: 900;
         }
 
-        .settings-section {
-            border-top: 1px solid #334155; margin-top: 20px; padding-top: 15px;
-        }
+        .settings-section { border-top: 1px solid #334155; margin-top: 20px; padding-top: 15px; }
         .settings-section h4 { margin: 0 0 10px; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        
         .btn-small { padding: 8px 12px; font-size: 12px; margin-top: 5px; width: 100%; }
         .btn-danger { background: rgba(251, 113, 133, 0.1); border: 1px solid var(--danger); color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; }
+
+        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 13px; margin-top: 30px; }
     </style> 
 </head> 
 <body> 
@@ -123,7 +132,26 @@
         <p style="color:var(--text-dim)">Wszystkie gry w zasięgu Twojej ręki.</p>
     </div>
     <div class="game-grid" id="game-grid"></div> 
+
+    <div class="web-section">
+        <h3 style="color: var(--text); margin-bottom: 15px; font-weight: 800;">Nasze strony internetowe</h3>
+        <button class="web-btn" onclick="showWebConfirm('https://spinnerrealyt.pl', 'spinnerrealyt.pl')">spinnerrealyt.pl</button>
+        <button class="web-btn" onclick="showWebConfirm('http://www.spinnerrealyt.ovh/index.html', 'spinnerrealyt.ovh')">spinnerrealyt.ovh</button>
+    </div>
 </main> 
+
+<footer>© 2026 SpinnerRealYT Games</footer>
+
+<div id="confirm-overlay" class="modal-overlay">
+    <div class="modal" style="text-align: center;">
+        <h2 style="margin: 0 0 15px; color: var(--accent);">Opuszczasz stronę</h2>
+        <p id="confirm-web-text" style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px;"></p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-base" onclick="closeModals()" style="flex: 1;">Anuluj</button>
+            <button id="confirm-web-go" class="btn-base" style="flex: 1; background: var(--accent); color: #000; border: none;">Przejdź</button>
+        </div>
+    </div>
+</div>
 
 <div id="auth-overlay" class="modal-overlay"> 
     <div class="modal"> 
@@ -183,7 +211,7 @@ const games = [
     { file: "games/flappybird.html", name: "Flappy Bird", tag: "CLASSIC" },
     { file: "games/soon.html", name: "Flappy Bird OG", tag: "OG CLASSIC" },
     { file: "games/blockblast.html", name: "Block Blast", tag: "PUZZLE" }, 
-    { file: "games/quiz.html", name: "Określ Poglądy", tag: "POLITYKA" }, 
+    { file: "games/soon.html", name: "Określ Poglądy", tag: "POLITYKA - w budowie" }, 
     { file: "games/polls.html", name: "Sondaże", tag: "POLITYKA" } 
 ]; 
 
@@ -224,6 +252,12 @@ function render() {
     }
 }
 
+function showWebConfirm(url, site) {
+    document.getElementById('confirm-web-text').textContent = "Czy chcesz otworzyć " + site + " w nowej karcie?";
+    document.getElementById('confirm-web-go').onclick = function() { window.open(url, '_blank'); closeModals(); };
+    document.getElementById('confirm-overlay').classList.add('active');
+}
+
 function openProfile() {
     const nick = localStorage.getItem("sp_logged");
     document.getElementById('prof-nick').textContent = nick.toUpperCase();
@@ -239,15 +273,13 @@ function openProfile() {
     document.getElementById('profile-overlay').classList.add('active');
 }
 
-// NAPRAWIONA ZMIANA EMAILA
 async function updateEmail() {
     const newMail = document.getElementById('new-email').value.trim();
     const msg = document.getElementById('profile-msg');
     if(!newMail) return;
     try {
-        // Użycie nowszej metody weryfikującej przed zmianą
         await auth.currentUser.verifyBeforeUpdateEmail(newMail);
-        msg.innerHTML = `<p class="success">Link potwierdzający został wysłany na nowy e-mail!</p>`;
+        msg.innerHTML = `<p class="success">Link weryfikacyjny wysłany!</p>`;
     } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
 
@@ -257,7 +289,7 @@ async function updatePassword() {
     if(!newPass) return;
     try {
         await auth.currentUser.updatePassword(newPass);
-        msg.innerHTML = `<p class="success">Hasło zostało zmienione!</p>`;
+        msg.innerHTML = `<p class="success">Hasło zmienione!</p>`;
     } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 }
 
@@ -286,7 +318,6 @@ async function handleDeleteStep() {
 
 function logout() { localStorage.clear(); auth.signOut(); location.reload(); }
 function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
-
 function toggleAuth() {
     isLoginMode = !isLoginMode;
     document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
@@ -294,39 +325,25 @@ function toggleAuth() {
     document.getElementById('auth-switch').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
 }
 
-// NAPRAWIONA REJESTRACJA Z LINKIEM WERYFIKACYJNYM
 document.getElementById('auth-submit').onclick = async () => {
     const nick = document.getElementById('auth-user').value.trim().toLowerCase();
     const pass = document.getElementById('auth-pass').value.trim();
     const msg = document.getElementById('auth-msg');
-
     try {
         if(isLoginMode) {
             const snap = await db.ref('users_map/' + nick).once('value');
             if(!snap.exists()) throw new Error("Nick nie istnieje.");
             const email = snap.val().email;
             const cred = await auth.signInWithEmailAndPassword(email, pass);
-            
-            // SPRAWDZENIE CZY EMAIL ZWERYFIKOWANY
-            if(!cred.user.emailVerified) {
-                await auth.signOut();
-                throw new Error("Potwierdź swój e-mail! Sprawdź skrzynkę.");
-            }
-
+            if(!cred.user.emailVerified) { await auth.signOut(); throw new Error("Potwierdź e-mail!"); }
             localStorage.setItem("sp_logged", nick);
             location.reload();
         } else {
             const email = document.getElementById('auth-email').value.trim();
-            const snap = await db.ref('users_map/' + nick).once('value');
-            if(snap.exists()) throw new Error("Nick zajęty.");
-            
             const cred = await auth.createUserWithEmailAndPassword(email, pass);
-            
-            // WYSYŁANIE LINKU WERYFIKACYJNEGO
             await cred.user.sendEmailVerification();
-            
             await db.ref('users_map/' + nick).set({ email: email });
-            msg.innerHTML = `<p class="success">Zarejestrowano! Wyśleliśmy link weryfikacyjny na ${email}. Potwierdź go, by się zalogować.</p>`;
+            msg.innerHTML = `<p class="success">Potwierdź e-mail: ${email}</p>`;
         }
     } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
 };
