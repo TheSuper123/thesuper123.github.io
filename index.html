@@ -305,7 +305,7 @@ function checkAdStatus() {
     let adShowingBefore = sessionStorage.getItem('ad_showing_active');
 
     // Jeśli była wyświetlana (true) LUB losujemy nową szansę (45%)
-    if (adShowingBefore === 'true' || Math.random() < 0.45) {
+    if (adShowingBefore === 'true' || Math.random() < 0.20) {
         showAd();
     }
 }
