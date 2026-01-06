@@ -83,7 +83,7 @@
         /* MODALE */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); 
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
             display: none; align-items: center; justify-content: center; z-index: 9999; 
         } 
         .modal-overlay.active { display: flex; } 
@@ -91,6 +91,7 @@
             width: 92%; max-width: 420px; background: #0f172a; 
             padding: 25px; border-radius: 30px; border: 1px solid var(--card-border); 
             box-shadow: 0 0 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
+            position: relative;
         } 
 
         /* REKLAMA STYLE */
@@ -134,12 +135,12 @@
 
 <div id="cookie-overlay" class="modal-overlay">
     <div class="modal" style="text-align: center; border-color: var(--accent);">
-        <h2 style="margin: 0 0 15px; color: var(--accent);">Polityka Prywatności</h2>
-        <div style="font-size: 40px; margin-bottom: 15px;">🍪</div>
+        <h2 style="margin: 0 0 15px; color: var(--accent);">Pliki Cookies & Prywatność</h2>
+        <div style="font-size: 50px; margin-bottom: 15px;">🍪</div>
         <p style="color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
-            Nasza witryna wykorzystuje pliki cookie oraz technologie przechowywania lokalnego, aby zapewnić poprawne działanie systemu logowania, bezpieczeństwo oraz optymalizację treści. Kontynuując korzystanie ze strony, wyrażasz zgodę na ich użycie.
+            Ta strona wymaga akceptacji plików cookies oraz lokalnego przechowywania danych (LocalStorage), aby umożliwić logowanie, zapisywanie postępów w grach oraz poprawne wyświetlanie treści. Bez akceptacji strona nie będzie działać poprawnie.
         </p>
-        <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: #000; border: none; font-weight: 800; padding: 15px;">AKCEPTUJĘ</button>
+        <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: #000; border: none; font-weight: 800; padding: 15px; font-size: 16px;">AKCEPTUJĘ</button>
     </div>
 </div>
 
@@ -171,8 +172,9 @@
     <div class="modal">
         <h3 style="margin: 0 0 10px; color: var(--accent); font-size: 18px; text-align: center;">🔥 Polecane dla Ciebie</h3>
         <p class="ad-text">
-            🚀 Odkryj przyszłość polskiej polityki z Sondażometrem Pro! 🇵🇱 Sprawdzaj najświeższe trendy, analizuj poparcie i testuj realne scenariusze władzy dzięki naszemu zaawansowanemu kalkulatorowi mandatów d'Hondta z uwzględnieniem progu wyborczego! 📊 Obserwuj bitwę o sejmową większość w czasie rzeczywistym i bądź zawsze o krok przed innymi! 🗳️🔥. 
-            <a href="https://www.spinnerrealyt.ovh/" target="_blank" class="ad-link">spinnerrealyt.ovh</a>
+            🚀 Odkryj przyszłość polskiej polityki z Sondażometrem Pro! 🇵🇱 Sprawdzaj najświeższe trendy, analizuj poparcie i testuj realne scenariusze władzy dzięki naszemu zaawansowanemu kalkulatorowi mandatów d'Hondta! 📊 Obserwuj bitwę o sejmową większość w czasie rzeczywistym! 🗳️🔥. 
+            <br><br>
+            <a href="https://www.spinnerrealyt.ovh/" target="_blank" class="ad-link">Odwiedź spinnerrealyt.ovh</a>
         </p>
         <img src="reklamas.jpg" alt="Reklama" class="ad-image" onclick="handleAdClick()">
         
@@ -284,11 +286,10 @@ function render() {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
 
-    // NAJPIERW sprawdzamy czy cookie zaakceptowane
+    // SYSTEM BLOKADY COOKIE
     if(localStorage.getItem('cookies_accepted') !== 'true') {
         document.getElementById('cookie-overlay').classList.add('active');
     } else {
-        // Jeśli już wcześniej zaakceptował, od razu sprawdzamy reklamę
         checkAdStatus();
     }
 }
@@ -296,19 +297,19 @@ function render() {
 function acceptCookies() {
     localStorage.setItem('cookies_accepted', 'true');
     document.getElementById('cookie-overlay').classList.remove('active');
-    // KLUCZOWE: Po akceptacji wywołujemy system reklamowy
-    checkAdStatus();
+    // NATYCHMIAST PO COOKIE SPRAWDZ REKLAMĘ
+    setTimeout(checkAdStatus, 300); 
 }
 
 function checkAdStatus() {
-    const adFinished = sessionStorage.getItem('ad_finished');
-    if (adFinished === 'true') return;
+    // Jeśli już była reklama w tej sesji, nie pokazuj
+    if (sessionStorage.getItem('ad_finished') === 'true') return;
 
     let shouldShow = sessionStorage.getItem('ad_must_show');
 
-    // Losowanie szansy 20%
+    // LOSOWANIE SZANSY (ZWIĘKSZONE DO 45%)
     if (shouldShow === null) {
-        const roll = Math.random() < 0.20;
+        const roll = Math.random() < 0.45; // 0.45 = 45%
         shouldShow = roll ? 'true' : 'false';
         sessionStorage.setItem('ad_must_show', shouldShow);
     }
@@ -324,6 +325,9 @@ function showAd() {
     overlay.classList.add('active');
     
     let timeLeft = 4;
+    skipBtn.disabled = true;
+    skipBtn.textContent = `Pomiń (${timeLeft}s)`;
+
     const interval = setInterval(() => {
         timeLeft--;
         if(timeLeft > 0) {
@@ -338,23 +342,25 @@ function showAd() {
 
 function skipAd() {
     sessionStorage.setItem('ad_finished', 'true');
-    closeModals();
+    document.getElementById('ad-overlay').classList.remove('active');
 }
 
 function handleAdClick() {
     window.open('https://www.spinnerrealyt.ovh/', '_blank');
     sessionStorage.setItem('ad_finished', 'true');
-    closeModals();
+    document.getElementById('ad-overlay').classList.remove('active');
 }
 
 function closeModals() { 
     document.querySelectorAll('.modal-overlay').forEach(m => {
+        // Blokada zamknięcia cookie bez przycisku
         if(m.id === 'cookie-overlay' && localStorage.getItem('cookies_accepted') !== 'true') return;
+        // Blokada zamknięcia reklamy bez przycisku
+        if(m.id === 'ad-overlay' && sessionStorage.getItem('ad_finished') !== 'true') return;
         m.classList.remove('active');
     }); 
 }
 
-// Logika reszty systemów (User, Profile, Auth)
 function maskEmail(email) {
     if(!email) return "";
     const [name, domain] = email.split('@');
