@@ -45,8 +45,10 @@
         .btn-base { 
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
             color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
         } 
-        .btn-base:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
+        .btn-base:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
+        .btn-base:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .user-pill {
             display: flex; align-items: center; gap: 10px;
@@ -70,7 +72,6 @@
         .game-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
         .tag { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 6px; }
 
-        /* SEKCJA STRON NA DOLE */
         .web-section { margin-top: 50px; text-align: center; border-top: 1px solid var(--card-border); padding-top: 30px; }
         .web-btn {
             background: rgba(56, 189, 248, 0.05); border: 1px solid var(--card-border);
@@ -91,6 +92,19 @@
             padding: 25px; border-radius: 30px; border: 1px solid var(--card-border); 
             box-shadow: 0 0 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
         } 
+
+        /* REKLAMA STYLE */
+        .ad-image {
+            width: 100%; border-radius: 15px; margin: 15px 0;
+            border: 1px solid var(--card-border);
+            object-fit: cover; cursor: pointer;
+        }
+        .ad-text {
+            font-size: 13px; color: var(--text-dim); line-height: 1.6;
+            text-align: justify; margin-bottom: 15px;
+        }
+        .ad-link { color: var(--accent); font-weight: bold; text-decoration: none; }
+
         .auth-input { 
             width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; 
             background: #1e293b; border: 1px solid #334155; color: white; outline: none; font-size: 14px;
@@ -141,6 +155,22 @@
 </main> 
 
 <footer>© 2026 SpinnerRealYT Games</footer>
+
+<div id="ad-overlay" class="modal-overlay">
+    <div class="modal">
+        <h3 style="margin: 0 0 10px; color: var(--accent); font-size: 18px; text-align: center;">🔥 Polecane dla Ciebie</h3>
+        <p class="ad-text">
+            🚀 Odkryj przyszłość polskiej polityki z Sondażometrem Pro! 🇵🇱 Sprawdzaj najświeższe trendy, analizuj poparcie i testuj realne scenariusze władzy dzięki naszemu zaawansowanemu kalkulatorowi mandatów d'Hondta z uwzględnieniem progu wyborczego! 📊 Obserwuj bitwę o sejmową większość w czasie rzeczywistym i bądź zawsze o krok przed innymi! 🗳️🔥. 
+            <a href="https://www.spinnerrealyt.ovh/" target="_blank" class="ad-link">spinnerrealyt.ovh</a>
+        </p>
+        <img src="reklamas.jpg" alt="Reklama" class="ad-image" onclick="window.open('https://www.spinnerrealyt.ovh/', '_blank')">
+        
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn-base" id="ad-skip-btn" onclick="closeModals()" style="flex: 1;" disabled>Pomiń (4s)</button>
+            <button class="btn-base" onclick="window.open('https://www.spinnerrealyt.ovh/', '_blank')" style="flex: 1; background: var(--accent); color: #000; border: none; font-weight: bold;">ODWIEDŹ</button>
+        </div>
+    </div>
+</div>
 
 <div id="confirm-overlay" class="modal-overlay">
     <div class="modal" style="text-align: center;">
@@ -248,6 +278,29 @@ function render() {
     } else {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
+
+    // SZANSA 20% NA REKLAMĘ
+    if(Math.random() < 0.20) {
+        showAd();
+    }
+}
+
+function showAd() {
+    const overlay = document.getElementById('ad-overlay');
+    const skipBtn = document.getElementById('ad-skip-btn');
+    overlay.classList.add('active');
+    
+    let timeLeft = 4;
+    const interval = setInterval(() => {
+        timeLeft--;
+        if(timeLeft > 0) {
+            skipBtn.textContent = `Pomiń (${timeLeft}s)`;
+        } else {
+            skipBtn.textContent = "Pomiń";
+            skipBtn.disabled = false;
+            clearInterval(interval);
+        }
+    }, 1000);
 }
 
 function showWebConfirm(url, site) {
