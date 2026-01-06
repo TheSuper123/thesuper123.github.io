@@ -296,17 +296,27 @@ function render() {
 function acceptCookies() {
     localStorage.setItem('cookies_accepted', 'true');
     document.getElementById('cookie-overlay').classList.remove('active');
-    setTimeout(checkAdStatus, 500); 
+    setTimeout(checkAdStatus, 300); 
 }
 
 function checkAdStatus() {
-    // Jeśli reklama została już wyświetlona i zamknięta w tej sesji - nie pokazuj więcej
+    // Jeśli reklama została już ZAMKNIĘTA w tej sesji - nigdy jej nie pokazuj
     if (sessionStorage.getItem('ad_finished') === 'true') return;
 
-    // Losowanie 45% szansy przy każdym wejściu/odświeżeniu, dopóki reklama nie zostanie obejrzana
-    const roll = Math.random() < 0.45;
-    
-    if (roll) {
+    // Sprawdzamy, czy w tej sesji już wylosowaliśmy, czy reklama ma być aktywna
+    let adActiveInSession = sessionStorage.getItem('ad_active_in_session');
+
+    if (adActiveInSession === null) {
+        // Pierwsze wejście w sesji - losujemy szansę 45%
+        const roll = Math.random() < 0.45;
+        adActiveInSession = roll ? 'true' : 'false';
+        sessionStorage.setItem('ad_active_in_session', adActiveInSession);
+    }
+
+    // Jeśli wylosowano, że reklama ma się pojawić, wyświetlamy ją
+    // Dzięki temu, jeśli użytkownik odświeży stronę, a nie kliknął "Pomiń", 
+    // adActiveInSession nadal będzie 'true' i reklama wyskoczy ponownie.
+    if (adActiveInSession === 'true') {
         showAd();
     }
 }
@@ -333,6 +343,7 @@ function showAd() {
 }
 
 function skipAd() {
+    // Dopiero tutaj ustawiamy ad_finished, co blokuje reklamę do końca sesji (zamknięcia karty)
     sessionStorage.setItem('ad_finished', 'true');
     document.getElementById('ad-overlay').classList.remove('active');
 }
