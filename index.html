@@ -80,7 +80,6 @@
         }
         .web-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* MODALE */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
@@ -94,7 +93,6 @@
             position: relative;
         } 
 
-        /* REKLAMA STYLE */
         .ad-image {
             width: 100%; border-radius: 15px; margin: 15px 0;
             border: 1px solid var(--card-border);
@@ -300,23 +298,14 @@ function acceptCookies() {
 }
 
 function checkAdStatus() {
-    // Jeśli reklama została już ZAMKNIĘTA w tej sesji - nigdy jej nie pokazuj
+    // Jeśli reklama została już ZAMKNIĘTA przyciskiem w tej sesji - nie pokazuj
     if (sessionStorage.getItem('ad_finished') === 'true') return;
 
-    // Sprawdzamy, czy w tej sesji już wylosowaliśmy, czy reklama ma być aktywna
-    let adActiveInSession = sessionStorage.getItem('ad_active_in_session');
+    // Sprawdzamy, czy reklama była "w trakcie wyświetlania" przed refreshem
+    let adShowingBefore = sessionStorage.getItem('ad_showing_active');
 
-    if (adActiveInSession === null) {
-        // Pierwsze wejście w sesji - losujemy szansę 45%
-        const roll = Math.random() < 0.45;
-        adActiveInSession = roll ? 'true' : 'false';
-        sessionStorage.setItem('ad_active_in_session', adActiveInSession);
-    }
-
-    // Jeśli wylosowano, że reklama ma się pojawić, wyświetlamy ją
-    // Dzięki temu, jeśli użytkownik odświeży stronę, a nie kliknął "Pomiń", 
-    // adActiveInSession nadal będzie 'true' i reklama wyskoczy ponownie.
-    if (adActiveInSession === 'true') {
+    // Jeśli była wyświetlana (true) LUB losujemy nową szansę (45%)
+    if (adShowingBefore === 'true' || Math.random() < 0.45) {
         showAd();
     }
 }
@@ -325,6 +314,9 @@ function showAd() {
     const overlay = document.getElementById('ad-overlay');
     const skipBtn = document.getElementById('ad-skip-btn');
     overlay.classList.add('active');
+    
+    // Zapisujemy w sesji, że reklama jest aktualnie na ekranie (ważne przy refreshu)
+    sessionStorage.setItem('ad_showing_active', 'true');
     
     let timeLeft = 4;
     skipBtn.disabled = true;
@@ -343,15 +335,15 @@ function showAd() {
 }
 
 function skipAd() {
-    // Dopiero tutaj ustawiamy ad_finished, co blokuje reklamę do końca sesji (zamknięcia karty)
+    // Usuwamy status "wyświetlania" i blokujemy reklamę do końca sesji
+    sessionStorage.removeItem('ad_showing_active');
     sessionStorage.setItem('ad_finished', 'true');
     document.getElementById('ad-overlay').classList.remove('active');
 }
 
 function handleAdClick() {
     window.open('https://www.spinnerrealyt.ovh/', '_blank');
-    sessionStorage.setItem('ad_finished', 'true');
-    document.getElementById('ad-overlay').classList.remove('active');
+    skipAd();
 }
 
 function closeModals() { 
