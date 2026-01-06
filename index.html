@@ -132,12 +132,12 @@
 </head> 
 <body> 
 
-<div id="cookie-overlay" class="modal-overlay active">
+<div id="cookie-overlay" class="modal-overlay">
     <div class="modal" style="text-align: center; border-color: var(--accent);">
         <h2 style="margin: 0 0 15px; color: var(--accent);">Polityka Prywatności</h2>
         <div style="font-size: 40px; margin-bottom: 15px;">🍪</div>
         <p style="color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
-            Nasza witryna wykorzystuje pliki cookie oraz technologie przechowywania lokalnego (LocalStorage/SessionStorage), aby zapewnić poprawne działanie systemu logowania, bezpieczeństwo Twojego konta oraz optymalizację wyświetlanych treści. Kontynuując korzystanie ze strony, wyrażasz zgodę na ich użycie.
+            Nasza witryna wykorzystuje pliki cookie oraz technologie przechowywania lokalnego, aby zapewnić poprawne działanie systemu logowania, bezpieczeństwo oraz optymalizację treści. Kontynuując korzystanie ze strony, wyrażasz zgodę na ich użycie.
         </p>
         <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: #000; border: none; font-weight: 800; padding: 15px;">AKCEPTUJĘ</button>
     </div>
@@ -284,18 +284,19 @@ function render() {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
 
-    // Sprawdzenie, czy ciasteczka zostały już zaakceptowane w tej sesji
-    if(localStorage.getItem('cookies_accepted') === 'true') {
-        document.getElementById('cookie-overlay').classList.remove('active');
+    // NAJPIERW sprawdzamy czy cookie zaakceptowane
+    if(localStorage.getItem('cookies_accepted') !== 'true') {
+        document.getElementById('cookie-overlay').classList.add('active');
+    } else {
+        // Jeśli już wcześniej zaakceptował, od razu sprawdzamy reklamę
         checkAdStatus();
     }
 }
 
-// Funkcja akceptacji ciasteczek
 function acceptCookies() {
     localStorage.setItem('cookies_accepted', 'true');
     document.getElementById('cookie-overlay').classList.remove('active');
-    // Po akceptacji cookie sprawdzamy reklamę
+    // KLUCZOWE: Po akceptacji wywołujemy system reklamowy
     checkAdStatus();
 }
 
@@ -305,6 +306,7 @@ function checkAdStatus() {
 
     let shouldShow = sessionStorage.getItem('ad_must_show');
 
+    // Losowanie szansy 20%
     if (shouldShow === null) {
         const roll = Math.random() < 0.20;
         shouldShow = roll ? 'true' : 'false';
@@ -347,13 +349,12 @@ function handleAdClick() {
 
 function closeModals() { 
     document.querySelectorAll('.modal-overlay').forEach(m => {
-        // Nie zamykamy okna cookie tą funkcją, jeśli nie zostało zaakceptowane
         if(m.id === 'cookie-overlay' && localStorage.getItem('cookies_accepted') !== 'true') return;
         m.classList.remove('active');
     }); 
 }
 
-// Pozostałe funkcje (Auth, Profile itp.) bez zmian...
+// Logika reszty systemów (User, Profile, Auth)
 function maskEmail(email) {
     if(!email) return "";
     const [name, domain] = email.split('@');
