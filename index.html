@@ -286,7 +286,6 @@ function render() {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
 
-    // SYSTEM BLOKADY COOKIE
     if(localStorage.getItem('cookies_accepted') !== 'true') {
         document.getElementById('cookie-overlay').classList.add('active');
     } else {
@@ -297,24 +296,17 @@ function render() {
 function acceptCookies() {
     localStorage.setItem('cookies_accepted', 'true');
     document.getElementById('cookie-overlay').classList.remove('active');
-    // NATYCHMIAST PO COOKIE SPRAWDZ REKLAMĘ
-    setTimeout(checkAdStatus, 300); 
+    setTimeout(checkAdStatus, 500); 
 }
 
 function checkAdStatus() {
-    // Jeśli już była reklama w tej sesji, nie pokazuj
+    // Jeśli reklama została już wyświetlona i zamknięta w tej sesji - nie pokazuj więcej
     if (sessionStorage.getItem('ad_finished') === 'true') return;
 
-    let shouldShow = sessionStorage.getItem('ad_must_show');
-
-    // LOSOWANIE SZANSY (ZWIĘKSZONE DO 45%)
-    if (shouldShow === null) {
-        const roll = Math.random() < 0.45; // 0.45 = 45%
-        shouldShow = roll ? 'true' : 'false';
-        sessionStorage.setItem('ad_must_show', shouldShow);
-    }
-
-    if (shouldShow === 'true') {
+    // Losowanie 45% szansy przy każdym wejściu/odświeżeniu, dopóki reklama nie zostanie obejrzana
+    const roll = Math.random() < 0.45;
+    
+    if (roll) {
         showAd();
     }
 }
@@ -353,9 +345,7 @@ function handleAdClick() {
 
 function closeModals() { 
     document.querySelectorAll('.modal-overlay').forEach(m => {
-        // Blokada zamknięcia cookie bez przycisku
         if(m.id === 'cookie-overlay' && localStorage.getItem('cookies_accepted') !== 'true') return;
-        // Blokada zamknięcia reklamy bez przycisku
         if(m.id === 'ad-overlay' && sessionStorage.getItem('ad_finished') !== 'true') return;
         m.classList.remove('active');
     }); 
