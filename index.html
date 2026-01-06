@@ -132,6 +132,17 @@
 </head> 
 <body> 
 
+<div id="cookie-overlay" class="modal-overlay active">
+    <div class="modal" style="text-align: center; border-color: var(--accent);">
+        <h2 style="margin: 0 0 15px; color: var(--accent);">Polityka Prywatności</h2>
+        <div style="font-size: 40px; margin-bottom: 15px;">🍪</div>
+        <p style="color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
+            Nasza witryna wykorzystuje pliki cookie oraz technologie przechowywania lokalnego (LocalStorage/SessionStorage), aby zapewnić poprawne działanie systemu logowania, bezpieczeństwo Twojego konta oraz optymalizację wyświetlanych treści. Kontynuując korzystanie ze strony, wyrażasz zgodę na ich użycie.
+        </p>
+        <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: #000; border: none; font-weight: 800; padding: 15px;">AKCEPTUJĘ</button>
+    </div>
+</div>
+
 <header> 
     <div class="logo-area" onclick="location.reload()"> 
         <img src="Logo.png" alt="Logo"> 
@@ -163,11 +174,11 @@
             🚀 Odkryj przyszłość polskiej polityki z Sondażometrem Pro! 🇵🇱 Sprawdzaj najświeższe trendy, analizuj poparcie i testuj realne scenariusze władzy dzięki naszemu zaawansowanemu kalkulatorowi mandatów d'Hondta z uwzględnieniem progu wyborczego! 📊 Obserwuj bitwę o sejmową większość w czasie rzeczywistym i bądź zawsze o krok przed innymi! 🗳️🔥. 
             <a href="https://www.spinnerrealyt.ovh/" target="_blank" class="ad-link">spinnerrealyt.ovh</a>
         </p>
-        <img src="reklamas.jpg" alt="Reklama" class="ad-image" onclick="window.open('https://www.spinnerrealyt.ovh/', '_blank')">
+        <img src="reklamas.jpg" alt="Reklama" class="ad-image" onclick="handleAdClick()">
         
         <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn-base" id="ad-skip-btn" onclick="closeModals()" style="flex: 1;" disabled>Pomiń (4s)</button>
-            <button class="btn-base" onclick="window.open('https://www.spinnerrealyt.ovh/', '_blank')" style="flex: 1; background: var(--accent); color: #000; border: none; font-weight: bold;">ODWIEDŹ</button>
+            <button class="btn-base" id="ad-skip-btn" onclick="skipAd()" style="flex: 1;" disabled>Pomiń (4s)</button>
+            <button class="btn-base" onclick="handleAdClick()" style="flex: 1; background: var(--accent); color: #000; border: none; font-weight: bold;">ODWIEDŹ</button>
         </div>
     </div>
 </div>
@@ -256,12 +267,6 @@ const auth = firebase.auth();
 let isLoginMode = true;
 let deleteSteps = 10;
 
-function maskEmail(email) {
-    if(!email) return "";
-    const [name, domain] = email.split('@');
-    return name[0] + "****" + name[name.length - 1] + "@" + domain;
-}
-
 function render() {
     const grid = document.getElementById("game-grid");
     grid.innerHTML = games.map(g => `
@@ -279,8 +284,34 @@ function render() {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
 
-    // SZANSA 20% NA REKLAMĘ
-    if(Math.random() < 0.20) {
+    // Sprawdzenie, czy ciasteczka zostały już zaakceptowane w tej sesji
+    if(localStorage.getItem('cookies_accepted') === 'true') {
+        document.getElementById('cookie-overlay').classList.remove('active');
+        checkAdStatus();
+    }
+}
+
+// Funkcja akceptacji ciasteczek
+function acceptCookies() {
+    localStorage.setItem('cookies_accepted', 'true');
+    document.getElementById('cookie-overlay').classList.remove('active');
+    // Po akceptacji cookie sprawdzamy reklamę
+    checkAdStatus();
+}
+
+function checkAdStatus() {
+    const adFinished = sessionStorage.getItem('ad_finished');
+    if (adFinished === 'true') return;
+
+    let shouldShow = sessionStorage.getItem('ad_must_show');
+
+    if (shouldShow === null) {
+        const roll = Math.random() < 0.20;
+        shouldShow = roll ? 'true' : 'false';
+        sessionStorage.setItem('ad_must_show', shouldShow);
+    }
+
+    if (shouldShow === 'true') {
         showAd();
     }
 }
@@ -301,6 +332,32 @@ function showAd() {
             clearInterval(interval);
         }
     }, 1000);
+}
+
+function skipAd() {
+    sessionStorage.setItem('ad_finished', 'true');
+    closeModals();
+}
+
+function handleAdClick() {
+    window.open('https://www.spinnerrealyt.ovh/', '_blank');
+    sessionStorage.setItem('ad_finished', 'true');
+    closeModals();
+}
+
+function closeModals() { 
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        // Nie zamykamy okna cookie tą funkcją, jeśli nie zostało zaakceptowane
+        if(m.id === 'cookie-overlay' && localStorage.getItem('cookies_accepted') !== 'true') return;
+        m.classList.remove('active');
+    }); 
+}
+
+// Pozostałe funkcje (Auth, Profile itp.) bez zmian...
+function maskEmail(email) {
+    if(!email) return "";
+    const [name, domain] = email.split('@');
+    return name[0] + "****" + name[name.length - 1] + "@" + domain;
 }
 
 function showWebConfirm(url, site) {
@@ -368,7 +425,7 @@ async function handleDeleteStep() {
 }
 
 function logout() { localStorage.clear(); auth.signOut(); location.reload(); }
-function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+
 function toggleAuth() {
     isLoginMode = !isLoginMode;
     document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
