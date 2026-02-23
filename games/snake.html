@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spinner Snake.io - Mobile Pro Edition</title>
+    <title>Spinner Snake.io - Real Bot Edition</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -39,7 +39,6 @@
             flex-direction: column;
         }
 
-        /* --- UI NAVIGATION --- */
         header {
             height: 60px;
             background: var(--panel-bg);
@@ -53,9 +52,6 @@
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             font-weight: 900;
             letter-spacing: -1px;
             color: var(--accent-blue);
@@ -73,12 +69,6 @@
             transition: 0.2s;
         }
 
-        .btn-back:hover {
-            background: var(--accent-red);
-            color: white;
-        }
-
-        /* --- GAME LAYOUT --- */
         main {
             flex: 1;
             position: relative;
@@ -86,11 +76,9 @@
             background: #000;
         }
 
-        #gameCanvas {
-            display: block;
-        }
+        #gameCanvas { display: block; }
 
-        /* --- OVERLAYS --- */
+        /* OVERLAYS */
         .overlay {
             position: absolute;
             inset: 0;
@@ -110,7 +98,6 @@
             text-align: center;
             width: 90%;
             max-width: 450px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
 
         .card h1 {
@@ -122,10 +109,6 @@
             font-weight: 900;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
         input {
             width: 100%;
             padding: 15px;
@@ -135,11 +118,7 @@
             color: white;
             font-size: 16px;
             text-align: center;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--accent-blue);
+            margin-bottom: 20px;
         }
 
         .btn-play {
@@ -153,59 +132,37 @@
             font-size: 18px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: 0.2s;
         }
 
-        .btn-play:hover {
-            filter: brightness(1.2);
-            transform: translateY(-2px);
-        }
-
-        /* --- HUD --- */
+        /* HUD */
         .hud-leaderboard {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.8);
             padding: 10px;
             border-radius: 12px;
-            width: 140px;
+            width: 150px;
             pointer-events: none;
             border: 1px solid var(--border);
-            font-family: monospace;
         }
 
-        .leader-title {
-            font-size: 10px;
-            color: var(--accent-gold);
-            font-weight: 900;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        .leader-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
+        .leader-title { font-size: 10px; color: var(--accent-gold); font-weight: 900; text-align: center; margin-bottom: 5px; }
+        .leader-item { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; }
         .leader-item.me { color: var(--accent-blue); font-weight: bold; }
 
         .hud-score {
             position: absolute;
             top: 10px;
             left: 10px;
-            font-size: clamp(14px, 4vw, 20px);
+            font-size: 18px;
             font-weight: 900;
             background: rgba(0,0,0,0.5);
             padding: 5px 15px;
             border-radius: 20px;
         }
 
-        /* --- MOBILE CONTROLS --- */
+        /* CONTROLS */
         #joystick-container {
             position: absolute;
             bottom: 40px;
@@ -214,7 +171,7 @@
             height: 120px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            display: none; /* Pokazywane przez skrypt na mobile */
+            display: none;
             z-index: 1500;
             border: 1px solid rgba(255,255,255,0.2);
         }
@@ -245,7 +202,6 @@
             justify-content: center;
             align-items: center;
             font-weight: 900;
-            font-size: 12px;
             color: white;
         }
 
@@ -257,143 +213,97 @@
             height: 100px;
             background: rgba(0,0,0,0.6);
             border: 1px solid var(--border);
-            border-radius: 5px;
         }
-
-        #minimapCanvas { width: 100%; height: 100%; }
 
         @media (max-width: 1024px) {
             #joystick-container, .mobile-boost-zone { display: flex; }
-            .minimap { bottom: 130px; } /* Przesunięcie minimapy nad przycisk boosta */
+            .minimap { bottom: 130px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">SPINNER SNAKE.IO PRO</div>
-        <div id="user-info" style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">Weryfikacja...</div>
-        <a href="../index.html" class="btn-back">WRÓĆ</a>
+        <div class="logo">SNAKE.IO ELITE</div>
+        <div id="user-info" style="font-size: 10px; color: #94a3b8;">PROFIL...</div>
+        <a href="../index.html" class="btn-back">WYJDŹ</a>
     </header>
 
     <main id="game-container">
         <canvas id="gameCanvas"></canvas>
-
-        <div class="hud-score">MASA: <span id="current-mass">10</span></div>
-
+        <div class="hud-score">MASA: <span id="current-mass">0</span></div>
         <div class="hud-leaderboard">
-            <div class="leader-title">TOP 10</div>
+            <div class="leader-title">RANKING</div>
             <div id="leader-list"></div>
         </div>
+        <div class="minimap"><canvas id="minimapCanvas" width="100" height="100"></canvas></div>
 
-        <div class="minimap">
-            <canvas id="minimapCanvas"></canvas>
-        </div>
-
-        <div id="joystick-container">
-            <div id="joystick-knob"></div>
-        </div>
+        <div id="joystick-container"><div id="joystick-knob"></div></div>
         <div class="mobile-boost-zone" id="boost-btn">BOOST</div>
 
         <div id="start-overlay" class="overlay">
             <div class="card">
-                <h1>SNAKE.IO</h1>
-                <div class="input-group">
-                    <input type="text" id="nickInput" placeholder="WPISZ NICK" maxlength="15">
-                </div>
-                <button class="btn-play" id="start-btn">GRAJ</button>
-                <p id="hint-text" style="font-size: 11px; margin-top: 15px; color: #64748b;">
-                    Desktop: Mysz + Spacja | Mobile: Joystick + Boost
-                </p>
+                <h1>WĘŻOWY SZAŁ</h1>
+                <input type="text" id="nickInput" placeholder="TWÓJ NICK" maxlength="15">
+                <button class="btn-play" id="start-btn">ZACZNIJ GRĘ</button>
             </div>
         </div>
 
         <div id="death-overlay" class="overlay" style="display: none;">
-            <div class="card" style="border-color: var(--accent-red);">
-                <h1 style="color: var(--accent-red);">PADŁEŚ!</h1>
-                <p id="death-info" style="font-size: 20px; margin-bottom: 20px; color: #cbd5e1;">Wynik: 0</p>
-                <button class="btn-play" style="background: var(--accent-red); color: white;" id="restart-btn">ZAGRAJ ZNOWU</button>
+            <div class="card">
+                <h1 style="color: var(--accent-red);">KONIEC!</h1>
+                <p id="death-info" style="margin-bottom: 20px;">Wynik: 0</p>
+                <button class="btn-play" style="background: var(--accent-red); color: white;" id="restart-btn">RESTART</button>
             </div>
         </div>
     </main>
 
     <script>
-        /** * --- CONFIG & FIREBASE ---
-         */
-        const firebaseConfig = {
-            apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-            authDomain: "spinnerrealyt-games.firebaseapp.com",
-            databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const auth = firebase.auth();
+        /** --- CONFIG & DATA --- **/
+        const BOT_NAMES = [
+            "Mistrz_Kebab", "Turbo_Ślimak", "Zabójczy_Pączek", "Głodny_Stefan", "Kapitan_Laga",
+            "Marek_Mostowiak", "Ostra_Parówa", "Zły_Pomidor", "Dziki_Wąż", "Kuba_Rozpruwacz",
+            "Szybki_Gonzo", "Cichy_Zabójca", "Twoja_Stara", "Janusz_Biznesu", "Cyber_Kox",
+            "Noob_Killer", "El_Polako", "Smoczy_Ogień", "Ciasteczkowy_Potwór", "Rudy_Lis",
+            "Szalony_Górnik", "Neon_Ninja", "Pogromca_Botów", "Szef_Wszystkich_Szefów",
+            "Młody_Padawan", "Władca_Pikseli", "Król_Areny", "Biały_Wilk", "Czarny_Rycerz"
+        ];
 
-        // Global State
+        const CFG = {
+            MAP_SIZE: 4000,
+            BASE_SPEED: 3.5,
+            BOOST_SPEED: 7.2,
+            SEG_DIST: 5,
+            COLORS: ['#38bdf8', '#ef4444', '#22c55e', '#eab308', '#a855f7', '#f97316', '#ec4899', '#f472b6', '#ffffff']
+        };
+
         const state = {
-            nick: "Guest_" + Math.floor(Math.random()*999),
+            nick: "Gracz_" + Math.floor(Math.random()*999),
             isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
         };
 
-        // UI Nick Sync
-        const nickInput = document.getElementById('nickInput');
-        const userInfoEl = document.getElementById('user-info');
-        
-        auth.onAuthStateChanged(user => {
-            if (user && user.displayName) {
-                state.nick = user.displayName;
-                userInfoEl.textContent = "Zalogowano: " + state.nick;
-            } else if (localStorage.getItem("sp_logged")) {
-                state.nick = localStorage.getItem("sp_logged");
-                userInfoEl.textContent = "Profil: " + state.nick;
-            } else {
-                userInfoEl.textContent = "Grasz jako gość";
-            }
-            nickInput.value = state.nick;
-        });
-
-        const CFG = {
-            MAP_SIZE: 3500,
-            BASE_SPEED: 3.8,
-            BOOST_SPEED: 7.5,
-            START_LEN: 12,
-            SEG_DIST: 5,
-            COLORS: ['#38bdf8', '#ef4444', '#22c55e', '#eab308', '#a855f7', '#f97316', '#ec4899']
-        };
-
-        /**
-         * --- MATH HELPERS ---
-         */
+        /** --- MATH HELPERS --- **/
         class Vec {
             constructor(x, y) { this.x = x; this.y = y; }
             add(v) { return new Vec(this.x + v.x, this.y + v.y); }
             sub(v) { return new Vec(this.x - v.x, this.y - v.y); }
             mul(n) { return new Vec(this.x * n, this.y * n); }
             dist(v) { return Math.sqrt((this.x - v.x)**2 + (this.y - v.y)**2); }
-            mag() { return Math.sqrt(this.x**2 + this.y**2); }
-            normalize() { const m = this.mag(); return m === 0 ? new Vec(0,0) : new Vec(this.x/m, this.y/m); }
         }
 
-        /**
-         * --- SNAKE ENTITY ---
-         */
+        /** --- ENTITIES --- **/
         class Snake {
-            constructor(name, color, isBot = false) {
+            constructor(name, color, startMass = 12) {
                 this.name = name;
                 this.color = color;
-                this.isBot = isBot;
-                this.init();
-            }
-
-            init() {
                 this.pos = new Vec(Math.random() * CFG.MAP_SIZE, Math.random() * CFG.MAP_SIZE);
                 this.angle = Math.random() * Math.PI * 2;
                 this.targetAngle = this.angle;
+                this.mass = startMass;
                 this.segments = [];
-                for(let i=0; i<CFG.START_LEN; i++) this.segments.push(new Vec(this.pos.x, this.pos.y));
+                for(let i=0; i < Math.floor(this.mass); i++) this.segments.push(new Vec(this.pos.x, this.pos.y));
                 this.history = [];
                 this.speed = CFG.BASE_SPEED;
-                this.mass = CFG.START_LEN;
                 this.isBoosting = false;
                 this.dead = false;
             }
@@ -401,37 +311,33 @@
             update() {
                 if(this.dead) return;
 
-                // Speed logic
+                // Boost logic
                 if (this.isBoosting && this.mass > 5) {
                     this.speed = CFG.BOOST_SPEED;
-                    if (game.tick % 6 === 0) {
-                        this.mass -= 0.15;
-                        if(this.segments.length > 5 && game.tick % 12 === 0) this.segments.pop();
+                    if (game.tick % 5 === 0) {
+                        this.mass -= 0.1;
+                        if(this.segments.length > 5 && game.tick % 10 === 0) this.segments.pop();
                         game.spawnFood(this.segments[this.segments.length-1].x, this.segments[this.segments.length-1].y, 1, true);
                     }
                 } else {
                     this.speed = CFG.BASE_SPEED;
-                    this.isBoosting = false;
                 }
 
                 // Smooth rotation
                 let diff = this.targetAngle - this.angle;
                 while (diff < -Math.PI) diff += Math.PI * 2;
                 while (diff > Math.PI) diff -= Math.PI * 2;
-                this.angle += diff * 0.18;
+                this.angle += diff * 0.15;
 
-                // Move head
                 const vel = new Vec(Math.cos(this.angle), Math.sin(this.angle)).mul(this.speed);
                 this.pos = this.pos.add(vel);
 
-                // Wall check
-                if (this.pos.x < 0 || this.pos.x > CFG.MAP_SIZE || this.pos.y < 0 || this.pos.y > CFG.MAP_SIZE) {
-                    this.die();
-                }
+                // Wall collision
+                if (this.pos.x < 0 || this.pos.x > CFG.MAP_SIZE || this.pos.y < 0 || this.pos.y > CFG.MAP_SIZE) this.die();
 
-                // Segment following
+                // Segments update
                 this.history.unshift(new Vec(this.pos.x, this.pos.y));
-                if(this.history.length > 1000) this.history.pop();
+                if(this.history.length > 1500) this.history.pop();
 
                 for(let i=0; i<this.segments.length; i++) {
                     const lag = Math.floor((i+1) * (CFG.SEG_DIST / this.speed) * 4);
@@ -445,99 +351,91 @@
             die() {
                 if(this.dead) return;
                 this.dead = true;
-                this.segments.forEach((s, i) => {
-                    if(i % 3 === 0) game.spawnFood(s.x, s.y, 4);
-                });
-                if(this === game.player) game.gameOver();
+                this.segments.forEach((s, i) => { if(i % 3 === 0) game.spawnFood(s.x, s.y, 5); });
+                if(this === game.player) game.onGameOver();
             }
 
             draw(ctx, cam) {
                 if(this.dead) return;
-                const r = 14 + (this.mass * 0.04);
+                const r = 14 + (this.mass * 0.03);
                 
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-
+                ctx.shadowBlur = 10; ctx.shadowColor = this.color;
                 for(let i = this.segments.length-1; i >= 0; i--) {
                     const s = this.segments[i];
-                    const size = r * (1 - (i / (this.segments.length * 2.5)));
+                    const size = r * (1 - (i / (this.segments.length * 3)));
                     ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(s.x - cam.x, s.y - cam.y, size, 0, Math.PI*2);
-                    ctx.fill();
-
+                    ctx.beginPath(); ctx.arc(s.x - cam.x, s.y - cam.y, size, 0, Math.PI*2); ctx.fill();
+                    
                     if(i === 0) { // Eyes
-                        ctx.shadowBlur = 0;
-                        ctx.fillStyle = 'white';
+                        ctx.shadowBlur = 0; ctx.fillStyle = 'white';
                         const ex = (s.x - cam.x) + Math.cos(this.angle + 0.6) * (r*0.6);
                         const ey = (s.y - cam.y) + Math.sin(this.angle + 0.6) * (r*0.6);
-                        ctx.beginPath(); ctx.arc(ex, ey, r*0.25, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(ex, ey, r*0.3, 0, Math.PI*2); ctx.fill();
                         ctx.fillStyle = 'black';
                         ctx.beginPath(); ctx.arc(ex, ey, r*0.1, 0, Math.PI*2); ctx.fill();
                     }
                 }
                 ctx.shadowBlur = 0;
-
-                // Name tag
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
+                ctx.fillStyle = 'white'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
                 ctx.fillText(this.name, this.pos.x - cam.x, this.pos.y - cam.y - r - 10);
             }
         }
 
-        /**
-         * --- BOT AI ---
-         */
         class Bot extends Snake {
-            constructor(name, color) { super(name, color, true); }
+            constructor(name, color, startMass) {
+                super(name, color, startMass);
+                this.aiTick = Math.random() * 100;
+            }
             update() {
                 if(this.dead) return;
-                if(game.tick % 30 === 0) {
-                    // Simple AI: Head to nearest food or avoid others
-                    let nearest = null; let dMin = 400;
-                    game.foods.forEach(f => {
-                        let d = this.pos.dist(f.pos);
-                        if(d < dMin) { dMin = d; nearest = f; }
-                    });
-                    if(nearest) this.targetAngle = Math.atan2(nearest.pos.y - this.pos.y, nearest.pos.x - this.pos.x);
-                    
-                    // Avoidance
+                this.aiTick++;
+                if(this.aiTick % 40 === 0) {
+                    // Hunt food
+                    let n = null; let dM = 500;
+                    game.foods.forEach(f => { let d = this.pos.dist(f.pos); if(d < dM) { dM = d; n = f; } });
+                    if(n) this.targetAngle = Math.atan2(n.pos.y - this.pos.y, n.pos.x - this.pos.x);
+
+                    // Avoidance logic
                     game.snakes.forEach(other => {
                         if(other === this || other.dead) return;
-                        if(this.pos.dist(other.pos) < 100) {
+                        if(this.pos.dist(other.pos) < 120) {
                             this.targetAngle += Math.PI/2;
                             this.isBoosting = true;
                         }
                     });
+                    if(Math.random() < 0.05) this.isBoosting = false;
                 }
                 super.update();
             }
         }
 
-        /**
-         * --- ENGINE ---
-         */
+        /** --- CORE ENGINE --- **/
         const game = {
-            tick: 0,
-            isRunning: false,
-            snakes: [],
-            foods: [],
-            cam: { x: 0, y: 0 },
-            canvas: document.getElementById('gameCanvas'),
-            ctx: null,
-            
+            tick: 0, isRunning: false, snakes: [], foods: [], cam: { x: 0, y: 0 },
+            canvas: document.getElementById('gameCanvas'), ctx: null,
+
             init() {
                 this.ctx = this.canvas.getContext('2d');
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
                 this.setupInputs();
+                
+                // Firebase/Local Nick Sync
+                const nickInput = document.getElementById('nickInput');
+                const userInf = document.getElementById('user-info');
+                const saved = localStorage.getItem("sp_logged");
+                if(saved) { state.nick = saved; userInf.textContent = "PROFIL: " + saved; nickInput.value = saved; }
+
                 this.loop();
             },
 
             resize() {
                 this.canvas.width = window.innerWidth;
                 this.canvas.height = window.innerHeight - 60;
+            },
+
+            spawnFood(x, y, val, boost = false) {
+                this.foods.push({ pos: new Vec(x, y), val: val, color: boost ? '#fff' : CFG.COLORS[Math.floor(Math.random()*CFG.COLORS.length)], rot: Math.random()*10 });
             },
 
             setupInputs() {
@@ -549,82 +447,56 @@
                         this.player.targetAngle = Math.atan2(dy, dx);
                     }
                 });
-                window.addEventListener('keydown', e => { if(e.code === 'Space' && this.player) this.player.isBoosting = true; });
-                window.addEventListener('keyup', e => { if(e.code === 'Space' && this.player) this.player.isBoosting = false; });
                 window.addEventListener('mousedown', () => { if(!state.isMobile && this.player) this.player.isBoosting = true; });
                 window.addEventListener('mouseup', () => { if(!state.isMobile && this.player) this.player.isBoosting = false; });
 
-                // Joystick (Mobile)
-                const joyContainer = document.getElementById('joystick-container');
+                // Joystick
+                const joyCon = document.getElementById('joystick-container');
                 const joyKnob = document.getElementById('joystick-knob');
-                let joyData = { active: false, x: 0, y: 0 };
+                let activeJoy = false;
 
-                joyContainer.addEventListener('touchstart', e => {
-                    joyData.active = true;
-                }, {passive: false});
-
+                joyCon.addEventListener('touchstart', () => activeJoy = true);
                 window.addEventListener('touchmove', e => {
-                    if(!joyData.active) return;
+                    if(!activeJoy) return;
                     const touch = e.touches[0];
-                    const rect = joyContainer.getBoundingClientRect();
-                    const centerX = rect.left + rect.width/2;
-                    const centerY = rect.top + rect.height/2;
-                    
-                    let dx = touch.clientX - centerX;
-                    let dy = touch.clientY - centerY;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    const max = rect.width/2;
-
-                    if(dist > max) { dx *= max/dist; dy *= max/dist; }
-
+                    const rect = joyCon.getBoundingClientRect();
+                    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+                    let dx = touch.clientX - cx, dy = touch.clientY - cy;
+                    const d = Math.sqrt(dx*dx + dy*dy), max = rect.width/2;
+                    if(d > max) { dx *= max/d; dy *= max/d; }
                     joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-                    
                     if(this.player) this.player.targetAngle = Math.atan2(dy, dx);
-                }, {passive: false});
-
-                window.addEventListener('touchend', () => {
-                    joyData.active = false;
-                    joyKnob.style.transform = `translate(-50%, -50%)`;
                 });
+                window.addEventListener('touchend', () => { activeJoy = false; joyKnob.style.transform = `translate(-50%, -50%)`; });
 
-                // Boost Button (Mobile)
-                const boostBtn = document.getElementById('boost-btn');
-                boostBtn.addEventListener('touchstart', e => { e.preventDefault(); if(this.player) this.player.isBoosting = true; });
-                boostBtn.addEventListener('touchend', () => { if(this.player) this.player.isBoosting = false; });
-            },
-
-            spawnFood(x, y, val, isBoostFood = false) {
-                this.foods.push({
-                    pos: new Vec(x, y),
-                    val: val,
-                    color: isBoostFood ? '#fff' : CFG.COLORS[Math.floor(Math.random()*CFG.COLORS.length)],
-                    rot: Math.random()*Math.PI
-                });
+                document.getElementById('boost-btn').addEventListener('touchstart', e => { e.preventDefault(); if(this.player) this.player.isBoosting = true; });
+                document.getElementById('boost-btn').addEventListener('touchend', () => { if(this.player) this.player.isBoosting = false; });
             },
 
             start() {
-                state.nick = nickInput.value || "Player";
+                const inp = document.getElementById('nickInput').value;
+                if(inp) state.nick = inp;
                 document.getElementById('start-overlay').style.display = 'none';
                 
                 this.snakes = [];
-                this.player = new Snake(state.nick, CFG.COLORS[0]);
+                this.player = new Snake(state.nick, CFG.COLORS[0], 15);
                 this.snakes.push(this.player);
 
-                // Add Bots
-                for(let i=0; i<12; i++) {
-                    this.snakes.push(new Bot("Bot_"+i, CFG.COLORS[1 + (i % (CFG.COLORS.length-1))]));
+                // Spawn Real-like Bots with different masses
+                for(let i=0; i<20; i++) {
+                    const randomName = BOT_NAMES[Math.floor(Math.random()*BOT_NAMES.length)] + "_" + Math.floor(Math.random()*99);
+                    const randomMass = 10 + Math.random() * 200; // Niektóre boty są od razu gigantyczne
+                    this.snakes.push(new Bot(randomName, CFG.COLORS[1 + (i % 7)], randomMass));
                 }
 
-                // Initial Food
                 this.foods = [];
-                for(let i=0; i<300; i++) this.spawnFood(Math.random()*CFG.MAP_SIZE, Math.random()*CFG.MAP_SIZE, Math.random()*3+1);
+                for(let i=0; i<400; i++) this.spawnFood(Math.random()*CFG.MAP_SIZE, Math.random()*CFG.MAP_SIZE, Math.random()*3+1);
 
                 this.isRunning = true;
             },
 
-            gameOver() {
-                const score = Math.floor(this.player.mass);
-                document.getElementById('death-info').textContent = "TWOJA MASA: " + score;
+            onGameOver() {
+                document.getElementById('death-info').textContent = "TWOJA MASA: " + Math.floor(this.player.mass);
                 document.getElementById('death-overlay').style.display = 'flex';
                 this.isRunning = false;
             },
@@ -641,110 +513,68 @@
 
                 this.snakes.forEach(s => {
                     s.update();
-                    
-                    // Food collision
                     for(let i=this.foods.length-1; i>=0; i--) {
                         if(s.pos.dist(this.foods[i].pos) < 25 + s.mass*0.1) {
-                            s.mass += this.foods[i].val * 0.25;
+                            s.mass += this.foods[i].val * 0.3;
                             if(s.mass % 2 < 0.3) s.segments.push(new Vec(s.segments[s.segments.length-1].x, s.segments[s.segments.length-1].y));
                             this.foods.splice(i, 1);
-                            if(this.foods.length < 300) this.spawnFood(Math.random()*CFG.MAP_SIZE, Math.random()*CFG.MAP_SIZE, Math.random()*2+1);
+                            if(this.foods.length < 400) this.spawnFood(Math.random()*CFG.MAP_SIZE, Math.random()*CFG.MAP_SIZE, Math.random()*3+1);
                         }
                     }
-
-                    // Body collision
                     this.snakes.forEach(other => {
                         if(s === other || s.dead || other.dead) return;
                         for(let j=0; j<other.segments.length; j++) {
-                            if(s.pos.dist(other.segments[j]) < 18 + other.mass*0.05) {
-                                s.die(); break;
-                            }
+                            if(s.pos.dist(other.segments[j]) < 18 + other.mass*0.05) { s.die(); break; }
                         }
                     });
                 });
 
-                if(this.tick % 60 === 0) this.refreshLeaderboard();
+                if(this.tick % 60 === 0) this.updateRanking();
             },
 
             draw() {
-                this.ctx.fillStyle = '#020617';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Grid
+                this.ctx.fillStyle = '#020617'; this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
-                const gap = 120;
-                for(let x = -this.cam.x % gap; x < this.canvas.width; x += gap) {
+                for(let x = -this.cam.x % 100; x < this.canvas.width; x += 100) {
                     this.ctx.beginPath(); this.ctx.moveTo(x, 0); this.ctx.lineTo(x, this.canvas.height); this.ctx.stroke();
                 }
-                for(let y = -this.cam.y % gap; y < this.canvas.height; y += gap) {
+                for(let y = -this.cam.y % 100; y < this.canvas.height; y += 100) {
                     this.ctx.beginPath(); this.ctx.moveTo(0, y); this.ctx.lineTo(this.canvas.width, y); this.ctx.stroke();
                 }
-
-                // World Border
-                this.ctx.strokeStyle = '#ef4444';
-                this.ctx.lineWidth = 4;
+                this.ctx.strokeStyle = '#ef4444'; this.ctx.lineWidth = 5;
                 this.ctx.strokeRect(-this.cam.x, -this.cam.y, CFG.MAP_SIZE, CFG.MAP_SIZE);
 
-                // Food
                 this.foods.forEach(f => {
-                    const sx = f.pos.x - this.cam.x;
-                    const sy = f.pos.y - this.cam.y;
+                    const sx = f.pos.x - this.cam.x, sy = f.pos.y - this.cam.y;
                     if(sx < -20 || sx > this.canvas.width+20 || sy < -20 || sy > this.canvas.height+20) return;
-                    
                     this.ctx.fillStyle = f.color;
-                    const pulse = Math.sin(this.tick*0.1 + f.rot) * 2;
-                    this.ctx.beginPath();
-                    this.ctx.arc(sx, sy, f.val + 2 + pulse, 0, Math.PI*2);
-                    this.ctx.fill();
+                    this.ctx.beginPath(); this.ctx.arc(sx, sy, f.val + 2 + Math.sin(this.tick*0.1)*2, 0, Math.PI*2); this.ctx.fill();
                 });
 
-                // Snakes
                 this.snakes.sort((a,b)=>a.mass-b.mass).forEach(s => s.draw(this.ctx, this.cam));
-
-                this.drawMinimap();
+                
+                // Minimap
+                const mc = document.getElementById('minimapCanvas'), mtx = mc.getContext('2d');
+                mtx.clearRect(0,0,100,100);
+                this.snakes.forEach(s => { if(!s.dead) { mtx.fillStyle = s === this.player ? '#fff' : s.color; mtx.fillRect(s.pos.x*0.025, s.pos.y*0.025, 2, 2); } });
             },
 
-            drawMinimap() {
-                const mCanvas = document.getElementById('minimapCanvas');
-                const mCtx = mCanvas.getContext('2d');
-                mCtx.clearRect(0,0,100,100);
-                const ratio = 100/CFG.MAP_SIZE;
-                this.snakes.forEach(s => {
-                    if(s.dead) return;
-                    mCtx.fillStyle = s === this.player ? '#fff' : s.color;
-                    mCtx.fillRect(s.pos.x*ratio, s.pos.y*ratio, 2, 2);
-                });
-            },
-
-            refreshLeaderboard() {
+            updateRanking() {
                 const sorted = [...this.snakes].sort((a,b)=>b.mass-a.mass).slice(0, 10);
-                const list = document.getElementById('leader-list');
-                list.innerHTML = '';
+                const list = document.getElementById('leader-list'); list.innerHTML = '';
                 sorted.forEach((s, i) => {
-                    const item = document.createElement('div');
-                    item.className = `leader-item ${s === this.player ? 'me' : ''}`;
-                    item.innerHTML = `<span>${i+1}. ${s.name}</span><span>${Math.floor(s.mass)}</span>`;
-                    list.appendChild(item);
+                    const d = document.createElement('div'); d.className = `leader-item ${s === this.player ? 'me' : ''}`;
+                    d.innerHTML = `<span>${i+1}. ${s.name}</span><span>${Math.floor(s.mass)}</span>`;
+                    list.appendChild(d);
                 });
             },
 
-            loop() {
-                this.update();
-                this.draw();
-                requestAnimationFrame(() => this.loop());
-            }
+            loop() { this.update(); this.draw(); requestAnimationFrame(() => this.loop()); }
         };
 
-        // UI Bindings
         document.getElementById('start-btn').onclick = () => game.start();
-        document.getElementById('restart-btn').onclick = () => {
-            document.getElementById('death-overlay').style.display = 'none';
-            game.start();
-        };
-
-        // Start Engine
+        document.getElementById('restart-btn').onclick = () => { document.getElementById('death-overlay').style.display = 'none'; game.start(); };
         game.init();
-
     </script>
 </body>
 </html>
