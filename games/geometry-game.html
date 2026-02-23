@@ -1,370 +1,589 @@
 <!DOCTYPE html>
 <html lang="pl" style="background-color: #020617;">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Spinner Dash – SpinnerRealYT Games</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Spinner Dash – SpinnerRealYT Games</title>
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#020617">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#020617">
 
-    <link rel="icon" type="image/png" href="../Logo.png?v=2">
-    
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+<link rel="icon" type="image/png" href="../Logo.png?v=2">
+<link rel="apple-touch-icon" href="../Logo.png?v=2">
 
-    <style>
-        :root {
-            --bg: #020617;
-            --accent: #38bdf8;
-            --text: #e5e7eb;
-            --ship-color: #facc15;
-        }
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            margin: 0; font-family: Inter, sans-serif;
-            background: #020617; color: var(--text);
-            overflow: hidden; touch-action: none; user-select: none;
-        }
+<style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
+  --ship:#facc15;
+}
 
-        header {
-            display: flex; align-items: center; justify-content: space-between; padding: 15px 20px;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
-            position: fixed; top: 0; width: 100%; z-index: 100;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-        }
-        header img { height: 32px; }
-        .account-box { text-align: right; }
-        .user-info { font-size: 13px; color: var(--accent); font-weight: bold; }
-        nav button { background: none; border: none; color: var(--text); padding: 8px 14px; cursor: pointer; border-radius: 10px; }
-        nav button:hover { background: rgba(56, 189, 248, 0.15); }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        main { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding-top: 60px; }
+body {
+  margin: 0; 
+  font-family: Inter, sans-serif;
+  background: radial-gradient(circle at top, #1e293b, #020617);
+  background-attachment: fixed;
+  color: var(--text); 
+  user-select: none;
+  min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
-        #game-container {
-            position: relative; width: 100%; max-width: 800px; height: 400px;
-            background: linear-gradient(to bottom, #0f172a, #020617);
-            border: 2px solid rgba(56, 189, 248, 0.2); border-radius: 15px; overflow: hidden;
-        }
+header {
+  display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 20px;
+  background: rgba(15, 23, 42, 0.9); 
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+}
+header img { height: 32px; }
 
-        canvas { display: block; width: 100%; height: 100%; }
+.account-box { text-align: right; }
+.user-info { font-size: 13px; color: var(--accent); font-weight: bold; }
+.sync-status { font-size: 9px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 1px;}
 
-        #ui-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.7); z-index: 10;
-        }
+nav button {
+  background: none; border: none; color: var(--text); font-size: 15px;
+  padding: 8px 14px; border-radius: 10px; cursor: pointer;
+}
+nav button:hover { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
 
-        .menu-card { background: #1e293b; padding: 30px; border-radius: 24px; text-align: center; border: 1px solid var(--accent); }
-        select, button {
-            background: #0f172a; color: white; border: 1px solid var(--accent);
-            border-radius: 12px; padding: 12px; font-size: 16px; margin: 10px; width: 200px; cursor: pointer;
-        }
-        button:active { transform: scale(0.95); }
+main { max-width: 700px; margin: auto; padding: 10px; }
 
-        #progress-bar {
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-            width: 60%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;
-        }
-        #progress-fill { width: 0%; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.1s; }
-        
-        #game-info { position: absolute; bottom: 10px; left: 20px; font-size: 12px; color: var(--accent); }
-        .mode-badge {
-            position: absolute; top: 25px; left: 50%; transform: translateX(-50%);
-            font-weight: 900; font-size: 20px; text-transform: uppercase; letter-spacing: 2px;
-            opacity: 0.5; pointer-events: none;
-        }
-    </style>
+.card {
+  background: linear-gradient(180deg, #0f172a, #020617);
+  border-radius: 24px; padding: 15px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+h2 { text-align: center; margin-top: 0; margin-bottom: 15px; font-weight: 800; letter-spacing: -1px; }
+
+#menu {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  margin-bottom: 15px;
+}
+
+select, button {
+  background: #1e293b; color: white; border: 1px solid #334155;
+  border-radius: 12px; padding: 10px 12px; font-size: 14px; outline: none;
+  -webkit-appearance: none;
+}
+
+.btn-primary { 
+    cursor: pointer; background: var(--card); border: 1px solid var(--accent); 
+    color: var(--accent); font-weight: bold; width: 100%; max-width: 220px;
+}
+.btn-primary:active { transform: scale(0.96); }
+
+.game-info-bar {
+    display: flex; justify-content: space-between; width: 100%; max-width: 400px;
+    font-size: 13px; color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 10px;
+}
+
+#game-wrapper {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background: #000;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Wewnętrzny popup gry (zamiast alertów) */
+#in-game-popup {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 10;
+}
+#popup-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+#popup-msg { font-size: 14px; color: #94a3b8; margin-bottom: 20px; text-align: center; padding: 0 20px; }
+
+#points-info {
+    text-align: center; margin-top: 15px; font-weight: bold; padding: 10px;
+    border-top: 1px solid #334155; font-size: 1.2rem;
+}
+
+footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
+
+.instruction { font-size: 11px; color: #64748b; text-align: center; margin-top: 10px; }
+</style>
 </head>
 <body>
 
 <header>
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="../Logo.png" alt="Logo">
-        <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
-    </div>
-    <div class="account-box">
-        <div id="user-display" class="user-info">GUEST</div>
-        <div id="points-display" style="font-size: 10px; color: #94a3b8;">Points: 0</div>
-    </div>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="../Logo.png" alt="SpinnerRealYT">
+    <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
+  </div>
+  <div class="account-box">
+    <div id="user-display" class="user-info">GUEST</div>
+    <div id="sync-display" class="sync-status">OFFLINE</div>
+  </div>
 </header>
 
 <main>
-    <div id="game-container">
-        <div id="ui-overlay">
-            <div class="menu-card">
-                <h2 style="margin-top:0; color:var(--accent)">SPINNER DASH</h2>
-                <select id="diff-select">
-                    <option value="1">Łatwy (Easy)</option>
-                    <option value="1.5">Średni (Medium)</option>
-                    <option value="2">Trudny (Hard)</option>
-                    <option value="2.5">Ekstremalny (Extreme)</option>
-                </select>
-                <br>
-                <button id="start-btn">START</button>
-            </div>
-        </div>
-
-        <div id="progress-bar"><div id="progress-fill"></div></div>
-        <div id="game-info">PUNKTY ZA WYGRANĄ: +5</div>
-        <div id="mode-badge" class="mode-badge">CUBE</div>
-        <canvas id="gameCanvas"></canvas>
+  <div class="card" id="main-card">
+    <h2>🚀 Spinner Dash</h2>
+    
+    <div id="menu">
+      <select id="difficulty-select">
+        <option value="1">Łatwy (Wolniejszy)</option>
+        <option value="1.5" selected>Średni (Standard)</option>
+        <option value="2">Trudny (Szybki)</option>
+        <option value="2.5">Ekstremalny (Bardzo szybki)</option>
+      </select>
+      <button id="start-btn" class="btn-primary">START GRY</button>
+      
+      <div class="game-info-bar">
+          <div id="info">Przetrwaj 60s!</div>
+          <div id="timer">⏱️ 0.0s</div>
+      </div>
     </div>
-    <p style="font-size: 12px; color: #64748b; margin-top: 15px;">SPACJA / KLIKNIĘCIE = SKOK LUB LOT</p>
+
+    <div id="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+        <div id="in-game-popup">
+            <div id="popup-title" style="color: var(--accent);">GOTOWY?</div>
+            <div id="popup-msg">Wybierz poziom trudności i kliknij START.</div>
+            <button id="popup-btn" class="btn-primary" style="display: none;">ZAGRAJ PONOWNIE</button>
+        </div>
+    </div>
+    
+    <div class="instruction">Spacja lub kliknięcie w ekran gry, aby skakać / latać.</div>
+    <div id="points-info" style="color: var(--accent);">Points: 0</div>
+  </div>
 </main>
+
+<footer>© 2026 SpinnerRealYT Games • iOS 26 Optimized</footer>
 
 <script>
 (() => {
-    const firebaseConfig = {
+    const firebaseConfig = { 
         apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
         authDomain: "spinnerrealyt-games.firebaseapp.com",
-        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
+        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
     };
+    
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
     const loggedUser = localStorage.getItem("sp_logged");
+    const syncEl = document.getElementById('sync-display');
+    const pointsInfoEl = document.getElementById('points-info');
 
+    let totalPoints = 0;
+
+    // Elementy UI
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const ui = document.getElementById('ui-overlay');
-    const progFill = document.getElementById('progress-fill');
-    const modeBadge = document.getElementById('mode-badge');
-
-    let points = 0;
+    const wrapper = document.getElementById('game-wrapper');
+    const timerEl = document.getElementById('timer');
+    const infoEl = document.getElementById('info');
     
-    // Inicjalizacja Firebase
-    auth.onAuthStateChanged(user => {
+    const popup = document.getElementById('in-game-popup');
+    const popupTitle = document.getElementById('popup-title');
+    const popupMsg = document.getElementById('popup-msg');
+    const popupBtn = document.getElementById('popup-btn');
+
+    // System konta i Firebase
+    auth.onAuthStateChanged((user) => {
         if(user && loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-            db.ref('users/' + loggedUser + '/points').on('value', snap => {
-                points = snap.val() || 0;
-                document.getElementById('points-display').textContent = `Points: ${points}`;
-            });
+            loadData();
+        } else if (loggedUser) {
+            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+            syncEl.textContent = "Connecting...";
         }
     });
 
-    // Ustawienia gry
-    let gameActive = false;
-    let difficulty = 1;
-    let score = 0;
-    let gameTime = 0;
-    const levelDuration = 60 * 60; // 60 sekund przy 60fps
+    async function loadData() {
+        if(!loggedUser) return;
+        try {
+            const snap = await db.ref('users/' + loggedUser + '/points').once('value');
+            totalPoints = snap.exists() ? snap.val() : 0;
+            pointsInfoEl.textContent = `Points: ${totalPoints}`;
+            syncEl.textContent = "Synced";
+            syncEl.style.color = "#4ade80";
+        } catch(e) { syncEl.textContent = "Error"; }
+    }
 
-    const player = {
-        x: 100, y: 300, w: 30, h: 30,
-        dy: 0, gravity: 0.6, jump: -10,
-        rotation: 0, isShip: false,
-        isPressing: false
+    async function savePoints(added) {
+        if(!loggedUser || !auth.currentUser) return;
+        totalPoints += added;
+        pointsInfoEl.textContent = `Points: ${totalPoints}`;
+        try {
+            await db.ref('users/' + loggedUser).update({ points: totalPoints });
+            syncEl.textContent = "Saved";
+            syncEl.style.color = "#4ade80";
+        } catch(e) { syncEl.textContent = "Sync Error"; }
+    }
+
+    // Dopasowanie rozmiaru płótna
+    function resizeCanvas() {
+        canvas.width = wrapper.clientWidth;
+        canvas.height = wrapper.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Zmienne Gry
+    let gameActive = false;
+    let animationId;
+    let frameCount = 0;
+    let difficulty = 1;
+    const FPS = 60;
+    const MAX_TIME = 60; // 60 sekund
+    const SAFE_FRAMES = 5 * FPS; // 5 sekund na przygotowanie
+
+    // Zmienne Samolocika
+    let hasShipSection = false;
+    let shipStartFrame = 0;
+    let shipEndFrame = 0;
+    
+    let player = {
+        x: 50, y: 0, w: 24, h: 24,
+        dy: 0, gravity: 0.8, jumpForce: -11,
+        isJumping: false, rotation: 0,
+        isShip: false, isPressing: false
     };
 
     let obstacles = [];
     let particles = [];
+    let groundY = 0;
 
-    function resize() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    // Kontrolery
-    const handleAction = (e) => {
+    // Sterowanie
+    function handleInput(e) {
+        if(e.type !== 'keydown') e.preventDefault();
+        if(e.type === 'keydown' && e.code !== 'Space') return;
+        
         if (!gameActive) return;
         player.isPressing = true;
-        if (!player.isShip && player.y >= canvas.height - player.h - 5) {
-            player.dy = player.jump;
-        }
-    };
-    const stopAction = () => player.isPressing = false;
-
-    window.addEventListener('keydown', e => { if(e.code === 'Space') handleAction(); });
-    window.addEventListener('keyup', e => { if(e.code === 'Space') stopAction(); });
-    canvas.addEventListener('mousedown', handleAction);
-    window.addEventListener('mouseup', stopAction);
-    canvas.addEventListener('touchstart', e => { e.preventDefault(); handleAction(); });
-    canvas.addEventListener('touchend', stopAction);
-
-    function spawnObstacle() {
-        if (!gameActive) return;
-        let type = Math.random() > 0.4 ? 'spike' : 'block';
-        let obs = {
-            x: canvas.width + 100,
-            w: 30,
-            h: type === 'spike' ? 30 : 40,
-            type: type
-        };
-        obstacles.push(obs);
         
-        let nextSpawn = (Math.random() * 1000 / difficulty) + 600;
-        setTimeout(spawnObstacle, nextSpawn);
+        if (!player.isShip && !player.isJumping) {
+            player.dy = player.jumpForce;
+            player.isJumping = true;
+        }
     }
 
-    function resetGame() {
-        player.y = canvas.height - 35;
+    function handleInputEnd(e) {
+        if(e.type !== 'keyup') e.preventDefault();
+        if(e.type === 'keyup' && e.code !== 'Space') return;
+        player.isPressing = false;
+    }
+
+    window.addEventListener('keydown', handleInput);
+    window.addEventListener('keyup', handleInputEnd);
+    wrapper.addEventListener('mousedown', handleInput);
+    window.addEventListener('mouseup', handleInputEnd);
+    wrapper.addEventListener('touchstart', handleInput, {passive: false});
+    window.addEventListener('touchend', handleInputEnd);
+
+    // Resetowanie gry
+    function startGame() {
+        resizeCanvas();
+        difficulty = parseFloat(document.getElementById('difficulty-select').value);
+        groundY = canvas.height - 20;
+        
+        player.y = groundY - player.h;
         player.dy = 0;
         player.rotation = 0;
+        player.isJumping = false;
         player.isShip = false;
+        player.isPressing = false;
+        
         obstacles = [];
-        score = 0;
-        gameTime = 0;
+        particles = [];
+        frameCount = 0;
         gameActive = true;
-        ui.style.display = 'none';
-        modeBadge.textContent = "CUBE";
-        modeBadge.style.color = "var(--accent)";
-        spawnObstacle();
-        requestAnimationFrame(update);
+        
+        // Logika generowania trybu samolotu (20% szans)
+        hasShipSection = Math.random() < 0.20;
+        if(hasShipSection) {
+            // Samolot zaczyna się losowo między 10s a 35s gry, trwa 20s
+            const startSec = Math.floor(Math.random() * 25) + 10;
+            shipStartFrame = startSec * FPS;
+            shipEndFrame = shipStartFrame + (20 * FPS);
+        } else {
+            shipStartFrame = 0;
+            shipEndFrame = 0;
+        }
+
+        popup.style.display = 'none';
+        infoEl.textContent = hasShipSection ? "Tryb: MIESZANY ✈️" : "Tryb: KOSTKA ⬛";
+        infoEl.style.color = "#94a3b8";
+
+        cancelAnimationFrame(animationId);
+        gameLoop();
     }
 
-    function die() {
+    // Wyświetlanie Popupów Wewnętrznych
+    function showPopup(title, msg, color, showBtn) {
         gameActive = false;
-        ui.style.display = 'flex';
-        // Prosta animacja cząsteczek przy śmierci
-        for(let i=0; i<15; i++) {
-            particles.push({
-                x: player.x, y: player.y,
-                dx: (Math.random()-0.5)*10, dy: (Math.random()-0.5)*10,
-                life: 30
+        popupTitle.textContent = title;
+        popupTitle.style.color = color;
+        popupMsg.textContent = msg;
+        popupBtn.style.display = showBtn ? 'block' : 'none';
+        popup.style.display = 'flex';
+    }
+
+    function spawnObstacle() {
+        const speed = 6 * difficulty;
+        
+        if(player.isShip) {
+            // Przeszkody dla statku (kolumny z przerwą)
+            const gap = 100;
+            const topHeight = Math.random() * (canvas.height - gap - 60) + 20;
+            obstacles.push({
+                x: canvas.width, w: 30, h: topHeight, y: 0, type: 'pillar', passed: false
+            });
+            obstacles.push({
+                x: canvas.width, w: 30, h: canvas.height - topHeight - gap - 20, 
+                y: topHeight + gap, type: 'pillar', passed: false
+            });
+        } else {
+            // Przeszkody dla kostki (kolce lub klocki)
+            const isSpike = Math.random() > 0.4;
+            obstacles.push({
+                x: canvas.width, w: 24, h: isSpike ? 24 : 35,
+                y: groundY - (isSpike ? 24 : 35), type: isSpike ? 'spike' : 'block', passed: false
             });
         }
     }
 
-    async function win() {
-        gameActive = false;
-        ui.style.display = 'flex';
-        if(loggedUser && auth.currentUser) {
-            points += 5;
-            await db.ref('users/' + loggedUser).update({ points: points });
+    function createParticles(x, y, color) {
+        for(let i=0; i<15; i++) {
+            particles.push({
+                x: x + player.w/2, y: y + player.h/2,
+                dx: (Math.random()-0.5)*8, dy: (Math.random()-0.5)*8,
+                life: 30, color: color
+            });
         }
-        alert("POZIOM UKOŃCZONY! +5 PKT");
     }
 
-    function update() {
-        if (!gameActive) return;
+    function gameOver() {
+        createParticles(player.x, player.y, "#f87171");
+        showPopup("ROZBITY!", `Przetrwałeś: ${(frameCount/FPS).toFixed(1)}s`, "#ef4444", true);
+    }
 
-        gameTime++;
-        progFill.style.width = (gameTime / levelDuration * 100) + "%";
+    function gameWin() {
+        let pointsEarned = 0;
+        if(difficulty === 1) pointsEarned = 1;
+        if(difficulty === 1.5) pointsEarned = 2;
+        if(difficulty === 2) pointsEarned = 3;
+        if(difficulty === 2.5) pointsEarned = 5;
 
-        if (gameTime >= levelDuration) { win(); return; }
+        savePoints(pointsEarned);
+        showPopup("WYGRANA!", `Zaliczyłeś poziom! Zdobywasz +${pointsEarned} pkt.`, "#4ade80", true);
+    }
 
-        // Logika Samolocika (Ship Mode) - 20% szans na sekcję co jakiś czas
-        // Tutaj uproszczone: między 20s a 40s trwania poziomu
-        if (gameTime > 1200 && gameTime < 2400) {
-            if (!player.isShip) {
+    function gameLoop() {
+        if (!gameActive) {
+            // Rysuj ostatnią klatkę przed śmiercią/wygraną
+            draw();
+            return;
+        }
+
+        frameCount++;
+        let currentSeconds = (frameCount / FPS).toFixed(1);
+        timerEl.textContent = `⏱️ ${currentSeconds}s`;
+
+        // Zwycięstwo po 60 sekundach
+        if (frameCount >= MAX_TIME * FPS) {
+            gameWin();
+            return;
+        }
+
+        // Kontrola trybu statku
+        if (hasShipSection) {
+            if (frameCount === shipStartFrame) {
                 player.isShip = true;
-                modeBadge.textContent = "SHIP MODE";
-                modeBadge.style.color = "var(--ship-color)";
+                infoEl.textContent = "UWAGA: SAMOLOT!";
+                infoEl.style.color = "#facc15";
+                obstacles = []; // Czyścimy ekran przy zmianie
             }
-        } else {
-            if (player.isShip) {
+            if (frameCount === shipEndFrame) {
                 player.isShip = false;
-                modeBadge.textContent = "CUBE";
-                modeBadge.style.color = "var(--accent)";
+                player.rotation = 0;
+                infoEl.textContent = "POWRÓT DO KOSTKI!";
+                infoEl.style.color = "#38bdf8";
+                obstacles = [];
             }
         }
 
-        // Fizyka
+        // Spawnowanie przeszkód (po 5 sekundach)
+        if (frameCount > SAFE_FRAMES) {
+            // Częstotliwość zależy od trudności i trybu
+            const spawnRate = player.isShip ? Math.floor(70 / difficulty) : Math.floor(55 / difficulty);
+            if (frameCount % spawnRate === 0) {
+                spawnObstacle();
+            }
+        }
+
+        // Fizyka Gracza
         if (player.isShip) {
-            player.gravity = 0.35;
-            if (player.isPressing) player.dy -= 0.8;
+            player.gravity = 0.3;
+            if (player.isPressing) player.dy -= 0.6;
             else player.dy += player.gravity;
             
-            // Ograniczenie góra/dół w statku
+            player.dy = Math.max(-6, Math.min(player.dy, 6)); // Limit prędkości
+            player.y += player.dy;
+
+            // Granice statku
             if (player.y < 0) { player.y = 0; player.dy = 0; }
-            if (player.y > canvas.height - player.h) die(); 
+            if (player.y > groundY - player.h) { gameOver(); return; }
+
+            // Rotacja statku dla wizualnego efektu
+            player.rotation = player.dy * 4; 
+
         } else {
+            // Fizyka Kostki
             player.dy += player.gravity;
             player.y += player.dy;
-            if (player.y > canvas.height - player.h - 5) {
-                player.y = canvas.height - player.h - 5;
+
+            if (player.y >= groundY - player.h) {
+                player.y = groundY - player.h;
                 player.dy = 0;
+                player.isJumping = false;
+                // Wyrównanie rotacji do 90 stopni
                 player.rotation = Math.round(player.rotation / 90) * 90;
             } else {
-                player.rotation += 5 * difficulty;
+                player.rotation += 6 * difficulty;
             }
         }
-        player.y += player.dy;
 
-        // Przeszkody
+        // Aktualizacja Przeszkód i Kolizje
+        const speed = 6 * difficulty;
         for (let i = obstacles.length - 1; i >= 0; i--) {
-            obstacles[i].x -= 5 * difficulty;
+            let obs = obstacles[i];
+            obs.x -= speed;
 
-            // Kolizja (Hitbox nieco mniejszy dla sprawiedliwości)
-            if (player.x + player.w - 5 > obstacles[i].x && 
-                player.x + 5 < obstacles[i].x + obstacles[i].w &&
-                player.y + player.h - 5 > (canvas.height - obstacles[i].h - 5)) {
-                die();
+            // Hitbox kolizji (trochę wyrozumiały: zmniejszony o 4px z każdej strony)
+            const margin = 4;
+            if (player.x + margin < obs.x + obs.w &&
+                player.x + player.w - margin > obs.x &&
+                player.y + margin < obs.y + obs.h &&
+                player.y + player.h - margin > obs.y) {
+                gameOver();
+                return;
             }
 
-            if (obstacles[i].x < -50) obstacles.splice(i, 1);
+            if (obs.x + obs.w < 0) obstacles.splice(i, 1);
         }
 
         draw();
-        requestAnimationFrame(update);
+        animationId = requestAnimationFrame(gameLoop);
     }
 
     function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Podłoga
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+        // Grid w tle (delikatny)
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(0, canvas.height - 5);
-        ctx.lineTo(canvas.width, canvas.height - 5);
+        for(let i=0; i<canvas.width; i+=40) { ctx.moveTo(i, 0); ctx.lineTo(i, groundY); }
+        for(let i=0; i<groundY; i+=40) { ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); }
         ctx.stroke();
 
-        // Przeszkody
-        ctx.fillStyle = '#f87171';
-        obstacles.forEach(o => {
-            if (o.type === 'spike') {
+        // Podłoże
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
+
+        // Ostrzeżenie przed startem (pierwsze 5 sekund)
+        if(gameActive && frameCount <= SAFE_FRAMES) {
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.font = '20px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText("PRZYGOTUJ SIĘ...", canvas.width/2, canvas.height/2);
+            ctx.fillText(`START ZA: ${((SAFE_FRAMES - frameCount)/FPS).toFixed(1)}s`, canvas.width/2, canvas.height/2 + 30);
+        }
+
+        // Rysowanie Przeszkód
+        obstacles.forEach(obs => {
+            if (obs.type === 'spike') {
+                ctx.fillStyle = '#ef4444';
                 ctx.beginPath();
-                ctx.moveTo(o.x, canvas.height - 5);
-                ctx.lineTo(o.x + o.w / 2, canvas.height - 5 - o.h);
-                ctx.lineTo(o.x + o.w, canvas.height - 5);
+                ctx.moveTo(obs.x, obs.y + obs.h);
+                ctx.lineTo(obs.x + obs.w / 2, obs.y);
+                ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
                 ctx.fill();
             } else {
-                ctx.fillRect(o.x, canvas.height - 5 - o.h, o.w, o.h);
-                ctx.strokeRect(o.x, canvas.height - 5 - o.h, o.w, o.h);
+                ctx.fillStyle = '#020617';
+                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+                ctx.strokeStyle = '#38bdf8';
+                ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
             }
         });
 
-        // Gracz
-        ctx.save();
-        ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
-        if (!player.isShip) ctx.rotate(player.rotation * Math.PI / 180);
-        
-        ctx.fillStyle = player.isShip ? var(--ship-color) : var(--accent);
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = ctx.fillStyle;
-        
-        // Wygląd statku vs kostki
-        if(player.isShip) {
-            ctx.beginPath();
-            ctx.moveTo(-15, 0); ctx.lineTo(15, -10); ctx.lineTo(15, 10); ctx.closePath();
-            ctx.fill();
-        } else {
-            ctx.fillRect(-player.w / 2, -player.h / 2, player.w, player.h);
-            ctx.strokeStyle = "white";
-            ctx.strokeRect(-player.w / 2, -player.h / 2, player.w, player.h);
+        // Rysowanie Gracza
+        if(gameActive) {
+            ctx.save();
+            ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
+            ctx.rotate(player.rotation * Math.PI / 180);
+            
+            if (player.isShip) {
+                ctx.fillStyle = '#facc15';
+                ctx.shadowBlur = 10; ctx.shadowColor = '#facc15';
+                ctx.beginPath();
+                ctx.moveTo(-12, -6); ctx.lineTo(12, 0); ctx.lineTo(-12, 6);
+                ctx.closePath(); ctx.fill();
+            } else {
+                ctx.fillStyle = '#38bdf8';
+                ctx.shadowBlur = 10; ctx.shadowColor = '#38bdf8';
+                ctx.fillRect(-player.w / 2, -player.h / 2, player.w, player.h);
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+                ctx.strokeRect(-player.w / 2, -player.h / 2, player.w, player.h);
+            }
+            ctx.restore();
         }
-        ctx.restore();
 
-        // Cząsteczki
+        // Rysowanie Cząsteczek
         particles.forEach((p, i) => {
             p.x += p.dx; p.y += p.dy; p.life--;
-            ctx.fillStyle = `rgba(56, 189, 248, ${p.life/30})`;
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.life / 30);
             ctx.fillRect(p.x, p.y, 4, 4);
             if(p.life <= 0) particles.splice(i, 1);
         });
+        ctx.globalAlpha = 1;
     }
 
-    document.getElementById('start-btn').onclick = () => {
-        difficulty = parseFloat(document.getElementById('diff-select').value);
-        resetGame();
-    };
+    // Event Listenery dla przycisków
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    popupBtn.addEventListener('click', startGame);
+
+    // Initial draw
+    showPopup("GOTOWY?", "Wybierz poziom trudności i kliknij START.", "#38bdf8", false);
+    draw();
 
 })();
 </script>
