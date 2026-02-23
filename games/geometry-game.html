@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl" style="background-color: #020617;">
+<html lang="pl" style="background-color: #020617; margin: 0; padding: 0;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Spinner Dash: Insane Edition</title>
+    <title>Spinner Dash: Hardcore Generator Edition</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,16 +16,13 @@
 
     <style>
         :root {
-            --bg-color: #020617;
-            --panel-bg: rgba(15, 23, 42, 0.95);
-            --accent-blue: #38bdf8;
-            --accent-red: #ef4444;
-            --accent-gold: #facc15;
-            --accent-green: #4ade80;
-            --accent-purple: #d946ef;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-glow: rgba(56, 189, 248, 0.3);
+            --bg: #020617;
+            --panel: #0f172a;
+            --accent: #38bdf8;
+            --danger: #ef4444;
+            --gold: #facc15;
+            --victory: #4ade80;
+            --shadow: rgba(0, 0, 0, 0.7);
         }
 
         * {
@@ -33,99 +30,87 @@
             -webkit-tap-highlight-color: transparent;
             margin: 0;
             padding: 0;
-            outline: none;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: #f8fafc;
             overflow: hidden;
             touch-action: none;
-            user-select: none;
             height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* --- UI NAVIGATION --- */
         header {
-            height: 65px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 60px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
-            z-index: 1000;
+            z-index: 500;
         }
 
-        .brand {
+        .logo-area {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .brand img {
-            height: 32px;
-            filter: drop-shadow(0 0 8px var(--accent-blue));
+        .logo-area img {
+            height: 30px;
+            filter: drop-shadow(0 0 5px var(--accent));
         }
 
-        .nav-link {
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid var(--accent-blue);
-            color: var(--accent-blue);
-            padding: 6px 14px;
+        .btn-exit {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 5px 12px;
             border-radius: 6px;
             text-decoration: none;
-            font-weight: 700;
-            font-size: 13px;
+            font-weight: bold;
+            font-size: 12px;
             transition: 0.2s;
         }
 
-        .nav-link:hover {
-            background: var(--accent-blue);
-            color: var(--bg-color);
+        .btn-exit:hover {
+            background: var(--danger);
+            color: white;
         }
 
-        .user-panel {
+        .stats-display {
             text-align: right;
-            line-height: 1.2;
         }
 
-        .user-name {
+        #user-display-name {
+            color: var(--accent);
+            font-weight: 800;
             font-size: 14px;
-            font-weight: 900;
-            color: var(--accent-blue);
-            letter-spacing: 0.5px;
         }
 
-        .user-pts {
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        /* --- GAME LAYOUT --- */
         main {
             flex: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
-            position: relative;
+            padding: 20px;
+            background: radial-gradient(circle at center, #111827 0%, #020617 100%);
         }
 
         .viewport {
             position: relative;
             width: 100%;
-            max-width: 960px;
+            max-width: 1000px;
             aspect-ratio: 16 / 7;
             background: #000;
-            border-radius: 16px;
-            border: 2px solid var(--border-glow);
-            box-shadow: 0 0 40px rgba(0,0,0,0.9);
+            border-radius: 12px;
+            border: 3px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
             overflow: hidden;
         }
 
@@ -135,265 +120,239 @@
             display: block;
         }
 
-        /* --- OVERLAYS --- */
+        /* UI Overlays */
         .overlay {
             position: absolute;
             inset: 0;
-            z-index: 100;
+            background: rgba(2, 6, 23, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(5px);
-            transition: opacity 0.3s;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
         }
 
-        .card {
-            background: #0f172a;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 30px;
+        .menu-card {
+            background: var(--panel);
+            padding: 40px;
             border-radius: 24px;
-            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
             width: 90%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 480px;
+            text-align: center;
+            box-shadow: 0 20px 40px var(--shadow);
         }
 
-        .card h1 {
-            font-size: 32px;
+        .menu-card h1 {
+            font-size: 36px;
             font-weight: 900;
-            margin-bottom: 20px;
-            color: var(--accent-blue);
-            text-transform: uppercase;
-            letter-spacing: -1px;
-        }
-
-        .difficulty-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
             margin-bottom: 25px;
+            background: linear-gradient(45deg, var(--accent), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .diff-btn {
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .diff-option {
             background: #1e293b;
-            border: 1px solid #334155;
-            padding: 12px;
+            padding: 15px;
             border-radius: 12px;
             cursor: pointer;
+            border: 2px solid transparent;
             transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
-        .diff-btn.active {
-            border-color: var(--accent-blue);
-            background: rgba(56, 189, 248, 0.1);
-            transform: translateY(-2px);
+        .diff-option.selected {
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.15);
+            transform: scale(1.03);
         }
 
-        .diff-btn .title {
+        .diff-option .name {
+            display: block;
             font-weight: 800;
-            font-size: 13px;
-            margin-bottom: 2px;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
 
-        .diff-btn .multiplier {
+        .diff-option .val {
             font-size: 10px;
-            color: var(--text-secondary);
+            color: #94a3b8;
         }
 
-        .btn-main {
+        .btn-play {
             width: 100%;
-            padding: 16px;
-            background: var(--accent-blue);
-            color: #000;
+            padding: 18px;
+            background: var(--accent);
+            color: #020617;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
+            font-size: 20px;
             font-weight: 900;
-            font-size: 16px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
             transition: 0.2s;
         }
 
-        .btn-main:hover {
-            filter: brightness(1.1);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        .btn-play:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
         }
 
-        .btn-main:active {
-            transform: scale(0.97);
-        }
-
-        /* --- HUD --- */
-        .hud {
+        /* HUD Items */
+        .game-hud {
             position: absolute;
-            top: 15px;
+            top: 20px;
             left: 20px;
             right: 20px;
             pointer-events: none;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            z-index: 50;
+            z-index: 100;
         }
 
-        .hud-item {
-            background: rgba(0,0,0,0.6);
-            padding: 6px 14px;
-            border-radius: 12px;
+        .badge {
+            background: rgba(0,0,0,0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--accent);
         }
 
-        .progress-bar-container {
+        .progress-container {
             position: absolute;
-            top: 12px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 200px;
-            height: 8px;
+            width: 300px;
+            height: 6px;
             background: rgba(255,255,255,0.1);
             border-radius: 10px;
             overflow: hidden;
         }
 
-        .progress-bar-fill {
+        .progress-bar {
             height: 100%;
             width: 0%;
-            background: var(--accent-blue);
-            box-shadow: 0 0 10px var(--accent-blue);
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
         }
 
-        .countdown {
+        .countdown-text {
             position: absolute;
             inset: 0;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 100px;
+            font-size: 150px;
             font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 30px var(--accent-blue);
-            z-index: 200;
+            color: white;
+            z-index: 2000;
+            text-shadow: 0 0 40px var(--accent);
         }
 
-        /* --- FOOTER --- */
-        footer {
-            padding: 20px;
-            text-align: center;
-            color: var(--text-secondary);
+        #death-screen, #win-screen {
+            display: none;
+        }
+
+        .footer-info {
+            padding: 15px;
+            color: #64748b;
             font-size: 12px;
-            max-width: 700px;
+            text-align: center;
         }
 
-        footer b {
-            color: var(--accent-blue);
-        }
-
-        /* --- COLORS BY DIFFICULTY --- */
-        .diff-easy { color: #4ade80; }
-        .diff-medium { color: #38bdf8; }
-        .diff-hard { color: #facc15; }
-        .diff-insane { color: #fb923c; }
-        .diff-demon { color: #ef4444; }
-        .diff-extreme { color: #a855f7; }
+        .footer-info b { color: var(--accent); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand">
-            <img src="../Logo.png" alt="SpinnerLogo">
-            <a href="../index.html" class="nav-link">WYJŚCIE</a>
+        <div class="logo-area">
+            <img src="../Logo.png" alt="Logo">
+            <a href="../index.html" class="btn-exit">WYJŚCIE</a>
         </div>
-        <div class="user-panel">
-            <div id="u-name" class="user-name">GUEST_PLAYER</div>
-            <div id="u-points" class="user-pts">PKT: 0</div>
+        <div class="stats-display">
+            <div id="user-display-name">GUEST_USER</div>
+            <div id="user-display-points" style="font-size: 11px; color: #94a3b8;">PUNKTY: 0</div>
         </div>
     </header>
 
     <main>
-        <div class="viewport" id="game-container">
-            <canvas id="gameCanvas"></canvas>
+        <div class="viewport" id="gameBox">
+            <canvas id="mainCanvas"></canvas>
             
-            <div class="hud">
-                <div id="mode-badge" class="hud-item" style="color: var(--accent-blue);">CUBE MODE</div>
-                <div id="percent-badge" class="hud-item">0%</div>
+            <div id="hud-layer" class="game-hud">
+                <div id="mode-label" class="badge">CUBE MODE</div>
+                <div id="percent-label" class="badge" style="color: white;">0%</div>
             </div>
 
-            <div class="progress-bar-container">
-                <div id="prog-fill" class="progress-bar-fill"></div>
+            <div class="progress-container">
+                <div id="main-progress" class="progress-bar"></div>
             </div>
 
-            <div id="countdown-box" class="countdown">3</div>
+            <div id="cnt-display" class="countdown-text">3</div>
 
-            <div id="menu-overlay" class="overlay">
-                <div class="card">
+            <div id="start-overlay" class="overlay">
+                <div class="menu-card">
                     <h1>SPINNER DASH</h1>
-                    <div class="difficulty-selector">
-                        <div class="diff-btn active" onclick="pickDiff(1, this)">
-                            <span class="title diff-easy">ŁATWY</span>
-                            <span class="multiplier">x1 PKT</span>
+                    <div class="diff-grid">
+                        <div class="diff-option selected" onclick="updateDiff(1, this)">
+                            <span class="name" style="color: var(--victory);">ŁATWY</span>
+                            <span class="val">Prędkość x1.0</span>
                         </div>
-                        <div class="diff-btn" onclick="pickDiff(1.5, this)">
-                            <span class="title diff-medium">ŚREDNI</span>
-                            <span class="multiplier">x2 PKT</span>
+                        <div class="diff-option" onclick="updateDiff(1.5, this)">
+                            <span class="name" style="color: #38bdf8;">ŚREDNI</span>
+                            <span class="val">Prędkość x1.5</span>
                         </div>
-                        <div class="diff-btn" onclick="pickDiff(2, this)">
-                            <span class="title diff-hard">TRUDNY</span>
-                            <span class="multiplier">x3 PKT</span>
+                        <div class="diff-option" onclick="updateDiff(2.2, this)">
+                            <span class="name" style="color: #facc15;">TRUDNY</span>
+                            <span class="val">Prędkość x2.2</span>
                         </div>
-                        <div class="diff-btn" onclick="pickDiff(2.5, this)">
-                            <span class="title diff-insane">INSANE</span>
-                            <span class="multiplier">x5 PKT</span>
-                        </div>
-                        <div class="diff-btn" onclick="pickDiff(3.2, this)">
-                            <span class="title diff-demon">DEMON</span>
-                            <span class="multiplier">x10 PKT</span>
-                        </div>
-                        <div class="diff-btn" onclick="pickDiff(4.5, this)">
-                            <span class="title diff-extreme">EXTREME</span>
-                            <span class="multiplier">x25 PKT</span>
+                        <div class="diff-option" onclick="updateDiff(3.5, this)">
+                            <span class="name" style="color: #f87171;">DEMON</span>
+                            <span class="val">Prędkość x3.5</span>
                         </div>
                     </div>
-                    <button class="btn-main" onclick="preStart()">ZAGRAJ TERAZ</button>
+                    <button class="btn-play" onclick="triggerCountdown()">START LEVEL</button>
                 </div>
             </div>
 
-            <div id="death-overlay" class="overlay" style="display: none; background: rgba(239, 68, 68, 0.25);">
-                <div class="card" style="border-color: var(--accent-red);">
-                    <h1 style="color: var(--accent-red);">KATASTROFA</h1>
-                    <p id="death-info" style="margin-bottom: 20px; font-weight: 700;">Ukończono: 0%</p>
-                    <button class="btn-main" style="background: var(--accent-red); color: white;" onclick="preStart()">SPRÓBUJ PONOWNIE</button>
-                    <button class="btn-main" style="background: transparent; border: 1px solid #fff; color: #fff; margin-top: 10px;" onclick="backToMenu()">MENU</button>
+            <div id="death-screen" class="overlay" style="background: rgba(127, 29, 29, 0.4);">
+                <div class="menu-card" style="border-color: var(--danger);">
+                    <h1 style="color: var(--danger);">CRASHED!</h1>
+                    <p id="death-stat" style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">Postęp: 0%</p>
+                    <button class="btn-play" style="background: var(--danger); color: white;" onclick="triggerCountdown()">RETRY</button>
+                    <button class="btn-play" style="background: transparent; border: 1px solid white; color: white; margin-top: 10px;" onclick="location.reload()">MENU</button>
                 </div>
             </div>
 
-            <div id="win-overlay" class="overlay" style="display: none; background: rgba(74, 222, 128, 0.25);">
-                <div class="card" style="border-color: var(--accent-green);">
-                    <h1 style="color: var(--accent-green);">WYGRANA!</h1>
-                    <p style="margin-bottom: 10px;">Poziom zaliczony na 100%</p>
-                    <h2 id="win-reward" style="color: var(--accent-gold); margin-bottom: 20px;">+0 PKT</h2>
-                    <button class="btn-main" style="background: var(--accent-green); color: #000;" onclick="backToMenu()">KONTYNUUJ</button>
+            <div id="win-screen" class="overlay" style="background: rgba(20, 83, 45, 0.4);">
+                <div class="menu-card" style="border-color: var(--victory);">
+                    <h1 style="color: var(--victory);">LEVEL COMPLETE</h1>
+                    <p style="margin-bottom: 15px;">Wszystkie przeszkody pokonane!</p>
+                    <h2 id="win-pts" style="color: var(--gold); margin-bottom: 25px;">+0 PKT</h2>
+                    <button class="btn-play" style="background: var(--victory); color: #064e3b;" onclick="location.reload()">KONTYNUUJ</button>
                 </div>
             </div>
         </div>
-
-        <footer>
-            Używaj <b>SPACJI</b> lub <b>MYSZKI</b> aby skakać. <br>
-            W trybie statku ✈️ przytrzymaj, aby wznosić się, puść by opadać. Uważaj na <b>CZERWONĄ PODŁOGĘ</b>!
-        </footer>
     </main>
 
+    <div class="footer-info">
+        Klikaj <b>SPACJĘ</b> lub <b>EKRAN</b> aby skakać. Uważaj na <b>CZERWONĄ PODŁOGĘ</b> – dotknięcie jej to koniec gry!
+    </div>
+
     <script>
-        /** * --- KONFIGURACJA I SERCE SYSTEMU ---
-         * Silnik gry oparty na strukturze wektorowej i logice chunkowej.
+        /** * --- SILNIK GRY SPINNER DASH ---
+         * Fizyka, Generacja i Renderowanie.
          */
         const firebaseConfig = {
             apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
@@ -405,55 +364,52 @@
         const auth = firebase.auth();
         const loggedUser = localStorage.getItem("sp_logged");
 
-        let globalPoints = 0;
-        let selectedDiff = 1;
-        let isRunning = false;
-        
-        // Inicjalizacja danych użytkownika
-        auth.onAuthStateChanged(user => {
-            if (user && loggedUser) {
-                document.getElementById('u-name').textContent = loggedUser.toUpperCase();
-                db.ref('users/' + loggedUser + '/points').on('value', snap => {
-                    globalPoints = snap.val() || 0;
-                    document.getElementById('u-points').textContent = `PKT: ${globalPoints}`;
+        let userPoints = 0;
+        let difficultyMult = 1;
+        let gameActive = false;
+
+        // Statystyki użytkownika
+        auth.onAuthStateChanged(u => {
+            if (u && loggedUser) {
+                document.getElementById('user-display-name').textContent = loggedUser.toUpperCase();
+                db.ref('users/' + loggedUser + '/points').on('value', s => {
+                    userPoints = s.val() || 0;
+                    document.getElementById('user-display-points').textContent = `PUNKTY: ${userPoints}`;
                 });
             }
         });
 
-        function pickDiff(v, el) {
-            selectedDiff = v;
-            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
+        function updateDiff(v, el) {
+            difficultyMult = v;
+            document.querySelectorAll('.diff-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
         }
 
-        const canvas = document.getElementById('gameCanvas');
+        const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
-        const viewport = document.getElementById('game-container');
+        const box = document.getElementById('gameBox');
 
-        // Stałe fizyki
-        const PHYSICS = {
-            GRAVITY: 0.85,
-            JUMP_FORCE: -13.5,
-            SHIP_GRAVITY: 0.45,
-            SHIP_THRUST: -1.1,
-            TERMINAL_VELOCITY: 16,
-            GRID: 35
+        const CONFIG = {
+            G: 0.88,
+            JUMP: -13.8,
+            SHIP_G: 0.48,
+            SHIP_POW: -1.15,
+            SIZE: 32,
+            BLOCK: 36
         };
 
         class Particle {
             constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.vx = (Math.random() - 0.5) * 12;
-                this.vy = (Math.random() - 0.5) * 12;
-                this.size = Math.random() * 5 + 2;
+                this.x = x; this.y = y;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
                 this.life = 1.0;
                 this.color = color;
+                this.size = Math.random() * 4 + 2;
             }
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life -= 0.03;
+                this.x += this.vx; this.y += this.vy;
+                this.life -= 0.025;
             }
             draw() {
                 ctx.globalAlpha = this.life;
@@ -463,320 +419,295 @@
             }
         }
 
-        class Engine {
+        class GameEngine {
             constructor() {
-                this.reset();
-                this.bindInputs();
+                this.init();
+                this.setupControls();
             }
 
-            reset() {
+            init() {
                 this.player = {
-                    x: 120,
-                    y: 0,
-                    w: 30,
-                    h: 30,
-                    vy: 0,
-                    rotation: 0,
-                    isShip: false,
-                    isGrounded: false,
-                    dead: false,
-                    trail: []
+                    x: 150, y: 0, w: CONFIG.SIZE, h: CONFIG.SIZE,
+                    vy: 0, rot: 0, isShip: false, grounded: false,
+                    dead: false, trail: []
                 };
-                
                 this.scrollX = 0;
-                this.speed = 7 * (0.8 + (selectedDiff * 0.2));
-                this.levelLength = 40000; 
-                this.groundY = 0; // Ustawiane w resize
-                
+                this.baseSpeed = 7.5 * (0.8 + (difficultyMult * 0.25));
+                this.levelLen = 45000;
+                this.groundY = 0;
                 this.obstacles = [];
                 this.particles = [];
                 this.keys = {};
+                this.frameCount = 0;
                 
-                this.generateLevel();
+                this.createLevel();
             }
 
-            bindInputs() {
-                window.addEventListener('keydown', e => { 
-                    if(e.code === 'Space') { e.preventDefault(); this.keys['Space'] = true; }
+            setupControls() {
+                window.addEventListener('keydown', e => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.keys['Space'] = true;
+                    }
                 });
-                window.addEventListener('keyup', e => { 
-                    if(e.code === 'Space') this.keys['Space'] = false; 
+                window.addEventListener('keyup', e => {
+                    if (e.code === 'Space') this.keys['Space'] = false;
                 });
                 canvas.addEventListener('mousedown', () => this.keys['Space'] = true);
                 window.addEventListener('mouseup', () => this.keys['Space'] = false);
-                canvas.addEventListener('touchstart', e => { e.preventDefault(); this.keys['Space'] = true; }, {passive: false});
+                canvas.addEventListener('touchstart', e => {
+                    e.preventDefault();
+                    this.keys['Space'] = true;
+                }, {passive: false});
                 canvas.addEventListener('touchend', () => this.keys['Space'] = false);
             }
 
-            /** * --- GENERATOR POZIOMU ---
-             * Buduje poziom z modułów, dbając o logikę skoku.
+            /** * --- GENERATOR EKSTREMALNY ---
+             * Logika budowania poziomu z sekcji.
              */
-            generateLevel() {
-                let x = 1200; // Start po odliczaniu
+            createLevel() {
+                let currX = 1500;
                 
-                while(x < this.levelLength) {
-                    const rand = Math.random();
+                while(currX < this.levelLen) {
+                    const roll = Math.random();
                     
-                    // Sekcja statku (20% szans)
-                    if (rand < 0.2 && x < this.levelLength - 5000) {
-                        this.buildShipSection(x);
-                        x += 6000;
-                    } 
-                    // Sekcja zabójczej podłogi
-                    else if (rand < 0.4) {
-                        this.buildDeadlyFloorSection(x);
-                        x += 2500;
-                    }
-                    // Standardowe przeszkody rozbudowane
-                    else {
-                        this.buildComplexChunk(x);
-                        x += 800 + (Math.random() * 400);
+                    if (roll < 0.25) {
+                        this.spawnShipSection(currX);
+                        currX += 5500;
+                    } else if (roll < 0.50) {
+                        this.spawnDeadlyZone(currX);
+                        currX += 3000;
+                    } else if (roll < 0.75) {
+                        this.spawnJumpChain(currX);
+                        currX += 2500;
+                    } else {
+                        this.spawnObstacleCluster(currX);
+                        currX += 1500;
                     }
                 }
             }
 
-            addObj(x, gridY, type, w = 35, h = 35) {
-                // y liczone od dołu
+            addObj(x, gY, type, w=36, h=36) {
                 this.obstacles.push({
-                    x, 
-                    y: gridY * 35, 
-                    type, 
-                    w, 
-                    h,
-                    hitboxPadding: type === 'spike' ? 8 : 2
+                    x, y: gY * 36, w, h, type,
+                    padding: type === 'spike' ? 10 : 2
                 });
             }
 
-            buildComplexChunk(startX) {
-                const types = ['stairs', 'triple_spike', 'flying_islands', 'mixed'];
-                const t = types[Math.floor(Math.random() * types.length)];
-
-                switch(t) {
-                    case 'stairs':
-                        for(let i=0; i<4; i++) {
-                            this.addObj(startX + (i*70), i, 'block');
-                            if(i < 3) this.addObj(startX + (i*70) + 35, 0, 'spike');
+            spawnObstacleCluster(x) {
+                const patterns = [
+                    () => { // Triple Spikes
+                        this.addObj(x, 0, 'spike');
+                        this.addObj(x + 34, 0, 'spike');
+                        this.addObj(x + 68, 0, 'spike');
+                    },
+                    () => { // Stairs
+                        for(let i=0; i<3; i++) {
+                            this.addObj(x + (i*72), i, 'block');
+                            this.addObj(x + (i*72) + 36, i, 'spike');
                         }
-                        break;
-                    case 'triple_spike':
-                        this.addObj(startX, 0, 'spike');
-                        this.addObj(startX + 32, 0, 'spike');
-                        this.addObj(startX + 64, 0, 'spike');
-                        break;
-                    case 'flying_islands':
-                        this.addObj(startX, 2, 'block');
-                        this.addObj(startX + 35, 2, 'block');
-                        this.addObj(startX + 150, 4, 'block');
-                        this.addObj(startX + 185, 4, 'block');
-                        break;
-                    case 'mixed':
-                        this.addObj(startX, 0, 'block');
-                        this.addObj(startX, 1, 'spike');
-                        this.addObj(startX + 200, 0, 'block');
-                        this.addObj(startX + 200, 1, 'block');
-                        this.addObj(startX + 200, 2, 'spike');
-                        break;
-                }
+                    },
+                    () => { // High Pillars
+                        this.addObj(x, 0, 'block');
+                        this.addObj(x, 1, 'block');
+                        this.addObj(x, 2, 'spike');
+                    }
+                ];
+                patterns[Math.floor(Math.random()*patterns.length)]();
             }
 
-            buildDeadlyFloorSection(startX) {
-                const len = 1500;
-                // Oznaczenie podłogi jako zabójczej
+            spawnDeadlyZone(x) {
+                const zoneLen = 2000;
+                // Czerwona podłoga
                 this.obstacles.push({
-                    x: startX,
-                    y: -10,
-                    w: len,
-                    h: 20,
-                    type: 'deadly_floor'
+                    x: x, y: -20, w: zoneLen, h: 40, type: 'danger_floor'
                 });
-
-                // Klocki do skakania
-                for(let i = 0; i < len; i += 300) {
-                    let h = 1 + Math.floor(Math.random() * 2);
-                    this.addObj(startX + i, h, 'block');
-                    this.addObj(startX + i + 35, h, 'block');
+                // Klocki do przeskoczenia strefy
+                for(let i=0; i<zoneLen; i+=400) {
+                    this.addObj(x + i, 1, 'block', 72, 36);
+                    if(Math.random() > 0.5) this.addObj(x + i + 150, 3, 'block', 36, 36);
                 }
             }
 
-            buildShipSection(startX) {
+            spawnShipSection(x) {
                 // Portale
-                this.obstacles.push({ x: startX, y: 0, w: 40, h: 1000, type: 'portal_ship' });
-                this.obstacles.push({ x: startX + 5000, y: 0, w: 40, h: 1000, type: 'portal_cube' });
+                this.obstacles.push({ x: x, y: 0, w: 50, h: 2000, type: 'portal_ship' });
+                this.obstacles.push({ x: x + 5000, y: 0, w: 50, h: 2000, type: 'portal_cube' });
 
-                // Przeszkody w locie (jaskinie)
-                for(let i=400; i<4500; i+=400) {
-                    let gapY = 100 + Math.random() * 150;
-                    // Góra
-                    this.addObj(startX + i, 8, 'block', 40, 200);
-                    // Dół
-                    this.addObj(startX + i, 0, 'block', 40, 60);
+                // Jaskinie
+                for(let i=500; i<4500; i+=600) {
+                    let h = 2 + Math.floor(Math.random()*4);
+                    this.addObj(x + i, h, 'block', 40, 400); // Góra
+                    this.addObj(x + i, 0, 'block', 40, 80);  // Dół
+                }
+            }
+
+            spawnJumpChain(x) {
+                for(let i=0; i<5; i++) {
+                    this.addObj(x + (i*350), i%3, 'block');
+                    this.addObj(x + (i*350) + 40, (i%3), 'spike');
                 }
             }
 
             update() {
                 if (this.player.dead) return;
 
-                this.scrollX += this.speed;
-                const progress = (this.scrollX / this.levelLength) * 100;
-                document.getElementById('prog-fill').style.width = progress + '%';
-                document.getElementById('percent-badge').textContent = Math.floor(progress) + '%';
+                this.frameCount++;
+                this.scrollX += this.baseSpeed;
+                
+                const prog = (this.scrollX / this.levelLen) * 100;
+                document.getElementById('main-progress').style.width = prog + '%';
+                document.getElementById('percent-label').textContent = Math.floor(prog) + '%';
 
-                if (progress >= 100) { this.win(); return; }
+                if (prog >= 100) { this.victory(); return; }
 
-                // Fizyka gracza
+                // Ruch gracza
                 if (this.player.isShip) {
-                    if (this.keys['Space']) this.player.vy += PHYSICS.SHIP_THRUST;
-                    else this.player.vy += PHYSICS.SHIP_GRAVITY;
+                    if (this.keys['Space']) this.player.vy += CONFIG.SHIP_POW;
+                    else this.player.vy += CONFIG.SHIP_G;
                     
-                    this.player.vy = Math.max(-9, Math.min(this.player.vy, 9));
-                    this.player.rotation = this.player.vy * 3;
+                    this.player.vy = Math.max(-10, Math.min(this.player.vy, 10));
+                    this.player.rot = this.player.vy * 2.5;
                 } else {
-                    this.player.vy += PHYSICS.PHYSICS_GRAVITY || 0.85;
-                    if (this.player.isGrounded && this.keys['Space']) {
-                        this.player.vy = PHYSICS.JUMP_FORCE;
-                        this.player.isGrounded = false;
+                    this.player.vy += CONFIG.G;
+                    if (this.player.grounded && this.keys['Space']) {
+                        this.player.vy = CONFIG.JUMP;
+                        this.player.grounded = false;
                     }
-                    if (!this.player.isGrounded) this.player.rotation += 6;
-                    else this.player.rotation = Math.round(this.player.rotation / 90) * 90;
+                    if (!this.player.grounded) this.player.rot += 6.5;
+                    else this.player.rot = Math.round(this.player.rot / 90) * 90;
                 }
 
-                let nextY = this.player.y + this.player.vy;
-                let potentialGrounded = false;
+                let targetY = this.player.y + this.player.vy;
+                let isGroundedNow = false;
 
-                // Kolizja z podłogą
-                if (nextY >= this.groundY - this.player.h) {
-                    nextY = this.groundY - this.player.h;
+                // Sprawdzenie podłogi podstawowej
+                if (targetY >= this.groundY - this.player.h) {
+                    targetY = this.groundY - this.player.h;
                     this.player.vy = 0;
-                    potentialGrounded = true;
+                    isGroundedNow = true;
                 }
 
-                // Kolizja z obiektami
-                for (const obj of this.obstacles) {
-                    const relX = obj.x - this.scrollX + this.player.x;
-                    if (relX < -200 || relX > 600) continue;
+                // Fizyka kolizji z obiektami
+                for (const o of this.obstacles) {
+                    const rx = o.x - this.scrollX + this.player.x;
+                    if (rx < -100 || rx > 500) continue;
 
-                    const objY = this.groundY - obj.h - obj.y;
-                    const p = obj.hitboxPadding || 0;
+                    const oy = this.groundY - o.h - o.y;
+                    const p = o.padding || 0;
 
-                    // Prosta detekcja AABB
-                    const collision = (
-                        this.player.x + p < relX + obj.w - p &&
-                        this.player.x + this.player.w - p > relX + p &&
-                        nextY + p < objY + obj.h - p &&
-                        nextY + this.player.h - p > objY + p
+                    const hit = (
+                        this.player.x + p < rx + o.w - p &&
+                        this.player.x + this.player.w - p > rx + p &&
+                        targetY + p < oy + o.h - p &&
+                        targetY + this.player.h - p > oy + p
                     );
 
-                    if (collision) {
-                        if (obj.type === 'spike' || obj.type === 'deadly_floor') {
-                            this.die();
-                            return;
+                    if (hit) {
+                        if (o.type === 'spike' || o.type === 'danger_floor') {
+                            this.fail(); return;
                         }
-                        if (obj.type === 'portal_ship') {
+                        if (o.type === 'portal_ship') {
                             this.player.isShip = true;
-                            document.getElementById('mode-badge').textContent = "SHIP MODE ✈️";
-                            document.getElementById('mode-badge').style.color = "var(--accent-gold)";
+                            document.getElementById('mode-label').textContent = "SHIP MODE ✈️";
                         }
-                        if (obj.type === 'portal_cube') {
+                        if (o.type === 'portal_cube') {
                             this.player.isShip = false;
-                            document.getElementById('mode-badge').textContent = "CUBE MODE ⬛";
-                            document.getElementById('mode-badge').style.color = "var(--accent-blue)";
+                            document.getElementById('mode-label').textContent = "CUBE MODE ⬛";
                         }
-                        if (obj.type === 'block') {
-                            // Sprawdzanie czy lądujemy na górze
-                            if (!this.player.isShip && this.player.y + this.player.h <= objY + 12) {
-                                nextY = objY - this.player.h;
+                        if (o.type === 'block') {
+                            // Lądowanie na górze
+                            if (!this.player.isShip && this.player.y + this.player.h <= oy + 15) {
+                                targetY = oy - this.player.h;
                                 this.player.vy = 0;
-                                potentialGrounded = true;
+                                isGroundedNow = true;
                             } else {
-                                this.die();
-                                return;
+                                this.fail(); return;
                             }
                         }
                     }
                 }
 
-                this.player.y = nextY;
-                this.player.isGrounded = potentialGrounded;
+                this.player.y = targetY;
+                this.player.grounded = isGroundedNow;
 
-                // Granice ekranu dla statku
+                // Bariery sufit/podłoga dla statku
                 if (this.player.isShip && (this.player.y < 0 || this.player.y > this.groundY - this.player.h)) {
-                    this.die();
+                    this.fail();
                 }
 
-                // Cząsteczki i ślad
-                if (this.frameCount % 2 === 0) {
-                    this.player.trail.push({ x: this.player.x, y: this.player.y, alpha: 0.6 });
-                    if (this.player.trail.length > 10) this.player.trail.shift();
+                // Cząsteczki
+                if (this.frameCount % 3 === 0 && !this.player.dead) {
+                    this.player.trail.push({x: this.player.x, y: this.player.y, a: 0.5});
+                    if(this.player.trail.length > 12) this.player.trail.shift();
                 }
 
                 this.particles.forEach((p, i) => {
                     p.update();
-                    if (p.life <= 0) this.particles.splice(i, 1);
+                    if(p.life <= 0) this.particles.splice(i, 1);
                 });
-
-                this.frameCount++;
             }
 
             draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                this.drawBackground();
+                // Tło - Grids
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+                const step = 50;
+                const off = -(this.scrollX % step);
+                for(let x=off; x<canvas.width; x+=step) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, this.groundY); ctx.stroke();
+                }
 
-                // Rysowanie przeszkód
-                this.obstacles.forEach(obj => {
-                    const relX = obj.x - this.scrollX + this.player.x;
-                    if (relX < -100 || relX > canvas.width + 100) return;
-                    
-                    const objY = this.groundY - obj.h - obj.y;
+                // Przeszkody
+                this.obstacles.forEach(o => {
+                    const rx = o.x - this.scrollX + this.player.x;
+                    if (rx < -100 || rx > canvas.width + 100) return;
+                    const oy = this.groundY - o.h - o.y;
 
-                    if (obj.type === 'spike') {
+                    if (o.type === 'spike') {
                         ctx.fillStyle = '#ef4444';
                         ctx.beginPath();
-                        ctx.moveTo(relX, objY + obj.h);
-                        ctx.lineTo(relX + obj.w/2, objY);
-                        ctx.lineTo(relX + obj.w, objY + obj.h);
+                        ctx.moveTo(rx, oy + o.h); ctx.lineTo(rx + o.w/2, oy); ctx.lineTo(rx + o.w, oy + o.h);
                         ctx.fill();
                         ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
-                    } else if (obj.type === 'block') {
+                    } else if (o.type === 'block') {
                         ctx.fillStyle = '#1e293b';
-                        ctx.fillRect(relX, objY, obj.w, obj.h);
-                        ctx.strokeStyle = 'var(--accent-blue)';
-                        ctx.lineWidth = 2;
-                        ctx.strokeRect(relX, objY, obj.w, obj.h);
-                    } else if (obj.type === 'deadly_floor') {
-                        const gradient = ctx.createLinearGradient(0, objY, 0, objY + obj.h);
-                        gradient.addColorStop(0, '#ef4444');
-                        gradient.addColorStop(1, 'transparent');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(relX, objY, obj.w, 100);
-                    } else if (obj.type.startsWith('portal')) {
-                        ctx.fillStyle = obj.type === 'portal_ship' ? '#d946ef' : '#4ade80';
-                        ctx.globalAlpha = 0.3;
-                        ctx.fillRect(relX, 0, obj.w, canvas.height);
-                        ctx.globalAlpha = 1;
+                        ctx.fillRect(rx, oy, o.w, o.h);
+                        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+                        ctx.strokeRect(rx, oy, o.w, o.h);
+                    } else if (o.type === 'danger_floor') {
+                        const g = ctx.createLinearGradient(0, oy, 0, oy + 100);
+                        g.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
+                        g.addColorStop(1, 'transparent');
+                        ctx.fillStyle = g;
+                        ctx.fillRect(rx, oy, o.w, 150);
+                    } else if (o.type.includes('portal')) {
+                        ctx.fillStyle = o.type.includes('ship') ? 'rgba(217, 70, 239, 0.2)' : 'rgba(74, 222, 128, 0.2)';
+                        ctx.fillRect(rx, 0, o.w, canvas.height);
                     }
                 });
 
-                // Ślad gracza
+                // Ślad
                 this.player.trail.forEach(t => {
-                    ctx.fillStyle = `rgba(56, 189, 248, ${t.alpha})`;
+                    ctx.fillStyle = `rgba(56, 189, 248, ${t.a})`;
                     ctx.fillRect(t.x, t.y, this.player.w, this.player.h);
-                    t.alpha -= 0.05;
+                    t.a -= 0.04;
                 });
 
                 // Gracz
                 if (!this.player.dead) {
                     ctx.save();
                     ctx.translate(this.player.x + this.player.w/2, this.player.y + this.player.h/2);
-                    ctx.rotate(this.player.rotation * Math.PI / 180);
+                    ctx.rotate(this.player.rot * Math.PI / 180);
                     
                     if (this.player.isShip) {
-                        ctx.fillStyle = 'var(--accent-gold)';
+                        ctx.fillStyle = '#facc15';
                         ctx.beginPath();
                         ctx.moveTo(-15, 0); ctx.lineTo(15, -10); ctx.lineTo(10, 0); ctx.lineTo(15, 10);
                         ctx.closePath(); ctx.fill();
                     } else {
-                        ctx.fillStyle = 'var(--accent-blue)';
+                        ctx.fillStyle = '#38bdf8';
                         ctx.fillRect(-15, -15, 30, 30);
                         ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
                         ctx.strokeRect(-15, -15, 30, 30);
@@ -786,106 +717,83 @@
 
                 this.particles.forEach(p => p.draw());
 
-                // Podłoga
+                // Podłoga stała
                 ctx.fillStyle = '#020617';
                 ctx.fillRect(0, this.groundY, canvas.width, 100);
-                ctx.strokeStyle = 'var(--accent-blue)';
-                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 4;
                 ctx.beginPath(); ctx.moveTo(0, this.groundY); ctx.lineTo(canvas.width, this.groundY); ctx.stroke();
             }
 
-            drawBackground() {
-                // Paralaksa i grid
-                ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
-                const step = 40;
-                const offset = -(this.scrollX % step);
-                for(let x = offset; x < canvas.width; x += step) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, this.groundY); ctx.stroke();
-                }
-                for(let y = 0; y < this.groundY; y += step) {
-                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-                }
-            }
-
-            die() {
-                if (this.player.dead) return;
+            fail() {
                 this.player.dead = true;
-                for(let i=0; i<40; i++) this.particles.push(new Particle(this.player.x, this.player.y, '#ef4444'));
+                for(let i=0; i<35; i++) this.particles.push(new Particle(this.player.x, this.player.y, '#ef4444'));
                 
-                const percent = Math.floor((this.scrollX / this.levelLength) * 100);
-                document.getElementById('death-info').textContent = `Ukończono: ${percent}%`;
+                const p = Math.floor((this.scrollX / this.levelLen) * 100);
+                document.getElementById('death-stat').textContent = `Ukończono: ${p}%`;
                 
                 setTimeout(() => {
-                    document.getElementById('death-overlay').style.display = 'flex';
-                }, 1000);
+                    document.getElementById('death-screen').style.display = 'flex';
+                }, 800);
             }
 
-            win() {
-                isRunning = false;
-                const reward = Math.floor(10 * selectedDiff);
-                document.getElementById('win-reward').textContent = `+${reward} PKT`;
-                document.getElementById('win-overlay').style.display = 'flex';
+            victory() {
+                gameActive = false;
+                const pts = Math.floor(15 * difficultyMult);
+                document.getElementById('win-pts').textContent = `+${pts} PKT`;
+                document.getElementById('win-screen').style.display = 'flex';
                 
                 if (loggedUser) {
-                    db.ref('users/' + loggedUser).update({ points: globalPoints + reward });
+                    db.ref('users/' + loggedUser).update({ points: userPoints + pts });
                 }
             }
         }
 
-        const game = new Engine();
+        const game = new GameEngine();
 
-        function resize() {
-            canvas.width = viewport.clientWidth;
-            canvas.height = viewport.clientHeight;
+        function syncSize() {
+            canvas.width = box.clientWidth;
+            canvas.height = box.clientHeight;
             game.groundY = canvas.height - 40;
+            if (!gameActive) game.draw();
         }
 
-        window.addEventListener('resize', resize);
-        resize();
+        window.addEventListener('resize', syncSize);
+        syncSize();
 
-        function preStart() {
-            document.getElementById('menu-overlay').style.display = 'none';
-            document.getElementById('death-overlay').style.display = 'none';
-            document.getElementById('win-overlay').style.display = 'none';
+        function triggerCountdown() {
+            document.getElementById('start-overlay').style.display = 'none';
+            document.getElementById('death-screen').style.display = 'none';
             
-            const cdBox = document.getElementById('countdown-box');
-            cdBox.style.display = 'flex';
+            const cd = document.getElementById('cnt-display');
+            cd.style.display = 'flex';
             
-            let count = 3;
-            cdBox.textContent = count;
+            let val = 3;
+            cd.textContent = val;
             
             const timer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    cdBox.textContent = count;
+                val--;
+                if (val > 0) {
+                    cd.textContent = val;
                 } else {
                     clearInterval(timer);
-                    cdBox.style.display = 'none';
-                    start();
+                    cd.style.display = 'none';
+                    runGame();
                 }
             }, 1000);
         }
 
-        function start() {
-            game.reset();
-            isRunning = true;
-            requestAnimationFrame(loop);
+        function runGame() {
+            game.init();
+            gameActive = true;
+            loop();
         }
 
         function loop() {
-            if (!isRunning) return;
+            if (!gameActive || game.player.dead) return;
             game.update();
             game.draw();
             requestAnimationFrame(loop);
         }
-
-        function backToMenu() {
-            isRunning = false;
-            document.getElementById('death-overlay').style.display = 'none';
-            document.getElementById('win-overlay').style.display = 'none';
-            document.getElementById('menu-overlay').style.display = 'flex';
-        }
-
     </script>
 </body>
 </html>
