@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Spinner Dash – Professional Edition</title>
+    <title>Spinner Dash: Insane Edition</title>
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#020617">
     <link rel="icon" type="image/png" href="../Logo.png?v=2">
+
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
     <style>
         :root {
-            --bg: #020617;
-            --card-bg: #0f172a;
-            --accent: #38bdf8;
-            --danger: #ef4444;
-            --success: #4ade80;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --ship-mode: #facc15;
-            --portal-color: #d946ef;
+            --bg-color: #020617;
+            --panel-bg: rgba(15, 23, 42, 0.95);
+            --accent-blue: #38bdf8;
+            --accent-red: #ef4444;
+            --accent-gold: #facc15;
+            --accent-green: #4ade80;
+            --accent-purple: #d946ef;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-glow: rgba(56, 189, 248, 0.3);
         }
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             margin: 0;
             padding: 0;
+            outline: none;
         }
+
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             overflow: hidden;
             touch-action: none;
             user-select: none;
@@ -40,314 +47,354 @@
             display: flex;
             flex-direction: column;
         }
+
+        /* --- UI NAVIGATION --- */
         header {
-            height: 70px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            height: 65px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 25px;
+            padding: 0 20px;
             z-index: 1000;
         }
-        .header-left {
+
+        .brand {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
-        .header-left img {
-            height: 35px;
-            filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+
+        .brand img {
+            height: 32px;
+            filter: drop-shadow(0 0 8px var(--accent-blue));
         }
-        .btn-back {
+
+        .nav-link {
             background: rgba(56, 189, 248, 0.1);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            transition: 0.2s;
         }
-        .btn-back:hover {
-            background: var(--accent);
-            color: var(--bg);
+
+        .nav-link:hover {
+            background: var(--accent-blue);
+            color: var(--bg-color);
         }
-        .user-stats {
+
+        .user-panel {
             text-align: right;
+            line-height: 1.2;
         }
-        #user-name {
+
+        .user-name {
             font-size: 14px;
-            font-weight: 800;
-            color: var(--accent);
-            text-transform: uppercase;
+            font-weight: 900;
+            color: var(--accent-blue);
+            letter-spacing: 0.5px;
         }
-        #user-points {
+
+        .user-pts {
             font-size: 11px;
-            color: var(--text-dim);
-            letter-spacing: 1px;
+            color: var(--text-secondary);
         }
+
+        /* --- GAME LAYOUT --- */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            gap: 20px;
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            padding: 10px;
+            position: relative;
         }
-        .game-container {
+
+        .viewport {
+            position: relative;
             width: 100%;
-            max-width: 900px;
+            max-width: 960px;
             aspect-ratio: 16 / 7;
             background: #000;
-            border-radius: 20px;
-            position: relative;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(56, 189, 248, 0.1);
+            border-radius: 16px;
+            border: 2px solid var(--border-glow);
+            box-shadow: 0 0 40px rgba(0,0,0,0.9);
             overflow: hidden;
         }
+
         canvas {
             width: 100%;
             height: 100%;
             display: block;
         }
-        .ui-layer {
+
+        /* --- OVERLAYS --- */
+        .overlay {
             position: absolute;
             inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s;
+        }
+
+        .card {
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card h1 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .difficulty-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .diff-btn {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            z-index: 50;
         }
-        .menu-overlay {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 40px;
-            border-radius: 30px;
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            text-align: center;
-            width: 90%;
-            max-width: 450px;
-            transition: opacity 0.3s ease;
-        }
-        .menu-overlay h1 {
-            font-size: 32px;
-            margin-bottom: 25px;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-            letter-spacing: -1px;
-        }
-        .difficulty-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        .diff-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 15px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .diff-card.active {
-            border-color: var(--accent);
+
+        .diff-btn.active {
+            border-color: var(--accent-blue);
             background: rgba(56, 189, 248, 0.1);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
         }
-        .diff-card .label {
-            display: block;
+
+        .diff-btn .title {
+            font-weight: 800;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .diff-btn .multiplier {
             font-size: 10px;
-            color: var(--text-dim);
-            margin-bottom: 4px;
+            color: var(--text-secondary);
         }
-        .diff-card .name {
-            font-weight: 700;
-            font-size: 14px;
-        }
-        .btn-start {
+
+        .btn-main {
             width: 100%;
-            padding: 18px;
-            background: var(--accent);
-            color: var(--bg);
+            padding: 16px;
+            background: var(--accent-blue);
+            color: #000;
             border: none;
-            border-radius: 15px;
-            font-size: 18px;
+            border-radius: 12px;
             font-weight: 900;
+            font-size: 16px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: transform 0.1s, box-shadow 0.2s;
+            transition: 0.2s;
         }
-        .btn-start:hover {
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+
+        .btn-main:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
         }
-        .btn-start:active {
-            transform: scale(0.95);
+
+        .btn-main:active {
+            transform: scale(0.97);
         }
-        .game-hud {
+
+        /* --- HUD --- */
+        .hud {
             position: absolute;
-            top: 20px;
+            top: 15px;
             left: 20px;
             right: 20px;
             pointer-events: none;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            z-index: 50;
         }
-        .progress-container {
+
+        .hud-item {
+            background: rgba(0,0,0,0.6);
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        .progress-bar-container {
             position: absolute;
-            top: 15px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50%;
-            height: 6px;
+            width: 200px;
+            height: 8px;
             background: rgba(255,255,255,0.1);
             border-radius: 10px;
             overflow: hidden;
         }
-        .progress-fill {
+
+        .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-            transition: width 0.1s linear;
+            background: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-blue);
         }
-        .status-badge {
-            background: rgba(0,0,0,0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .countdown-overlay {
+
+        .countdown {
             position: absolute;
             inset: 0;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 120px;
+            font-size: 100px;
             font-weight: 900;
-            color: var(--text-main);
-            text-shadow: 0 0 30px rgba(56, 189, 248, 0.8);
-            z-index: 60;
+            color: #fff;
+            text-shadow: 0 0 30px var(--accent-blue);
+            z-index: 200;
         }
-        .death-screen {
-            display: none;
-            position: absolute;
-            inset: 0;
-            background: rgba(239, 68, 68, 0.2);
-            backdrop-filter: blur(4px);
-            z-index: 70;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .win-screen {
-            display: none;
-            position: absolute;
-            inset: 0;
-            background: rgba(74, 222, 128, 0.2);
-            backdrop-filter: blur(4px);
-            z-index: 70;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .stats-panel {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 25px;
-            border: 2px solid var(--accent);
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 20px;
             text-align: center;
-            min-width: 300px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            max-width: 700px;
         }
-        .instruction-footer {
-            color: var(--text-dim);
-            font-size: 13px;
-            text-align: center;
-            max-width: 600px;
-            line-height: 1.6;
+
+        footer b {
+            color: var(--accent-blue);
         }
-        .instruction-footer b { color: var(--accent); }
+
+        /* --- COLORS BY DIFFICULTY --- */
+        .diff-easy { color: #4ade80; }
+        .diff-medium { color: #38bdf8; }
+        .diff-hard { color: #facc15; }
+        .diff-insane { color: #fb923c; }
+        .diff-demon { color: #ef4444; }
+        .diff-extreme { color: #a855f7; }
     </style>
 </head>
 <body>
+
     <header>
-        <div class="header-left">
+        <div class="brand">
             <img src="../Logo.png" alt="SpinnerLogo">
-            <button class="btn-back" onclick="location.href='../index.html'">Wstecz</button>
+            <a href="../index.html" class="nav-link">WYJŚCIE</a>
         </div>
-        <div class="user-stats">
-            <div id="user-name">Guest Player</div>
-            <div id="user-points">Points: 0</div>
+        <div class="user-panel">
+            <div id="u-name" class="user-name">GUEST_PLAYER</div>
+            <div id="u-points" class="user-pts">PKT: 0</div>
         </div>
     </header>
+
     <main>
-        <div class="game-container" id="gameBox">
+        <div class="viewport" id="game-container">
             <canvas id="gameCanvas"></canvas>
-            <div id="menuLayer" class="ui-layer">
-                <div class="menu-overlay">
+            
+            <div class="hud">
+                <div id="mode-badge" class="hud-item" style="color: var(--accent-blue);">CUBE MODE</div>
+                <div id="percent-badge" class="hud-item">0%</div>
+            </div>
+
+            <div class="progress-bar-container">
+                <div id="prog-fill" class="progress-bar-fill"></div>
+            </div>
+
+            <div id="countdown-box" class="countdown">3</div>
+
+            <div id="menu-overlay" class="overlay">
+                <div class="card">
                     <h1>SPINNER DASH</h1>
-                    <div class="difficulty-grid">
-                        <div class="diff-card active" data-diff="1" onclick="setDifficulty(1, this)">
-                            <span class="label">POZIOM 1</span>
-                            <span class="name">Łatwy</span>
+                    <div class="difficulty-selector">
+                        <div class="diff-btn active" onclick="pickDiff(1, this)">
+                            <span class="title diff-easy">ŁATWY</span>
+                            <span class="multiplier">x1 PKT</span>
                         </div>
-                        <div class="diff-card" data-diff="1.5" onclick="setDifficulty(1.5, this)">
-                            <span class="label">POZIOM 2</span>
-                            <span class="name">Średni</span>
+                        <div class="diff-btn" onclick="pickDiff(1.5, this)">
+                            <span class="title diff-medium">ŚREDNI</span>
+                            <span class="multiplier">x2 PKT</span>
                         </div>
-                        <div class="diff-card" data-diff="2" onclick="setDifficulty(2, this)">
-                            <span class="label">POZIOM 3</span>
-                            <span class="name">Trudny</span>
+                        <div class="diff-btn" onclick="pickDiff(2, this)">
+                            <span class="title diff-hard">TRUDNY</span>
+                            <span class="multiplier">x3 PKT</span>
                         </div>
-                        <div class="diff-card" data-diff="3" onclick="setDifficulty(3, this)">
-                            <span class="label">POZIOM 4</span>
-                            <span class="name">Ekstremalny</span>
+                        <div class="diff-btn" onclick="pickDiff(2.5, this)">
+                            <span class="title diff-insane">INSANE</span>
+                            <span class="multiplier">x5 PKT</span>
+                        </div>
+                        <div class="diff-btn" onclick="pickDiff(3.2, this)">
+                            <span class="title diff-demon">DEMON</span>
+                            <span class="multiplier">x10 PKT</span>
+                        </div>
+                        <div class="diff-btn" onclick="pickDiff(4.5, this)">
+                            <span class="title diff-extreme">EXTREME</span>
+                            <span class="multiplier">x25 PKT</span>
                         </div>
                     </div>
-                    <button class="btn-start" onclick="initiateGame()">ROZPOCZNIJ PRZYGODĘ</button>
+                    <button class="btn-main" onclick="preStart()">ZAGRAJ TERAZ</button>
                 </div>
             </div>
-            <div id="countdown" class="countdown-overlay">3</div>
-            <div id="deathScreen" class="death-screen">
-                <div class="stats-panel" style="border-color: var(--danger);">
-                    <h2 style="color: var(--danger); font-size: 32px; margin-bottom: 10px;">PRZEGRANA</h2>
-                    <p id="deathProgress" style="margin-bottom: 20px; font-weight: 600;">Postęp: 0%</p>
-                    <button class="btn-start" onclick="initiateGame()" style="background: var(--danger); color: white;">SPRÓBUJ PONOWNIE</button>
+
+            <div id="death-overlay" class="overlay" style="display: none; background: rgba(239, 68, 68, 0.25);">
+                <div class="card" style="border-color: var(--accent-red);">
+                    <h1 style="color: var(--accent-red);">KATASTROFA</h1>
+                    <p id="death-info" style="margin-bottom: 20px; font-weight: 700;">Ukończono: 0%</p>
+                    <button class="btn-main" style="background: var(--accent-red); color: white;" onclick="preStart()">SPRÓBUJ PONOWNIE</button>
+                    <button class="btn-main" style="background: transparent; border: 1px solid #fff; color: #fff; margin-top: 10px;" onclick="backToMenu()">MENU</button>
                 </div>
             </div>
-            <div id="winScreen" class="win-screen">
-                <div class="stats-panel" style="border-color: var(--success);">
-                    <h2 style="color: var(--success); font-size: 32px; margin-bottom: 10px;">ZWYCIĘSTWO!</h2>
-                    <p style="margin-bottom: 20px;">Poziom ukończony na 100%</p>
-                    <p id="pointsAwarded" style="color: var(--accent); font-weight: 800; margin-bottom: 20px;">+0 PUNKTÓW</p>
-                    <button class="btn-start" onclick="closeOverlayAndReset()" style="background: var(--success); color: white;">DO MENU</button>
+
+            <div id="win-overlay" class="overlay" style="display: none; background: rgba(74, 222, 128, 0.25);">
+                <div class="card" style="border-color: var(--accent-green);">
+                    <h1 style="color: var(--accent-green);">WYGRANA!</h1>
+                    <p style="margin-bottom: 10px;">Poziom zaliczony na 100%</p>
+                    <h2 id="win-reward" style="color: var(--accent-gold); margin-bottom: 20px;">+0 PKT</h2>
+                    <button class="btn-main" style="background: var(--accent-green); color: #000;" onclick="backToMenu()">KONTYNUUJ</button>
                 </div>
-            </div>
-            <div class="game-hud">
-                <div id="modeBadge" class="status-badge" style="color: var(--accent);">CUBE MODE</div>
-                <div id="timerBadge" class="status-badge">00:00</div>
-            </div>
-            <div class="progress-container">
-                <div id="progressFill" class="progress-fill"></div>
             </div>
         </div>
-        <div class="instruction-footer">
-            Użyj <b>SPACJI</b> lub <b>LEWEGO PRZYCISKU MYSZY</b> aby skakać. <br>
-            W trybie samolotu przytrzymaj, aby lecieć w górę, puść, aby opadać.
-        </div>
+
+        <footer>
+            Używaj <b>SPACJI</b> lub <b>MYSZKI</b> aby skakać. <br>
+            W trybie statku ✈️ przytrzymaj, aby wznosić się, puść by opadać. Uważaj na <b>CZERWONĄ PODŁOGĘ</b>!
+        </footer>
     </main>
+
     <script>
+        /** * --- KONFIGURACJA I SERCE SYSTEMU ---
+         * Silnik gry oparty na strukturze wektorowej i logice chunkowej.
+         */
         const firebaseConfig = {
             apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
             authDomain: "spinnerrealyt-games.firebaseapp.com",
@@ -357,202 +404,289 @@
         const db = firebase.database();
         const auth = firebase.auth();
         const loggedUser = localStorage.getItem("sp_logged");
-        let userPoints = 0;
+
+        let globalPoints = 0;
+        let selectedDiff = 1;
+        let isRunning = false;
+        
+        // Inicjalizacja danych użytkownika
         auth.onAuthStateChanged(user => {
             if (user && loggedUser) {
-                document.getElementById('user-name').textContent = loggedUser;
+                document.getElementById('u-name').textContent = loggedUser.toUpperCase();
                 db.ref('users/' + loggedUser + '/points').on('value', snap => {
-                    userPoints = snap.val() || 0;
-                    document.getElementById('user-points').textContent = `Points: ${userPoints}`;
+                    globalPoints = snap.val() || 0;
+                    document.getElementById('u-points').textContent = `PKT: ${globalPoints}`;
                 });
             }
         });
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const gameBox = document.getElementById('gameBox');
-        let selectedDifficulty = 1;
-        let isGameRunning = false;
-        let isPaused = false;
-        let lastTime = 0;
-        let accumulator = 0;
-        const deltaTime = 1 / 60;
-        function setDifficulty(val, el) {
-            selectedDifficulty = val;
-            document.querySelectorAll('.diff-card').forEach(c => c.classList.remove('active'));
+
+        function pickDiff(v, el) {
+            selectedDiff = v;
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
         }
-        class GameEngine {
-            constructor() {
-                this.reset();
-                this.setupInputs();
-            }
-            reset() {
-                this.player = {
-                    x: 100,
-                    y: 0,
-                    width: 30,
-                    height: 30,
-                    velY: 0,
-                    gravity: 0.8,
-                    jumpForce: -13,
-                    rotation: 0,
-                    isGrounded: false,
-                    isShip: false,
-                    isDead: false,
-                    trail: []
-                };
-                this.cameraX = 0;
-                this.distanceTraveled = 0;
-                this.levelWidth = 3600 * 60;
-                this.scrollSpeed = 7 * selectedDifficulty;
-                this.obstacles = [];
-                this.particles = [];
-                this.frameCount = 0;
-                this.levelMap = [];
-                this.generateLevel();
-                this.groundY = canvas.height - 40;
-                this.player.y = this.groundY - this.player.height;
-                this.shipPortalStart = 0;
-                this.shipPortalEnd = 0;
-                this.isShipSection = Math.random() < 0.25;
-                if (this.isShipSection) {
-                    this.shipPortalStart = 2000 + Math.random() * 2000;
-                    this.shipPortalEnd = this.shipPortalStart + 4000;
-                }
-            }
-            setupInputs() {
-                this.keys = {};
-                window.addEventListener('keydown', e => {
-                    if (e.code === 'Space') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.keys[e.code] = true;
-                    }
-                }, { passive: false });
-                window.addEventListener('keyup', e => {
-                    if (e.code === 'Space') {
-                        e.preventDefault();
-                        this.keys[e.code] = false;
-                    }
-                }, { passive: false });
-                canvas.addEventListener('mousedown', e => {
-                    e.preventDefault();
-                    this.keys['Space'] = true;
-                });
-                window.addEventListener('mouseup', e => {
-                    this.keys['Space'] = false;
-                });
-                canvas.addEventListener('touchstart', e => {
-                    e.preventDefault();
-                    this.keys['Space'] = true;
-                }, { passive: false });
-                canvas.addEventListener('touchend', e => {
-                    this.keys['Space'] = false;
-                });
-            }
-            generateLevel() {
-                let x = 800;
-                const minGap = 250 / selectedDifficulty;
-                const maxGap = 450 / selectedDifficulty;
-                while (x < 30000) {
-                    let type = Math.random();
-                    if (type < 0.4) {
-                        this.obstacles.push({ x, y: 0, type: 'spike', w: 30, h: 30 });
-                        x += 30 + minGap + Math.random() * 100;
-                    } else if (type < 0.7) {
-                        let h = 1 + Math.floor(Math.random() * 3);
-                        for (let i = 0; i < h; i++) {
-                            this.obstacles.push({ x, y: i * 35, type: 'block', w: 35, h: 35 });
-                        }
-                        this.obstacles.push({ x: x + 35, y: (h - 1) * 35, type: 'block', w: 35, h: 35 });
-                        x += 70 + minGap;
-                    } else {
-                        let len = 2 + Math.floor(Math.random() * 4);
-                        let height = 80 + Math.random() * 40;
-                        for (let i = 0; i < len; i++) {
-                            this.obstacles.push({ x: x + i * 35, y: height, type: 'block', w: 35, h: 35 });
-                        }
-                        if (Math.random() > 0.5) {
-                            this.obstacles.push({ x: x + 35, y: height + 35, type: 'spike', w: 30, h: 30 });
-                        }
-                        x += (len * 35) + minGap;
-                    }
-                }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const viewport = document.getElementById('game-container');
+
+        // Stałe fizyki
+        const PHYSICS = {
+            GRAVITY: 0.85,
+            JUMP_FORCE: -13.5,
+            SHIP_GRAVITY: 0.45,
+            SHIP_THRUST: -1.1,
+            TERMINAL_VELOCITY: 16,
+            GRID: 35
+        };
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 12;
+                this.vy = (Math.random() - 0.5) * 12;
+                this.size = Math.random() * 5 + 2;
+                this.life = 1.0;
+                this.color = color;
             }
             update() {
-                if (this.player.isDead) return;
-                this.frameCount++;
-                this.distanceTraveled += this.scrollSpeed;
-                this.cameraX = this.distanceTraveled;
-                const progress = Math.min((this.distanceTraveled / 25000) * 100, 100);
-                document.getElementById('progressFill').style.width = progress + '%';
-                if (progress >= 100) {
-                    this.win();
-                    return;
-                }
-                if (this.isShipSection) {
-                    if (this.distanceTraveled >= this.shipPortalStart && this.distanceTraveled <= this.shipPortalEnd) {
-                        if (!this.player.isShip) {
-                            this.player.isShip = true;
-                            document.getElementById('modeBadge').textContent = "SHIP MODE";
-                            document.getElementById('modeBadge').style.color = "var(--ship-mode)";
-                        }
-                    } else {
-                        if (this.player.isShip) {
-                            this.player.isShip = false;
-                            document.getElementById('modeBadge').textContent = "CUBE MODE";
-                            document.getElementById('modeBadge').style.color = "var(--accent)";
-                        }
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= 0.03;
+            }
+            draw() {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        class Engine {
+            constructor() {
+                this.reset();
+                this.bindInputs();
+            }
+
+            reset() {
+                this.player = {
+                    x: 120,
+                    y: 0,
+                    w: 30,
+                    h: 30,
+                    vy: 0,
+                    rotation: 0,
+                    isShip: false,
+                    isGrounded: false,
+                    dead: false,
+                    trail: []
+                };
+                
+                this.scrollX = 0;
+                this.speed = 7 * (0.8 + (selectedDiff * 0.2));
+                this.levelLength = 40000; 
+                this.groundY = 0; // Ustawiane w resize
+                
+                this.obstacles = [];
+                this.particles = [];
+                this.keys = {};
+                
+                this.generateLevel();
+            }
+
+            bindInputs() {
+                window.addEventListener('keydown', e => { 
+                    if(e.code === 'Space') { e.preventDefault(); this.keys['Space'] = true; }
+                });
+                window.addEventListener('keyup', e => { 
+                    if(e.code === 'Space') this.keys['Space'] = false; 
+                });
+                canvas.addEventListener('mousedown', () => this.keys['Space'] = true);
+                window.addEventListener('mouseup', () => this.keys['Space'] = false);
+                canvas.addEventListener('touchstart', e => { e.preventDefault(); this.keys['Space'] = true; }, {passive: false});
+                canvas.addEventListener('touchend', () => this.keys['Space'] = false);
+            }
+
+            /** * --- GENERATOR POZIOMU ---
+             * Buduje poziom z modułów, dbając o logikę skoku.
+             */
+            generateLevel() {
+                let x = 1200; // Start po odliczaniu
+                
+                while(x < this.levelLength) {
+                    const rand = Math.random();
+                    
+                    // Sekcja statku (20% szans)
+                    if (rand < 0.2 && x < this.levelLength - 5000) {
+                        this.buildShipSection(x);
+                        x += 6000;
+                    } 
+                    // Sekcja zabójczej podłogi
+                    else if (rand < 0.4) {
+                        this.buildDeadlyFloorSection(x);
+                        x += 2500;
+                    }
+                    // Standardowe przeszkody rozbudowane
+                    else {
+                        this.buildComplexChunk(x);
+                        x += 800 + (Math.random() * 400);
                     }
                 }
+            }
+
+            addObj(x, gridY, type, w = 35, h = 35) {
+                // y liczone od dołu
+                this.obstacles.push({
+                    x, 
+                    y: gridY * 35, 
+                    type, 
+                    w, 
+                    h,
+                    hitboxPadding: type === 'spike' ? 8 : 2
+                });
+            }
+
+            buildComplexChunk(startX) {
+                const types = ['stairs', 'triple_spike', 'flying_islands', 'mixed'];
+                const t = types[Math.floor(Math.random() * types.length)];
+
+                switch(t) {
+                    case 'stairs':
+                        for(let i=0; i<4; i++) {
+                            this.addObj(startX + (i*70), i, 'block');
+                            if(i < 3) this.addObj(startX + (i*70) + 35, 0, 'spike');
+                        }
+                        break;
+                    case 'triple_spike':
+                        this.addObj(startX, 0, 'spike');
+                        this.addObj(startX + 32, 0, 'spike');
+                        this.addObj(startX + 64, 0, 'spike');
+                        break;
+                    case 'flying_islands':
+                        this.addObj(startX, 2, 'block');
+                        this.addObj(startX + 35, 2, 'block');
+                        this.addObj(startX + 150, 4, 'block');
+                        this.addObj(startX + 185, 4, 'block');
+                        break;
+                    case 'mixed':
+                        this.addObj(startX, 0, 'block');
+                        this.addObj(startX, 1, 'spike');
+                        this.addObj(startX + 200, 0, 'block');
+                        this.addObj(startX + 200, 1, 'block');
+                        this.addObj(startX + 200, 2, 'spike');
+                        break;
+                }
+            }
+
+            buildDeadlyFloorSection(startX) {
+                const len = 1500;
+                // Oznaczenie podłogi jako zabójczej
+                this.obstacles.push({
+                    x: startX,
+                    y: -10,
+                    w: len,
+                    h: 20,
+                    type: 'deadly_floor'
+                });
+
+                // Klocki do skakania
+                for(let i = 0; i < len; i += 300) {
+                    let h = 1 + Math.floor(Math.random() * 2);
+                    this.addObj(startX + i, h, 'block');
+                    this.addObj(startX + i + 35, h, 'block');
+                }
+            }
+
+            buildShipSection(startX) {
+                // Portale
+                this.obstacles.push({ x: startX, y: 0, w: 40, h: 1000, type: 'portal_ship' });
+                this.obstacles.push({ x: startX + 5000, y: 0, w: 40, h: 1000, type: 'portal_cube' });
+
+                // Przeszkody w locie (jaskinie)
+                for(let i=400; i<4500; i+=400) {
+                    let gapY = 100 + Math.random() * 150;
+                    // Góra
+                    this.addObj(startX + i, 8, 'block', 40, 200);
+                    // Dół
+                    this.addObj(startX + i, 0, 'block', 40, 60);
+                }
+            }
+
+            update() {
+                if (this.player.dead) return;
+
+                this.scrollX += this.speed;
+                const progress = (this.scrollX / this.levelLength) * 100;
+                document.getElementById('prog-fill').style.width = progress + '%';
+                document.getElementById('percent-badge').textContent = Math.floor(progress) + '%';
+
+                if (progress >= 100) { this.win(); return; }
+
+                // Fizyka gracza
                 if (this.player.isShip) {
-                    this.player.gravity = 0.4;
-                    if (this.keys['Space']) {
-                        this.player.velY -= 0.9;
-                    } else {
-                        this.player.velY += this.player.gravity;
-                    }
-                    this.player.velY = Math.max(-7, Math.min(this.player.velY, 7));
-                    this.player.rotation = this.player.velY * 3;
+                    if (this.keys['Space']) this.player.vy += PHYSICS.SHIP_THRUST;
+                    else this.player.vy += PHYSICS.SHIP_GRAVITY;
+                    
+                    this.player.vy = Math.max(-9, Math.min(this.player.vy, 9));
+                    this.player.rotation = this.player.vy * 3;
                 } else {
-                    this.player.gravity = 0.9;
-                    this.player.velY += this.player.gravity;
+                    this.player.vy += PHYSICS.PHYSICS_GRAVITY || 0.85;
                     if (this.player.isGrounded && this.keys['Space']) {
-                        this.player.velY = this.player.jumpForce;
+                        this.player.vy = PHYSICS.JUMP_FORCE;
                         this.player.isGrounded = false;
                     }
-                    if (!this.player.isGrounded) {
-                        this.player.rotation += 6;
-                    } else {
-                        this.player.rotation = Math.round(this.player.rotation / 90) * 90;
-                    }
+                    if (!this.player.isGrounded) this.player.rotation += 6;
+                    else this.player.rotation = Math.round(this.player.rotation / 90) * 90;
                 }
-                let nextY = this.player.y + this.player.velY;
-                let onBlock = false;
-                const floorY = this.groundY - this.player.height;
-                if (nextY >= floorY) {
-                    nextY = floorY;
-                    this.player.velY = 0;
-                    this.player.isGrounded = true;
-                    onBlock = true;
-                } else {
-                    this.player.isGrounded = false;
+
+                let nextY = this.player.y + this.player.vy;
+                let potentialGrounded = false;
+
+                // Kolizja z podłogą
+                if (nextY >= this.groundY - this.player.h) {
+                    nextY = this.groundY - this.player.h;
+                    this.player.vy = 0;
+                    potentialGrounded = true;
                 }
-                for (let obs of this.obstacles) {
-                    let relX = obs.x - this.cameraX + this.player.x;
-                    if (relX < -100 || relX > 500) continue;
-                    let obsActualY = this.groundY - obs.h - obs.y;
-                    if (this.checkCollision(this.player.x, nextY, this.player.width, this.player.height, relX, obsActualY, obs.w, obs.h)) {
-                        if (obs.type === 'spike') {
+
+                // Kolizja z obiektami
+                for (const obj of this.obstacles) {
+                    const relX = obj.x - this.scrollX + this.player.x;
+                    if (relX < -200 || relX > 600) continue;
+
+                    const objY = this.groundY - obj.h - obj.y;
+                    const p = obj.hitboxPadding || 0;
+
+                    // Prosta detekcja AABB
+                    const collision = (
+                        this.player.x + p < relX + obj.w - p &&
+                        this.player.x + this.player.w - p > relX + p &&
+                        nextY + p < objY + obj.h - p &&
+                        nextY + this.player.h - p > objY + p
+                    );
+
+                    if (collision) {
+                        if (obj.type === 'spike' || obj.type === 'deadly_floor') {
                             this.die();
                             return;
                         }
-                        if (obs.type === 'block') {
-                            if (this.player.y + this.player.height <= obsActualY + 10 && this.player.velY >= 0) {
-                                nextY = obsActualY - this.player.height;
-                                this.player.velY = 0;
-                                this.player.isGrounded = true;
-                                onBlock = true;
+                        if (obj.type === 'portal_ship') {
+                            this.player.isShip = true;
+                            document.getElementById('mode-badge').textContent = "SHIP MODE ✈️";
+                            document.getElementById('mode-badge').style.color = "var(--accent-gold)";
+                        }
+                        if (obj.type === 'portal_cube') {
+                            this.player.isShip = false;
+                            document.getElementById('mode-badge').textContent = "CUBE MODE ⬛";
+                            document.getElementById('mode-badge').style.color = "var(--accent-blue)";
+                        }
+                        if (obj.type === 'block') {
+                            // Sprawdzanie czy lądujemy na górze
+                            if (!this.player.isShip && this.player.y + this.player.h <= objY + 12) {
+                                nextY = objY - this.player.h;
+                                this.player.vy = 0;
+                                potentialGrounded = true;
                             } else {
                                 this.die();
                                 return;
@@ -560,209 +694,198 @@
                         }
                     }
                 }
+
                 this.player.y = nextY;
-                if (this.player.isShip && (this.player.y <= 0 || this.player.y >= this.groundY - this.player.height)) {
+                this.player.isGrounded = potentialGrounded;
+
+                // Granice ekranu dla statku
+                if (this.player.isShip && (this.player.y < 0 || this.player.y > this.groundY - this.player.h)) {
                     this.die();
                 }
+
+                // Cząsteczki i ślad
                 if (this.frameCount % 2 === 0) {
-                    this.player.trail.push({ x: this.player.x, y: this.player.y, life: 20 });
+                    this.player.trail.push({ x: this.player.x, y: this.player.y, alpha: 0.6 });
+                    if (this.player.trail.length > 10) this.player.trail.shift();
                 }
-                this.player.trail.forEach((t, i) => {
-                    t.life--;
-                    if (t.life <= 0) this.player.trail.splice(i, 1);
-                });
+
                 this.particles.forEach((p, i) => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.life -= 0.05;
+                    p.update();
                     if (p.life <= 0) this.particles.splice(i, 1);
                 });
+
+                this.frameCount++;
             }
-            checkCollision(ax, ay, aw, ah, bx, by, bw, bh) {
-                let padding = 4;
-                return ax + padding < bx + bw &&
-                    ax + aw - padding > bx &&
-                    ay + padding < by + bh &&
-                    ay + ah - padding > by;
-            }
-            die() {
-                this.player.isDead = true;
-                for (let i = 0; i < 30; i++) {
-                    this.particles.push({
-                        x: this.player.x + 15,
-                        y: this.player.y + 15,
-                        vx: (Math.random() - 0.5) * 15,
-                        vy: (Math.random() - 0.5) * 15,
-                        life: 1,
-                        color: this.player.isShip ? '#facc15' : '#38bdf8'
-                    });
-                }
-                const progress = Math.floor((this.distanceTraveled / 25000) * 100);
-                document.getElementById('deathProgress').textContent = `Ukończono: ${progress}%`;
-                setTimeout(() => {
-                    document.getElementById('deathScreen').style.display = 'flex';
-                }, 800);
-            }
-            win() {
-                this.player.isDead = true;
-                isGameRunning = false;
-                let reward = Math.floor(5 * selectedDifficulty);
-                document.getElementById('pointsAwarded').textContent = `+${reward} PUNKTÓW`;
-                document.getElementById('winScreen').style.display = 'flex';
-                if (loggedUser && auth.currentUser) {
-                    db.ref('users/' + loggedUser).update({ points: userPoints + reward });
-                }
-            }
+
             draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
                 this.drawBackground();
-                this.drawGround();
-                this.player.trail.forEach(t => {
-                    ctx.fillStyle = `rgba(56, 189, 248, ${t.life / 40})`;
-                    ctx.fillRect(t.x - (this.distanceTraveled - this.cameraX), t.y, this.player.width, this.player.height);
-                });
-                this.obstacles.forEach(obs => {
-                    let relX = obs.x - this.cameraX + this.player.x;
-                    if (relX < -50 || relX > canvas.width + 50) return;
-                    let obsActualY = this.groundY - obs.h - obs.y;
-                    if (obs.type === 'spike') {
+
+                // Rysowanie przeszkód
+                this.obstacles.forEach(obj => {
+                    const relX = obj.x - this.scrollX + this.player.x;
+                    if (relX < -100 || relX > canvas.width + 100) return;
+                    
+                    const objY = this.groundY - obj.h - obj.y;
+
+                    if (obj.type === 'spike') {
                         ctx.fillStyle = '#ef4444';
                         ctx.beginPath();
-                        ctx.moveTo(relX, obsActualY + obs.h);
-                        ctx.lineTo(relX + obs.w / 2, obsActualY);
-                        ctx.lineTo(relX + obs.w, obsActualY + obs.h);
+                        ctx.moveTo(relX, objY + obj.h);
+                        ctx.lineTo(relX + obj.w/2, objY);
+                        ctx.lineTo(relX + obj.w, objY + obj.h);
                         ctx.fill();
-                        ctx.strokeStyle = '#fff';
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    } else {
+                        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+                    } else if (obj.type === 'block') {
                         ctx.fillStyle = '#1e293b';
-                        ctx.fillRect(relX, obsActualY, obs.w, obs.h);
-                        ctx.strokeStyle = '#38bdf8';
+                        ctx.fillRect(relX, objY, obj.w, obj.h);
+                        ctx.strokeStyle = 'var(--accent-blue)';
                         ctx.lineWidth = 2;
-                        ctx.strokeRect(relX, obsActualY, obs.w, obs.h);
+                        ctx.strokeRect(relX, objY, obj.w, obj.h);
+                    } else if (obj.type === 'deadly_floor') {
+                        const gradient = ctx.createLinearGradient(0, objY, 0, objY + obj.h);
+                        gradient.addColorStop(0, '#ef4444');
+                        gradient.addColorStop(1, 'transparent');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(relX, objY, obj.w, 100);
+                    } else if (obj.type.startsWith('portal')) {
+                        ctx.fillStyle = obj.type === 'portal_ship' ? '#d946ef' : '#4ade80';
+                        ctx.globalAlpha = 0.3;
+                        ctx.fillRect(relX, 0, obj.w, canvas.height);
+                        ctx.globalAlpha = 1;
                     }
                 });
-                if (!this.player.isDead) {
+
+                // Ślad gracza
+                this.player.trail.forEach(t => {
+                    ctx.fillStyle = `rgba(56, 189, 248, ${t.alpha})`;
+                    ctx.fillRect(t.x, t.y, this.player.w, this.player.h);
+                    t.alpha -= 0.05;
+                });
+
+                // Gracz
+                if (!this.player.dead) {
                     ctx.save();
-                    ctx.translate(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2);
+                    ctx.translate(this.player.x + this.player.w/2, this.player.y + this.player.h/2);
                     ctx.rotate(this.player.rotation * Math.PI / 180);
+                    
                     if (this.player.isShip) {
-                        ctx.fillStyle = '#facc15';
+                        ctx.fillStyle = 'var(--accent-gold)';
                         ctx.beginPath();
-                        ctx.moveTo(-15, 0);
-                        ctx.lineTo(15, -10);
-                        ctx.lineTo(10, 0);
-                        ctx.lineTo(15, 10);
-                        ctx.closePath();
-                        ctx.fill();
+                        ctx.moveTo(-15, 0); ctx.lineTo(15, -10); ctx.lineTo(10, 0); ctx.lineTo(15, 10);
+                        ctx.closePath(); ctx.fill();
                     } else {
-                        ctx.fillStyle = '#38bdf8';
+                        ctx.fillStyle = 'var(--accent-blue)';
                         ctx.fillRect(-15, -15, 30, 30);
-                        ctx.strokeStyle = '#fff';
-                        ctx.lineWidth = 3;
+                        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
                         ctx.strokeRect(-15, -15, 30, 30);
-                        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                        ctx.fillRect(-10, -10, 8, 8);
                     }
                     ctx.restore();
                 }
-                this.particles.forEach(p => {
-                    ctx.globalAlpha = p.life;
-                    ctx.fillStyle = p.color;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-                ctx.globalAlpha = 1;
+
+                this.particles.forEach(p => p.draw());
+
+                // Podłoga
+                ctx.fillStyle = '#020617';
+                ctx.fillRect(0, this.groundY, canvas.width, 100);
+                ctx.strokeStyle = 'var(--accent-blue)';
+                ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, this.groundY); ctx.lineTo(canvas.width, this.groundY); ctx.stroke();
             }
+
             drawBackground() {
-                let parallax = this.cameraX * 0.2;
-                ctx.strokeStyle = 'rgba(56, 189, 248, 0.1)';
-                ctx.lineWidth = 1;
-                for (let i = -parallax % 100; i < canvas.width; i += 100) {
-                    ctx.beginPath();
-                    ctx.moveTo(i, 0);
-                    ctx.lineTo(i, this.groundY);
-                    ctx.stroke();
+                // Paralaksa i grid
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
+                const step = 40;
+                const offset = -(this.scrollX % step);
+                for(let x = offset; x < canvas.width; x += step) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, this.groundY); ctx.stroke();
                 }
-                for (let i = 0; i < this.groundY; i += 100) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, i);
-                    ctx.lineTo(canvas.width, i);
-                    ctx.stroke();
+                for(let y = 0; y < this.groundY; y += step) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
                 }
             }
-            drawGround() {
-                ctx.fillStyle = '#0f172a';
-                ctx.fillRect(0, this.groundY, canvas.width, 40);
-                ctx.strokeStyle = '#38bdf8';
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.moveTo(0, this.groundY);
-                ctx.lineTo(canvas.width, this.groundY);
-                ctx.stroke();
-                let patternX = -(this.cameraX % 40);
-                ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
-                for (let x = patternX; x < canvas.width; x += 40) {
-                    ctx.beginPath();
-                    ctx.moveTo(x, this.groundY);
-                    ctx.lineTo(x + 20, this.groundY + 40);
-                    ctx.stroke();
+
+            die() {
+                if (this.player.dead) return;
+                this.player.dead = true;
+                for(let i=0; i<40; i++) this.particles.push(new Particle(this.player.x, this.player.y, '#ef4444'));
+                
+                const percent = Math.floor((this.scrollX / this.levelLength) * 100);
+                document.getElementById('death-info').textContent = `Ukończono: ${percent}%`;
+                
+                setTimeout(() => {
+                    document.getElementById('death-overlay').style.display = 'flex';
+                }, 1000);
+            }
+
+            win() {
+                isRunning = false;
+                const reward = Math.floor(10 * selectedDiff);
+                document.getElementById('win-reward').textContent = `+${reward} PKT`;
+                document.getElementById('win-overlay').style.display = 'flex';
+                
+                if (loggedUser) {
+                    db.ref('users/' + loggedUser).update({ points: globalPoints + reward });
                 }
             }
         }
-        let engine = new GameEngine();
+
+        const game = new Engine();
+
         function resize() {
-            canvas.width = gameBox.clientWidth;
-            canvas.height = gameBox.clientHeight;
-            engine.groundY = canvas.height - 40;
+            canvas.width = viewport.clientWidth;
+            canvas.height = viewport.clientHeight;
+            game.groundY = canvas.height - 40;
         }
+
         window.addEventListener('resize', resize);
         resize();
-        function initiateGame() {
-            document.getElementById('menuLayer').style.display = 'none';
-            document.getElementById('deathScreen').style.display = 'none';
-            document.getElementById('winScreen').style.display = 'none';
-            const cd = document.getElementById('countdown');
-            cd.style.display = 'flex';
+
+        function preStart() {
+            document.getElementById('menu-overlay').style.display = 'none';
+            document.getElementById('death-overlay').style.display = 'none';
+            document.getElementById('win-overlay').style.display = 'none';
+            
+            const cdBox = document.getElementById('countdown-box');
+            cdBox.style.display = 'flex';
+            
             let count = 3;
-            cd.textContent = count;
-            const interval = setInterval(() => {
+            cdBox.textContent = count;
+            
+            const timer = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    cd.textContent = count;
+                    cdBox.textContent = count;
                 } else {
-                    clearInterval(interval);
-                    cd.style.display = 'none';
-                    startGame();
+                    clearInterval(timer);
+                    cdBox.style.display = 'none';
+                    start();
                 }
             }, 1000);
         }
-        function startGame() {
-            engine.reset();
-            isGameRunning = true;
-            lastTime = performance.now();
-            requestAnimationFrame(gameLoop);
+
+        function start() {
+            game.reset();
+            isRunning = true;
+            requestAnimationFrame(loop);
         }
-        function gameLoop(now) {
-            if (!isGameRunning) return;
-            let frameTime = (now - lastTime) / 1000;
-            if (frameTime > 0.25) frameTime = 0.25;
-            lastTime = now;
-            accumulator += frameTime;
-            while (accumulator >= deltaTime) {
-                engine.update();
-                accumulator -= deltaTime;
-            }
-            engine.draw();
-            requestAnimationFrame(gameLoop);
+
+        function loop() {
+            if (!isRunning) return;
+            game.update();
+            game.draw();
+            requestAnimationFrame(loop);
         }
-        function closeOverlayAndReset() {
-            document.getElementById('winScreen').style.display = 'none';
-            document.getElementById('menuLayer').style.display = 'flex';
-            engine.draw();
+
+        function backToMenu() {
+            isRunning = false;
+            document.getElementById('death-overlay').style.display = 'none';
+            document.getElementById('win-overlay').style.display = 'none';
+            document.getElementById('menu-overlay').style.display = 'flex';
         }
+
     </script>
 </body>
 </html>
