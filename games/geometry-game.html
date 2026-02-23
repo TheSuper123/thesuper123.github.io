@@ -1,717 +1,768 @@
 <!DOCTYPE html>
 <html lang="pl" style="background-color: #020617;">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Spinner Dash – SpinnerRealYT Games</title>
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#020617">
-
-<link rel="icon" type="image/png" href="../Logo.png?v=2">
-<link rel="apple-touch-icon" href="../Logo.png?v=2">
-
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-
-<style>
-:root{
-  --bg:#020617;
-  --card:#0f172a;
-  --accent:#38bdf8;
-  --text:#e5e7eb;
-  --ship:#facc15;
-  --portal-ship: #d946ef;
-  --portal-cube: #4ade80;
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  margin: 0; 
-  font-family: Inter, sans-serif;
-  background: radial-gradient(circle at top, #1e293b, #020617);
-  background-attachment: fixed;
-  color: var(--text); 
-  user-select: none;
-  min-height: 100vh;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}
-
-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 20px;
-  background: rgba(15, 23, 42, 0.9); 
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-}
-header img { height: 32px; }
-
-.account-box { text-align: right; }
-.user-info { font-size: 13px; color: var(--accent); font-weight: bold; }
-.sync-status { font-size: 9px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 1px;}
-
-nav button {
-  background: none; border: none; color: var(--text); font-size: 15px;
-  padding: 8px 14px; border-radius: 10px; cursor: pointer;
-}
-nav button:hover { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
-
-main { max-width: 800px; margin: auto; padding: 10px; }
-
-.card {
-  background: linear-gradient(180deg, #0f172a, #020617);
-  border-radius: 24px; padding: 15px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.6);
-  border: 1px solid rgba(255,255,255,0.05);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-h2 { text-align: center; margin-top: 0; margin-bottom: 15px; font-weight: 800; letter-spacing: -1px; }
-
-#menu {
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  margin-bottom: 15px;
-}
-
-select, button {
-  background: #1e293b; color: white; border: 1px solid #334155;
-  border-radius: 12px; padding: 10px 12px; font-size: 14px; outline: none;
-  -webkit-appearance: none;
-}
-
-.btn-primary { 
-    cursor: pointer; background: var(--card); border: 1px solid var(--accent); 
-    color: var(--accent); font-weight: bold; width: 100%; max-width: 250px;
-    padding: 15px; font-size: 16px; letter-spacing: 1px;
-}
-.btn-primary:active { transform: scale(0.96); }
-
-.game-info-bar {
-    display: flex; justify-content: space-between; width: 100%; max-width: 500px;
-    font-size: 13px; color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 10px;
-}
-
-#game-wrapper {
-    position: relative;
-    width: 100%;
-    height: 300px;
-    background: #000;
-    border-radius: 12px;
-    border: 1px solid #334155;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-#in-game-popup {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-    display: none; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 10;
-}
-#popup-title { font-size: 28px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
-#popup-msg { font-size: 15px; color: #94a3b8; margin-bottom: 25px; text-align: center; padding: 0 20px; }
-
-#progress-container {
-    width: 100%; max-width: 400px; height: 8px; background: rgba(255,255,255,0.1);
-    border-radius: 4px; margin: 15px auto 0; position: relative; overflow: hidden;
-}
-#progress-bar {
-    width: 0%; height: 100%; background: var(--accent);
-    transition: width 0.1s linear;
-}
-
-#points-info {
-    text-align: center; margin-top: 15px; font-weight: bold; padding: 10px;
-    border-top: 1px solid #334155; font-size: 1.2rem;
-}
-
-footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
-
-.instruction { font-size: 12px; color: #64748b; text-align: center; margin-top: 10px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Spinner Dash – Professional Edition</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#020617">
+    <link rel="icon" type="image/png" href="../Logo.png?v=2">
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+    <style>
+        :root {
+            --bg: #020617;
+            --card-bg: #0f172a;
+            --accent: #38bdf8;
+            --danger: #ef4444;
+            --success: #4ade80;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --ship-mode: #facc15;
+            --portal-color: #d946ef;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            height: 70px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 1000;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header-left img {
+            height: 35px;
+            filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+        }
+        .btn-back {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-back:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+        .user-stats {
+            text-align: right;
+        }
+        #user-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+        #user-points {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+        }
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 7;
+            background: #000;
+            border-radius: 20px;
+            position: relative;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(56, 189, 248, 0.1);
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .ui-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .menu-overlay {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            transition: opacity 0.3s ease;
+        }
+        .menu-overlay h1 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+        .difficulty-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .diff-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .diff-card.active {
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .diff-card .label {
+            display: block;
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+        .diff-card .name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .btn-start {
+            width: 100%;
+            padding: 18px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .btn-start:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+        }
+        .btn-start:active {
+            transform: scale(0.95);
+        }
+        .game-hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .progress-container {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            transition: width 0.1s linear;
+        }
+        .status-badge {
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .countdown-overlay {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+            font-weight: 900;
+            color: var(--text-main);
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.8);
+            z-index: 60;
+        }
+        .death-screen {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(239, 68, 68, 0.2);
+            backdrop-filter: blur(4px);
+            z-index: 70;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .win-screen {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(74, 222, 128, 0.2);
+            backdrop-filter: blur(4px);
+            z-index: 70;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .stats-panel {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 25px;
+            border: 2px solid var(--accent);
+            text-align: center;
+            min-width: 300px;
+        }
+        .instruction-footer {
+            color: var(--text-dim);
+            font-size: 13px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        .instruction-footer b { color: var(--accent); }
+    </style>
 </head>
 <body>
-
-<header>
-  <div style="display:flex; align-items:center; gap:10px;">
-    <img src="../Logo.png" alt="SpinnerRealYT">
-    <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
-  </div>
-  <div class="account-box">
-    <div id="user-display" class="user-info">GUEST</div>
-    <div id="sync-display" class="sync-status">OFFLINE</div>
-  </div>
-</header>
-
-<main>
-  <div class="card" id="main-card">
-    <h2>🚀 Spinner Dash</h2>
-    
-    <div id="menu">
-      <select id="difficulty-select">
-        <option value="1">Łatwy (+1 pkt)</option>
-        <option value="1.5" selected>Średni (+2 pkt)</option>
-        <option value="2">Trudny (+3 pkt)</option>
-        <option value="2.5">Ekstremalny (+5 pkt)</option>
-      </select>
-      <button id="start-btn" class="btn-primary">ZAGRAJ</button>
-      
-      <div class="game-info-bar">
-          <div id="info">Cel: 100% Trasy</div>
-          <div id="timer">⏱️ 0.0s</div>
-      </div>
-    </div>
-
-    <div id="game-wrapper">
-        <canvas id="gameCanvas"></canvas>
-        <div id="in-game-popup">
-            <div id="popup-title" style="color: var(--accent);">GEOMETRY DASH</div>
-            <div id="popup-msg">Przytrzymaj by skakać lub latać.</div>
-            <button id="popup-btn" class="btn-primary" style="display: none;">ZAGRAJ PONOWNIE</button>
+    <header>
+        <div class="header-left">
+            <img src="../Logo.png" alt="SpinnerLogo">
+            <button class="btn-back" onclick="location.href='../index.html'">Wstecz</button>
         </div>
-    </div>
-    
-    <div id="progress-container"><div id="progress-bar"></div></div>
-    
-    <div class="instruction">Spacja lub kliknięcie/przytrzymanie palca na ekranie gry.</div>
-    <div id="points-info" style="color: var(--accent);">Points: 0</div>
-  </div>
-</main>
-
-<footer>© 2026 SpinnerRealYT Games • iOS 26 Optimized</footer>
-
-<script>
-(() => {
-    const firebaseConfig = { 
-        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-        authDomain: "spinnerrealyt-games.firebaseapp.com",
-        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const auth = firebase.auth();
-    const loggedUser = localStorage.getItem("sp_logged");
-    const syncEl = document.getElementById('sync-display');
-    const pointsInfoEl = document.getElementById('points-info');
-
-    let totalPoints = 0;
-
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const wrapper = document.getElementById('game-wrapper');
-    const timerEl = document.getElementById('timer');
-    const infoEl = document.getElementById('info');
-    const progBar = document.getElementById('progress-bar');
-    
-    const popup = document.getElementById('in-game-popup');
-    const popupTitle = document.getElementById('popup-title');
-    const popupMsg = document.getElementById('popup-msg');
-    const popupBtn = document.getElementById('popup-btn');
-
-    auth.onAuthStateChanged((user) => {
-        if(user && loggedUser) {
-            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-            loadData();
-        } else if (loggedUser) {
-            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-            syncEl.textContent = "Connecting...";
-        }
-    });
-
-    async function loadData() {
-        if(!loggedUser) return;
-        try {
-            const snap = await db.ref('users/' + loggedUser + '/points').once('value');
-            totalPoints = snap.exists() ? snap.val() : 0;
-            pointsInfoEl.textContent = `Points: ${totalPoints}`;
-            syncEl.textContent = "Synced";
-            syncEl.style.color = "#4ade80";
-        } catch(e) { syncEl.textContent = "Error"; }
-    }
-
-    async function savePoints(added) {
-        if(!loggedUser || !auth.currentUser) return;
-        totalPoints += added;
-        pointsInfoEl.textContent = `Points: ${totalPoints}`;
-        try {
-            await db.ref('users/' + loggedUser).update({ points: totalPoints });
-            syncEl.textContent = "Saved";
-            syncEl.style.color = "#4ade80";
-        } catch(e) { syncEl.textContent = "Sync Error"; }
-    }
-
-    function resizeCanvas() {
-        canvas.width = wrapper.clientWidth;
-        canvas.height = wrapper.clientHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // Stałe i zmienne silnika
-    let gameActive = false;
-    let animationId;
-    let frameCount = 0;
-    let difficulty = 1;
-    const FPS = 60;
-    const MAX_TIME = 60; // 60 sekund długości poziomu
-    const SAFE_FRAMES = 3 * FPS; // Odliczanie 3 sekundy
-    const GRID_SIZE = 30; // 30x30 to wymiar jednego bloku (kostki/kolca)
-
-    // Fizyka i Przewijanie
-    let scrollSpeed = 0;
-    let groundY = 0;
-    let totalDistance = 0;
-    let distanceTraveled = 0;
-    
-    let player = {
-        x: 80, y: 0, w: GRID_SIZE, h: GRID_SIZE,
-        dy: 0, gravity: 0.9, jumpForce: -12.5,
-        rotation: 0, isShip: false, isPressing: false,
-        isGrounded: false
-    };
-
-    let obstacles = [];
-    let particles = [];
-    let shipStartDist = 0;
-    let shipEndDist = 0;
-    let hasShipSection = false;
-
-    // Obsługa Sterowania (z jump buffering)
-    function handleInput(e) {
-        if(e.type !== 'keydown') e.preventDefault();
-        if(e.type === 'keydown' && e.code !== 'Space') return;
-        if (!gameActive) return;
-        player.isPressing = true;
-    }
-
-    function handleInputEnd(e) {
-        if(e.type !== 'keyup') e.preventDefault();
-        if(e.type === 'keyup' && e.code !== 'Space') return;
-        player.isPressing = false;
-    }
-
-    window.addEventListener('keydown', handleInput);
-    window.addEventListener('keyup', handleInputEnd);
-    wrapper.addEventListener('mousedown', handleInput);
-    window.addEventListener('mouseup', handleInputEnd);
-    wrapper.addEventListener('touchstart', handleInput, {passive: false});
-    window.addEventListener('touchend', handleInputEnd);
-
-    // --- GENERATOR MAPY (Proceduralny, jak prawdziwe GD) ---
-    function generateLevel() {
-        obstacles = [];
-        totalDistance = MAX_TIME * FPS * scrollSpeed;
-        
-        hasShipSection = Math.random() < 0.20;
-        if(hasShipSection) {
-            shipStartDist = scrollSpeed * FPS * (Math.floor(Math.random() * 20) + 10); // miedzy 10s a 30s
-            shipEndDist = shipStartDist + (20 * FPS * scrollSpeed); // Trwa 20s
-            // Dodaj portale
-            obstacles.push({ type: 'portal_ship', x: shipStartDist, y: 0, w: 20, h: canvas.height * 2 });
-            obstacles.push({ type: 'portal_cube', x: shipEndDist, y: 0, w: 20, h: canvas.height * 2 });
-        } else {
-            shipStartDist = Infinity; shipEndDist = Infinity;
-        }
-
-        let cursorX = scrollSpeed * SAFE_FRAMES; // Zaczynamy budować po 3 sekundach
-        
-        while(cursorX < totalDistance) {
-            let isShipArea = (cursorX >= shipStartDist && cursorX <= shipEndDist);
-            
-            if(isShipArea) {
-                // Tryb statku: tworzymy jaskinię z klocków z góry i z dołu
-                let gapHeight = Math.max(100, 200 - (difficulty * 30)); 
-                let topH = Math.random() * (canvas.height - gapHeight - 40) + 20;
-                
-                // Zbuduj kolumnę bloków u góry
-                for(let y = groundY - topH; y < groundY; y += GRID_SIZE) {
-                    if(y < groundY - gapHeight - topH) {
-                        obstacles.push({ type: 'block', x: cursorX, y: y, w: GRID_SIZE, h: GRID_SIZE, gridY: -1 }); // Top
-                    } else if (y >= groundY - topH) {
-                        obstacles.push({ type: 'block', x: cursorX, y: y, w: GRID_SIZE, h: GRID_SIZE, gridY: 0 }); // Bottom
-                    }
-                }
-                cursorX += GRID_SIZE * 2; // Odstęp tunelu
-            } else {
-                // Tryb Kostki: Logiczne Chunki Platformowe
-                let rand = Math.random();
-                let chunkType = "spike_single";
-                
-                // Skalowanie trudności – ekstremalny ma trudniejsze struktury
-                if (difficulty > 1.5 && rand < 0.2) chunkType = "triple_spike";
-                else if (rand < 0.3) chunkType = "spike_double";
-                else if (rand < 0.5) chunkType = "platform_jump";
-                else if (rand < 0.7) chunkType = "stairs_up";
-                else if (rand < 0.8) chunkType = "block_with_spike";
-                else if (rand < 0.9) chunkType = "spike_single";
-                else chunkType = "pit"; // Puste miejsce dla złapania tchu
-
-                buildChunk(chunkType, cursorX);
-                
-                // Odstęp między chunkami zależy od prędkości i trudności
-                let gap = (Math.random() * 2 + 2) * GRID_SIZE;
-                if(difficulty > 2) gap -= GRID_SIZE; // ciaśniej na ekstremalnym
-                cursorX += getChunkWidth(chunkType) + gap;
+        <div class="user-stats">
+            <div id="user-name">Guest Player</div>
+            <div id="user-points">Points: 0</div>
+        </div>
+    </header>
+    <main>
+        <div class="game-container" id="gameBox">
+            <canvas id="gameCanvas"></canvas>
+            <div id="menuLayer" class="ui-layer">
+                <div class="menu-overlay">
+                    <h1>SPINNER DASH</h1>
+                    <div class="difficulty-grid">
+                        <div class="diff-card active" data-diff="1" onclick="setDifficulty(1, this)">
+                            <span class="label">POZIOM 1</span>
+                            <span class="name">Łatwy</span>
+                        </div>
+                        <div class="diff-card" data-diff="1.5" onclick="setDifficulty(1.5, this)">
+                            <span class="label">POZIOM 2</span>
+                            <span class="name">Średni</span>
+                        </div>
+                        <div class="diff-card" data-diff="2" onclick="setDifficulty(2, this)">
+                            <span class="label">POZIOM 3</span>
+                            <span class="name">Trudny</span>
+                        </div>
+                        <div class="diff-card" data-diff="3" onclick="setDifficulty(3, this)">
+                            <span class="label">POZIOM 4</span>
+                            <span class="name">Ekstremalny</span>
+                        </div>
+                    </div>
+                    <button class="btn-start" onclick="initiateGame()">ROZPOCZNIJ PRZYGODĘ</button>
+                </div>
+            </div>
+            <div id="countdown" class="countdown-overlay">3</div>
+            <div id="deathScreen" class="death-screen">
+                <div class="stats-panel" style="border-color: var(--danger);">
+                    <h2 style="color: var(--danger); font-size: 32px; margin-bottom: 10px;">PRZEGRANA</h2>
+                    <p id="deathProgress" style="margin-bottom: 20px; font-weight: 600;">Postęp: 0%</p>
+                    <button class="btn-start" onclick="initiateGame()" style="background: var(--danger); color: white;">SPRÓBUJ PONOWNIE</button>
+                </div>
+            </div>
+            <div id="winScreen" class="win-screen">
+                <div class="stats-panel" style="border-color: var(--success);">
+                    <h2 style="color: var(--success); font-size: 32px; margin-bottom: 10px;">ZWYCIĘSTWO!</h2>
+                    <p style="margin-bottom: 20px;">Poziom ukończony na 100%</p>
+                    <p id="pointsAwarded" style="color: var(--accent); font-weight: 800; margin-bottom: 20px;">+0 PUNKTÓW</p>
+                    <button class="btn-start" onclick="closeOverlayAndReset()" style="background: var(--success); color: white;">DO MENU</button>
+                </div>
+            </div>
+            <div class="game-hud">
+                <div id="modeBadge" class="status-badge" style="color: var(--accent);">CUBE MODE</div>
+                <div id="timerBadge" class="status-badge">00:00</div>
+            </div>
+            <div class="progress-container">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+        <div class="instruction-footer">
+            Użyj <b>SPACJI</b> lub <b>LEWEGO PRZYCISKU MYSZY</b> aby skakać. <br>
+            W trybie samolotu przytrzymaj, aby lecieć w górę, puść, aby opadać.
+        </div>
+    </main>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
+            authDomain: "spinnerrealyt-games.firebaseapp.com",
+            databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+        const loggedUser = localStorage.getItem("sp_logged");
+        let userPoints = 0;
+        auth.onAuthStateChanged(user => {
+            if (user && loggedUser) {
+                document.getElementById('user-name').textContent = loggedUser;
+                db.ref('users/' + loggedUser + '/points').on('value', snap => {
+                    userPoints = snap.val() || 0;
+                    document.getElementById('user-points').textContent = `Points: ${userPoints}`;
+                });
             }
-        }
-    }
-
-    function addObj(type, realX, gridY) {
-        obstacles.push({ 
-            type: type, 
-            x: realX, 
-            y: groundY - GRID_SIZE - (gridY * GRID_SIZE), 
-            w: GRID_SIZE, 
-            h: GRID_SIZE 
         });
-    }
-
-    function buildChunk(type, startX) {
-        switch(type) {
-            case "spike_single":
-                addObj('spike', startX, 0);
-                break;
-            case "spike_double":
-                addObj('spike', startX, 0); addObj('spike', startX + GRID_SIZE, 0);
-                break;
-            case "triple_spike":
-                addObj('spike', startX, 0); addObj('spike', startX + GRID_SIZE, 0); addObj('spike', startX + GRID_SIZE*2, 0);
-                break;
-            case "stairs_up":
-                addObj('block', startX, 0);
-                addObj('block', startX + GRID_SIZE, 0); addObj('block', startX + GRID_SIZE, 1);
-                addObj('block', startX + GRID_SIZE*2, 0); addObj('block', startX + GRID_SIZE*2, 1); addObj('block', startX + GRID_SIZE*2, 2);
-                break;
-            case "platform_jump":
-                // Blok w powietrzu
-                addObj('block', startX, 1);
-                addObj('block', startX + GRID_SIZE, 1);
-                addObj('spike', startX + GRID_SIZE, 0); // kolec pod spodem
-                addObj('block', startX + GRID_SIZE*2, 1);
-                break;
-            case "block_with_spike":
-                // Blok z kolcem na nim
-                addObj('block', startX, 0);
-                addObj('spike', startX, 1);
-                break;
-            case "pit":
-                // Pusto
-                break;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameBox = document.getElementById('gameBox');
+        let selectedDifficulty = 1;
+        let isGameRunning = false;
+        let isPaused = false;
+        let lastTime = 0;
+        let accumulator = 0;
+        const deltaTime = 1 / 60;
+        function setDifficulty(val, el) {
+            selectedDifficulty = val;
+            document.querySelectorAll('.diff-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
         }
-    }
-
-    function getChunkWidth(type) {
-        if(type === "spike_single" || type === "block_with_spike") return GRID_SIZE;
-        if(type === "spike_double") return GRID_SIZE * 2;
-        if(type === "triple_spike" || type === "stairs_up" || type === "platform_jump") return GRID_SIZE * 3;
-        return 0; // pit
-    }
-
-    function startGame() {
-        resizeCanvas();
-        difficulty = parseFloat(document.getElementById('difficulty-select').value);
-        scrollSpeed = 5 + (difficulty * 1.5); // np. Łatwy = 6.5, Ekstremalny = 8.75
-        groundY = canvas.height - 25;
-        
-        player.y = groundY - player.h;
-        player.dy = 0;
-        player.rotation = 0;
-        player.isShip = false;
-        player.isPressing = false;
-        player.isGrounded = true;
-        
-        particles = [];
-        frameCount = 0;
-        distanceTraveled = 0;
-        gameActive = true;
-        
-        generateLevel();
-
-        popup.style.display = 'none';
-        infoEl.textContent = hasShipSection ? "Tryb: MIESZANY ✈️" : "Tryb: KOSTKA ⬛";
-        infoEl.style.color = "#94a3b8";
-        progBar.style.width = "0%";
-
-        cancelAnimationFrame(animationId);
-        gameLoop();
-    }
-
-    function showPopup(title, msg, color, showBtn) {
-        gameActive = false;
-        popupTitle.textContent = title;
-        popupTitle.style.color = color;
-        popupMsg.textContent = msg;
-        popupBtn.style.display = showBtn ? 'block' : 'none';
-        popup.style.display = 'flex';
-    }
-
-    function createParticles(x, y, color) {
-        for(let i=0; i<20; i++) {
-            particles.push({
-                x: x + player.w/2, y: y + player.h/2,
-                dx: (Math.random()-0.5)*12, dy: (Math.random()-0.5)*12,
-                life: 30, color: color
-            });
-        }
-    }
-
-    function gameOver() {
-        createParticles(player.x, player.y, "#f87171");
-        showPopup("ROZBITY!", `Przetrwałeś: ${(frameCount/FPS).toFixed(1)}s`, "#ef4444", true);
-    }
-
-    function gameWin() {
-        let pointsEarned = 0;
-        if(difficulty === 1) pointsEarned = 1;
-        if(difficulty === 1.5) pointsEarned = 2;
-        if(difficulty === 2) pointsEarned = 3;
-        if(difficulty === 2.5) pointsEarned = 5;
-
-        savePoints(pointsEarned);
-        showPopup("WYGRANA!", `Zaliczyłeś poziom na 100%! Zdobywasz +${pointsEarned} pkt.`, "#4ade80", true);
-    }
-
-    function gameLoop() {
-        if (!gameActive) { draw(); return; }
-
-        frameCount++;
-        let currentSeconds = (frameCount / FPS).toFixed(1);
-        timerEl.textContent = `⏱️ ${currentSeconds}s`;
-
-        distanceTraveled += scrollSpeed;
-        let progress = Math.min((distanceTraveled / totalDistance) * 100, 100);
-        progBar.style.width = progress + "%";
-
-        // Zwycięstwo
-        if (progress >= 100) { gameWin(); return; }
-
-        // Odliczanie startowe
-        if (frameCount <= SAFE_FRAMES) {
-            // Kostka sunie płasko
-            player.rotation += 8 * difficulty;
-            draw();
-            animationId = requestAnimationFrame(gameLoop);
-            return;
-        }
-
-        // Fizyka Gracza
-        let nextY;
-        if (player.isShip) {
-            // Fizyka statku (grawitacja i ciąg)
-            player.gravity = 0.35;
-            if (player.isPressing) player.dy -= 0.7; // Ciąg w górę
-            else player.dy += player.gravity; // Opadanie
-            
-            player.dy = Math.max(-6, Math.min(player.dy, 7)); // Terminal velocity
-            nextY = player.y + player.dy;
-
-            // Granice statku (sufit i podłoga)
-            if (nextY < 0) { nextY = 0; player.dy = 0; }
-            if (nextY > groundY - player.h) { gameOver(); return; }
-            
-            player.rotation = player.dy * 4; 
-            player.isGrounded = false;
-        } else {
-            // Fizyka Kostki
-            player.gravity = 0.9;
-            player.dy += player.gravity;
-            nextY = player.y + player.dy;
-
-            // Grawitacja podłogi
-            if (nextY >= groundY - player.h) {
-                nextY = groundY - player.h;
-                player.dy = 0;
-                player.isGrounded = true;
-                player.rotation = Math.round(player.rotation / 90) * 90;
-            } else {
-                player.isGrounded = false;
-                player.rotation += 7 * difficulty;
+        class GameEngine {
+            constructor() {
+                this.reset();
+                this.setupInputs();
             }
-
-            // Jump Buffering (Auto-skok gdy wylądujemy z przytrzymaną Spacją)
-            if (player.isGrounded && player.isPressing) {
-                player.dy = player.jumpForce;
-                player.isGrounded = false;
-                nextY += player.dy;
+            reset() {
+                this.player = {
+                    x: 100,
+                    y: 0,
+                    width: 30,
+                    height: 30,
+                    velY: 0,
+                    gravity: 0.8,
+                    jumpForce: -13,
+                    rotation: 0,
+                    isGrounded: false,
+                    isShip: false,
+                    isDead: false,
+                    trail: []
+                };
+                this.cameraX = 0;
+                this.distanceTraveled = 0;
+                this.levelWidth = 3600 * 60;
+                this.scrollSpeed = 7 * selectedDifficulty;
+                this.obstacles = [];
+                this.particles = [];
+                this.frameCount = 0;
+                this.levelMap = [];
+                this.generateLevel();
+                this.groundY = canvas.height - 40;
+                this.player.y = this.groundY - this.player.height;
+                this.shipPortalStart = 0;
+                this.shipPortalEnd = 0;
+                this.isShipSection = Math.random() < 0.25;
+                if (this.isShipSection) {
+                    this.shipPortalStart = 2000 + Math.random() * 2000;
+                    this.shipPortalEnd = this.shipPortalStart + 4000;
+                }
             }
-        }
-
-        // Aktualizacja Przeszkód i Kolizje (Real GD Hitboxes)
-        let crashed = false;
-
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-            let obs = obstacles[i];
-            obs.x -= scrollSpeed;
-
-            // Optymalizacja – sprawdzamy tylko te blisko gracza
-            if(obs.x + obs.w < player.x - 50 || obs.x > player.x + 100) continue;
-
-            // PORTALE
-            if(obs.type === 'portal_ship') {
-                if(player.x + player.w/2 > obs.x) { player.isShip = true; player.dy = 0; obstacles.splice(i,1); }
-            } else if(obs.type === 'portal_cube') {
-                if(player.x + player.w/2 > obs.x) { player.isShip = false; player.rotation = 0; obstacles.splice(i,1); }
+            setupInputs() {
+                this.keys = {};
+                window.addEventListener('keydown', e => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.keys[e.code] = true;
+                    }
+                }, { passive: false });
+                window.addEventListener('keyup', e => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.keys[e.code] = false;
+                    }
+                }, { passive: false });
+                canvas.addEventListener('mousedown', e => {
+                    e.preventDefault();
+                    this.keys['Space'] = true;
+                });
+                window.addEventListener('mouseup', e => {
+                    this.keys['Space'] = false;
+                });
+                canvas.addEventListener('touchstart', e => {
+                    e.preventDefault();
+                    this.keys['Space'] = true;
+                }, { passive: false });
+                canvas.addEventListener('touchend', e => {
+                    this.keys['Space'] = false;
+                });
             }
-
-            // KOLIZJA: SPRAWDZAMY KLOCKI (Solidne od góry)
-            if(obs.type === 'block') {
-                // Czy jest nachodzenie na osi X
-                let overlapX = (player.x + player.w > obs.x + 2) && (player.x < obs.x + obs.w - 2);
-                // Czy jest nachodzenie na osi Y
-                let overlapY = (nextY + player.h > obs.y + 2) && (nextY < obs.y + obs.h - 2);
-
-                if (overlapX && overlapY) {
-                    // LĄDOWANIE (Top collision)
-                    // Jeśli gracz w poprzedniej klatce był wyżej (lub na równi) z wierzchem klocka
-                    if (!player.isShip && player.y + player.h <= obs.y + Math.abs(player.dy) + 2) {
-                        nextY = obs.y - player.h; // Ustaw na górze
-                        player.dy = 0;
-                        player.isGrounded = true;
-                        player.rotation = Math.round(player.rotation / 90) * 90;
+            generateLevel() {
+                let x = 800;
+                const minGap = 250 / selectedDifficulty;
+                const maxGap = 450 / selectedDifficulty;
+                while (x < 30000) {
+                    let type = Math.random();
+                    if (type < 0.4) {
+                        this.obstacles.push({ x, y: 0, type: 'spike', w: 30, h: 30 });
+                        x += 30 + minGap + Math.random() * 100;
+                    } else if (type < 0.7) {
+                        let h = 1 + Math.floor(Math.random() * 3);
+                        for (let i = 0; i < h; i++) {
+                            this.obstacles.push({ x, y: i * 35, type: 'block', w: 35, h: 35 });
+                        }
+                        this.obstacles.push({ x: x + 35, y: (h - 1) * 35, type: 'block', w: 35, h: 35 });
+                        x += 70 + minGap;
                     } else {
-                        // CRASH (boczny lub uderzenie głową)
-                        crashed = true;
-                        break;
+                        let len = 2 + Math.floor(Math.random() * 4);
+                        let height = 80 + Math.random() * 40;
+                        for (let i = 0; i < len; i++) {
+                            this.obstacles.push({ x: x + i * 35, y: height, type: 'block', w: 35, h: 35 });
+                        }
+                        if (Math.random() > 0.5) {
+                            this.obstacles.push({ x: x + 35, y: height + 35, type: 'spike', w: 30, h: 30 });
+                        }
+                        x += (len * 35) + minGap;
                     }
                 }
             }
-
-            // KOLIZJA: SPRAWDZAMY KOLCE (Ostre Hitboxy wewnątrz)
-            if(obs.type === 'spike') {
-                // Zacieśniony, uczciwy hitbox kolca (obejmuje węższy trójkąt, nie pełen kwadrat)
-                let sHit = { x: obs.x + 8, y: obs.y + 12, w: 14, h: 18 };
-                if (player.x + player.w > sHit.x && player.x < sHit.x + sHit.w &&
-                    nextY + player.h > sHit.y && nextY < sHit.y + sHit.h) {
-                    crashed = true;
-                    break;
+            update() {
+                if (this.player.isDead) return;
+                this.frameCount++;
+                this.distanceTraveled += this.scrollSpeed;
+                this.cameraX = this.distanceTraveled;
+                const progress = Math.min((this.distanceTraveled / 25000) * 100, 100);
+                document.getElementById('progressFill').style.width = progress + '%';
+                if (progress >= 100) {
+                    this.win();
+                    return;
+                }
+                if (this.isShipSection) {
+                    if (this.distanceTraveled >= this.shipPortalStart && this.distanceTraveled <= this.shipPortalEnd) {
+                        if (!this.player.isShip) {
+                            this.player.isShip = true;
+                            document.getElementById('modeBadge').textContent = "SHIP MODE";
+                            document.getElementById('modeBadge').style.color = "var(--ship-mode)";
+                        }
+                    } else {
+                        if (this.player.isShip) {
+                            this.player.isShip = false;
+                            document.getElementById('modeBadge').textContent = "CUBE MODE";
+                            document.getElementById('modeBadge').style.color = "var(--accent)";
+                        }
+                    }
+                }
+                if (this.player.isShip) {
+                    this.player.gravity = 0.4;
+                    if (this.keys['Space']) {
+                        this.player.velY -= 0.9;
+                    } else {
+                        this.player.velY += this.player.gravity;
+                    }
+                    this.player.velY = Math.max(-7, Math.min(this.player.velY, 7));
+                    this.player.rotation = this.player.velY * 3;
+                } else {
+                    this.player.gravity = 0.9;
+                    this.player.velY += this.player.gravity;
+                    if (this.player.isGrounded && this.keys['Space']) {
+                        this.player.velY = this.player.jumpForce;
+                        this.player.isGrounded = false;
+                    }
+                    if (!this.player.isGrounded) {
+                        this.player.rotation += 6;
+                    } else {
+                        this.player.rotation = Math.round(this.player.rotation / 90) * 90;
+                    }
+                }
+                let nextY = this.player.y + this.player.velY;
+                let onBlock = false;
+                const floorY = this.groundY - this.player.height;
+                if (nextY >= floorY) {
+                    nextY = floorY;
+                    this.player.velY = 0;
+                    this.player.isGrounded = true;
+                    onBlock = true;
+                } else {
+                    this.player.isGrounded = false;
+                }
+                for (let obs of this.obstacles) {
+                    let relX = obs.x - this.cameraX + this.player.x;
+                    if (relX < -100 || relX > 500) continue;
+                    let obsActualY = this.groundY - obs.h - obs.y;
+                    if (this.checkCollision(this.player.x, nextY, this.player.width, this.player.height, relX, obsActualY, obs.w, obs.h)) {
+                        if (obs.type === 'spike') {
+                            this.die();
+                            return;
+                        }
+                        if (obs.type === 'block') {
+                            if (this.player.y + this.player.height <= obsActualY + 10 && this.player.velY >= 0) {
+                                nextY = obsActualY - this.player.height;
+                                this.player.velY = 0;
+                                this.player.isGrounded = true;
+                                onBlock = true;
+                            } else {
+                                this.die();
+                                return;
+                            }
+                        }
+                    }
+                }
+                this.player.y = nextY;
+                if (this.player.isShip && (this.player.y <= 0 || this.player.y >= this.groundY - this.player.height)) {
+                    this.die();
+                }
+                if (this.frameCount % 2 === 0) {
+                    this.player.trail.push({ x: this.player.x, y: this.player.y, life: 20 });
+                }
+                this.player.trail.forEach((t, i) => {
+                    t.life--;
+                    if (t.life <= 0) this.player.trail.splice(i, 1);
+                });
+                this.particles.forEach((p, i) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= 0.05;
+                    if (p.life <= 0) this.particles.splice(i, 1);
+                });
+            }
+            checkCollision(ax, ay, aw, ah, bx, by, bw, bh) {
+                let padding = 4;
+                return ax + padding < bx + bw &&
+                    ax + aw - padding > bx &&
+                    ay + padding < by + bh &&
+                    ay + ah - padding > by;
+            }
+            die() {
+                this.player.isDead = true;
+                for (let i = 0; i < 30; i++) {
+                    this.particles.push({
+                        x: this.player.x + 15,
+                        y: this.player.y + 15,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: (Math.random() - 0.5) * 15,
+                        life: 1,
+                        color: this.player.isShip ? '#facc15' : '#38bdf8'
+                    });
+                }
+                const progress = Math.floor((this.distanceTraveled / 25000) * 100);
+                document.getElementById('deathProgress').textContent = `Ukończono: ${progress}%`;
+                setTimeout(() => {
+                    document.getElementById('deathScreen').style.display = 'flex';
+                }, 800);
+            }
+            win() {
+                this.player.isDead = true;
+                isGameRunning = false;
+                let reward = Math.floor(5 * selectedDifficulty);
+                document.getElementById('pointsAwarded').textContent = `+${reward} PUNKTÓW`;
+                document.getElementById('winScreen').style.display = 'flex';
+                if (loggedUser && auth.currentUser) {
+                    db.ref('users/' + loggedUser).update({ points: userPoints + reward });
+                }
+            }
+            draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                this.drawBackground();
+                this.drawGround();
+                this.player.trail.forEach(t => {
+                    ctx.fillStyle = `rgba(56, 189, 248, ${t.life / 40})`;
+                    ctx.fillRect(t.x - (this.distanceTraveled - this.cameraX), t.y, this.player.width, this.player.height);
+                });
+                this.obstacles.forEach(obs => {
+                    let relX = obs.x - this.cameraX + this.player.x;
+                    if (relX < -50 || relX > canvas.width + 50) return;
+                    let obsActualY = this.groundY - obs.h - obs.y;
+                    if (obs.type === 'spike') {
+                        ctx.fillStyle = '#ef4444';
+                        ctx.beginPath();
+                        ctx.moveTo(relX, obsActualY + obs.h);
+                        ctx.lineTo(relX + obs.w / 2, obsActualY);
+                        ctx.lineTo(relX + obs.w, obsActualY + obs.h);
+                        ctx.fill();
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    } else {
+                        ctx.fillStyle = '#1e293b';
+                        ctx.fillRect(relX, obsActualY, obs.w, obs.h);
+                        ctx.strokeStyle = '#38bdf8';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(relX, obsActualY, obs.w, obs.h);
+                    }
+                });
+                if (!this.player.isDead) {
+                    ctx.save();
+                    ctx.translate(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2);
+                    ctx.rotate(this.player.rotation * Math.PI / 180);
+                    if (this.player.isShip) {
+                        ctx.fillStyle = '#facc15';
+                        ctx.beginPath();
+                        ctx.moveTo(-15, 0);
+                        ctx.lineTo(15, -10);
+                        ctx.lineTo(10, 0);
+                        ctx.lineTo(15, 10);
+                        ctx.closePath();
+                        ctx.fill();
+                    } else {
+                        ctx.fillStyle = '#38bdf8';
+                        ctx.fillRect(-15, -15, 30, 30);
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(-15, -15, 30, 30);
+                        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                        ctx.fillRect(-10, -10, 8, 8);
+                    }
+                    ctx.restore();
+                }
+                this.particles.forEach(p => {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+            }
+            drawBackground() {
+                let parallax = this.cameraX * 0.2;
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.1)';
+                ctx.lineWidth = 1;
+                for (let i = -parallax % 100; i < canvas.width; i += 100) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, this.groundY);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < this.groundY; i += 100) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(canvas.width, i);
+                    ctx.stroke();
+                }
+            }
+            drawGround() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, this.groundY, canvas.width, 40);
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(0, this.groundY);
+                ctx.lineTo(canvas.width, this.groundY);
+                ctx.stroke();
+                let patternX = -(this.cameraX % 40);
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+                for (let x = patternX; x < canvas.width; x += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, this.groundY);
+                    ctx.lineTo(x + 20, this.groundY + 40);
+                    ctx.stroke();
                 }
             }
         }
-
-        if (crashed) { gameOver(); return; }
-
-        player.y = nextY;
-        
-        // Czyszczenie obiektów, które minęły
-        obstacles = obstacles.filter(o => o.x + o.w > -100);
-
-        draw();
-        animationId = requestAnimationFrame(gameLoop);
-    }
-
-    function draw() {
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Grid w tle
-        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for(let i=0; i<canvas.width; i+=GRID_SIZE) { ctx.moveTo(i, 0); ctx.lineTo(i, groundY); }
-        for(let i=0; i<groundY; i+=GRID_SIZE) { ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); }
-        ctx.stroke();
-
-        // Podłoże
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
-
-        // Rysowanie Przeszkód
-        obstacles.forEach(obs => {
-            if (obs.type === 'spike') {
-                ctx.fillStyle = '#ef4444'; // Red
-                ctx.beginPath();
-                ctx.moveTo(obs.x, obs.y + obs.h);
-                ctx.lineTo(obs.x + obs.w / 2, obs.y);
-                ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
-                ctx.fill();
-                // Subtelne ostre światło wewnątrz
-                ctx.fillStyle = '#fca5a5';
-                ctx.beginPath(); ctx.moveTo(obs.x+8, obs.y+obs.h); ctx.lineTo(obs.x+obs.w/2, obs.y+10); ctx.lineTo(obs.x+obs.w-8, obs.y+obs.h); ctx.fill();
-            } else if (obs.type === 'block') {
-                ctx.fillStyle = '#020617';
-                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
-                ctx.strokeStyle = '#38bdf8';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(obs.x+1, obs.y+1, obs.w-2, obs.h-2);
-                // Detal kwadratu w środku
-                ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
-                ctx.strokeRect(obs.x+8, obs.y+8, obs.w-16, obs.h-16);
-            } else if (obs.type === 'portal_ship') {
-                ctx.fillStyle = 'rgba(217, 70, 239, 0.4)'; // Portal różowy
-                ctx.fillRect(obs.x, 0, 10, canvas.height);
-                ctx.shadowBlur = 15; ctx.shadowColor = '#d946ef'; ctx.fillRect(obs.x+3, 0, 4, canvas.height); ctx.shadowBlur = 0;
-            } else if (obs.type === 'portal_cube') {
-                ctx.fillStyle = 'rgba(74, 222, 128, 0.4)'; // Portal zielony
-                ctx.fillRect(obs.x, 0, 10, canvas.height);
-                ctx.shadowBlur = 15; ctx.shadowColor = '#4ade80'; ctx.fillRect(obs.x+3, 0, 4, canvas.height); ctx.shadowBlur = 0;
-            }
-        });
-
-        // Ostrzeżenie / Odliczanie przed startem (3 sekundy)
-        if(gameActive && frameCount <= SAFE_FRAMES) {
-            let leftSec = ((SAFE_FRAMES - frameCount)/FPS).toFixed(1);
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.font = '900 30px Inter';
-            ctx.textAlign = 'center';
-            if(leftSec > 0.0) ctx.fillText(`START ZA: ${leftSec}s`, canvas.width/2, canvas.height/2);
+        let engine = new GameEngine();
+        function resize() {
+            canvas.width = gameBox.clientWidth;
+            canvas.height = gameBox.clientHeight;
+            engine.groundY = canvas.height - 40;
         }
-
-        // Rysowanie Gracza
-        if(gameActive) {
-            ctx.save();
-            ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
-            ctx.rotate(player.rotation * Math.PI / 180);
-            
-            if (player.isShip) {
-                ctx.fillStyle = '#facc15';
-                ctx.shadowBlur = 10; ctx.shadowColor = '#facc15';
-                ctx.beginPath();
-                ctx.moveTo(-12, -6); ctx.lineTo(12, 0); ctx.lineTo(-12, 6);
-                ctx.closePath(); ctx.fill();
-            } else {
-                ctx.fillStyle = '#38bdf8';
-                ctx.shadowBlur = 10; ctx.shadowColor = '#38bdf8';
-                ctx.fillRect(-player.w / 2, -player.h / 2, player.w, player.h);
-                ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
-                ctx.strokeRect(-player.w / 2, -player.h / 2, player.w, player.h);
-            }
-            ctx.restore();
+        window.addEventListener('resize', resize);
+        resize();
+        function initiateGame() {
+            document.getElementById('menuLayer').style.display = 'none';
+            document.getElementById('deathScreen').style.display = 'none';
+            document.getElementById('winScreen').style.display = 'none';
+            const cd = document.getElementById('countdown');
+            cd.style.display = 'flex';
+            let count = 3;
+            cd.textContent = count;
+            const interval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    cd.textContent = count;
+                } else {
+                    clearInterval(interval);
+                    cd.style.display = 'none';
+                    startGame();
+                }
+            }, 1000);
         }
-
-        // Cząsteczki
-        particles.forEach((p, i) => {
-            p.x += p.dx; p.y += p.dy; p.life--;
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = Math.max(0, p.life / 30);
-            ctx.fillRect(p.x, p.y, 4, 4);
-            if(p.life <= 0) particles.splice(i, 1);
-        });
-        ctx.globalAlpha = 1;
-    }
-
-    document.getElementById('start-btn').addEventListener('click', startGame);
-    popupBtn.addEventListener('click', startGame);
-
-    draw();
-})();
-</script>
+        function startGame() {
+            engine.reset();
+            isGameRunning = true;
+            lastTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+        function gameLoop(now) {
+            if (!isGameRunning) return;
+            let frameTime = (now - lastTime) / 1000;
+            if (frameTime > 0.25) frameTime = 0.25;
+            lastTime = now;
+            accumulator += frameTime;
+            while (accumulator >= deltaTime) {
+                engine.update();
+                accumulator -= deltaTime;
+            }
+            engine.draw();
+            requestAnimationFrame(gameLoop);
+        }
+        function closeOverlayAndReset() {
+            document.getElementById('winScreen').style.display = 'none';
+            document.getElementById('menuLayer').style.display = 'flex';
+            engine.draw();
+        }
+    </script>
 </body>
 </html>
