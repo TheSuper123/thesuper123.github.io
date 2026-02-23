@@ -23,6 +23,8 @@
   --accent:#38bdf8;
   --text:#e5e7eb;
   --ship:#facc15;
+  --portal-ship: #d946ef;
+  --portal-cube: #4ade80;
 }
 
 * {
@@ -60,7 +62,7 @@ nav button {
 }
 nav button:hover { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
 
-main { max-width: 700px; margin: auto; padding: 10px; }
+main { max-width: 800px; margin: auto; padding: 10px; }
 
 .card {
   background: linear-gradient(180deg, #0f172a, #020617);
@@ -87,19 +89,20 @@ select, button {
 
 .btn-primary { 
     cursor: pointer; background: var(--card); border: 1px solid var(--accent); 
-    color: var(--accent); font-weight: bold; width: 100%; max-width: 220px;
+    color: var(--accent); font-weight: bold; width: 100%; max-width: 250px;
+    padding: 15px; font-size: 16px; letter-spacing: 1px;
 }
 .btn-primary:active { transform: scale(0.96); }
 
 .game-info-bar {
-    display: flex; justify-content: space-between; width: 100%; max-width: 400px;
+    display: flex; justify-content: space-between; width: 100%; max-width: 500px;
     font-size: 13px; color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 10px;
 }
 
 #game-wrapper {
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 300px;
     background: #000;
     border-radius: 12px;
     border: 1px solid #334155;
@@ -113,15 +116,23 @@ canvas {
     height: 100%;
 }
 
-/* Wewnętrzny popup gry (zamiast alertów) */
 #in-game-popup {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
     display: none; flex-direction: column; align-items: center; justify-content: center;
     z-index: 10;
 }
-#popup-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-#popup-msg { font-size: 14px; color: #94a3b8; margin-bottom: 20px; text-align: center; padding: 0 20px; }
+#popup-title { font-size: 28px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
+#popup-msg { font-size: 15px; color: #94a3b8; margin-bottom: 25px; text-align: center; padding: 0 20px; }
+
+#progress-container {
+    width: 100%; max-width: 400px; height: 8px; background: rgba(255,255,255,0.1);
+    border-radius: 4px; margin: 15px auto 0; position: relative; overflow: hidden;
+}
+#progress-bar {
+    width: 0%; height: 100%; background: var(--accent);
+    transition: width 0.1s linear;
+}
 
 #points-info {
     text-align: center; margin-top: 15px; font-weight: bold; padding: 10px;
@@ -130,7 +141,7 @@ canvas {
 
 footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
 
-.instruction { font-size: 11px; color: #64748b; text-align: center; margin-top: 10px; }
+.instruction { font-size: 12px; color: #64748b; text-align: center; margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -152,15 +163,15 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
     
     <div id="menu">
       <select id="difficulty-select">
-        <option value="1">Łatwy (Wolniejszy)</option>
-        <option value="1.5" selected>Średni (Standard)</option>
-        <option value="2">Trudny (Szybki)</option>
-        <option value="2.5">Ekstremalny (Bardzo szybki)</option>
+        <option value="1">Łatwy (+1 pkt)</option>
+        <option value="1.5" selected>Średni (+2 pkt)</option>
+        <option value="2">Trudny (+3 pkt)</option>
+        <option value="2.5">Ekstremalny (+5 pkt)</option>
       </select>
-      <button id="start-btn" class="btn-primary">START GRY</button>
+      <button id="start-btn" class="btn-primary">ZAGRAJ</button>
       
       <div class="game-info-bar">
-          <div id="info">Przetrwaj 60s!</div>
+          <div id="info">Cel: 100% Trasy</div>
           <div id="timer">⏱️ 0.0s</div>
       </div>
     </div>
@@ -168,13 +179,15 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
     <div id="game-wrapper">
         <canvas id="gameCanvas"></canvas>
         <div id="in-game-popup">
-            <div id="popup-title" style="color: var(--accent);">GOTOWY?</div>
-            <div id="popup-msg">Wybierz poziom trudności i kliknij START.</div>
+            <div id="popup-title" style="color: var(--accent);">GEOMETRY DASH</div>
+            <div id="popup-msg">Przytrzymaj by skakać lub latać.</div>
             <button id="popup-btn" class="btn-primary" style="display: none;">ZAGRAJ PONOWNIE</button>
         </div>
     </div>
     
-    <div class="instruction">Spacja lub kliknięcie w ekran gry, aby skakać / latać.</div>
+    <div id="progress-container"><div id="progress-bar"></div></div>
+    
+    <div class="instruction">Spacja lub kliknięcie/przytrzymanie palca na ekranie gry.</div>
     <div id="points-info" style="color: var(--accent);">Points: 0</div>
   </div>
 </main>
@@ -198,19 +211,18 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
 
     let totalPoints = 0;
 
-    // Elementy UI
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const wrapper = document.getElementById('game-wrapper');
     const timerEl = document.getElementById('timer');
     const infoEl = document.getElementById('info');
+    const progBar = document.getElementById('progress-bar');
     
     const popup = document.getElementById('in-game-popup');
     const popupTitle = document.getElementById('popup-title');
     const popupMsg = document.getElementById('popup-msg');
     const popupBtn = document.getElementById('popup-btn');
 
-    // System konta i Firebase
     auth.onAuthStateChanged((user) => {
         if(user && loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
@@ -243,7 +255,6 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         } catch(e) { syncEl.textContent = "Sync Error"; }
     }
 
-    // Dopasowanie rozmiaru płótna
     function resizeCanvas() {
         canvas.width = wrapper.clientWidth;
         canvas.height = wrapper.clientHeight;
@@ -251,43 +262,41 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Zmienne Gry
+    // Stałe i zmienne silnika
     let gameActive = false;
     let animationId;
     let frameCount = 0;
     let difficulty = 1;
     const FPS = 60;
-    const MAX_TIME = 60; // 60 sekund
-    const SAFE_FRAMES = 5 * FPS; // 5 sekund na przygotowanie
+    const MAX_TIME = 60; // 60 sekund długości poziomu
+    const SAFE_FRAMES = 3 * FPS; // Odliczanie 3 sekundy
+    const GRID_SIZE = 30; // 30x30 to wymiar jednego bloku (kostki/kolca)
 
-    // Zmienne Samolocika
-    let hasShipSection = false;
-    let shipStartFrame = 0;
-    let shipEndFrame = 0;
+    // Fizyka i Przewijanie
+    let scrollSpeed = 0;
+    let groundY = 0;
+    let totalDistance = 0;
+    let distanceTraveled = 0;
     
     let player = {
-        x: 50, y: 0, w: 24, h: 24,
-        dy: 0, gravity: 0.8, jumpForce: -11,
-        isJumping: false, rotation: 0,
-        isShip: false, isPressing: false
+        x: 80, y: 0, w: GRID_SIZE, h: GRID_SIZE,
+        dy: 0, gravity: 0.9, jumpForce: -12.5,
+        rotation: 0, isShip: false, isPressing: false,
+        isGrounded: false
     };
 
     let obstacles = [];
     let particles = [];
-    let groundY = 0;
+    let shipStartDist = 0;
+    let shipEndDist = 0;
+    let hasShipSection = false;
 
-    // Sterowanie
+    // Obsługa Sterowania (z jump buffering)
     function handleInput(e) {
         if(e.type !== 'keydown') e.preventDefault();
         if(e.type === 'keydown' && e.code !== 'Space') return;
-        
         if (!gameActive) return;
         player.isPressing = true;
-        
-        if (!player.isShip && !player.isJumping) {
-            player.dy = player.jumpForce;
-            player.isJumping = true;
-        }
     }
 
     function handleInputEnd(e) {
@@ -303,45 +312,145 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
     wrapper.addEventListener('touchstart', handleInput, {passive: false});
     window.addEventListener('touchend', handleInputEnd);
 
-    // Resetowanie gry
+    // --- GENERATOR MAPY (Proceduralny, jak prawdziwe GD) ---
+    function generateLevel() {
+        obstacles = [];
+        totalDistance = MAX_TIME * FPS * scrollSpeed;
+        
+        hasShipSection = Math.random() < 0.20;
+        if(hasShipSection) {
+            shipStartDist = scrollSpeed * FPS * (Math.floor(Math.random() * 20) + 10); // miedzy 10s a 30s
+            shipEndDist = shipStartDist + (20 * FPS * scrollSpeed); // Trwa 20s
+            // Dodaj portale
+            obstacles.push({ type: 'portal_ship', x: shipStartDist, y: 0, w: 20, h: canvas.height * 2 });
+            obstacles.push({ type: 'portal_cube', x: shipEndDist, y: 0, w: 20, h: canvas.height * 2 });
+        } else {
+            shipStartDist = Infinity; shipEndDist = Infinity;
+        }
+
+        let cursorX = scrollSpeed * SAFE_FRAMES; // Zaczynamy budować po 3 sekundach
+        
+        while(cursorX < totalDistance) {
+            let isShipArea = (cursorX >= shipStartDist && cursorX <= shipEndDist);
+            
+            if(isShipArea) {
+                // Tryb statku: tworzymy jaskinię z klocków z góry i z dołu
+                let gapHeight = Math.max(100, 200 - (difficulty * 30)); 
+                let topH = Math.random() * (canvas.height - gapHeight - 40) + 20;
+                
+                // Zbuduj kolumnę bloków u góry
+                for(let y = groundY - topH; y < groundY; y += GRID_SIZE) {
+                    if(y < groundY - gapHeight - topH) {
+                        obstacles.push({ type: 'block', x: cursorX, y: y, w: GRID_SIZE, h: GRID_SIZE, gridY: -1 }); // Top
+                    } else if (y >= groundY - topH) {
+                        obstacles.push({ type: 'block', x: cursorX, y: y, w: GRID_SIZE, h: GRID_SIZE, gridY: 0 }); // Bottom
+                    }
+                }
+                cursorX += GRID_SIZE * 2; // Odstęp tunelu
+            } else {
+                // Tryb Kostki: Logiczne Chunki Platformowe
+                let rand = Math.random();
+                let chunkType = "spike_single";
+                
+                // Skalowanie trudności – ekstremalny ma trudniejsze struktury
+                if (difficulty > 1.5 && rand < 0.2) chunkType = "triple_spike";
+                else if (rand < 0.3) chunkType = "spike_double";
+                else if (rand < 0.5) chunkType = "platform_jump";
+                else if (rand < 0.7) chunkType = "stairs_up";
+                else if (rand < 0.8) chunkType = "block_with_spike";
+                else if (rand < 0.9) chunkType = "spike_single";
+                else chunkType = "pit"; // Puste miejsce dla złapania tchu
+
+                buildChunk(chunkType, cursorX);
+                
+                // Odstęp między chunkami zależy od prędkości i trudności
+                let gap = (Math.random() * 2 + 2) * GRID_SIZE;
+                if(difficulty > 2) gap -= GRID_SIZE; // ciaśniej na ekstremalnym
+                cursorX += getChunkWidth(chunkType) + gap;
+            }
+        }
+    }
+
+    function addObj(type, realX, gridY) {
+        obstacles.push({ 
+            type: type, 
+            x: realX, 
+            y: groundY - GRID_SIZE - (gridY * GRID_SIZE), 
+            w: GRID_SIZE, 
+            h: GRID_SIZE 
+        });
+    }
+
+    function buildChunk(type, startX) {
+        switch(type) {
+            case "spike_single":
+                addObj('spike', startX, 0);
+                break;
+            case "spike_double":
+                addObj('spike', startX, 0); addObj('spike', startX + GRID_SIZE, 0);
+                break;
+            case "triple_spike":
+                addObj('spike', startX, 0); addObj('spike', startX + GRID_SIZE, 0); addObj('spike', startX + GRID_SIZE*2, 0);
+                break;
+            case "stairs_up":
+                addObj('block', startX, 0);
+                addObj('block', startX + GRID_SIZE, 0); addObj('block', startX + GRID_SIZE, 1);
+                addObj('block', startX + GRID_SIZE*2, 0); addObj('block', startX + GRID_SIZE*2, 1); addObj('block', startX + GRID_SIZE*2, 2);
+                break;
+            case "platform_jump":
+                // Blok w powietrzu
+                addObj('block', startX, 1);
+                addObj('block', startX + GRID_SIZE, 1);
+                addObj('spike', startX + GRID_SIZE, 0); // kolec pod spodem
+                addObj('block', startX + GRID_SIZE*2, 1);
+                break;
+            case "block_with_spike":
+                // Blok z kolcem na nim
+                addObj('block', startX, 0);
+                addObj('spike', startX, 1);
+                break;
+            case "pit":
+                // Pusto
+                break;
+        }
+    }
+
+    function getChunkWidth(type) {
+        if(type === "spike_single" || type === "block_with_spike") return GRID_SIZE;
+        if(type === "spike_double") return GRID_SIZE * 2;
+        if(type === "triple_spike" || type === "stairs_up" || type === "platform_jump") return GRID_SIZE * 3;
+        return 0; // pit
+    }
+
     function startGame() {
         resizeCanvas();
         difficulty = parseFloat(document.getElementById('difficulty-select').value);
-        groundY = canvas.height - 20;
+        scrollSpeed = 5 + (difficulty * 1.5); // np. Łatwy = 6.5, Ekstremalny = 8.75
+        groundY = canvas.height - 25;
         
         player.y = groundY - player.h;
         player.dy = 0;
         player.rotation = 0;
-        player.isJumping = false;
         player.isShip = false;
         player.isPressing = false;
+        player.isGrounded = true;
         
-        obstacles = [];
         particles = [];
         frameCount = 0;
+        distanceTraveled = 0;
         gameActive = true;
         
-        // Logika generowania trybu samolotu (20% szans)
-        hasShipSection = Math.random() < 0.20;
-        if(hasShipSection) {
-            // Samolot zaczyna się losowo między 10s a 35s gry, trwa 20s
-            const startSec = Math.floor(Math.random() * 25) + 10;
-            shipStartFrame = startSec * FPS;
-            shipEndFrame = shipStartFrame + (20 * FPS);
-        } else {
-            shipStartFrame = 0;
-            shipEndFrame = 0;
-        }
+        generateLevel();
 
         popup.style.display = 'none';
         infoEl.textContent = hasShipSection ? "Tryb: MIESZANY ✈️" : "Tryb: KOSTKA ⬛";
         infoEl.style.color = "#94a3b8";
+        progBar.style.width = "0%";
 
         cancelAnimationFrame(animationId);
         gameLoop();
     }
 
-    // Wyświetlanie Popupów Wewnętrznych
     function showPopup(title, msg, color, showBtn) {
         gameActive = false;
         popupTitle.textContent = title;
@@ -351,35 +460,11 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         popup.style.display = 'flex';
     }
 
-    function spawnObstacle() {
-        const speed = 6 * difficulty;
-        
-        if(player.isShip) {
-            // Przeszkody dla statku (kolumny z przerwą)
-            const gap = 100;
-            const topHeight = Math.random() * (canvas.height - gap - 60) + 20;
-            obstacles.push({
-                x: canvas.width, w: 30, h: topHeight, y: 0, type: 'pillar', passed: false
-            });
-            obstacles.push({
-                x: canvas.width, w: 30, h: canvas.height - topHeight - gap - 20, 
-                y: topHeight + gap, type: 'pillar', passed: false
-            });
-        } else {
-            // Przeszkody dla kostki (kolce lub klocki)
-            const isSpike = Math.random() > 0.4;
-            obstacles.push({
-                x: canvas.width, w: 24, h: isSpike ? 24 : 35,
-                y: groundY - (isSpike ? 24 : 35), type: isSpike ? 'spike' : 'block', passed: false
-            });
-        }
-    }
-
     function createParticles(x, y, color) {
-        for(let i=0; i<15; i++) {
+        for(let i=0; i<20; i++) {
             particles.push({
                 x: x + player.w/2, y: y + player.h/2,
-                dx: (Math.random()-0.5)*8, dy: (Math.random()-0.5)*8,
+                dx: (Math.random()-0.5)*12, dy: (Math.random()-0.5)*12,
                 life: 30, color: color
             });
         }
@@ -398,102 +483,132 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         if(difficulty === 2.5) pointsEarned = 5;
 
         savePoints(pointsEarned);
-        showPopup("WYGRANA!", `Zaliczyłeś poziom! Zdobywasz +${pointsEarned} pkt.`, "#4ade80", true);
+        showPopup("WYGRANA!", `Zaliczyłeś poziom na 100%! Zdobywasz +${pointsEarned} pkt.`, "#4ade80", true);
     }
 
     function gameLoop() {
-        if (!gameActive) {
-            // Rysuj ostatnią klatkę przed śmiercią/wygraną
-            draw();
-            return;
-        }
+        if (!gameActive) { draw(); return; }
 
         frameCount++;
         let currentSeconds = (frameCount / FPS).toFixed(1);
         timerEl.textContent = `⏱️ ${currentSeconds}s`;
 
-        // Zwycięstwo po 60 sekundach
-        if (frameCount >= MAX_TIME * FPS) {
-            gameWin();
+        distanceTraveled += scrollSpeed;
+        let progress = Math.min((distanceTraveled / totalDistance) * 100, 100);
+        progBar.style.width = progress + "%";
+
+        // Zwycięstwo
+        if (progress >= 100) { gameWin(); return; }
+
+        // Odliczanie startowe
+        if (frameCount <= SAFE_FRAMES) {
+            // Kostka sunie płasko
+            player.rotation += 8 * difficulty;
+            draw();
+            animationId = requestAnimationFrame(gameLoop);
             return;
         }
 
-        // Kontrola trybu statku
-        if (hasShipSection) {
-            if (frameCount === shipStartFrame) {
-                player.isShip = true;
-                infoEl.textContent = "UWAGA: SAMOLOT!";
-                infoEl.style.color = "#facc15";
-                obstacles = []; // Czyścimy ekran przy zmianie
-            }
-            if (frameCount === shipEndFrame) {
-                player.isShip = false;
-                player.rotation = 0;
-                infoEl.textContent = "POWRÓT DO KOSTKI!";
-                infoEl.style.color = "#38bdf8";
-                obstacles = [];
-            }
-        }
-
-        // Spawnowanie przeszkód (po 5 sekundach)
-        if (frameCount > SAFE_FRAMES) {
-            // Częstotliwość zależy od trudności i trybu
-            const spawnRate = player.isShip ? Math.floor(70 / difficulty) : Math.floor(55 / difficulty);
-            if (frameCount % spawnRate === 0) {
-                spawnObstacle();
-            }
-        }
-
         // Fizyka Gracza
+        let nextY;
         if (player.isShip) {
-            player.gravity = 0.3;
-            if (player.isPressing) player.dy -= 0.6;
-            else player.dy += player.gravity;
+            // Fizyka statku (grawitacja i ciąg)
+            player.gravity = 0.35;
+            if (player.isPressing) player.dy -= 0.7; // Ciąg w górę
+            else player.dy += player.gravity; // Opadanie
             
-            player.dy = Math.max(-6, Math.min(player.dy, 6)); // Limit prędkości
-            player.y += player.dy;
+            player.dy = Math.max(-6, Math.min(player.dy, 7)); // Terminal velocity
+            nextY = player.y + player.dy;
 
-            // Granice statku
-            if (player.y < 0) { player.y = 0; player.dy = 0; }
-            if (player.y > groundY - player.h) { gameOver(); return; }
-
-            // Rotacja statku dla wizualnego efektu
+            // Granice statku (sufit i podłoga)
+            if (nextY < 0) { nextY = 0; player.dy = 0; }
+            if (nextY > groundY - player.h) { gameOver(); return; }
+            
             player.rotation = player.dy * 4; 
-
+            player.isGrounded = false;
         } else {
             // Fizyka Kostki
+            player.gravity = 0.9;
             player.dy += player.gravity;
-            player.y += player.dy;
+            nextY = player.y + player.dy;
 
-            if (player.y >= groundY - player.h) {
-                player.y = groundY - player.h;
+            // Grawitacja podłogi
+            if (nextY >= groundY - player.h) {
+                nextY = groundY - player.h;
                 player.dy = 0;
-                player.isJumping = false;
-                // Wyrównanie rotacji do 90 stopni
+                player.isGrounded = true;
                 player.rotation = Math.round(player.rotation / 90) * 90;
             } else {
-                player.rotation += 6 * difficulty;
+                player.isGrounded = false;
+                player.rotation += 7 * difficulty;
+            }
+
+            // Jump Buffering (Auto-skok gdy wylądujemy z przytrzymaną Spacją)
+            if (player.isGrounded && player.isPressing) {
+                player.dy = player.jumpForce;
+                player.isGrounded = false;
+                nextY += player.dy;
             }
         }
 
-        // Aktualizacja Przeszkód i Kolizje
-        const speed = 6 * difficulty;
+        // Aktualizacja Przeszkód i Kolizje (Real GD Hitboxes)
+        let crashed = false;
+
         for (let i = obstacles.length - 1; i >= 0; i--) {
             let obs = obstacles[i];
-            obs.x -= speed;
+            obs.x -= scrollSpeed;
 
-            // Hitbox kolizji (trochę wyrozumiały: zmniejszony o 4px z każdej strony)
-            const margin = 4;
-            if (player.x + margin < obs.x + obs.w &&
-                player.x + player.w - margin > obs.x &&
-                player.y + margin < obs.y + obs.h &&
-                player.y + player.h - margin > obs.y) {
-                gameOver();
-                return;
+            // Optymalizacja – sprawdzamy tylko te blisko gracza
+            if(obs.x + obs.w < player.x - 50 || obs.x > player.x + 100) continue;
+
+            // PORTALE
+            if(obs.type === 'portal_ship') {
+                if(player.x + player.w/2 > obs.x) { player.isShip = true; player.dy = 0; obstacles.splice(i,1); }
+            } else if(obs.type === 'portal_cube') {
+                if(player.x + player.w/2 > obs.x) { player.isShip = false; player.rotation = 0; obstacles.splice(i,1); }
             }
 
-            if (obs.x + obs.w < 0) obstacles.splice(i, 1);
+            // KOLIZJA: SPRAWDZAMY KLOCKI (Solidne od góry)
+            if(obs.type === 'block') {
+                // Czy jest nachodzenie na osi X
+                let overlapX = (player.x + player.w > obs.x + 2) && (player.x < obs.x + obs.w - 2);
+                // Czy jest nachodzenie na osi Y
+                let overlapY = (nextY + player.h > obs.y + 2) && (nextY < obs.y + obs.h - 2);
+
+                if (overlapX && overlapY) {
+                    // LĄDOWANIE (Top collision)
+                    // Jeśli gracz w poprzedniej klatce był wyżej (lub na równi) z wierzchem klocka
+                    if (!player.isShip && player.y + player.h <= obs.y + Math.abs(player.dy) + 2) {
+                        nextY = obs.y - player.h; // Ustaw na górze
+                        player.dy = 0;
+                        player.isGrounded = true;
+                        player.rotation = Math.round(player.rotation / 90) * 90;
+                    } else {
+                        // CRASH (boczny lub uderzenie głową)
+                        crashed = true;
+                        break;
+                    }
+                }
+            }
+
+            // KOLIZJA: SPRAWDZAMY KOLCE (Ostre Hitboxy wewnątrz)
+            if(obs.type === 'spike') {
+                // Zacieśniony, uczciwy hitbox kolca (obejmuje węższy trójkąt, nie pełen kwadrat)
+                let sHit = { x: obs.x + 8, y: obs.y + 12, w: 14, h: 18 };
+                if (player.x + player.w > sHit.x && player.x < sHit.x + sHit.w &&
+                    nextY + player.h > sHit.y && nextY < sHit.y + sHit.h) {
+                    crashed = true;
+                    break;
+                }
+            }
         }
+
+        if (crashed) { gameOver(); return; }
+
+        player.y = nextY;
+        
+        // Czyszczenie obiektów, które minęły
+        obstacles = obstacles.filter(o => o.x + o.w > -100);
 
         draw();
         animationId = requestAnimationFrame(gameLoop);
@@ -503,46 +618,61 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         ctx.fillStyle = '#0f172a';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Grid w tle (delikatny)
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        // Grid w tle
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        for(let i=0; i<canvas.width; i+=40) { ctx.moveTo(i, 0); ctx.lineTo(i, groundY); }
-        for(let i=0; i<groundY; i+=40) { ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); }
+        for(let i=0; i<canvas.width; i+=GRID_SIZE) { ctx.moveTo(i, 0); ctx.lineTo(i, groundY); }
+        for(let i=0; i<groundY; i+=GRID_SIZE) { ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); }
         ctx.stroke();
 
         // Podłoże
         ctx.fillStyle = '#1e293b';
         ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
-
-        // Ostrzeżenie przed startem (pierwsze 5 sekund)
-        if(gameActive && frameCount <= SAFE_FRAMES) {
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.font = '20px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText("PRZYGOTUJ SIĘ...", canvas.width/2, canvas.height/2);
-            ctx.fillText(`START ZA: ${((SAFE_FRAMES - frameCount)/FPS).toFixed(1)}s`, canvas.width/2, canvas.height/2 + 30);
-        }
 
         // Rysowanie Przeszkód
         obstacles.forEach(obs => {
             if (obs.type === 'spike') {
-                ctx.fillStyle = '#ef4444';
+                ctx.fillStyle = '#ef4444'; // Red
                 ctx.beginPath();
                 ctx.moveTo(obs.x, obs.y + obs.h);
                 ctx.lineTo(obs.x + obs.w / 2, obs.y);
                 ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
                 ctx.fill();
-            } else {
+                // Subtelne ostre światło wewnątrz
+                ctx.fillStyle = '#fca5a5';
+                ctx.beginPath(); ctx.moveTo(obs.x+8, obs.y+obs.h); ctx.lineTo(obs.x+obs.w/2, obs.y+10); ctx.lineTo(obs.x+obs.w-8, obs.y+obs.h); ctx.fill();
+            } else if (obs.type === 'block') {
                 ctx.fillStyle = '#020617';
                 ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
                 ctx.strokeStyle = '#38bdf8';
-                ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
+                ctx.lineWidth = 2;
+                ctx.strokeRect(obs.x+1, obs.y+1, obs.w-2, obs.h-2);
+                // Detal kwadratu w środku
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+                ctx.strokeRect(obs.x+8, obs.y+8, obs.w-16, obs.h-16);
+            } else if (obs.type === 'portal_ship') {
+                ctx.fillStyle = 'rgba(217, 70, 239, 0.4)'; // Portal różowy
+                ctx.fillRect(obs.x, 0, 10, canvas.height);
+                ctx.shadowBlur = 15; ctx.shadowColor = '#d946ef'; ctx.fillRect(obs.x+3, 0, 4, canvas.height); ctx.shadowBlur = 0;
+            } else if (obs.type === 'portal_cube') {
+                ctx.fillStyle = 'rgba(74, 222, 128, 0.4)'; // Portal zielony
+                ctx.fillRect(obs.x, 0, 10, canvas.height);
+                ctx.shadowBlur = 15; ctx.shadowColor = '#4ade80'; ctx.fillRect(obs.x+3, 0, 4, canvas.height); ctx.shadowBlur = 0;
             }
         });
+
+        // Ostrzeżenie / Odliczanie przed startem (3 sekundy)
+        if(gameActive && frameCount <= SAFE_FRAMES) {
+            let leftSec = ((SAFE_FRAMES - frameCount)/FPS).toFixed(1);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '900 30px Inter';
+            ctx.textAlign = 'center';
+            if(leftSec > 0.0) ctx.fillText(`START ZA: ${leftSec}s`, canvas.width/2, canvas.height/2);
+        }
 
         // Rysowanie Gracza
         if(gameActive) {
@@ -566,7 +696,7 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
             ctx.restore();
         }
 
-        // Rysowanie Cząsteczek
+        // Cząsteczki
         particles.forEach((p, i) => {
             p.x += p.dx; p.y += p.dy; p.life--;
             ctx.fillStyle = p.color;
@@ -577,14 +707,10 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         ctx.globalAlpha = 1;
     }
 
-    // Event Listenery dla przycisków
     document.getElementById('start-btn').addEventListener('click', startGame);
     popupBtn.addEventListener('click', startGame);
 
-    // Initial draw
-    showPopup("GOTOWY?", "Wybierz poziom trudności i kliknij START.", "#38bdf8", false);
     draw();
-
 })();
 </script>
 </body>
