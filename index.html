@@ -3,6 +3,7 @@
 <head> 
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
+    <meta name="description" content="SpinnerRealYT Games – graj w klasyczne i nowe gry online, śledź postępy i wygrywaj nagrody w premiumowej platformie gamingowej.">
     <title>SpinnerRealYT Games | Premium Gaming</title> 
     <link rel="icon" href="Logo.png"> 
 
@@ -95,17 +96,6 @@
             position: relative;
         } 
 
-        .ad-image {
-            width: 100%; border-radius: 15px; margin: 15px 0;
-            border: 1px solid var(--card-border);
-            object-fit: cover; cursor: pointer;
-        }
-        .ad-text {
-            font-size: 13px; color: var(--text-dim); line-height: 1.6;
-            text-align: justify; margin-bottom: 15px;
-        }
-        .ad-link { color: var(--accent); font-weight: bold; text-decoration: none; }
-
         .auth-input { 
             width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; 
             background: #1e293b; border: 1px solid #334155; color: white; outline: none; font-size: 14px;
@@ -133,17 +123,6 @@
 </head> 
 <body> 
 
-<div id="cookie-overlay" class="modal-overlay">
-    <div class="modal" style="text-align: center; border-color: var(--accent);">
-        <h2 style="margin: 0 0 15px; color: var(--accent);">Pliki Cookies & Prywatność</h2>
-        <div style="font-size: 50px; margin-bottom: 15px;">🍪</div>
-        <p style="color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
-            Ta strona wymaga akceptacji plików cookies oraz lokalnego przechowywania danych (LocalStorage), aby umożliwić logowanie, zapisywanie postępów w grach oraz poprawne wyświetlanie treści. Bez akceptacji strona nie będzie działać poprawnie.
-        </p>
-        <button class="btn-base" onclick="acceptCookies()" style="width:100%; background: var(--accent); color: #000; border: none; font-weight: 800; padding: 15px; font-size: 16px;">AKCEPTUJĘ</button>
-    </div>
-</div>
-
 <header> 
     <div class="logo-area" onclick="location.reload()"> 
         <img src="Logo.png" alt="Logo"> 
@@ -167,23 +146,6 @@
 </main> 
 
 <footer>© 2026 SpinnerRealYT Games</footer>
-
-<div id="ad-overlay" class="modal-overlay">
-    <div class="modal">
-        <h3 style="margin: 0 0 10px; color: var(--accent); font-size: 18px; text-align: center;">🔥 Polecane dla Ciebie</h3>
-        <p class="ad-text">
-            🚀 Odkryj przyszłość polskiej polityki z Sondażometrem Pro! 🇵🇱 Sprawdzaj najświeższe trendy, analizuj poparcie i testuj realne scenariusze władzy dzięki naszemu zaawansowanemu kalkulatorowi mandatów d'Hondta! 📊 Obserwuj bitwę o sejmową większość w czasie rzeczywistym! 🗳️🔥. 
-            <br><br>
-            <a href="https://www.spinnerrealyt.ovh/" target="_blank" class="ad-link">Odwiedź spinnerrealyt.ovh</a>
-        </p>
-        <img src="reklamas.jpg" alt="Reklama" class="ad-image" onclick="handleAdClick()">
-        
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn-base" id="ad-skip-btn" onclick="skipAd()" style="flex: 1;" disabled>Pomiń (4s)</button>
-            <button class="btn-base" onclick="handleAdClick()" style="flex: 1; background: var(--accent); color: #000; border: none; font-weight: bold;">ODWIEDŹ</button>
-        </div>
-    </div>
-</div>
 
 <div id="confirm-overlay" class="modal-overlay">
     <div class="modal" style="text-align: center;">
@@ -285,73 +247,10 @@ function render() {
     } else {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
     }
-
-    if(localStorage.getItem('cookies_accepted') !== 'true') {
-        document.getElementById('cookie-overlay').classList.add('active');
-    } else {
-        checkAdStatus();
-    }
-}
-
-function acceptCookies() {
-    localStorage.setItem('cookies_accepted', 'true');
-    document.getElementById('cookie-overlay').classList.remove('active');
-    setTimeout(checkAdStatus, 300); 
-}
-
-function checkAdStatus() {
-    // Jeśli reklama została już ZAMKNIĘTA przyciskiem w tej sesji - nie pokazuj
-    if (sessionStorage.getItem('ad_finished') === 'true') return;
-
-    // Sprawdzamy, czy reklama była "w trakcie wyświetlania" przed refreshem
-    let adShowingBefore = sessionStorage.getItem('ad_showing_active');
-
-    // Jeśli była wyświetlana (true) LUB losujemy nową szansę (45%)
-    if (adShowingBefore === 'true' || Math.random() < 0.20) {
-        showAd();
-    }
-}
-
-function showAd() {
-    const overlay = document.getElementById('ad-overlay');
-    const skipBtn = document.getElementById('ad-skip-btn');
-    overlay.classList.add('active');
-    
-    // Zapisujemy w sesji, że reklama jest aktualnie na ekranie (ważne przy refreshu)
-    sessionStorage.setItem('ad_showing_active', 'true');
-    
-    let timeLeft = 4;
-    skipBtn.disabled = true;
-    skipBtn.textContent = `Pomiń (${timeLeft}s)`;
-
-    const interval = setInterval(() => {
-        timeLeft--;
-        if(timeLeft > 0) {
-            skipBtn.textContent = `Pomiń (${timeLeft}s)`;
-        } else {
-            skipBtn.textContent = "Pomiń";
-            skipBtn.disabled = false;
-            clearInterval(interval);
-        }
-    }, 1000);
-}
-
-function skipAd() {
-    // Usuwamy status "wyświetlania" i blokujemy reklamę do końca sesji
-    sessionStorage.removeItem('ad_showing_active');
-    sessionStorage.setItem('ad_finished', 'true');
-    document.getElementById('ad-overlay').classList.remove('active');
-}
-
-function handleAdClick() {
-    window.open('https://www.spinnerrealyt.ovh/', '_blank');
-    skipAd();
 }
 
 function closeModals() { 
     document.querySelectorAll('.modal-overlay').forEach(m => {
-        if(m.id === 'cookie-overlay' && localStorage.getItem('cookies_accepted') !== 'true') return;
-        if(m.id === 'ad-overlay' && sessionStorage.getItem('ad_finished') !== 'true') return;
         m.classList.remove('active');
     }); 
 }
