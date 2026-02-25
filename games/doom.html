@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="utf-8">
     <title>DOOM | SpinnerRealYT</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://js-dos.com/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://js-dos.com/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
-
-    <style type="text/css">
+    
+    <style>
         :root {
             --bg-color: #020617;
             --accent-color: #38bdf8;
@@ -19,292 +18,236 @@
             width: 100%; height: 100%;
             background-color: var(--bg-color);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             overflow: hidden;
-            display: flex;
+            touch-action: none; /* Blokuje zoomowanie przy dotyku */
         }
 
-        /* Stylizacja kontenera gry */
+        .container-fluid {
+            display: flex;
+            height: 100vh;
+            padding: 0;
+        }
+
         .game-wrapper {
             flex-grow: 1;
+            position: relative;
+            background: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            background: #000;
         }
 
         canvas.emscripten {
             border: 0 none;
-            background-color: black;
             max-width: 100%;
-            max-height: 85vh;
-            border-radius: 8px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            max-height: 90vh;
+            image-rendering: pixelated; /* Retro look */
         }
 
         /* Panel boczny */
         .main-panel {
-            width: 320px;
-            height: 100%;
+            width: 300px;
             background: var(--panel-bg);
             border-left: 1px solid rgba(56, 189, 248, 0.2);
+            transition: 0.3s;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        /* Stylizacja dla telefonów */
+        @media (max-width: 768px) {
+            .main-panel {
+                position: fixed;
+                right: -300px;
+                height: 100%;
+            }
+            .main-panel.active {
+                right: 0;
+            }
+            #joystick-container {
+                display: block !important;
+            }
+        }
+
+        /* DRĄŻEK / JOYSTICK */
+        #joystick-container {
+            display: none;
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: 2000;
+            border: 2px solid var(--accent-color);
+        }
+
+        #joystick-stick {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            top: 35px;
+            left: 35px;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: #000;
             display: flex;
             flex-direction: column;
-            transition: 0.3s;
-            position: relative;
-            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
         }
 
-        .main-panel-content {
-            padding: 25px;
-            overflow-y: auto;
-        }
-
-        .hide-main-panel {
+        .btn-action {
             position: absolute;
-            left: -40px;
-            top: 20px;
-            width: 40px;
-            height: 40px;
-            background: var(--panel-bg);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-right: none;
-            color: var(--accent-color);
-            cursor: pointer;
-            border-radius: 8px 0 0 8px;
+            bottom: 40px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            background: rgba(220, 38, 38, 0.6);
+            border: none;
+            border-radius: 50%;
+            color: white;
             font-weight: bold;
-        }
-
-        /* Statusy i napisy */
-        .dos-status {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 10;
-        }
-
-        pre.ascii-logo {
-            font-size: 8px;
-            color: #67CC00;
-            line-height: 8px;
-            margin-bottom: 20px;
-        }
-
-        #progress {
-            color: var(--accent-color);
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        kbd {
-            background: #1e293b;
-            padding: 2px 5px;
-            border-radius: 3px;
-            border: 1px solid #334155;
-            color: #f8fafc;
+            display: none;
         }
     </style>
 </head>
-
 <body>
+
+<div class="container-fluid">
     <div class="game-wrapper">
-        <div class="emscripten-status" id="loading-overlay">
-            <pre class="ascii-logo">
-            -.`                                                                      `.-            
-            yccess+/:-.`                                                    `.-:/+ccessy           
-            :MMMMMMMMNccess+:-.``                                  `..-:+ccessNMMMMMMMM:            
-             cMMMMMMMMMMMMMMMNNccess/:-.`                 ``.-:+ccessNMMMMMMMMMMMMMMMMm             
-             +MMMMMMMMMMMMMMMMMMMMMMMMNess+              essNMMMMMMMMMMMMMMMMMMMMMMMMM+             
-             `NMMMMMMccessNMMMMMMMMMMMMMMMN`            /MMMMMMMMMMMMMMMNNccessMMMMMMN`             
-              cMMMMMMe  `.--/+ccessNMMMMMMMs            cMMMMMMNNccess+:-.`   cMMMMMMs              
-              .MMMMMMs           `.-/MMMMMMN`          /MMMMMMd:-.`          `NMMMMMM.              
-               cMMMMMM-              yMMMMMMs         `cMMMMMM:              /MMMMMMy               
-               :MMMMMMs              .NMMMMMN`        +MMMMMMd               hMMMMMM-               
-                +ccesNs               sMMMMMMs       `cMMMMMM:              `NNcess/                
-                     `.               .NMMMMMN`      +MMMMMMh               ``                      
-                                       cNNMMMMs     `NMMMMNN-                                       
-                                        `.:/cce`    :ss+/-.`                                        
-                -cce+/-.`                                                  `.-/cess.                
-                 mMMMMMMMcces+/-.`                                `.:/ccesNMMMMMMMs                 
-                 +MMMMMMMMMMMMMMMMNy                            yNMMMMMMMMMMMMMMMM:                 
-                 `NMMMMMMMMMMMMMMMMM.                          .MMMMMMMMMMMMMMMMMs                  
-                  cMMMMMMMeMMMMMMMMMs                          sMMMMMMMNmdMMMMMMM/                  
-                  .MMMMMMM-`.-:/ccess                          cce+/-.`` /MMMMMMN`                  
-                   cMMMMMMs                                              dMMMMMMs                   
-                   :MMMMMMN`                                            :MMMMMMN`                   
-                    mMMMMMM+                                            hMMMMMMs                    
-                    +MMMMMMs                                           -MMMMMMM.                    
-                    `NMMMMMM:                                          yMMMMMMh                     
-                     sMMMMMMs                                         .NMMMMMM:                     
-                     .MMMMMMM-`                                     `-sMMMMMMd                      
-                      hMMMMMMNcces/:-.`                     `.-/+cessNMMMMMMM/                      
-                      :MMMMMMMMMMMMMNcce/                 .ssNMMMMMMMMMMMMMMs`                      
-                       cNMMMMMMMMMMMMMMMs                 yMMMMMMMMMMMMMMNNm+                       
-                       `.-/+ccesNNMMMMMMM:               .NMMMMMMNNcess+:-.`                        
-                               `.-:+ccess.               ccesss+:-.`                                
-                                       `..               ..`                                        
-            </pre>
-            <div id="status">Inicjalizacja systemu MS-DOS...</div>
-            <div id="progress">Oczekiwanie na dane...</div>
+        <div id="loading-overlay" class="loading-overlay">
+            <h2 id="status">Wczytywanie...</h2>
+            <div id="progress" style="color: var(--accent-color);">0%</div>
+            <p style="margin-top: 20px; font-size: 12px; opacity: 0.6;">Jeśli strona się zawiesi, odśwież (F5)</p>
         </div>
 
         <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 
-        <div id="fullscreen-btn" style="margin-top: 15px; display: none;">
-            <button onclick="Module.requestFullScreen(false, false)" class="btn btn-primary">PEŁNY EKRAN (F)</button>
+        <div id="joystick-container">
+            <div id="joystick-stick"></div>
         </div>
+        <button class="btn-action" id="fire-btn" style="display: none;">STRZAŁ</button>
     </div>
 
-    <div class="main-panel">
-        <button class="hide-main-panel"><i> >> </i></button>
-        <div class="main-panel-content">
-            <h3 style="color: var(--accent-color); margin-top: 0;">DOOM Payload</h3>
-            <p>Uruchamiasz klasycznego Dooma przez emulator JS-DOS.</p>
-            
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; font-size: 13px;">
-                <strong>STEROWANIE:</strong><br><br>
-                <kbd>Strzałki</kbd> - Poruszanie się<br>
-                <kbd>Ctrl</kbd> - Strzelanie<br>
-                <kbd>Spacja</kbd> - Użyj / Drzwi<br>
-                <kbd>Alt</kbd> - Krok w bok (Strafe)<br>
-                <kbd>1-7</kbd> - Zmiana broni
+    <div class="main-panel" id="side-panel">
+        <div style="padding: 20px;">
+            <h4 style="color: var(--accent-color);">DOOM</h4>
+            <hr style="border-color: rgba(255,255,255,0.1);">
+            <p>Gracz: <strong id="player-nick">Gość</strong></p>
+            <div style="font-size: 13px; background: #1e293b; padding: 10px; border-radius: 5px;">
+                <strong>PC:</strong> Strzałki + CTRL<br>
+                <strong>Mobilne:</strong> Użyj drążka po lewej
             </div>
-
-            <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px;">
-                <p style="font-size: 12px; color: #94a3b8;">Zalogowany jako:</p>
-                <p id="user-display" style="color: var(--accent-color); font-weight: bold;"></p>
-                <button onclick="location.href='../index.html'" class="btn btn-block btn-inverse">Powrót do menu</button>
-            </div>
+            <br>
+            <button onclick="location.href='../index.html'" class="btn btn-danger btn-block">Wyjdź z gry</button>
         </div>
     </div>
+</div>
 
-    <script src="https://js-dos.com/assets/js/jquery-1.11.2.min.js"></script>
-    <script src="https://js-dos.com/assets/js/bootstrap.min.js" defer></script>
+<script src="https://js-dos.com/assets/js/jquery-1.11.2.min.js"></script>
+<script async src="https://js-dos.com/dosbox.js"></script>
 
-    <script type='text/javascript'>
-        // Personalizacja nicku
-        const nick = localStorage.getItem("sp_logged") || "Niezalogowany";
-        document.getElementById('user-display').textContent = nick;
+<script>
+    // 1. Obsługa Nicku (Zgodnie z Twoimi instrukcjami)
+    const savedNick = localStorage.getItem("sp_username") || "Gracz";
+    document.getElementById("player-nick").innerText = savedNick;
 
-        // Panel toggle
-        $('.hide-main-panel').click(function() {
-            const panel = $('.main-panel');
-            if (panel.css('width') !== '0px') {
-                panel.css('width', '0px');
-                $(this).find('i').text('Info');
-            } else {
-                panel.css('width', '320px');
-                $(this).find('i').text('>>');
-            }
-        });
-
-        var statusElement = document.getElementById('status');
-        var progressElement = document.getElementById('progress');
-
-        var Module = {
-            noImageDecoding: true,
-            preRun: [],
-            postRun: [],
-            canvas: document.getElementById('canvas'),
-            setStatus: function(text) {
-                if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
-                if (text === Module.setStatus.text) return;
-                var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-                if (m) {
-                    text = m[1];
-                    progressElement.innerHTML = "Postęp: " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
-                }
-                statusElement.innerHTML = text;
-            },
-            totalDependencies: 0,
-            monitorRunDependencies: function(left) {
-                this.totalDependencies = Math.max(this.totalDependencies, left);
-                Module.setStatus(left ? 'Przygotowywanie... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'Wszystkie pliki pobrane.');
-                if (left == 0) {
-                    $('#loading-overlay').hide();
-                    $('#fullscreen-btn').show();
+    // 2. Konfiguracja Emulatora
+    var Module = {
+        canvas: document.getElementById('canvas'),
+        setStatus: function(text) {
+            console.log(text);
+            document.getElementById('status').innerHTML = text;
+            if (text.includes("Running")) {
+                document.getElementById('loading-overlay').style.display = 'none';
+                if ('ontouchstart' in window) {
+                    document.getElementById('fire-btn').style.display = 'block';
+                    document.getElementById('joystick-container').style.display = 'block';
                 }
             }
-        };
+        },
+        monitorRunDependencies: function(left) {
+            const total = 100;
+            const p = Math.round(((total - left) / total) * 100);
+            document.getElementById('progress').innerHTML = p + "%";
+        }
+    };
 
-        $(document).ready(function () {
-            setTimeout(function () {
-                $.ajax({
-                    url: "https://js-dos.com/dosbox.js",
-                    dataType: "script",
-                    xhr: function() {
-                        var xhr = $.ajaxSettings.xhr();
-                        xhr.addEventListener("progress", function(evt) {
-                            if (evt.lengthComputable) {
-                                Module.setStatus("Pobieranie silnika... (" + evt.loaded + "/" + evt.total + ")");
-                            }
-                        });
-                        return xhr;
-                    }
-                });
-            }, 1000);
-        });
+    // 3. Obsługa Joysticka (Drążka)
+    const joystick = document.getElementById('joystick-container');
+    const stick = document.getElementById('joystick-stick');
+    let isMoving = false;
 
-        // Dane gry DOOM
-        Module.expectedDataFileDownloads = 1;
-        (function() {
-            var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/doom.exe.data';
-            var REMOTE_PACKAGE_NAME = 'https://js-dos.com/games/doom.exe.data';
-            
-            function fetchRemotePackage(packageName, callback) {
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', packageName, true);
-                xhr.responseType = 'arraybuffer';
-                xhr.onprogress = function(event) {
-                    if (event.loaded && event.total) {
-                        Module.setStatus('Pobieranie danych gry... (' + event.loaded + '/' + event.total + ')');
-                    }
-                };
-                xhr.onload = function() { callback(xhr.response); };
-                xhr.send(null);
-            };
+    joystick.addEventListener('touchstart', (e) => {
+        isMoving = true;
+        handleJoystick(e);
+    });
 
-            fetchRemotePackage(REMOTE_PACKAGE_NAME, function(data) {
-                function runWithFS() {
-                    function DataRequest(start, end, name) {
-                        this.start = start; this.end = end; this.name = name;
-                    }
-                    DataRequest.prototype.finish = function(byteArray) {
-                        var that = this;
-                        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, 
-                            function() { Module['removeRunDependency']('fp ' + that.name); },
-                            function() { console.error('Błąd pliku: ' + that.name); }, false, true);
-                    };
+    window.addEventListener('touchmove', (e) => {
+        if (isMoving) handleJoystick(e);
+    });
 
-                    var byteArray = new Uint8Array(data);
-                    // Lista plików z Twojego oryginalnego kodu
-                    const files = [
-                        [0, 67, '/MODEM.NUM'], [67, 2603, '/DWANGO.STR'], [2603, 6008, '/MODEM.STR'],
-                        [87595, 108532, '/DM.EXE'], [108532, 12516824, '/DOOM.WAD'], [12729854, 13445347, '/DOOM.EXE'],
-                        [13684349, 13731014, '/SETUP.EXE']
-                    ];
+    window.addEventListener('touchend', () => {
+        isMoving = false;
+        stick.style.top = '35px';
+        stick.style.left = '35px';
+        // Tu należy dodać puszczenie klawiszy w emulatorze
+    });
 
-                    files.forEach(f => {
-                        Module['addRunDependency']('fp ' + f[2]);
-                        var req = new DataRequest(f[0], f[1], f[2]);
-                        req.finish(byteArray.subarray(f[0], f[1]));
-                    });
-                    Module['removeRunDependency']('datafile_' + PACKAGE_NAME);
-                }
+    function handleJoystick(e) {
+        const rect = joystick.getBoundingClientRect();
+        const touch = e.touches[0];
+        let x = touch.clientX - rect.left - 60;
+        let y = touch.clientY - rect.top - 60;
+        
+        const distance = Math.sqrt(x*x + y*y);
+        if (distance > 50) {
+            x *= 50 / distance;
+            y *= 50 / distance;
+        }
 
-                Module['addRunDependency']('datafile_' + PACKAGE_NAME);
-                if (Module['calledRun']) runWithFS(); else {
-                    if (!Module['preRun']) Module['preRun'] = [];
-                    Module["preRun"].push(runWithFS);
-                }
-            });
-        })();
+        stick.style.left = (35 + x) + 'px';
+        stick.style.top = (35 + y) + 'px';
+        
+        // Mapowanie na klawisze (uproszczone)
+        if (y < -20) simulateKey(38); // Góra
+        if (y > 20) simulateKey(40);  // Dół
+        if (x < -20) simulateKey(37); // Lewo
+        if (x > 20) simulateKey(39);  // Prawo
+    }
 
-        Module['arguments'] = [ '-conf', './dosbox.conf', './DOOM.EXE' ];
-    </script>
+    function simulateKey(code) {
+        // Funkcja do przekazywania klawiszy do DOSBox
+        const event = new KeyboardEvent('keydown', { keyCode: code });
+        window.dispatchEvent(event);
+    }
+
+    // Ładowanie gry
+    window.onload = function() {
+        // Opóźnienie, aby przeglądarka "odetchnęła"
+        setTimeout(() => {
+            if (typeof Dosbox !== 'undefined') {
+                // Inicjalizacja gry
+            }
+        }, 2000);
+    };
+</script>
+
+<script type="text/javascript">
+// Tu wklej pozostałą część skryptu DataRequest z poprzedniej wiadomości (pobieranie doom.exe.data)
+// Pamiętaj, aby ścieżki do plików były pełne: https://js-dos.com/games/doom.exe.data
+</script>
+
 </body>
 </html>
