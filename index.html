@@ -1,367 +1,256 @@
-<!DOCTYPE html> 
-<html lang="pl" style="background-color: #020617;"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
-    <meta name="description" content="SpinnerRealYT Games – graj w klasyczne i nowe gry online, śledź postępy i wygrywaj nagrody w premiumowej platformie gamingowej.">
-    <title>SpinnerRealYT Games | Premium Gaming</title> 
-    <link rel="icon" href="Logo.png"> 
+<!DOCTYPE html>
+<html lang="en-US">
 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script> 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script> 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+<head>
+    <base href="https://rawcdn.githack.com/genizy/google-class/main/gdlite/">
+    <title>Geometry Dash</title>
+    <link rel="icon" type="image/png" href="https://e3334afd.cf-nate.pages.dev/0/g/geodash/game/splash.png">
+    <meta name="description" content="Play Geometry Dash Lite Online For Free on Chromebook, PC, Windows, Desktop in Chrome and modern browsers.">
+    <link rel="canonical" href="https://gamecomets.com/game/geometry-dash-lite/" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="themes/geometrydashlite.io/rs/css/home.css?v=1">
+</head>
+<meta name="cf-2fa-verify" content="GpoihhhSRQknehLQkEtXM">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6220227113216464" crossorigin="anonymous"></script>
-
-    <style> 
-        :root { 
-            --bg: #020617; 
-            --card: rgba(15, 23, 42, 0.7); 
-            --card-border: rgba(56, 189, 248, 0.2); 
-            --accent: #38bdf8; 
-            --accent-glow: rgba(56, 189, 248, 0.4); 
-            --text: #f1f5f9; 
-            --text-dim: #94a3b8; 
-            --danger: #fb7185; 
-            --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
-        } 
-
-        * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; } 
-        body { 
-            margin: 0; font-family: 'Inter', sans-serif; 
-            background: var(--bg); color: var(--text); 
-            min-height: 100vh; overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%);
-            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-        } 
-
-        header { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 15px 5%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px); 
-            border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 1000; 
-        } 
-
-        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; } 
-        .logo-area img { height: 38px; } 
-        .logo-area span { font-weight: 800; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } 
-
-        .btn-base { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
-            color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            display: flex; align-items: center; justify-content: center;
-        } 
-        .btn-base:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
-        .btn-base:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .user-pill {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid var(--accent);
-            padding: 5px 15px; border-radius: 20px;
-            cursor: pointer; font-weight: bold;
-            color: var(--accent); text-transform: uppercase;
-            font-size: 13px; letter-spacing: 1px;
+<body>
+    <style>
+        html {
+            box-sizing: border-box;
         }
         
-        main { max-width: 1200px; margin: auto; padding: 40px 20px; } 
-        .hero { text-align: center; margin-bottom: 60px; }
-        .hero h1 { font-size: 3.5rem; margin: 0; letter-spacing: -2px; }
-
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; } 
-        .game-card { 
-            background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; 
-            padding: 40px 20px; text-align: center; cursor: pointer; position: relative;
-        } 
-        .game-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
-        .tag { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 6px; }
-
-        .web-section { margin-top: 50px; text-align: center; border-top: 1px solid var(--card-border); padding-top: 30px; }
-        .web-btn {
-            background: rgba(56, 189, 248, 0.05); border: 1px solid var(--card-border);
-            color: var(--text-dim); padding: 10px 20px; border-radius: 10px;
-            font-weight: 600; font-size: 13px; cursor: pointer; margin: 5px;
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
         }
-        .web-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
-            display: none; align-items: center; justify-content: center; z-index: 9999; 
-        } 
-        .modal-overlay.active { display: flex; } 
-        .modal { 
-            width: 92%; max-width: 420px; background: #0f172a; 
-            padding: 25px; border-radius: 30px; border: 1px solid var(--card-border); 
-            box-shadow: 0 0 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
+        
+        body {
+            margin: 0;
+            background-image: linear-gradient(rgb(0, 0, 0), rgb(0, 102, 255));
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        canvas+* {
+            z-index: 2;
+        }
+        
+        .container {
+            max-width: 1600px;
             position: relative;
-        } 
-
-        .auth-input { 
-            width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; 
-            background: #1e293b; border: 1px solid #334155; color: white; outline: none; font-size: 14px;
         }
-        .auth-input:focus { border-color: var(--accent); }
         
-        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; background: rgba(251, 113, 133, 0.1); padding: 8px; border-radius: 8px;} 
-        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 8px;} 
-
-        .profile-avatar { 
-            width: 60px; height: 60px; background: var(--grad); 
-            border-radius: 50%; margin: 0 auto 10px; 
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: #000; font-weight: 900;
+        .posImg {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
         }
-
-        .settings-section { border-top: 1px solid #334155; margin-top: 20px; padding-top: 15px; }
-        .settings-section h4 { margin: 0 0 10px; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .btn-small { padding: 8px 12px; font-size: 12px; margin-top: 5px; width: 100%; }
-        .btn-danger { background: rgba(251, 113, 133, 0.1); border: 1px solid var(--danger); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; }
-
-        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 13px; margin-top: 30px; }
-    </style> 
-</head> 
-<body> 
-
-<header> 
-    <div class="logo-area" onclick="location.reload()"> 
-        <img src="Logo.png" alt="Logo"> 
-        <span>SPINNER GAMES</span> 
-    </div> 
-    <nav id="nav-auth-container"></nav> 
-</header> 
-
-<main> 
-    <div class="hero">
-        <h1>Graj i <span style="color:var(--accent)">Wygrywaj</span></h1>
-        <p style="color:var(--text-dim)">Wszystkie gry w zasięgu Twojej ręki.</p>
-    </div>
-    <div class="game-grid" id="game-grid"></div> 
-
-    <div class="web-section">
-        <h3 style="color: var(--text); margin-bottom: 15px; font-weight: 800;">Nasze strony internetowe</h3>
-        <button class="web-btn" onclick="showWebConfirm('https://www.spinnerrealyt.pl/', 'spinnerrealyt.pl')">spinnerrealyt.pl</button>
-        <button class="web-btn" onclick="showWebConfirm('https://www.spinnerrealyt.ovh/', 'spinnerrealyt.ovh')">spinnerrealyt.ovh</button>
-    </div>
-</main> 
-
-<footer>© 2026 SpinnerRealYT Games</footer>
-
-<div id="confirm-overlay" class="modal-overlay">
-    <div class="modal" style="text-align: center;">
-        <h2 style="margin: 0 0 15px; color: var(--accent);">Opuszczasz stronę</h2>
-        <p id="confirm-web-text" style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px;"></p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-base" onclick="closeModals()" style="flex: 1;">Anuluj</button>
-            <button id="confirm-web-go" class="btn-base" style="flex: 1; background: var(--accent); color: #000; border: none;">Przejdź</button>
-        </div>
-    </div>
-</div>
-
-<div id="auth-overlay" class="modal-overlay"> 
-    <div class="modal"> 
-        <h2 id="auth-title" style="margin-top:0">Zaloguj się</h2> 
-        <div id="auth-msg"></div> 
-        <input type="text" id="auth-user" class="auth-input" placeholder="Nick"> 
-        <div id="reg-fields"></div>
-        <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
-        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000; border:none; font-weight: bold; padding:15px; margin-bottom:10px;">POTWIERDŹ</button> 
-        <p id="forgot-pass" style="text-align:center; cursor:pointer; font-size: 12px; color: var(--text-dim);" onclick="resetPassword()">Zapomniałeś hasła?</p>
-        <p id="auth-switch" style="text-align:center; cursor:pointer; font-size: 14px; margin-top: 15px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p> 
-        <button class="btn-base" onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px;">Zamknij</button>
-    </div> 
-</div> 
-
-<div id="profile-overlay" class="modal-overlay">
-    <div class="modal">
-        <div id="profile-msg"></div>
-        <div style="text-align: center;">
-            <div id="prof-avatar" class="profile-avatar">S</div>
-            <h2 id="prof-nick" style="margin: 0; color: var(--accent);">NICK</h2>
-            <p id="prof-email" style="color: var(--text-dim); font-size: 13px; margin: 5px 0 15px;"></p>
-        </div>
-
-        <div class="settings-section">
-            <h4>Zmień adres E-mail</h4>
-            <input type="email" id="new-email" class="auth-input" placeholder="Nowy e-mail">
-            <button class="btn-base btn-small" onclick="updateEmail()">Zaktualizuj E-mail</button>
-        </div>
-
-        <div class="settings-section">
-            <h4>Zmień Hasło</h4>
-            <input type="password" id="new-pass" class="auth-input" placeholder="Nowe hasło">
-            <button class="btn-base btn-small" onclick="updatePassword()">Zaktualizuj Hasło</button>
-        </div>
-
-        <div class="settings-section" style="background: rgba(251, 113, 133, 0.05); border-radius: 15px; padding: 10px;">
-            <h4 style="color: var(--danger);">Strefa Niebezpieczna</h4>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Wpisz hasło i kliknij 10 razy, aby usunąć konto.</p>
-            <input type="password" id="delete-confirm-pass" class="auth-input" placeholder="Aktualne hasło">
-            <button class="btn-base btn-small btn-danger" id="delete-btn" onclick="handleDeleteStep()">USUŃ KONTO (<span id="del-counter">10</span>)</button>
-        </div>
-
-        <button class="btn-base" onclick="logout()" style="width:100%; margin-top: 20px;">WYLOGUJ SIĘ</button>
-        <button class="btn-base" onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px;">Zamknij</button>
-    </div>
-</div>
-
-<script> 
-const games = [ 
-    { file: "games/saper.html", name: "Saper", tag: "CLASSIC" },
-    { file: "saper.html", name: "Saper OG REVAMP", tag: "OG CLASSIC"},
-    { file: "games/neonsnake1.html", name: "Neon Snake", tag: "CLASSIC"},
-    { file: "games/tetris.html", name: "Tetris", tag: "CLASSIC" }, 
-    { file: "games/neonmaze.html", name: "Neonowy Labirynt", tag: "SKILL" }, 
-    { file: "games/tictactoe.html", name: "Kółko i Krzyżyk", tag: "CLASSIC" }, 
-    { file: "games/flappybird.html", name: "Flappy Bird", tag: "CLASSIC" },
-    { file: "flappy.html", name: "Flappy Bird OG", tag: "OG CLASSIC" },
-    { file: "games/blockblast.html", name: "Block Blast", tag: "PUZZLE" },
-    { file: "games/geometry-game.html", name: "Geometry Game", tag: "SKILL" },
-    { file: "games/snake.html", name: "Snake", tag: "SKILL" },
-    { file: "games/geometrydashlite986.html", name: "Geometry Game Lite", tag: "SKILL" },
-    { file: "games/soon.html", name: "More coming soon!", tag: "SOON" }
-]; 
-
-const firebaseConfig = {
-    apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-    authDomain: "spinnerrealyt-games.firebaseapp.com",
-    databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
-
-let isLoginMode = true;
-let deleteSteps = 10;
-
-function render() {
-    const grid = document.getElementById("game-grid");
-    grid.innerHTML = games.map(g => `
-        <div class="game-card" onclick="window.location.href='${g.file}'">
-            <span class="tag">${g.tag}</span>
-            <h3 style="margin:0; font-size: 1.5rem;">${g.name}</h3>
-        </div>
-    `).join('');
-
-    const nav = document.getElementById("nav-auth-container");
-    const user = localStorage.getItem("sp_logged");
-    if(user) {
-        nav.innerHTML = `<div class="user-pill" onclick="openProfile()">${user}</div>`;
-    } else {
-        nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
-    }
-}
-
-function closeModals() { 
-    document.querySelectorAll('.modal-overlay').forEach(m => {
-        m.classList.remove('active');
-    }); 
-}
-
-function maskEmail(email) {
-    if(!email) return "";
-    const [name, domain] = email.split('@');
-    return name[0] + "****" + name[name.length - 1] + "@" + domain;
-}
-
-function showWebConfirm(url, site) {
-    document.getElementById('confirm-web-text').textContent = "Czy chcesz otworzyć " + site + " w nowej karcie?";
-    document.getElementById('confirm-web-go').onclick = function() { window.open(url, '_blank'); closeModals(); };
-    document.getElementById('confirm-overlay').classList.add('active');
-}
-
-function openProfile() {
-    const nick = localStorage.getItem("sp_logged");
-    document.getElementById('prof-nick').textContent = nick.toUpperCase();
-    document.getElementById('prof-avatar').textContent = nick.charAt(0).toUpperCase();
-    deleteSteps = 10;
-    document.getElementById('del-counter').textContent = deleteSteps;
-    
-    db.ref('users_map/' + nick.toLowerCase()).once('value').then(snap => {
-        if(snap.exists()) {
-            document.getElementById('prof-email').textContent = maskEmail(snap.val().email);
+        
+        .logo {
+            position: absolute;
+            display: block;
+            max-width: 100vw;
+            max-height: 70vh;
+            top: 300px;
         }
-    });
-    document.getElementById('profile-overlay').classList.add('active');
-}
-
-async function updateEmail() {
-    const newMail = document.getElementById('new-email').value.trim();
-    const msg = document.getElementById('profile-msg');
-    if(!newMail) return;
-    try {
-        await auth.currentUser.verifyBeforeUpdateEmail(newMail);
-        msg.innerHTML = `<p class="success">Link weryfikacyjny wysłany!</p>`;
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
-}
-
-async function updatePassword() {
-    const newPass = document.getElementById('new-pass').value.trim();
-    const msg = document.getElementById('profile-msg');
-    if(!newPass) return;
-    try {
-        await auth.currentUser.updatePassword(newPass);
-        msg.innerHTML = `<p class="success">Hasło zmienione!</p>`;
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
-}
-
-async function handleDeleteStep() {
-    const msg = document.getElementById('profile-msg');
-    const pass = document.getElementById('delete-confirm-pass').value;
-    if(!pass) { msg.innerHTML = `<p class="error">Wpisz hasło!</p>`; return; }
-    deleteSteps--;
-    document.getElementById('del-counter').textContent = deleteSteps;
-    if(deleteSteps <= 0) {
-        try {
-            const user = auth.currentUser;
-            const nick = localStorage.getItem("sp_logged").toLowerCase();
-            const credential = firebase.auth.EmailAuthProvider.credential(user.email, pass);
-            await user.reauthenticateWithCredential(credential);
-            await db.ref('users_map/' + nick).remove();
-            await user.delete();
-            logout();
-        } catch(e) { 
-            deleteSteps = 10;
-            document.getElementById('del-counter').textContent = deleteSteps;
-            msg.innerHTML = `<p class="error">Błąd: ${e.message}</p>`; 
+        
+        .pos_progress {
+            position: absolute;
+            bottom: 15%;
+            width: 100%;
         }
-    }
-}
-
-function logout() { localStorage.clear(); auth.signOut(); location.reload(); }
-
-function toggleAuth() {
-    isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
-    document.getElementById('reg-fields').innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="E-mail">';
-    document.getElementById('auth-switch').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
-}
-
-document.getElementById('auth-submit').onclick = async () => {
-    const nick = document.getElementById('auth-user').value.trim().toLowerCase();
-    const pass = document.getElementById('auth-pass').value.trim();
-    const msg = document.getElementById('auth-msg');
-    try {
-        if(isLoginMode) {
-            const snap = await db.ref('users_map/' + nick).once('value');
-            if(!snap.exists()) throw new Error("Nick nie istnieje.");
-            const email = snap.val().email;
-            const cred = await auth.signInWithEmailAndPassword(email, pass);
-            if(!cred.user.emailVerified) { await auth.signOut(); throw new Error("Potwierdź e-mail!"); }
-            localStorage.setItem("sp_logged", nick);
-            location.reload();
-        } else {
-            const email = document.getElementById('auth-email').value.trim();
-            const cred = await auth.createUserWithEmailAndPassword(email, pass);
-            await cred.user.sendEmailVerification();
-            await db.ref('users_map/' + nick).set({ email: email });
-            msg.innerHTML = `<p class="success">Potwierdź e-mail: ${email}</p>`;
+        
+        .progress {
+            margin: 1.5em auto;
+            max-width: 436px;
+            height: auto;
+            display: none;
+            position: relative;
         }
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
-};
+        
+        .full {
+            width: 97%;
+            transform-origin: top left;
+        }
+        
+        .box_process {
+            width: 100%;
+        }
+        
+        .process {
+            width: 98%;
+        }
+        
+        .progress .posfull,
+        .progress .posbox {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress .posfull {
+            top: 8px;
+            z-index: 1;
+        }
+        
+        .progress .posbox {
+            top: 0;
+            z-index: 2;
+        }
+        
+        #loader {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(rgb(0, 0, 0), rgb(0, 102, 255));
+        }
+        
+        .pos_spinner {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-30%, -50%);
+        }
+        
+        .spinner,
+        .spinner:after {
+            display: none;
+            border-radius: 50%;
+            width: 5em;
+            height: 5em;
+        }
+        
+        .spinner {
+            margin: 10px;
+            font-size: 10px;
+            position: relative;
+            text-indent: -9999em;
+            border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+            border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+            border-left: 1.1em solid #ffffff;
+            transform: translateZ(0);
+            animation: spinner-spin 1.1s infinite linear;
+        }
+        
+        @keyframes spinner-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <div id="gameContainer"></div>
+    <div id="loader"><img class="logo" src="image/loading.png?v=1">
+        <div class="spinner"></div>
+        <div class=" pos_progress">
+            <div class="progress">
+                <div class="posfull"><img class="full" src="image/process_bar_back.png"></div>
+                <div class="posbox"><img class="box_process" src="image/process_bar_front.png"></div>
+            </div>
+        </div>
+        <script src="Build/UnityLoader.js"></script>
+        <script>
+            var gameInstance = UnityLoader.instantiate("gameContainer", "Build/GeometryDashLite.json", {
+                onProgress: UnityProgress
+            });
 
-window.onload = render;
-</script> 
-</body> 
+            function UnityProgress(gameInstance, progress) {
+                if (!gameInstance.Module) {
+                    return;
+                }
+                const loader = document.querySelector("#loader");
+                if (!gameInstance.progress) {
+                    const progress = document.querySelector("#loader .progress");
+                    progress.style.display = "block";
+                    gameInstance.progress = progress.querySelector(".full");
+                    loader.querySelector(".spinner").style.display = "none";
+                }
+                gameInstance.progress.style.transform = `scaleX(${progress})`;
+                if (progress === 1 && !gameInstance.removeTimeout) {
+                    gameInstance.removeTimeout = setTimeout(function() {
+                        loader.style.display = "none";
+                    }, 2000);
+                }
+            }
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let buttondiv = document.getElementsByTagName('button');
+                for (let i = 0; i < buttondiv.length; i++) {
+                    if (buttondiv[i].innerHTML == "OK") {
+                        buttondiv[i].click();
+                    }
+                }
+                setTimeout(function() {
+                    let buttonok = document.getElementsByTagName('button');
+                    for (let i = 0; i < buttondiv.length; i++) {
+                        if (buttonok[i].innerHTML == "OK") {
+                            buttonok[i].click();
+                        }
+                    }
+                }, 1000);
+            });
+        </script>
+        <script src="themes/geometrydashlite.io/rs/js/jquery-3.4.1.min.js"></script>
+        <script>
+            function ToggleInfo() {
+                if ($('button.hide-main-panel').children('i')[0].textContent != 'Info') {
+                    $("div.main-panel").css('width', '0px');
+                    $("div.main-panel-ads").css('display', 'none');
+                    $("div.main-panel-content").css('display', 'none');
+                    $('button.hide-main-panel').children('i').html('Info');
+                    console.log('Info');
+                } else {
+                    $("div.main-panel").css('width', $("div.main-panel").css('max-width'));
+                    $("div.main-panel-ads").css('display', 'block');
+                    $("div.main-panel-content").css('display', 'block');
+                    $('button.hide-main-panel').children('i').html('>>');
+                    console.log('>>');
+                }
+            }
+
+            function ShowInfo() {
+                $("div.main-panel").css('width', $("div.main-panel").css('max-width'));
+                $("div.main-panel-ads").css('display', 'block');
+                $("div.main-panel-content").css('display', 'block');
+                $('button.hide-main-panel').children('i').html('>>');
+            }
+
+            function HideInfo() {
+                $("div.main-panel").css('width', '0px');
+                $("div.main-panel-ads").css('display', 'none');
+                $("div.main-panel-content").css('display', 'none');
+                $('button.hide-main-panel').children('i').html('Info');
+            }
+            $('button.hide-main-panel').click(function() {
+                console.log('a');
+                ToggleInfo();
+            });
+        </script>
+</body>
+
 </html>
