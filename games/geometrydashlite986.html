@@ -36,22 +36,30 @@
 
         header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 15px 5%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px);
+            padding: 10px 5%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 1000;
         }
 
         .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-area img { height: 35px; }
-        .logo-area span { font-weight: 800; font-size: 1.1rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-area img { height: 30px; }
+        
+        /* Status połączenia w prawym górnym rogu */
+        #sync-status {
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background: #4ade80; box-shadow: 0 0 10px #4ade80; }
+        .offline { background: #fb7185; }
 
         .btn-back {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            text-decoration: none; font-size: 14px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text); padding: 6px 15px; border-radius: 10px; cursor: pointer; text-decoration: none; font-size: 13px;
         }
-        .btn-back:hover { border-color: var(--accent); color: var(--accent); }
 
-        main { max-width: 1000px; margin: auto; padding: 40px 20px; }
+        main { max-width: 1000px; margin: auto; padding: 20px; }
 
         .game-card {
             background: var(--card); border: 1px solid var(--card-border); border-radius: 24px;
@@ -67,85 +75,117 @@
         #gameContainer { width: 100%; height: 100%; }
 
         .fullscreen-btn {
-            display: block; width: 100%; max-width: 280px; margin: 25px auto 0;
-            padding: 15px; background: var(--grad); border: none;
-            color: #000; font-weight: 800; border-radius: 14px; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px;
+            display: block; width: 100%; max-width: 250px; margin: 20px auto 0;
+            padding: 12px; background: var(--grad); border: none;
+            color: #000; font-weight: 800; border-radius: 12px; cursor: pointer;
         }
-        .fullscreen-btn:hover { transform: scale(1.03); box-shadow: 0 0 20px var(--accent); }
 
-        /* Loader */
         #loader {
             position: absolute; inset: 0; background: #000;
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
         }
-        .progress-bar { width: 60%; height: 8px; background: #1e293b; border-radius: 4px; margin-top: 20px; overflow: hidden; }
-        #progress-fill { width: 0%; height: 100%; background: var(--accent); }
+        .progress-bar { width: 60%; height: 6px; background: #1e293b; border-radius: 3px; margin-top: 15px; overflow: hidden; }
+        #progress-fill { width: 0%; height: 100%; background: var(--accent); transition: width 0.3s; }
 
-        /* Drążek dla telefonów (Zgodnie z instrukcją) */
+        /* Joystick Mobilny */
         #joystick-zone {
-            position: fixed; bottom: 40px; left: 40px; width: 100px; height: 100px;
+            position: fixed; bottom: 30px; left: 30px; width: 90px; height: 90px;
             background: rgba(255,255,255,0.05); border: 2px solid var(--accent);
             border-radius: 50%; display: none; touch-action: none; z-index: 1000;
         }
         #joystick-stick {
-            position: absolute; top: 50%; left: 50%; width: 40px; height: 40px;
+            position: absolute; top: 50%; left: 50%; width: 35px; height: 35px;
             background: var(--accent); border-radius: 50%; transform: translate(-50%, -50%);
         }
 
-        @media (max-width: 768px) {
-            #joystick-zone { display: block; }
-            #game-wrapper { aspect-ratio: 4 / 3; }
-        }
-
-        footer { text-align: center; padding: 40px; color: #94a3b8; font-size: 13px; }
+        @media (max-width: 768px) { #joystick-zone { display: block; } #game-wrapper { aspect-ratio: 4/3; } }
     </style>
 </head>
 
 <body>
 
 <header>
-    <a href="../index.html" class="btn-back">← POWRÓT</a>
+    <a href="../index.html" class="btn-back">← MENU</a>
+    
     <div class="logo-area">
         <img src="../Logo.png" alt="Logo">
-        <span>SPINNER GAMES</span>
+    </div>
+
+    <div id="sync-status">
+        <div id="user-info">Ładowanie...</div>
+        <div id="last-sync">Ostatni sync: Brak</div>
     </div>
 </header>
 
 <main>
     <div class="game-card">
-        <h2 style="text-align: center; margin-bottom: 20px; letter-spacing: -1px;">GEOMETRY DASH LITE</h2>
-        
         <div id="game-wrapper">
             <div id="gameContainer"></div>
             <div id="loader">
-                <img src="gdlitefiles/image/loading.png" style="width: 200px;">
+                <img src="gdlitefiles/image/loading.png" style="width: 150px;">
                 <div class="progress-bar"><div id="progress-fill"></div></div>
             </div>
         </div>
-
         <button class="fullscreen-btn" onclick="openFullscreen()">PEŁNY EKRAN</button>
     </div>
 </main>
 
 <div id="joystick-zone"><div id="joystick-stick"></div></div>
 
-<footer>© 2026 SpinnerRealYT Games</footer>
-
 <script src="gdlitefiles/Build/UnityLoader.js"></script>
 <script>
-    // Konfiguracja Firebase (Skopiuj ze swojego index.html jeśli chcesz mieć tu logowanie)
+    // Konfiguracja Firebase (DOKŁADNIE TAKA JAK W TWOIM INDEX)
     const firebaseConfig = {
         apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
         authDomain: "spinnerrealyt-games.firebaseapp.com",
         databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
     };
     firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
 
+    const nick = localStorage.getItem("sp_logged");
+    const userInfoEl = document.getElementById('user-info');
+    const syncInfoEl = document.getElementById('last-sync');
+
+    // Funkcja zapisu danych do Firebase
+    function syncDataToFirebase(progressValue) {
+        if(!nick) return;
+        
+        const now = new Date().toLocaleTimeString();
+        db.ref('users_progress/' + nick.toLowerCase()).update({
+            last_game: "Geometry Dash Lite",
+            last_sync_time: now,
+            loading_progress: progressValue + "%",
+            status: "online"
+        }).then(() => {
+            syncInfoEl.innerText = "Ostatni sync: " + now;
+        });
+    }
+
+    // Sprawdzanie statusu zalogowania
+    if(nick) {
+        userInfoEl.innerHTML = `<span class="status-dot online"></span> Zalogowany: <b>${nick}</b>`;
+        syncDataToFirebase(0); // Pierwszy sync przy wejściu
+    } else {
+        userInfoEl.innerHTML = `<span class="status-dot offline"></span> Niezalogowany`;
+    }
+
+    // Ładowanie gry
     var gameInstance = UnityLoader.instantiate("gameContainer", "gdlitefiles/Build/GeometryDashLite.json", {
         onProgress: (inst, prog) => {
-            document.getElementById("progress-fill").style.width = (prog * 100) + "%";
-            if (prog === 1) setTimeout(() => document.getElementById("loader").style.display = "none", 1500);
+            let p = Math.round(prog * 100);
+            document.getElementById("progress-fill").style.width = p + "%";
+            
+            // Wysyłaj progres ładowania co 25% do bazy
+            if (p % 25 === 0) syncDataToFirebase(p);
+
+            if (prog === 1) {
+                setTimeout(() => {
+                    document.getElementById("loader").style.display = "none";
+                    syncDataToFirebase(100);
+                }, 1500);
+            }
         }
     });
 
@@ -155,7 +195,7 @@
         else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     }
 
-    // Sterowanie mobilne - skok
+    // Joystick
     const joy = document.getElementById('joystick-zone');
     joy.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -172,6 +212,11 @@
         let btns = document.getElementsByTagName('button');
         for (let b of btns) { if (b.innerText.trim() === "OK") b.click(); }
     }, 1000);
+
+    // Zmiana statusu na offline przy wyjściu
+    window.onbeforeunload = function() {
+        if(nick) db.ref('users_progress/' + nick.toLowerCase()).update({ status: "offline" });
+    };
 </script>
 
 </body>
