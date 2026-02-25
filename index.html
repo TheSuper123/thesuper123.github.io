@@ -53,6 +53,13 @@
         .btn-base:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
         .btn-base:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        .btn-google {
+            background: #fff; color: #000; border: none; width: 100%; padding: 12px;
+            border-radius: 12px; font-weight: bold; margin-bottom: 15px; display: flex;
+            align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-google img { height: 18px; }
+
         .user-pill {
             display: flex; align-items: center; gap: 10px;
             background: rgba(56, 189, 248, 0.1);
@@ -162,6 +169,14 @@
     <div class="modal"> 
         <h2 id="auth-title" style="margin-top:0">Zaloguj się</h2> 
         <div id="auth-msg"></div> 
+
+        <button class="btn-google" onclick="loginWithGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+            Zaloguj przez Google
+        </button>
+
+        <div style="text-align:center; color:gray; font-size:12px; margin-bottom:15px;">LUB E-MAIL</div>
+
         <input type="text" id="auth-user" class="auth-input" placeholder="Nick"> 
         <div id="reg-fields"></div>
         <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
@@ -249,6 +264,27 @@ function render() {
         nav.innerHTML = `<div class="user-pill" onclick="openProfile()">${user}</div>`;
     } else {
         nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
+    }
+}
+
+// NOWA FUNKCJA: Logowanie przez Google
+async function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const msg = document.getElementById('auth-msg');
+    try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        
+        // Czyścimy nazwę użytkownika z maila lub DisplayName
+        let nick = user.displayName ? user.displayName.split(' ')[0].toLowerCase() : user.email.split('@')[0].toLowerCase();
+        
+        // Zapisujemy mapowanie w bazie, jeśli nie istnieje
+        await db.ref('users_map/' + nick).set({ email: user.email });
+        
+        localStorage.setItem("sp_logged", nick);
+        location.reload();
+    } catch (e) {
+        msg.innerHTML = `<p class="error">${e.message}</p>`;
     }
 }
 
