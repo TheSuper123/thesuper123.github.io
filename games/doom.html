@@ -1,60 +1,64 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <title>DOOM | SpinnerRealYT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOOM | SpinnerRealYT Games</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
+    <link href="https://js-dos.com/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://js-dos.com/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <style type="text/css">
         :root {
-            --bg: #020617;
-            --accent: #38bdf8;
+            --bg-color: #020617;
+            --accent-color: #38bdf8;
             --panel-bg: #0f172a;
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--bg);
-            color: white; font-family: 'Inter', sans-serif;
-            overflow: hidden; display: flex;
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
         }
 
-        /* Kontener Gry */
-        .game-container {
+        /* Stylizacja kontenera gry */
+        .game-wrapper {
             flex-grow: 1;
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            position: relative;
             background: #000;
         }
 
-        #canvas {
+        canvas.emscripten {
+            border: 0 none;
+            background-color: black;
             max-width: 100%;
-            max-height: 80vh;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            cursor: crosshair;
+            max-height: 85vh;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
         }
 
-        /* Panel boczny (Info) */
+        /* Panel boczny */
         .main-panel {
-            width: 300px;
-            max-width: 300px;
+            width: 320px;
             height: 100%;
             background: var(--panel-bg);
             border-left: 1px solid rgba(56, 189, 248, 0.2);
-            transition: 0.3s;
-            position: relative;
             display: flex;
             flex-direction: column;
+            transition: 0.3s;
+            position: relative;
             z-index: 100;
         }
 
         .main-panel-content {
-            padding: 20px;
+            padding: 25px;
             overflow-y: auto;
         }
 
@@ -67,151 +71,240 @@
             background: var(--panel-bg);
             border: 1px solid rgba(56, 189, 248, 0.2);
             border-right: none;
-            color: var(--accent);
+            color: var(--accent-color);
             cursor: pointer;
             border-radius: 8px 0 0 8px;
             font-weight: bold;
         }
 
-        /* Status ładowania */
-        .loader-overlay {
+        /* Statusy i napisy */
+        .dos-status {
             position: absolute;
-            inset: 0;
-            background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
         }
 
-        .progress-bar {
-            width: 200px;
-            height: 4px;
-            background: #1e293b;
-            border-radius: 2px;
-            margin-top: 15px;
-            overflow: hidden;
+        pre.ascii-logo {
+            font-size: 8px;
+            color: #67CC00;
+            line-height: 8px;
+            margin-bottom: 20px;
         }
 
-        #progress-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--accent);
-            transition: 0.3s;
-        }
-
-        .controls-hint {
-            margin-top: 20px;
-            font-size: 13px;
-            color: #94a3b8;
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 8px;
+        #progress {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 10px;
         }
 
         kbd {
-            background: #334155;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            color: white;
+            background: #1e293b;
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid #334155;
+            color: #f8fafc;
         }
     </style>
 </head>
-<body>
 
-    <div class="game-container">
-        <div id="loader" class="loader-overlay">
-            <img src="../Logo.png" alt="Logo" style="height: 50px; margin-bottom: 20px;">
-            <div id="status-text">Inicjalizacja MS-DOS...</div>
-            <div class="progress-bar"><div id="progress-fill"></div></div>
+<body>
+    <div class="game-wrapper">
+        <div class="emscripten-status" id="loading-overlay">
+            <pre class="ascii-logo">
+            -.`                                                                      `.-            
+            yccess+/:-.`                                                    `.-:/+ccessy           
+            :MMMMMMMMNccess+:-.``                                  `..-:+ccessNMMMMMMMM:            
+             cMMMMMMMMMMMMMMMNNccess/:-.`                 ``.-:+ccessNMMMMMMMMMMMMMMMMm             
+             +MMMMMMMMMMMMMMMMMMMMMMMMNess+              essNMMMMMMMMMMMMMMMMMMMMMMMMM+             
+             `NMMMMMMccessNMMMMMMMMMMMMMMMN`            /MMMMMMMMMMMMMMMNNccessMMMMMMN`             
+              cMMMMMMe  `.--/+ccessNMMMMMMMs            cMMMMMMNNccess+:-.`   cMMMMMMs              
+              .MMMMMMs           `.-/MMMMMMN`          /MMMMMMd:-.`          `NMMMMMM.              
+               cMMMMMM-              yMMMMMMs         `cMMMMMM:              /MMMMMMy               
+               :MMMMMMs              .NMMMMMN`        +MMMMMMd               hMMMMMM-               
+                +ccesNs               sMMMMMMs       `cMMMMMM:              `NNcess/                
+                     `.               .NMMMMMN`      +MMMMMMh               ``                      
+                                       cNNMMMMs     `NMMMMNN-                                       
+                                        `.:/cce`    :ss+/-.`                                        
+                -cce+/-.`                                                  `.-/cess.                
+                 mMMMMMMMcces+/-.`                                `.:/ccesNMMMMMMMs                 
+                 +MMMMMMMMMMMMMMMMNy                            yNMMMMMMMMMMMMMMMM:                 
+                 `NMMMMMMMMMMMMMMMMM.                          .MMMMMMMMMMMMMMMMMs                  
+                  cMMMMMMMeMMMMMMMMMs                          sMMMMMMMNmdMMMMMMM/                  
+                  .MMMMMMM-`.-:/ccess                          cce+/-.`` /MMMMMMN`                  
+                   cMMMMMMs                                              dMMMMMMs                   
+                   :MMMMMMN`                                            :MMMMMMN`                   
+                    mMMMMMM+                                            hMMMMMMs                    
+                    +MMMMMMs                                           -MMMMMMM.                    
+                    `NMMMMMM:                                          yMMMMMMh                     
+                     sMMMMMMs                                         .NMMMMMM:                     
+                     .MMMMMMM-`                                     `-sMMMMMMd                      
+                      hMMMMMMNcces/:-.`                     `.-/+cessNMMMMMMM/                      
+                      :MMMMMMMMMMMMMNcce/                 .ssNMMMMMMMMMMMMMMs`                      
+                       cNMMMMMMMMMMMMMMMs                 yMMMMMMMMMMMMMMNNm+                       
+                       `.-/+ccesNNMMMMMMM:               .NMMMMMMNNcess+:-.`                        
+                               `.-:+ccess.               ccesss+:-.`                                
+                                       `..               ..`                                        
+            </pre>
+            <div id="status">Inicjalizacja systemu MS-DOS...</div>
+            <div id="progress">Oczekiwanie na dane...</div>
         </div>
 
-        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-        
-        <div style="margin-top: 15px;">
-            <button onclick="Module.requestFullScreen(false, false)" style="background: var(--accent); border:none; padding: 8px 20px; border-radius: 8px; cursor:pointer; font-weight:bold;">PEŁNY EKRAN</button>
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+
+        <div id="fullscreen-btn" style="margin-top: 15px; display: none;">
+            <button onclick="Module.requestFullScreen(false, false)" class="btn btn-primary">PEŁNY EKRAN (F)</button>
         </div>
     </div>
 
     <div class="main-panel">
-        <button class="hide-main-panel"> >> </button>
+        <button class="hide-main-panel"><i> >> </i></button>
         <div class="main-panel-content">
-            <h2 style="color:var(--accent); margin-top:0;">DOOM (1993)</h2>
-            <p style="font-size: 14px; color: #cbd5e1;">Legendarna strzelanka FPS, która zdefiniowała gatunek. Walcz z demonami na Marsie.</p>
+            <h3 style="color: var(--accent-color); margin-top: 0;">DOOM Payload</h3>
+            <p>Uruchamiasz klasycznego Dooma przez emulator JS-DOS.</p>
             
-            <div class="controls-hint">
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; font-size: 13px;">
                 <strong>STEROWANIE:</strong><br><br>
-                <kbd>Strzałki</kbd> - Poruszanie<br>
-                <kbd>Ctrl</kbd> - Strzał<br>
-                <kbd>Spacja</kbd> - Otwórz drzwi<br>
-                <kbd>Alt</kbd> - Strafe (bok)<br>
+                <kbd>Strzałki</kbd> - Poruszanie się<br>
+                <kbd>Ctrl</kbd> - Strzelanie<br>
+                <kbd>Spacja</kbd> - Użyj / Drzwi<br>
+                <kbd>Alt</kbd> - Krok w bok (Strafe)<br>
                 <kbd>1-7</kbd> - Zmiana broni
             </div>
 
             <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px;">
-                <p style="font-size: 12px; color: #64748b;">Zalogowany jako: <span id="user-display" style="color:var(--accent)">Gość</span></p>
-                <button onclick="location.href='../index.html'" style="width:100%; background:none; border: 1px solid #334155; color: white; padding: 8px; border-radius: 8px; cursor:pointer;">Powrót do menu</button>
+                <p style="font-size: 12px; color: #94a3b8;">Zalogowany jako:</p>
+                <p id="user-display" style="color: var(--accent-color); font-weight: bold;"></p>
+                <button onclick="location.href='../index.html'" class="btn btn-block btn-inverse">Powrót do menu</button>
             </div>
         </div>
     </div>
 
-    <script type='text/javascript'>
-        // Pobieranie nicku z localStorage
-        document.getElementById('user-display').textContent = localStorage.getItem("sp_logged") || "Gość";
+    <script src="https://js-dos.com/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="https://js-dos.com/assets/js/bootstrap.min.js" defer></script>
 
-        // Toggle Panelu
+    <script type='text/javascript'>
+        // Personalizacja nicku
+        const nick = localStorage.getItem("sp_logged") || "Niezalogowany";
+        document.getElementById('user-display').textContent = nick;
+
+        // Panel toggle
         $('.hide-main-panel').click(function() {
             const panel = $('.main-panel');
             if (panel.css('width') !== '0px') {
                 panel.css('width', '0px');
-                $(this).html('Info');
+                $(this).find('i').text('Info');
             } else {
-                panel.css('width', '300px');
-                $(this).html('>>');
+                panel.css('width', '320px');
+                $(this).find('i').text('>>');
             }
         });
 
+        var statusElement = document.getElementById('status');
+        var progressElement = document.getElementById('progress');
+
         var Module = {
+            noImageDecoding: true,
+            preRun: [],
+            postRun: [],
             canvas: document.getElementById('canvas'),
             setStatus: function(text) {
-                document.getElementById('status-text').innerText = text;
-                var m = text.match(/(\d+)\/(\d+)/);
+                if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+                if (text === Module.setStatus.text) return;
+                var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
                 if (m) {
-                    var percent = Math.round(parseInt(m[1]) / parseInt(m[2]) * 100);
-                    document.getElementById('progress-fill').style.width = percent + "%";
+                    text = m[1];
+                    progressElement.innerHTML = "Postęp: " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
                 }
+                statusElement.innerHTML = text;
             },
+            totalDependencies: 0,
             monitorRunDependencies: function(left) {
-                if (left === 0) {
-                    document.getElementById('loader').style.display = 'none';
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Przygotowywanie... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'Wszystkie pliki pobrane.');
+                if (left == 0) {
+                    $('#loading-overlay').hide();
+                    $('#fullscreen-btn').show();
                 }
             }
         };
 
-        // Ładowanie silnika i gry
-        window.onload = function() {
-            const script = document.createElement('script');
-            script.src = "https://js-dos.com/dosbox.js";
-            script.onload = () => {
-                // Konfiguracja plików gry (Doom.exe.data z Twojego kodu)
-                (function() {
-                    var PACKAGE_PATH = "https://js-dos.com/games/";
-                    var REMOTE_PACKAGE_NAME = PACKAGE_PATH + 'doom.exe.data';
-                    var REMOTE_PACKAGE_SIZE = 13731014;
+        $(document).ready(function () {
+            setTimeout(function () {
+                $.ajax({
+                    url: "https://js-dos.com/dosbox.js",
+                    dataType: "script",
+                    xhr: function() {
+                        var xhr = $.ajaxSettings.xhr();
+                        xhr.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                Module.setStatus("Pobieranie silnika... (" + evt.loaded + "/" + evt.total + ")");
+                            }
+                        });
+                        return xhr;
+                    }
+                });
+            }, 1000);
+        });
 
-                    Module['arguments'] = [ '-conf', './dosbox.conf', './DOOM.EXE' ];
-                    
-                    fetch(REMOTE_PACKAGE_NAME).then(res => res.arrayBuffer()).then(data => {
-                        Module.removeRunDependency = (id) => { if(id.includes('datafile')) document.getElementById('loader').style.display = 'none'; };
-                        Module.addRunDependency = (id) => {};
-                        // Tutaj js-dos automatycznie zajmie się resztą przez FS_createPreloadedFile
-                    });
-                })();
+        // Dane gry DOOM
+        Module.expectedDataFileDownloads = 1;
+        (function() {
+            var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/doom.exe.data';
+            var REMOTE_PACKAGE_NAME = 'https://js-dos.com/games/doom.exe.data';
+            
+            function fetchRemotePackage(packageName, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', packageName, true);
+                xhr.responseType = 'arraybuffer';
+                xhr.onprogress = function(event) {
+                    if (event.loaded && event.total) {
+                        Module.setStatus('Pobieranie danych gry... (' + event.loaded + '/' + event.total + ')');
+                    }
+                };
+                xhr.onload = function() { callback(xhr.response); };
+                xhr.send(null);
             };
-            document.body.appendChild(script);
-        };
+
+            fetchRemotePackage(REMOTE_PACKAGE_NAME, function(data) {
+                function runWithFS() {
+                    function DataRequest(start, end, name) {
+                        this.start = start; this.end = end; this.name = name;
+                    }
+                    DataRequest.prototype.finish = function(byteArray) {
+                        var that = this;
+                        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, 
+                            function() { Module['removeRunDependency']('fp ' + that.name); },
+                            function() { console.error('Błąd pliku: ' + that.name); }, false, true);
+                    };
+
+                    var byteArray = new Uint8Array(data);
+                    // Lista plików z Twojego oryginalnego kodu
+                    const files = [
+                        [0, 67, '/MODEM.NUM'], [67, 2603, '/DWANGO.STR'], [2603, 6008, '/MODEM.STR'],
+                        [87595, 108532, '/DM.EXE'], [108532, 12516824, '/DOOM.WAD'], [12729854, 13445347, '/DOOM.EXE'],
+                        [13684349, 13731014, '/SETUP.EXE']
+                    ];
+
+                    files.forEach(f => {
+                        Module['addRunDependency']('fp ' + f[2]);
+                        var req = new DataRequest(f[0], f[1], f[2]);
+                        req.finish(byteArray.subarray(f[0], f[1]));
+                    });
+                    Module['removeRunDependency']('datafile_' + PACKAGE_NAME);
+                }
+
+                Module['addRunDependency']('datafile_' + PACKAGE_NAME);
+                if (Module['calledRun']) runWithFS(); else {
+                    if (!Module['preRun']) Module['preRun'] = [];
+                    Module["preRun"].push(runWithFS);
+                }
+            });
+        })();
+
+        Module['arguments'] = [ '-conf', './dosbox.conf', './DOOM.EXE' ];
     </script>
 </body>
 </html>
