@@ -18,235 +18,224 @@
             width: 100%; height: 100%;
             background-color: var(--bg-color);
             color: white;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             overflow: hidden;
-            touch-action: none; /* Blokuje zoomowanie przy dotyku */
         }
 
-        .container-fluid {
+        .main-container {
             display: flex;
+            width: 100vw;
             height: 100vh;
-            padding: 0;
         }
 
+        /* Kontener gry z Iframe */
         .game-wrapper {
             flex-grow: 1;
             position: relative;
             background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
-        canvas.emscripten {
-            border: 0 none;
-            max-width: 100%;
-            max-height: 90vh;
-            image-rendering: pixelated; /* Retro look */
+        #game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
         /* Panel boczny */
         .main-panel {
-            width: 300px;
+            width: 320px;
             background: var(--panel-bg);
             border-left: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            flex-direction: column;
             transition: 0.3s;
-            overflow-y: auto;
-            z-index: 1000;
+            z-index: 100;
         }
 
-        /* Stylizacja dla telefonów */
+        .main-panel-content {
+            padding: 25px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* Drążek sterowniczy (Joystick) dla telefonów */
+        #joystick-zone {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            display: none; /* Widoczne tylko na mobilkach via JS */
+            touch-action: none;
+        }
+
+        #joystick-stick {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            top: 45px;
+            left: 45px;
+            box-shadow: 0 0 20px var(--accent-color);
+        }
+
+        /* Personalizacja wyglądu na telefonach */
         @media (max-width: 768px) {
             .main-panel {
                 position: fixed;
-                right: -300px;
+                right: -320px;
                 height: 100%;
             }
             .main-panel.active {
                 right: 0;
             }
-            #joystick-container {
-                display: block !important;
+            #joystick-zone {
+                display: block;
             }
         }
 
-        /* DRĄŻEK / JOYSTICK */
-        #joystick-container {
-            display: none;
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            z-index: 2000;
-            border: 2px solid var(--accent-color);
+        .user-badge {
+            background: rgba(56, 189, 248, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-color);
+            margin-bottom: 20px;
         }
 
-        #joystick-stick {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            top: 35px;
-            left: 35px;
-            box-shadow: 0 0 15px var(--accent-color);
-        }
-
-        .loading-overlay {
-            position: absolute;
-            inset: 0;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 500;
-        }
-
-        .btn-action {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            width: 80px;
-            height: 80px;
-            background: rgba(220, 38, 38, 0.6);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-weight: bold;
-            display: none;
+        kbd {
+            background: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            padding: 2px 4px;
         }
     </style>
 </head>
 <body>
 
-<div class="container-fluid">
+<div class="main-container">
     <div class="game-wrapper">
-        <div id="loading-overlay" class="loading-overlay">
-            <h2 id="status">Wczytywanie...</h2>
-            <div id="progress" style="color: var(--accent-color);">0%</div>
-            <p style="margin-top: 20px; font-size: 12px; opacity: 0.6;">Jeśli strona się zawiesi, odśwież (F5)</p>
-        </div>
+        <iframe id="game-frame" src="doomfiles/DOOM_html/Titlescreen.html"></iframe>
 
-        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-
-        <div id="joystick-container">
+        <div id="joystick-zone">
             <div id="joystick-stick"></div>
         </div>
-        <button class="btn-action" id="fire-btn" style="display: none;">STRZAŁ</button>
     </div>
 
     <div class="main-panel" id="side-panel">
-        <div style="padding: 20px;">
-            <h4 style="color: var(--accent-color);">DOOM</h4>
-            <hr style="border-color: rgba(255,255,255,0.1);">
-            <p>Gracz: <strong id="player-nick">Gość</strong></p>
-            <div style="font-size: 13px; background: #1e293b; padding: 10px; border-radius: 5px;">
-                <strong>PC:</strong> Strzałki + CTRL<br>
-                <strong>Mobilne:</strong> Użyj drążka po lewej
+        <div class="main-panel-content">
+            <h3 style="color: var(--accent-color); margin-top: 0;">DOOM PORTAL</h3>
+            
+            <div class="user-badge">
+                <small style="display: block; opacity: 0.6;">Zalogowano jako:</small>
+                <span id="display-name" style="font-weight: bold; font-size: 1.2em;">Wczytywanie...</span>
             </div>
-            <br>
-            <button onclick="location.href='../index.html'" class="btn btn-danger btn-block">Wyjdź z gry</button>
+
+            <div style="margin-bottom: 20px;">
+                <strong>Sterowanie:</strong>
+                <ul style="font-size: 0.9em; padding-left: 20px; margin-top: 10px;">
+                    <li><kbd>WASD</kbd> / <kbd>Strzałki</kbd> - Ruch</li>
+                    <li><kbd>CTRL</kbd> - Strzał</li>
+                    <li><kbd>SPACE</kbd> - Akcja</li>
+                </ul>
+            </div>
+
+            <button onclick="window.location.href='../index.html'" class="btn btn-block btn-primary">POWRÓT DO MENU</button>
+            <hr style="border-color: rgba(255,255,255,0.1);">
+            <button id="logout-btn" class="btn btn-block btn-danger" style="display:none;">WYLOGUJ</button>
         </div>
     </div>
 </div>
 
-<script src="https://js-dos.com/assets/js/jquery-1.11.2.min.js"></script>
-<script async src="https://js-dos.com/dosbox.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
 
 <script>
-    // 1. Obsługa Nicku (Zgodnie z Twoimi instrukcjami)
-    const savedNick = localStorage.getItem("sp_username") || "Gracz";
-    document.getElementById("player-nick").innerText = savedNick;
-
-    // 2. Konfiguracja Emulatora
-    var Module = {
-        canvas: document.getElementById('canvas'),
-        setStatus: function(text) {
-            console.log(text);
-            document.getElementById('status').innerHTML = text;
-            if (text.includes("Running")) {
-                document.getElementById('loading-overlay').style.display = 'none';
-                if ('ontouchstart' in window) {
-                    document.getElementById('fire-btn').style.display = 'block';
-                    document.getElementById('joystick-container').style.display = 'block';
-                }
-            }
-        },
-        monitorRunDependencies: function(left) {
-            const total = 100;
-            const p = Math.round(((total - left) / total) * 100);
-            document.getElementById('progress').innerHTML = p + "%";
-        }
+    // 1. Konfiguracja Firebase (Wklej tutaj swoje dane z konsoli Firebase)
+    const firebaseConfig = {
+        apiKey: "TWOJE_API_KEY",
+        authDomain: "TWOJE_PROJEKT.firebaseapp.com",
+        projectId: "TWOJE_PROJEKT",
+        storageBucket: "TWOJE_PROJEKT.appspot.com",
+        messagingSenderId: "SENDER_ID",
+        appId: "APP_ID"
     };
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    // 3. Obsługa Joysticka (Drążka)
-    const joystick = document.getElementById('joystick-container');
+    // 2. Obsługa nicku i konta
+    auth.onAuthStateChanged(user => {
+        const nameDisplay = document.getElementById('display-name');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        if (user) {
+            // Jeżeli zalogowany, użyj nicku z konta
+            nameDisplay.textContent = user.displayName || user.email;
+            logoutBtn.style.display = 'block';
+        } else {
+            // Jeżeli nie zalogowany, sprawdź localStorage lub wpisz nick
+            const localNick = localStorage.getItem("user_nick");
+            if (localNick) {
+                nameDisplay.textContent = localNick;
+            } else {
+                const guestNick = prompt("Podaj swój nick do gry:", "Gracz" + Math.floor(Math.random()*100));
+                localStorage.setItem("user_nick", guestNick);
+                nameDisplay.textContent = guestNick;
+            }
+            logoutBtn.style.display = 'none';
+        }
+    });
+
+    // Wylogowanie
+    document.getElementById('logout-btn').onclick = () => auth.signOut();
+
+    // 3. Logika Drążka (Joystick)
+    const joystick = document.getElementById('joystick-zone');
     const stick = document.getElementById('joystick-stick');
-    let isMoving = false;
+    let active = false;
 
-    joystick.addEventListener('touchstart', (e) => {
-        isMoving = true;
-        handleJoystick(e);
+    if ('ontouchstart' in window) {
+        joystick.style.display = 'block';
+    }
+
+    joystick.addEventListener('touchstart', e => { active = true; handleMove(e); });
+    window.addEventListener('touchend', () => { 
+        active = false; 
+        stick.style.transform = 'translate(0,0)';
+        // Wysyłaj puste komendy do iframe, żeby postać się zatrzymała
+        document.getElementById('game-frame').contentWindow.postMessage({type: 'stop'}, '*');
     });
+    window.addEventListener('touchmove', e => { if(active) handleMove(e); });
 
-    window.addEventListener('touchmove', (e) => {
-        if (isMoving) handleJoystick(e);
-    });
-
-    window.addEventListener('touchend', () => {
-        isMoving = false;
-        stick.style.top = '35px';
-        stick.style.left = '35px';
-        // Tu należy dodać puszczenie klawiszy w emulatorze
-    });
-
-    function handleJoystick(e) {
+    function handleMove(e) {
         const rect = joystick.getBoundingClientRect();
         const touch = e.touches[0];
-        let x = touch.clientX - rect.left - 60;
-        let y = touch.clientY - rect.top - 60;
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
         
-        const distance = Math.sqrt(x*x + y*y);
-        if (distance > 50) {
-            x *= 50 / distance;
-            y *= 50 / distance;
-        }
-
-        stick.style.left = (35 + x) + 'px';
-        stick.style.top = (35 + y) + 'px';
+        let deltaX = touch.clientX - centerX;
+        let deltaY = touch.clientY - centerY;
         
-        // Mapowanie na klawisze (uproszczone)
-        if (y < -20) simulateKey(38); // Góra
-        if (y > 20) simulateKey(40);  // Dół
-        if (x < -20) simulateKey(37); // Lewo
-        if (x > 20) simulateKey(39);  // Prawo
+        const distance = Math.min(60, Math.sqrt(deltaX**2 + deltaY**2));
+        const angle = Math.atan2(deltaY, deltaX);
+        
+        const moveX = Math.cos(angle) * distance;
+        const moveY = Math.sin(angle) * distance;
+        
+        stick.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+        // Przesyłanie kierunków do gry wewnątrz iframe
+        const frame = document.getElementById('game-frame').contentWindow;
+        if (deltaY < -20) frame.postMessage({key: 'up'}, '*');
+        if (deltaY > 20) frame.postMessage({key: 'down'}, '*');
+        if (deltaX < -20) frame.postMessage({key: 'left'}, '*');
+        if (deltaX > 20) frame.postMessage({key: 'right'}, '*');
     }
-
-    function simulateKey(code) {
-        // Funkcja do przekazywania klawiszy do DOSBox
-        const event = new KeyboardEvent('keydown', { keyCode: code });
-        window.dispatchEvent(event);
-    }
-
-    // Ładowanie gry
-    window.onload = function() {
-        // Opóźnienie, aby przeglądarka "odetchnęła"
-        setTimeout(() => {
-            if (typeof Dosbox !== 'undefined') {
-                // Inicjalizacja gry
-            }
-        }, 2000);
-    };
-</script>
-
-<script type="text/javascript">
-// Tu wklej pozostałą część skryptu DataRequest z poprzedniej wiadomości (pobieranie doom.exe.data)
-// Pamiętaj, aby ścieżki do plików były pełne: https://js-dos.com/games/doom.exe.data
 </script>
 
 </body>
