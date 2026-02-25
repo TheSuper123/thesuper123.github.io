@@ -2,74 +2,132 @@
 <html lang="pl">
 <head>
     <meta charset="utf-8">
-    <title>DOOM | SpinnerRealYT</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link href="https://js-dos.com/assets/css/bootstrap.min.css" rel="stylesheet">
+    <title>DOOM | SpinnerRealYT Games</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
     <style>
         :root {
-            --bg-color: #020617;
-            --accent-color: #38bdf8;
-            --panel-bg: #0f172a;
+            --bg: #020617;
+            --card: rgba(15, 23, 42, 0.7);
+            --card-border: rgba(56, 189, 248, 0.2);
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --text: #f1f5f9;
+            --text-dim: #94a3b8;
+            --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
+            touch-action: none;
         }
 
-        .main-container {
+        .layout {
             display: flex;
             width: 100vw;
             height: 100vh;
         }
 
-        /* Kontener gry z Iframe */
-        .game-wrapper {
+        /* Kontener gry */
+        .game-container {
             flex-grow: 1;
             position: relative;
             background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #game-frame {
+        iframe#game-frame {
             width: 100%;
             height: 100%;
             border: none;
-            display: block;
+            outline: none;
         }
 
-        /* Panel boczny */
-        .main-panel {
+        /* Panel boczny - Stylizacja z index.html */
+        .side-panel {
             width: 320px;
-            background: var(--panel-bg);
-            border-left: 1px solid rgba(56, 189, 248, 0.2);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-left: 1px solid var(--card-border);
             display: flex;
             flex-direction: column;
-            transition: 0.3s;
-            z-index: 100;
-        }
-
-        .main-panel-content {
             padding: 25px;
-            overflow-y: auto;
-            flex-grow: 1;
+            z-index: 1000;
+            transition: transform 0.3s ease;
         }
 
-        /* Drążek sterowniczy (Joystick) dla telefonów */
-        #joystick-zone {
+        .panel-header h2 {
+            margin: 0;
+            font-weight: 800;
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+            padding: 15px;
+            border-radius: 16px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .user-nick {
+            display: block;
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        .controls-hint {
+            font-size: 13px;
+            color: var(--text-dim);
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-exit {
+            background: var(--grad);
+            border: none;
+            color: #000;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        /* DRĄŻEK / JOYSTICK - Personalizacja na telefon */
+        #joystick-wrapper {
+            display: none;
             position: absolute;
-            bottom: 40px;
-            left: 40px;
-            width: 150px;
-            height: 150px;
+            bottom: 50px;
+            left: 50px;
+            width: 140px;
+            height: 140px;
             background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--accent);
             border-radius: 50%;
-            border: 2px solid var(--accent-color);
-            display: none; /* Widoczne tylko na mobilkach via JS */
+            z-index: 2000;
             touch-action: none;
         }
 
@@ -77,165 +135,161 @@
             position: absolute;
             width: 60px;
             height: 60px;
-            background: var(--accent-color);
+            background: var(--accent);
             border-radius: 50%;
-            top: 45px;
-            left: 45px;
-            box-shadow: 0 0 20px var(--accent-color);
+            top: 40px;
+            left: 40px;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        /* Personalizacja wyglądu na telefonach */
-        @media (max-width: 768px) {
-            .main-panel {
+        .mobile-fire {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 50px;
+            width: 90px;
+            height: 90px;
+            background: rgba(251, 113, 133, 0.4);
+            border: 2px solid #fb7185;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            z-index: 2000;
+        }
+
+        /* Responsywność */
+        @media (max-width: 900px) {
+            .side-panel {
                 position: fixed;
                 right: -320px;
                 height: 100%;
             }
-            .main-panel.active {
-                right: 0;
+            .side-panel.open {
+                transform: translateX(-320px);
             }
-            #joystick-zone {
+            #joystick-wrapper, .mobile-fire {
                 display: block;
             }
-        }
-
-        .user-badge {
-            background: rgba(56, 189, 248, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--accent-color);
-            margin-bottom: 20px;
-        }
-
-        kbd {
-            background: #1e293b;
-            color: #38bdf8;
-            border: 1px solid #334155;
-            padding: 2px 4px;
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <div class="game-wrapper">
+<div class="layout">
+    <div class="game-container">
         <iframe id="game-frame" src="doomfiles/DOOM_html/Titlescreen.html"></iframe>
 
-        <div id="joystick-zone">
+        <div id="joystick-wrapper">
             <div id="joystick-stick"></div>
         </div>
+        <button class="mobile-fire" id="fire-btn">FIRE</button>
     </div>
 
-    <div class="main-panel" id="side-panel">
-        <div class="main-panel-content">
-            <h3 style="color: var(--accent-color); margin-top: 0;">DOOM PORTAL</h3>
-            
-            <div class="user-badge">
-                <small style="display: block; opacity: 0.6;">Zalogowano jako:</small>
-                <span id="display-name" style="font-weight: bold; font-size: 1.2em;">Wczytywanie...</span>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <strong>Sterowanie:</strong>
-                <ul style="font-size: 0.9em; padding-left: 20px; margin-top: 10px;">
-                    <li><kbd>WASD</kbd> / <kbd>Strzałki</kbd> - Ruch</li>
-                    <li><kbd>CTRL</kbd> - Strzał</li>
-                    <li><kbd>SPACE</kbd> - Akcja</li>
-                </ul>
-            </div>
-
-            <button onclick="window.location.href='../index.html'" class="btn btn-block btn-primary">POWRÓT DO MENU</button>
-            <hr style="border-color: rgba(255,255,255,0.1);">
-            <button id="logout-btn" class="btn btn-block btn-danger" style="display:none;">WYLOGUJ</button>
+    <aside class="side-panel" id="side-panel">
+        <div class="panel-header">
+            <h2>SPINNER DOOM</h2>
         </div>
-    </div>
+
+        <div class="user-info">
+            <small style="color: var(--text-dim)">ZALOGOWANY JAKO</small>
+            <span id="player-nick" class="user-nick">GOŚĆ</span>
+        </div>
+
+        <div class="controls-hint">
+            <strong>PC:</strong> Strzałki + CTRL<br>
+            <strong>Mobile:</strong> Użyj drążka po lewej
+        </div>
+
+        <button onclick="window.location.href='../index.html'" class="btn-exit">WYJDŹ Z GRY</button>
+        
+        <p style="margin-top: auto; font-size: 10px; color: var(--text-dim); text-align: center;">
+            SpinnerRealYT Games &copy; 2026
+        </p>
+    </aside>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-
 <script>
-    // 1. Konfiguracja Firebase (Wklej tutaj swoje dane z konsoli Firebase)
+    // 1. Konfiguracja Firebase (Pobrana z index.html)
     const firebaseConfig = {
-        apiKey: "TWOJE_API_KEY",
-        authDomain: "TWOJE_PROJEKT.firebaseapp.com",
-        projectId: "TWOJE_PROJEKT",
-        storageBucket: "TWOJE_PROJEKT.appspot.com",
-        messagingSenderId: "SENDER_ID",
-        appId: "APP_ID"
+        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
+        authDomain: "spinnerrealyt-games.firebaseapp.com",
+        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
     };
-    
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // 2. Obsługa nicku i konta
-    auth.onAuthStateChanged(user => {
-        const nameDisplay = document.getElementById('display-name');
-        const logoutBtn = document.getElementById('logout-btn');
+    // 2. Obsługa nicku (Konto Firebase lub Nick lokalny)
+    function updateDisplayName() {
+        const nickSpan = document.getElementById('player-nick');
+        const loggedUser = localStorage.getItem("sp_logged");
 
-        if (user) {
-            // Jeżeli zalogowany, użyj nicku z konta
-            nameDisplay.textContent = user.displayName || user.email;
-            logoutBtn.style.display = 'block';
+        if (loggedUser) {
+            // Używa nicku zapisanego podczas logowania w index.html
+            nickSpan.innerText = loggedUser;
         } else {
-            // Jeżeli nie zalogowany, sprawdź localStorage lub wpisz nick
-            const localNick = localStorage.getItem("user_nick");
-            if (localNick) {
-                nameDisplay.textContent = localNick;
-            } else {
-                const guestNick = prompt("Podaj swój nick do gry:", "Gracz" + Math.floor(Math.random()*100));
-                localStorage.setItem("user_nick", guestNick);
-                nameDisplay.textContent = guestNick;
+            // Jeśli nie zalogowany, sprawdza nick z promptu
+            let guestNick = localStorage.getItem("sp_guest_nick");
+            if (!guestNick) {
+                guestNick = prompt("Podaj swój nick:", "Gracz" + Math.floor(Math.random()*999));
+                if(guestNick) localStorage.setItem("sp_guest_nick", guestNick);
             }
-            logoutBtn.style.display = 'none';
+            nickSpan.innerText = guestNick || "GOŚĆ";
         }
-    });
-
-    // Wylogowanie
-    document.getElementById('logout-btn').onclick = () => auth.signOut();
-
-    // 3. Logika Drążka (Joystick)
-    const joystick = document.getElementById('joystick-zone');
-    const stick = document.getElementById('joystick-stick');
-    let active = false;
-
-    if ('ontouchstart' in window) {
-        joystick.style.display = 'block';
     }
 
-    joystick.addEventListener('touchstart', e => { active = true; handleMove(e); });
-    window.addEventListener('touchend', () => { 
-        active = false; 
-        stick.style.transform = 'translate(0,0)';
-        // Wysyłaj puste komendy do iframe, żeby postać się zatrzymała
-        document.getElementById('game-frame').contentWindow.postMessage({type: 'stop'}, '*');
-    });
-    window.addEventListener('touchmove', e => { if(active) handleMove(e); });
+    // 3. Obsługa Drążka (Joystick)
+    const joystick = document.getElementById('joystick-wrapper');
+    const stick = document.getElementById('joystick-stick');
+    let isMoving = false;
 
-    function handleMove(e) {
+    joystick.addEventListener('touchstart', (e) => { isMoving = true; handleJoystick(e); });
+    window.addEventListener('touchmove', (e) => { if (isMoving) handleJoystick(e); });
+    window.addEventListener('touchend', () => {
+        isMoving = false;
+        stick.style.transform = `translate(0px, 0px)`;
+        // Wysyłanie sygnału stop do gry
+        sendKeyToGame('stop');
+    });
+
+    function handleJoystick(e) {
         const rect = joystick.getBoundingClientRect();
         const touch = e.touches[0];
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+        const centerX = rect.left + 70;
+        const centerY = rect.top + 70;
         
         let deltaX = touch.clientX - centerX;
         let deltaY = touch.clientY - centerY;
         
-        const distance = Math.min(60, Math.sqrt(deltaX**2 + deltaY**2));
-        const angle = Math.atan2(deltaY, deltaX);
+        const dist = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+        const maxDist = 50;
         
-        const moveX = Math.cos(angle) * distance;
-        const moveY = Math.sin(angle) * distance;
-        
-        stick.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        if (dist > maxDist) {
+            deltaX *= maxDist / dist;
+            deltaY *= maxDist / dist;
+        }
 
-        // Przesyłanie kierunków do gry wewnątrz iframe
-        const frame = document.getElementById('game-frame').contentWindow;
-        if (deltaY < -20) frame.postMessage({key: 'up'}, '*');
-        if (deltaY > 20) frame.postMessage({key: 'down'}, '*');
-        if (deltaX < -20) frame.postMessage({key: 'left'}, '*');
-        if (deltaX > 20) frame.postMessage({key: 'right'}, '*');
+        stick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+        // Mapowanie na kierunki
+        if (deltaY < -20) sendKeyToGame('up');
+        if (deltaY > 20) sendKeyToGame('down');
+        if (deltaX < -20) sendKeyToGame('left');
+        if (deltaX > 20) sendKeyToGame('right');
     }
+
+    function sendKeyToGame(dir) {
+        const gameFrame = document.getElementById('game-frame').contentWindow;
+        gameFrame.postMessage({ type: 'move', direction: dir }, '*');
+    }
+
+    // Strzał mobilny
+    document.getElementById('fire-btn').addEventListener('touchstart', () => {
+        const gameFrame = document.getElementById('game-frame').contentWindow;
+        gameFrame.postMessage({ type: 'fire' }, '*');
+    });
+
+    window.onload = updateDisplayName;
 </script>
 
 </body>
