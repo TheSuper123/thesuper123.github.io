@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gemini Watch AI</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --user-bubble: #007AFF;
+            --ai-bubble: #262626;
+            --text-color: #ffffff;
+            --accent-color: #34C759; /* Zielony kolor drążka */
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none; /* Ważne dla działania joysticka */
+        }
+
+        /* Górny pasek z nickiem */
+        #header {
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            background: #111;
+            border-bottom: 1px solid #333;
+            color: #aaa;
+        }
+
+        #user-nick-display {
+            color: var(--accent-color);
+        }
+
+        /* Kontener historii czatu */
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            scrollbar-width: none;
+        }
+
+        #chat-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Dymki wiadomości */
+        .message {
+            max-width: 85%;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: var(--user-bubble);
+            border-bottom-right-radius: 2px;
+        }
+
+        .ai {
+            align-self: flex-start;
+            background-color: var(--ai-bubble);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* JOYSTICK (Drążek sterowania) */
+        #joystick-zone {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #joystick-knob {
+            width: 35px;
+            height: 35px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(52, 199, 89, 0.4);
+            cursor: pointer;
+        }
+
+        /* Panel sterowania na dole */
+        #controls {
+            padding: 10px;
+            background: #111;
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid #333;
+        }
+
+        #user-input {
+            flex: 1;
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #send-btn {
+            background: var(--user-bubble);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Efekt myślenia AI */
+        .typing-indicator {
+            font-size: 11px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        Zalogowany: <span id="user-nick-display">Ładowanie...</span>
+    </div>
+
+    <div id="chat-container">
+        <div class="message ai">Cześć! Jestem Twoim AI na Apple Watch. Użyj zielonego drążka po prawej, aby przewijać tekst!</div>
+    </div>
+
+    <div id="joystick-zone">
+        <div id="joystick-knob"></div>
+    </div>
+
+    <div id="controls">
+        <input type="text" id="user-input" placeholder="Zadaj pytanie..." autocomplete="off">
+        <button id="send-btn">OK</button>
+    </div>
+
+    <script>
+        // TWOJE API I KONFIGURACJA
+        const API_KEY = 'AIzaSyCVE1PCYhvHzzXVsXpQ7b3HblKBk5Un-V8';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+        // Zarządzanie nickiem
+        let nickname = prompt("Podaj swój nick:", "Użytkownik") || "Użytkownik";
+        document.getElementById('user-nick-display').innerText = nickname;
+
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const knob = document.getElementById('joystick-knob');
+
+        // FUNKCJA WYSYŁANIA WIADOMOŚCI
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Dodaj wiadomość użytkownika
+            addMessage(text, 'user');
+            userInput.value = '';
+
+            // Wskaźnik ładowania
+            const loader = document.createElement('div');
+            loader.className = 'typing-indicator';
+            loader.innerText = 'Gemini generuje odpowiedź...';
+            chatContainer.appendChild(loader);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: text }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                loader.remove();
+
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    addMessage(aiResponse, 'ai');
+                } else {
+                    addMessage("Przepraszam, wystąpił błąd w odpowiedzi.", 'ai');
+                }
+            } catch (error) {
+                if(loader) loader.remove();
+                addMessage("Błąd połączenia. Sprawdź internet.", 'ai');
+                console.error(error);
+            }
+        }
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.innerText = text;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // OBSŁUGA DRĄŻKA (JOYSTICKA)
+        let isDragging = false;
+        let startY = 0;
+
+        knob.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+            
+            // Ograniczenie ruchu gałki (max 40px w górę/dół)
+            const moveY = Math.max(Math.min(deltaY, 40), -40);
+            knob.style.transform = `translateY(${moveY}px)`;
+
+            // Przewijanie kontenera czatu (mnożnik 1.5 dla szybkości)
+            chatContainer.scrollTop += moveY * 1.5;
+            
+            e.preventDefault();
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+            knob.style.transform = `translateY(0px)`; // Powrót drążka do środka
+        });
+
+        // Eventy przycisków
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
