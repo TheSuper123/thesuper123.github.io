@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zasady Wędkowania</title>
+    <style>
+        /* Globalne ustawienia i wygląd pod urządzenia mobilne / Apple Watch */
+        :root {
+            --bg-color: #0b1c11;
+            --card-bg: #153320;
+            --text-main: #e8f5e9;
+            --text-accent: #81c784;
+            --border-color: #2e7d32;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            line-height: 1.5;
+            padding-bottom: 120px; /* Miejsce na drążek */
+        }
+
+        /* Powitanie Użytkownika */
+        #user-greeting {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-accent);
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--text-accent);
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        /* Ramki z informacjami */
+        .card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+
+        .warning-card {
+            border-color: #f57f17;
+            background-color: #3e2723;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            color: #f57f17;
+            font-weight: bold;
+        }
+
+        /* Stylizacja dla bardzo małych ekranów (np. Apple Watch) */
+        @media (max-width: 300px) {
+            body {
+                padding: 5px;
+            }
+            .card {
+                padding: 10px;
+                border-radius: 8px;
+            }
+            h1 { font-size: 1.2rem; }
+            h2 { font-size: 1rem; }
+            li { font-size: 0.9rem; margin-bottom: 5px; }
+        }
+
+        /* System Drążka (Joysticka) dla urządzeń dotykowych */
+        #joystick-zone {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: rgba(46, 125, 50, 0.3);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            touch-action: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #joystick-knob {
+            width: 40px;
+            height: 40px;
+            background: var(--text-accent);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+
+        /* Okienko logowania nicku */
+        #nick-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        #nick-modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            text-align: center;
+        }
+
+        #nick-modal input {
+            padding: 10px;
+            margin-top: 10px;
+            width: 80%;
+            border-radius: 6px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        #nick-modal button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: var(--border-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="nick-modal">
+        <div id="nick-modal-content">
+            <h2>Witaj Wędkarzu!</h2>
+            <p>Podaj swój nick, aby kontynuować:</p>
+            <input type="text" id="nick-input" placeholder="Wpisz nick..." />
+            <br>
+            <button onclick="saveNick()">Wejdź na stronę</button>
+        </div>
+    </div>
+
+    <div id="user-greeting">Wczytywanie profilu...</div>
+
+    <h1>Poradnik Wędkarski</h1>
+
+    <div class="card">
+        <h2>Idąc na ryby zabieramy</h2>
+        <ol>
+            <li>Karta wędkarska</li>
+            <li>Wędki</li>
+            <li>Siatka na ryby</li>
+            <li>Przynęta na ryby</li>
+            <li>Metrówka do mierzenia ryb</li>
+            <li>Przyrząd do wyhaczania ryb</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h2>Ważne zasady na łowisku</h2>
+        <ol>
+            <li>Przed rozpoczęciem wędkowania należy wpisać w książeczce połowu ryb datę i numer łowiska.</li>
+            <li>Przy wędce może być tylko jeden haczyk.</li>
+            <li>Złowione niewymiarowe ryby i będące pod ochroną muszą być wypuszczone do wody.</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h2>Wymiar ochronny</h2>
+        <ul>
+            <li><strong>Szczupak</strong> - do 50 cm - powyżej 80 cm</li>
+            <li><strong>Sandacz</strong> - do 50 cm - powyżej 70 cm</li>
+            <li><strong>Okoń</strong> - do 20 cm - powyżej 35 cm</li>
+            <li><strong>Lin</strong> - do 30 cm - powyżej 50 cm</li>
+            <li><strong>Karp</strong> - do 40 cm - powyżej 60 cm</li>
+        </ul>
+    </div>
+
+    <div class="card warning-card">
+        <h2>Ważne!</h2>
+        <p class="highlight">Zachować czystość w promieniu 5 metrów swojego łowiska!</p>
+    </div>
+
+    <div class="card">
+        <h2>Okres ochronny ryb</h2>
+        <ol>
+            <li><strong>Sandacz</strong> - 1 styczeń do 31 maja</li>
+            <li><strong>Sum</strong> - 1 styczeń do 31 maja</li>
+            <li><strong>Szczupak</strong> - 1 styczeń do 30 kwietnia</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h2>Limit zabierania ryb do domu</h2>
+        <ol>
+            <li>Szczupak, sandacz, boleń - łącznie 2 sztuki</li>
+            <li>Leszcz powyżej 50cm - dwie sztuki</li>
+            <li>Karp - 3 sztuki</li>
+            <li>Lin - 4 sztuki</li>
+            <li>Węgorz - 2 sztuki</li>
+        </ol>
+        <p>Inne ryby takie jak płotka, Leszcz (poniżej 50cm), karaś pospolity, okoń, wzdręga (inaczej krasnopiórka) - <strong class="highlight">5 kg w ciągu doby</strong>.</p>
+    </div>
+
+    <div class="card warning-card">
+        <h2>Regulamin Specjalny</h2>
+        <p class="highlight">Łowisko jezioro Mleczowskie - Złap i wypuść! Wszystkie ryby wypuszczamy (!)</p>
+    </div>
+
+    <div id="joystick-zone">
+        <div id="joystick-knob"></div>
+    </div>
+
+    <script>
+        // --- OBSŁUGA NICKU ---
+        const modal = document.getElementById('nick-modal');
+        const greeting = document.getElementById('user-greeting');
+        const nickInput = document.getElementById('nick-input');
+
+        // Sprawdzanie czy użytkownik ma już zapisany nick w pamięci urządzenia (localStorage)
+        let savedNick = localStorage.getItem('wedkarzNick');
+
+        if (savedNick) {
+            modal.style.display = 'none';
+            greeting.innerText = `Witaj na łowisku, ${savedNick}!`;
+        }
+
+        function saveNick() {
+            const val = nickInput.value.trim();
+            if (val !== "") {
+                localStorage.setItem('wedkarzNick', val);
+                modal.style.display = 'none';
+                greeting.innerText = `Witaj na łowisku, ${val}!`;
+            } else {
+                alert("Proszę wpisać nick!");
+            }
+        }
+
+        // --- OBSŁUGA DRĄŻKA DO STEROWANIA (PRZEWIJANIA STRONY) ---
+        const joystickZone = document.getElementById('joystick-zone');
+        const joystickKnob = document.getElementById('joystick-knob');
+        
+        let isDragging = false;
+        let startY = 0;
+        let currentY = 0;
+        let scrollInterval;
+        let maxRadius = 30; // Maksymalne wychylenie gałki
+
+        joystickZone.addEventListener('touchstart', handleStart, {passive: false});
+        joystickZone.addEventListener('touchmove', handleMove, {passive: false});
+        joystickZone.addEventListener('touchend', handleEnd);
+        
+        // Dodatkowa obsługa myszką w razie testów na PC
+        joystickZone.addEventListener('mousedown', handleStart);
+        document.addEventListener('mousemove', handleMove);
+        document.addEventListener('mouseup', handleEnd);
+
+        function handleStart(e) {
+            e.preventDefault();
+            isDragging = true;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            startY = clientY;
+            joystickKnob.style.transition = 'none';
+            
+            // Pętla do płynnego przewijania
+            scrollInterval = setInterval(() => {
+                if(currentY !== 0) {
+                    // Szybkość przewijania zależna od wychylenia
+                    window.scrollBy(0, currentY / 2); 
+                }
+            }, 16);
+        }
+
+        function handleMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            let deltaY = clientY - startY;
+            
+            // Ograniczenie wychylenia drążka
+            if (deltaY > maxRadius) deltaY = maxRadius;
+            if (deltaY < -maxRadius) deltaY = -maxRadius;
+            
+            currentY = deltaY;
+            joystickKnob.style.transform = `translateY(${deltaY}px)`;
+        }
+
+        function handleEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            currentY = 0;
+            joystickKnob.style.transition = 'transform 0.2s ease-out';
+            joystickKnob.style.transform = `translateY(0px)`;
+            clearInterval(scrollInterval);
+        }
+    </script>
+</body>
+</html>
