@@ -16,20 +16,20 @@
   let best = Number(prefs.get("bird:classic:best", 0)) || 0;
   bestElement.textContent = best;
   function draw() {
-    ctx.fillStyle = "#b6c9b4";
+    ctx.fillStyle = SpinnerTheme.mode === "dark" ? "#1b2a20" : "#bfd0b3";
     ctx.fillRect(0, 0, 360, 500);
-    ctx.fillStyle = "#e1e9d5";
+    ctx.fillStyle = SpinnerTheme.alpha("ink", 0.1);
     ctx.fillRect(30, 85, 48, 4);
     ctx.fillRect(54, 73, 42, 4);
     ctx.fillRect(245, 180, 58, 4);
-    ctx.fillStyle = "#506f55";
+    ctx.fillStyle = SpinnerTheme.palette.green;
     for (const pipe of pipes || []) {
       ctx.fillRect(pipe.x, 0, 48, pipe.y);
       ctx.fillRect(pipe.x, pipe.y + 150, 48, 500);
-      ctx.fillStyle = "#405d44";
+      ctx.fillStyle = SpinnerTheme.alpha("ink", 0.3);
       ctx.fillRect(pipe.x - 4, pipe.y - 15, 56, 15);
       ctx.fillRect(pipe.x - 4, pipe.y + 150, 56, 15);
-      ctx.fillStyle = "#506f55";
+      ctx.fillStyle = SpinnerTheme.palette.green;
     }
     if (!bird) return;
     ctx.save();
@@ -121,5 +121,6 @@
     if (running) bird.dy = -6.5;
     else start();
   });
+  window.addEventListener("spinner:theme-change", draw);
   draw();
 })();

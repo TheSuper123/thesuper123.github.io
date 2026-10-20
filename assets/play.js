@@ -32,7 +32,7 @@
     try {
       if (
         !frame.contentDocument?.querySelector(
-          "canvas, #game, #board, #game-frame, #gameCanvas, .grid, #grid",
+          "canvas, #game, #board, #game-frame, #gameCanvas, #game-wrapper, [data-game=fish], .grid, #grid",
         )
       )
         return;
@@ -85,4 +85,15 @@
       (document.querySelector("#fullscreen-game").textContent =
         document.fullscreenElement ? "Zamknij pełny ekran ⛶" : "Pełny ekran ⛶"),
   );
+  window.addEventListener("message", (event) => {
+    if (
+      event.origin !== location.origin ||
+      event.source !== frame.contentWindow ||
+      event.data?.type !== "spinner:game-size"
+    )
+      return;
+    const height = Number(event.data.height);
+    if (Number.isFinite(height))
+      frame.style.height = Math.min(900, Math.max(400, height)) + "px";
+  });
 })();

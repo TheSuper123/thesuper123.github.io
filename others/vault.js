@@ -167,6 +167,7 @@
         true,
       );
     } finally {
+      $("#vault-password").value = "";
       raw?.fill(0);
       bytes?.fill(0);
       busy = false;

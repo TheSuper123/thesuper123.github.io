@@ -1,284 +1,480 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Labirynt – Spinner Games</title>
-<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
-<style>
-:root{
-  --bg:#020617; --card:#0f172a; --accent:#38bdf8; --text:#e5e7eb; --danger:#f87171; --coin:#facc15;
-}
-*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-body{
-  margin:0; font-family:Inter,system-ui,sans-serif;
-  background:radial-gradient(circle at top,#020617,#000); color:var(--text);
-  overflow: hidden; touch-action: none;
-}
-header{
-  display:flex; align-items:center; justify-content: space-between;
-  padding:10px 20px; background:rgba(15,23,42,.9);
-  backdrop-filter:blur(10px); position:sticky; top:0; z-index:100;
-}
-header img{height:32px}
-nav button{
-  background:rgba(56,189,248,.1); border:1px solid var(--accent);
-  color:var(--text); padding:6px 15px; border-radius:8px; cursor:pointer;
-}
-main{ max-width:600px; margin:auto; padding:10px; }
-.card{
-  background:linear-gradient(180deg,#0f172a,#020617);
-  border-radius:24px; padding:15px; box-shadow:0 20px 60px rgba(0,0,0,.6);
-  border: 1px solid rgba(255,255,255,0.05); text-align: center;
-}
-#game-container {
-  position: relative; width: 100%; aspect-ratio: 1/1;
-  background: #000; border-radius: 15px; border: 2px solid #1e293b;
-  overflow: hidden; margin: 10px 0;
-}
-canvas { width: 100%; height: 100%; display: block; }
-.stats-bar { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; flex-wrap: wrap; gap: 5px;}
-.stat-item { background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-#lives-txt { color: var(--danger); font-weight: bold; }
-#coins-txt { color: var(--coin); font-weight: bold; }
+  <head>
+    <script src="../assets/theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Labirynt – Spinner Games</title>
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #020617;
+        --card: #0f172a;
+        --accent: #38bdf8;
+        --text: #e5e7eb;
+        --danger: #f87171;
+        --coin: #facc15;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        background: radial-gradient(circle at top, #020617, #000);
+        color: var(--text);
+        overflow: hidden;
+        touch-action: none;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header img {
+        height: 32px;
+      }
+      nav button {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--accent);
+        color: var(--text);
+        padding: 6px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      main {
+        max-width: 600px;
+        margin: auto;
+        padding: 10px;
+      }
+      .card {
+        background: linear-gradient(180deg, #0f172a, #020617);
+        border-radius: 24px;
+        padding: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: center;
+      }
+      #game-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1/1;
+        background: #000;
+        border-radius: 15px;
+        border: 2px solid #1e293b;
+        overflow: hidden;
+        margin: 10px 0;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .stats-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 13px;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 5px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      #lives-txt {
+        color: var(--danger);
+        font-weight: bold;
+      }
+      #coins-txt {
+        color: var(--coin);
+        font-weight: bold;
+      }
 
-select, .btn-start {
-  background:#1e293b; color:white; border:1px solid var(--accent);
-  padding:12px; border-radius:10px; cursor:pointer; margin: 10px 0; width: 100%;
-}
-.btn-start { background: var(--accent); color: var(--bg); font-weight: bold; font-size: 1.1rem;}
+      select,
+      .btn-start {
+        background: #1e293b;
+        color: white;
+        border: 1px solid var(--accent);
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin: 10px 0;
+        width: 100%;
+      }
+      .btn-start {
+        background: var(--accent);
+        color: var(--bg);
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
 
-#mobile-controls {
-  display: none; grid-template-areas: ". up ." "left down right";
-  gap: 10px; justify-content: center; margin-top: 10px;
-}
-.joy-btn {
-  width: 50px; height: 50px; background: rgba(56,189,248,0.1);
-  border: 1px solid var(--accent); border-radius: 10px;
-  color: var(--accent); display: flex; align-items: center; justify-content: center;
-  font-size: 20px; user-select: none;
-}
-</style>
-<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
-<body>
+      #mobile-controls {
+        display: none;
+        grid-template-areas: ". up ." "left down right";
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .joy-btn {
+        width: 50px;
+        height: 50px;
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--accent);
+        border-radius: 10px;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        user-select: none;
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/progress.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <link rel="stylesheet" href="../assets/theme.css" />
+  </head>
+  <body class="game-page">
+    <header>
+      <img src="../assets/mark.svg" alt="SpinnerRealYT" />
+      <nav><button onclick="location.href='../index.html'">Menu</button></nav>
+    </header>
 
-<header>
-  <img src="../assets/mark.svg" alt="SpinnerRealYT">
-  <nav><button onclick="location.href='../index.html'">Menu</button></nav>
-</header>
+    <main>
+      <div class="card">
+        <div id="setup">
+          <h2>Labirynt</h2>
+          <p style="opacity: 0.7; font-size: 14px">Wybierz tryb wyzwania:</p>
+          <select id="difficulty">
+            <option value="amator">Amator (Bez limitów)</option>
+            <option value="easy">Łatwy (5 ❤️ | Życie: 50 🪙)</option>
+            <option value="medium">Średni (3 ❤️ | Życie: 75 🪙)</option>
+            <option value="hard">Trudny (1 ❤️ | Życie: 100 🪙)</option>
+          </select>
+          <button class="btn-start" id="start-btn">Zacznij Przygodę</button>
+        </div>
 
-<main>
-  <div class="card">
-    <div id="setup">
-      <h2>✨ Labirynt</h2>
-      <p style="opacity: 0.7; font-size: 14px;">Wybierz tryb wyzwania:</p>
-      <select id="difficulty">
-        <option value="amator">Amator (Bez limitów)</option>
-        <option value="easy">Łatwy (5 ❤️ | Życie: 50 🪙)</option>
-        <option value="medium">Średni (3 ❤️ | Życie: 75 🪙)</option>
-        <option value="hard">Trudny (1 ❤️ | Życie: 100 🪙)</option>
-      </select>
-      <button class="btn-start" id="start-btn">Zacznij Przygodę</button>
-    </div>
-
-    <div id="game-ui" style="display:none;">
-      <div class="stats-bar">
-        <div class="stat-item" id="level-txt">Level: 1</div>
-        <div class="stat-item" id="lives-txt">❤️ ∞</div>
-        <div class="stat-item" id="coins-txt">🪙 0</div>
+        <div id="game-ui" style="display: none">
+          <div class="stats-bar">
+            <div class="stat-item" id="level-txt">Poziom: 1</div>
+            <div class="stat-item" id="lives-txt">❤️ ∞</div>
+            <div class="stat-item" id="coins-txt">🪙 0</div>
+          </div>
+          <div id="game-container">
+            <canvas id="mazeCanvas"></canvas>
+          </div>
+          <div id="mobile-controls">
+            <button
+              type="button"
+              class="joy-btn"
+              style="grid-area: up"
+              id="btn-up"
+            >
+              ▲
+            </button>
+            <button
+              type="button"
+              class="joy-btn"
+              style="grid-area: left"
+              id="btn-left"
+            >
+              ◀
+            </button>
+            <button
+              type="button"
+              class="joy-btn"
+              style="grid-area: down"
+              id="btn-down"
+            >
+              ▼
+            </button>
+            <button
+              type="button"
+              class="joy-btn"
+              style="grid-area: right"
+              id="btn-right"
+            >
+              ▶
+            </button>
+          </div>
+        </div>
       </div>
-      <div id="game-container">
-        <canvas id="mazeCanvas"></canvas>
-      </div>
-      <div id="mobile-controls">
-        <div class="joy-btn" style="grid-area: up" id="btn-up">▲</div>
-        <div class="joy-btn" style="grid-area: left" id="btn-left">◀</div>
-        <div class="joy-btn" style="grid-area: down" id="btn-down">▼</div>
-        <div class="joy-btn" style="grid-area: right" id="btn-right">▶</div>
-      </div>
-    </div>
-  </div>
-</main>
+    </main>
 
-<script>
-const canvas = document.getElementById('mazeCanvas');
-const ctx = canvas.getContext('2d');
-const setupDiv = document.getElementById('setup');
-const gameUIDiv = document.getElementById('game-ui');
-const diffSelect = document.getElementById('difficulty');
-const mobileCtrl = document.getElementById('mobile-controls');
+    <script>
+      const canvas = document.getElementById("mazeCanvas");
+      const ctx = canvas.getContext("2d");
+      const setupDiv = document.getElementById("setup");
+      const gameUIDiv = document.getElementById("game-ui");
+      const diffSelect = document.getElementById("difficulty");
+      const mobileCtrl = document.getElementById("mobile-controls");
 
-let level = 1, deaths = 0, coins = 0, lives = Infinity, gameActive = false;
-let player = { x: 30, y: 30, size: 7, speed: 3.5 };
-let goal = { x: 370, y: 370, size: 12 };
-let walls = [], pickups = [], keys = {};
+      let level = 1,
+        deaths = 0,
+        coins = 0,
+        lives = Infinity,
+        gameActive = false;
+      let player = { x: 30, y: 30, size: 7, speed: 3.5 };
+      let goal = { x: 370, y: 370, size: 12 };
+      let walls = [],
+        pickups = [],
+        keys = {};
 
-if ('ontouchstart' in window) mobileCtrl.style.display = 'grid';
+      if ("ontouchstart" in window) mobileCtrl.style.display = "grid";
 
-function resize() { canvas.width = 400; canvas.height = 400; }
-resize();
+      function resize() {
+        canvas.width = 400;
+        canvas.height = 400;
+      }
+      resize();
 
-function initLevel() {
-  player.x = 30; player.y = 30;
-  walls = [];
-  pickups = [];
+      function initLevel() {
+        player.x = 30;
+        player.y = 30;
+        walls = [];
+        pickups = [];
 
-  const mode = diffSelect.value;
-  let wallCount = 6 + (level * 2);
-  let vSpeed = 0;
+        const mode = diffSelect.value;
+        let wallCount = 6 + level * 2;
+        let vSpeed = 0;
 
-  if(mode === 'easy') { vSpeed = 0.5; }
-  if(mode === 'medium') { vSpeed = 1.5; wallCount += 5; }
-  if(mode === 'hard') { vSpeed = 2.5; wallCount += 10; }
+        if (mode === "easy") {
+          vSpeed = 0.5;
+        }
+        if (mode === "medium") {
+          vSpeed = 1.5;
+          wallCount += 5;
+        }
+        if (mode === "hard") {
+          vSpeed = 2.5;
+          wallCount += 10;
+        }
 
-  // Generowanie ścian
-  for(let i=0; i<wallCount; i++) {
-    walls.push({
-      x: Math.random() * (canvas.width - 100) + 50,
-      y: Math.random() * (canvas.height - 100) + 50,
-      w: Math.random() > 0.5 ? 50 : 12,
-      h: Math.random() > 0.5 ? 12 : 50,
-      vx: (mode !== 'amator' && mode !== 'easy') ? (Math.random() - 0.5) * (vSpeed + level*0.2) : 0,
-      vy: (mode !== 'amator' && mode !== 'easy') ? (Math.random() - 0.5) * (vSpeed + level*0.2) : 0
-    });
-  }
+        // Generowanie ścian
+        for (let i = 0; i < wallCount; i++) {
+          walls.push({
+            x: Math.random() * (canvas.width - 100) + 50,
+            y: Math.random() * (canvas.height - 100) + 50,
+            w: Math.random() > 0.5 ? 50 : 12,
+            h: Math.random() > 0.5 ? 12 : 50,
+            vx:
+              mode !== "amator" && mode !== "easy"
+                ? (Math.random() - 0.5) * (vSpeed + level * 0.2)
+                : 0,
+            vy:
+              mode !== "amator" && mode !== "easy"
+                ? (Math.random() - 0.5) * (vSpeed + level * 0.2)
+                : 0,
+          });
+        }
 
-  // Generowanie monet (tylko poza amatorem)
-  if(mode !== 'amator') {
-    for(let i=0; i<3 + Math.floor(level/2); i++) {
-      pickups.push({
-        x: Math.random() * (canvas.width - 60) + 30,
-        y: Math.random() * (canvas.height - 60) + 30,
-        size: 5, collected: false
-      });
-    }
-  }
-}
-
-window.onkeydown = e => keys[e.key.toLowerCase()] = true;
-window.onkeyup = e => keys[e.key.toLowerCase()] = false;
-
-function bindMobile(id, key) {
-  const btn = document.getElementById(id);
-  btn.ontouchstart = (e) => { e.preventDefault(); keys[key] = true; };
-  btn.ontouchend = () => keys[key] = false;
-}
-bindMobile('btn-up', 'arrowup'); bindMobile('btn-down', 'arrowdown');
-bindMobile('btn-left', 'arrowleft'); bindMobile('btn-right', 'arrowright');
-
-function checkLifeSystem() {
-  const mode = diffSelect.value;
-  let cost = 50;
-  if(mode === 'medium') cost = 75;
-  if(mode === 'hard') cost = 100;
-
-  if(coins >= cost) {
-    coins -= cost;
-    lives++;
-    updateUI();
-  }
-}
-
-function updateUI() {
-  document.getElementById('level-txt').textContent = `Level: ${level}`;
-  document.getElementById('coins-txt').textContent = `🪙 ${coins}`;
-  document.getElementById('lives-txt').textContent = lives === Infinity ? "❤️ ∞" : `❤️ ${lives}`;
-}
-
-function update() {
-  if(!gameActive) return;
-
-  let nextX = player.x, nextY = player.y;
-  if(keys['w'] || keys['arrowup']) nextY -= player.speed;
-  if(keys['s'] || keys['arrowdown']) nextY += player.speed;
-  if(keys['a'] || keys['arrowleft']) nextX -= player.speed;
-  if(keys['d'] || keys['arrowright']) nextX += player.speed;
-
-  if(nextX > player.size && nextX < canvas.width - player.size) player.x = nextX;
-  if(nextY > player.size && nextY < canvas.height - player.size) player.y = nextY;
-
-  // Monety
-  pickups.forEach(p => {
-    if(!p.collected && Math.hypot(player.x - p.x, player.y - p.y) < player.size + p.size) {
-      p.collected = true;
-      coins += 10;
-      checkLifeSystem();
-      updateUI();
-    }
-  });
-
-  // Ściany
-  walls.forEach(w => {
-    w.x += w.vx; w.y += w.vy;
-    if(w.x <= 0 || w.x + w.w >= canvas.width) w.vx *= -1;
-    if(w.y <= 0 || w.y + w.h >= canvas.height) w.vy *= -1;
-
-    if(player.x + player.size > w.x && player.x - player.size < w.x + w.w &&
-       player.y + player.size > w.y && player.y - player.size < w.y + w.h) {
-
-      if(lives !== Infinity) {
-        lives--;
-        if(lives <= 0) {
-          alert(`GAME OVER! Osiągnięty poziom: ${level}`);
-          location.reload();
-          return;
+        // Generowanie monet (tylko poza amatorem)
+        if (mode !== "amator") {
+          for (let i = 0; i < 3 + Math.floor(level / 2); i++) {
+            pickups.push({
+              x: Math.random() * (canvas.width - 60) + 30,
+              y: Math.random() * (canvas.height - 60) + 30,
+              size: 5,
+              collected: false,
+            });
+          }
         }
       }
-      player.x = 30; player.y = 30;
-      updateUI();
-    }
-  });
 
-  if(Math.hypot(player.x - goal.x, player.y - goal.y) < player.size + goal.size) {
-    level++;
-    updateUI();
-    initLevel();
-  }
-}
+      window.onkeydown = (e) => {
+        if (e.key.startsWith("Arrow")) e.preventDefault();
+        keys[e.key.toLowerCase()] = true;
+      };
+      window.onkeyup = (e) => (keys[e.key.toLowerCase()] = false);
 
-function draw() {
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.shadowBlur = 10;
+      function bindMobile(id, key) {
+        const btn = document.getElementById(id);
+        btn.ontouchstart = (e) => {
+          e.preventDefault();
+          keys[key] = true;
+        };
+        btn.ontouchend = () => (keys[key] = false);
+        btn.onkeydown = (e) => {
+          if (e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            keys[key] = true;
+          }
+        };
+        btn.onkeyup = (e) => {
+          if (e.key === " " || e.key === "Enter") keys[key] = false;
+        };
+        btn.onblur = () => (keys[key] = false);
+        btn.onpointerdown = (e) => {
+          e.preventDefault();
+          btn.setPointerCapture(e.pointerId);
+          keys[key] = true;
+        };
+        btn.onpointerup = btn.onpointercancel = () => (keys[key] = false);
+      }
+      bindMobile("btn-up", "arrowup");
+      bindMobile("btn-down", "arrowdown");
+      bindMobile("btn-left", "arrowleft");
+      bindMobile("btn-right", "arrowright");
 
-  // Cel
-  ctx.fillStyle = '#4ade80'; ctx.shadowColor = '#4ade80';
-  ctx.beginPath(); ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI*2); ctx.fill();
+      function checkLifeSystem() {
+        const mode = diffSelect.value;
+        let cost = 50;
+        if (mode === "medium") cost = 75;
+        if (mode === "hard") cost = 100;
 
-  // Ściany
-  ctx.fillStyle = '#f87171'; ctx.shadowColor = '#f87171';
-  walls.forEach(w => ctx.fillRect(w.x, w.y, w.w, w.h));
+        if (coins >= cost) {
+          coins -= cost;
+          lives++;
+          updateUI();
+        }
+      }
 
-  // Monety
-  ctx.fillStyle = '#facc15'; ctx.shadowColor = '#facc15';
-  pickups.forEach(p => {
-    if(!p.collected) {
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-    }
-  });
+      function updateUI() {
+        document.getElementById("level-txt").textContent = `Poziom: ${level}`;
+        document.getElementById("coins-txt").textContent = `🪙 ${coins}`;
+        document.getElementById("lives-txt").textContent =
+          lives === Infinity ? "❤️ ∞" : `❤️ ${lives}`;
+      }
 
-  // Gracz
-  ctx.fillStyle = '#38bdf8'; ctx.shadowColor = '#38bdf8';
-  ctx.beginPath(); ctx.arc(player.x, player.y, player.size, 0, Math.PI*2); ctx.fill();
+      function update() {
+        if (!gameActive) return;
 
-  ctx.shadowBlur = 0;
-  update();
-  requestAnimationFrame(draw);
-}
+        let nextX = player.x,
+          nextY = player.y;
+        if (keys["w"] || keys["arrowup"]) nextY -= player.speed;
+        if (keys["s"] || keys["arrowdown"]) nextY += player.speed;
+        if (keys["a"] || keys["arrowleft"]) nextX -= player.speed;
+        if (keys["d"] || keys["arrowright"]) nextX += player.speed;
 
-document.getElementById('start-btn').onclick = () => {
-  const mode = diffSelect.value;
-  if(mode === 'easy') lives = 5;
-  if(mode === 'medium') lives = 3;
-  if(mode === 'hard') lives = 1;
-  if(mode === 'amator') lives = Infinity;
+        if (nextX > player.size && nextX < canvas.width - player.size)
+          player.x = nextX;
+        if (nextY > player.size && nextY < canvas.height - player.size)
+          player.y = nextY;
 
-  setupDiv.style.display = 'none';
-  gameUIDiv.style.display = 'block';
-  gameActive = true;
-  updateUI();
-  initLevel();
-  draw();
-};
-</script>
-</body>
+        // Monety
+        pickups.forEach((p) => {
+          if (
+            !p.collected &&
+            Math.hypot(player.x - p.x, player.y - p.y) < player.size + p.size
+          ) {
+            p.collected = true;
+            coins += 10;
+            checkLifeSystem();
+            updateUI();
+          }
+        });
+
+        // Ściany
+        walls.forEach((w) => {
+          w.x += w.vx;
+          w.y += w.vy;
+          if (w.x <= 0 || w.x + w.w >= canvas.width) w.vx *= -1;
+          if (w.y <= 0 || w.y + w.h >= canvas.height) w.vy *= -1;
+
+          if (
+            player.x + player.size > w.x &&
+            player.x - player.size < w.x + w.w &&
+            player.y + player.size > w.y &&
+            player.y - player.size < w.y + w.h
+          ) {
+            if (lives !== Infinity) {
+              lives--;
+              if (lives <= 0) {
+                gameActive = false;
+                setupDiv.style.display = "block";
+                gameUIDiv.style.display = "none";
+                document.querySelector("#setup p").textContent =
+                  `Runda zakończona. Osiągnięty poziom: ${level}. Spróbujesz jeszcze raz?`;
+                return;
+              }
+            }
+            player.x = 30;
+            player.y = 30;
+            updateUI();
+          }
+        });
+
+        if (
+          Math.hypot(player.x - goal.x, player.y - goal.y) <
+          player.size + goal.size
+        ) {
+          level++;
+          updateUI();
+          initLevel();
+        }
+      }
+
+      function draw() {
+        SpinnerTheme.drawBoard(ctx, canvas.width, canvas.height, 25);
+        ctx.shadowBlur = 0;
+
+        // Cel
+        ctx.fillStyle = SpinnerTheme.color("#4ade80");
+        ctx.shadowColor = SpinnerTheme.color("#4ade80");
+        ctx.beginPath();
+        ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ściany
+        ctx.fillStyle = SpinnerTheme.color("#f87171");
+        ctx.shadowColor = SpinnerTheme.color("#f87171");
+        walls.forEach((w) => ctx.fillRect(w.x, w.y, w.w, w.h));
+
+        // Monety
+        ctx.fillStyle = SpinnerTheme.color("#facc15");
+        ctx.shadowColor = SpinnerTheme.color("#facc15");
+        pickups.forEach((p) => {
+          if (!p.collected) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+
+        // Gracz
+        ctx.fillStyle = SpinnerTheme.color("#38bdf8");
+        ctx.shadowColor = SpinnerTheme.color("#38bdf8");
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        update();
+        requestAnimationFrame(draw);
+      }
+
+      document.getElementById("start-btn").onclick = () => {
+        const mode = diffSelect.value;
+        level = 1;
+        coins = 0;
+        if (mode === "easy") lives = 5;
+        if (mode === "medium") lives = 3;
+        if (mode === "hard") lives = 1;
+        if (mode === "amator") lives = Infinity;
+
+        setupDiv.style.display = "none";
+        gameUIDiv.style.display = "block";
+        gameActive = true;
+        updateUI();
+        initLevel();
+        if (!window.mazeLoopStarted) {
+          window.mazeLoopStarted = true;
+          draw();
+        }
+      };
+    </script>
+  </body>
 </html>

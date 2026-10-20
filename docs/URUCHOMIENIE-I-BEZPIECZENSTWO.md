@@ -19,6 +19,16 @@ python3 tests/test_others.py
 
 Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 8 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
 
+## Wygląd gier i ciemny motyw
+
+Przełącznik w nagłówku zmienia motyw strony, paneli konta, gier i zagnieżdżonych ramek archiwum. Pierwsze wejście uwzględnia ustawienie systemu. Wybór działa w sesji karty; dopiero zgoda na preferencje pozwala zapamiętać go na kolejne wizyty. Szczegóły zapisu opisuje polityka prywatności. Kod pierwszego wyświetlenia jest w `assets/theme.js`, palety w `assets/theme.css`, a oprawa gier w `assets/game.css` i `assets/game-ui.js`.
+
+Zmieniono także kolory rysowane na canvasach, plansze, menu, wyniki i przyciski. Włączenie motywu nie resetuje rozgrywki. Poprawiono pozycjonowanie sterowania Snake Areny po zmianie rozmiaru oraz przyciski i ponowne rozpoczęcie Labiryntu. Starszy Przekaźnik, quiz i strony pomocnicze mają tę samą oprawę. W kompilacji Unity Geometry Dash Lite zmieniono stronę osadzenia, loader i sterowanie; grafika wewnątrz skompilowanego silnika pozostaje wcześniejsza i wymaga projektu źródłowego do przebudowy.
+
+Po zmianie wyglądu wykonano 12 testów publicznego serwisu i 8 testów archiwum. Obejmują oba motywy, ich zapis zgodny z wyborem prywatności, zachowanie partii podczas przełączania, pozycję i rozmiar planszy Areny oraz aktualizację szyfrogramów bez zmiany hasła. Osobno sprawdzono rzeczywiste archiwum w Chromium: wszystkie sześć pozycji w obu motywach, przeciąganie klocków, przejścia DOOM-a i pełne załadowanie Unity WebGL.
+
+Aktualne podglądy: [jasny](screenshots/desktop.png), [ciemny](screenshots/desktop-dark.png), [telefon](screenshots/mobile.png), [gra na telefonie](screenshots/game-mobile.png), [zamknięte others](screenshots/others.png).
+
 ## Firebase — wymagane sprawdzenie przez właściciela
 
 - W Authentication → Sign-in method włączyć Email/Password i Google, jeśli jeszcze nie są włączone.

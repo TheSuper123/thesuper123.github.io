@@ -45,22 +45,22 @@
       "sha256": "e56db865abbc1db850e6e57a01a7a5572c9747ceae5fb85793352f0eff15e1ae"
     },
     "assets/catalog.js": {
-      "file": "data/8775d4231e1e3f195e296a874911da289e8a6774675ad7cbbfcbfc18f67dfcd6.enc",
+      "file": "data/8775d4231e1e3f195e296a874911da289e8a6774675ad7cbbfcbfc18f67dfcd6-fe3ab17cc1daa758.enc",
       "mime": "text/javascript; charset=utf-8",
-      "size": 2602,
-      "sha256": "ccac360d4fda203c08ea14e4f3d18d3e34c9d5d57b685436ba689fe6410bf889"
+      "size": 2799,
+      "sha256": "a769c218c576e8a5c68217eea86ca554c8fb955b768bd9ba37c445bfe8d0ed7d"
     },
     "games/blockblast.html": {
-      "file": "data/eec598140a9cdb6701cc8f7a31a6dbe7636e0ba5d8c414fb42afcd6d003ddf34.enc",
+      "file": "data/eec598140a9cdb6701cc8f7a31a6dbe7636e0ba5d8c414fb42afcd6d003ddf34-8aeeef76e767330d.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 10610,
-      "sha256": "ded9df8aa755c53ebfdc644dca4195a96398def658020b5583d066a2e5de635c"
+      "size": 13959,
+      "sha256": "76b49364e99629fa57ec32099f53650b1f6491a8ae7f5a604826ca8ef30f8d99"
     },
     "games/doom.html": {
-      "file": "data/2e682943b93ee1ab3f0e9d9eff958b98a254ef7a0909ddc2809a2fefca836333.enc",
+      "file": "data/2e682943b93ee1ab3f0e9d9eff958b98a254ef7a0909ddc2809a2fefca836333-cfd6b9e16e69c669.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 2106,
-      "sha256": "170caf7850a06c31afa11ac1d6cacdd7b6ac86255cd47d7ad859348572962129"
+      "size": 2228,
+      "sha256": "dcb1ce734dff204691a0d9538209736c0a8a8b15b10df4788083c6bfa37383ad"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/0.png": {
       "file": "data/e9bf2c5928df1c9491f9e59eafec798a8709e3ffb71d275b81f32eefaa250b22.enc",
@@ -69,10 +69,10 @@
       "sha256": "11f76ee1423e5b56abdb6ac460209d8792867c63a98c6ad73d59448ecf97ba28"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/1.html": {
-      "file": "data/91e2b5b4dec883090428ef0af8a191c39630ebac1eefaf3e3087a9abeefc24e7.enc",
+      "file": "data/91e2b5b4dec883090428ef0af8a191c39630ebac1eefaf3e3087a9abeefc24e7-878dc21f72648734.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1121,
-      "sha256": "eb191ab63343aeb7fd69014707cf590e2d5426e23ac774f9ba16830e8a3f2225"
+      "size": 1308,
+      "sha256": "2584aff7f32e579f37729787c5e37ec937a53ec7c7a51a0362ee6daf253a229f"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/1.png": {
       "file": "data/78f660863bd8d49e19ca8b18dfbf4104f62c5bd7b2f5a623a031ffb1ecb5da32.enc",
@@ -81,10 +81,10 @@
       "sha256": "326f9419a9176bd8ebb3fb917627d8226b8acece1ab8d7c71f16b5a275d17f3e"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/10.html": {
-      "file": "data/7c6226e9d77d2b6468033ccf955a98bd9610f1cf6649479a4d87fa0e93490a88.enc",
+      "file": "data/7c6226e9d77d2b6468033ccf955a98bd9610f1cf6649479a4d87fa0e93490a88-e301cf57e4b1e7a2.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1123,
-      "sha256": "72a573ef295bd37930cffcb707b05cecd90a17f4cffd548f24b10b920158703c"
+      "size": 1310,
+      "sha256": "858dc38c926c0cdabb57af967476870d52bcd90b573003036d0b468236614c91"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/10.png": {
       "file": "data/4aac686695042ae19be5e3393b35903cd695351818588666d2b1edd9378a70a6.enc",
@@ -93,16 +93,16 @@
       "sha256": "edd78d138d3ba8d37ccfae1c40d5d826429612a46b2a74b5e9337e0b0e1ac44a"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/10a.html": {
-      "file": "data/cc692c84dbc56852b54d943ed29246e766578fdc614c3433ca3785de512045f5.enc",
+      "file": "data/cc692c84dbc56852b54d943ed29246e766578fdc614c3433ca3785de512045f5-61f09168ff04ab7c.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1131,
-      "sha256": "6a1c16e8b4a917b2be2b046bc0a79a9b06832b0fb10051e823513a7b5f186341"
+      "size": 1318,
+      "sha256": "ed2a4bd9248b75faac535700bcb71bd83e23172b3af18cbf321635610228027f"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/11.html": {
-      "file": "data/e6821825bdb2569af53ea8250d5fe85e882e9e8a1e5b4f3a85f2d8bb2a432a5d.enc",
+      "file": "data/e6821825bdb2569af53ea8250d5fe85e882e9e8a1e5b4f3a85f2d8bb2a432a5d-8bd37649fc05253f.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1127,
-      "sha256": "052db97575443e83711b72bf9dcb460051efde76d85a4ddcc3b4d47202e495cd"
+      "size": 1314,
+      "sha256": "0d38ebc03636170e6ee73c2d67571c2f986cf72b507b1021500bcc9a49ce191c"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/11.png": {
       "file": "data/eeb55e44440b1c29bd7f753565879f069aaa496cffd6219d7a247c63a72d79bb.enc",
@@ -111,16 +111,16 @@
       "sha256": "7626243093e516b2c6a8870f415c5c0bd0233a4daaecb391023f9b5e8a2642ce"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/11a.html": {
-      "file": "data/3896f5e5d83564aab68ccdf7c6730b29bf230bbe0c468049787385a17352d793.enc",
+      "file": "data/3896f5e5d83564aab68ccdf7c6730b29bf230bbe0c468049787385a17352d793-a86dc79de0076958.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1131,
-      "sha256": "44ce4f2c95732dcf990e942f0a8def2c5756cda1f09d1f8c5091fcf09844d300"
+      "size": 1318,
+      "sha256": "89d683e2932ab52ec33d392fabece83535bdea61f22c77e86858a8d7423e0fe9"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/11open.html": {
-      "file": "data/a290c2f5041470f9abca8149b62dcc90ea11a2db56702a85b504638098c5c52f.enc",
+      "file": "data/a290c2f5041470f9abca8149b62dcc90ea11a2db56702a85b504638098c5c52f-25b24179057d748b.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1148,
-      "sha256": "7c2a0833d516ee3317a45410b233eb3656f5caaa9ce91ea4c9fa0570faed1bf2"
+      "size": 1335,
+      "sha256": "e1adc74f9ff0186a7bbb700da3649260fdb26c028607e0e65545c7b75afad6b9"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/11open.png": {
       "file": "data/0d6e40d0932199cc9ff037dc3a07344c8780b318c0f9d9a6777f2684711c9dee.enc",
@@ -129,10 +129,10 @@
       "sha256": "13daae30fa6997bffb907e6a3b0e6813af827b19dbc1a58d6e348a7048e01824"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/12.html": {
-      "file": "data/1c79fb5b91016eee27b1c967a3c694f89686fa935a8f2761b3a8f17a804be826.enc",
+      "file": "data/1c79fb5b91016eee27b1c967a3c694f89686fa935a8f2761b3a8f17a804be826-8b4202cba598f72c.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "813fdaae001933fbea594b0294f7ca11eed69031f747f0fe3757182baa337dd7"
+      "size": 1311,
+      "sha256": "3ca8610a2e22649d3245119e33dec7aa15d2d92617c44ce162661ed1f36f0428"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/12.png": {
       "file": "data/dd68ee0f59d76e2ca3d7944941a77057721603780e75fdcbf50687375492b2cb.enc",
@@ -141,16 +141,16 @@
       "sha256": "a5ceef1618c8e6ab57a1861811b990f274c5717e24e474694967d6aaeb9928b3"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/12a.html": {
-      "file": "data/59c84086fecc6a82883f35e30cf1b75314cf256dcbef1f3091d9ce7e18caebfc.enc",
+      "file": "data/59c84086fecc6a82883f35e30cf1b75314cf256dcbef1f3091d9ce7e18caebfc-d92c6dffc5c4e5dd.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1132,
-      "sha256": "5083f0b495f8e1553e1622fc04e86682dd61cbf8f8bdf662a6b28fc86fc14e47"
+      "size": 1319,
+      "sha256": "5d570483ffe9f72d102419d801dfabf493feccc9d0353d210f1c439827f91b89"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/13.html": {
-      "file": "data/388e59e15534a444ba4246634bf9e7be094e0be20e8c4cc705c2b7c1c5006925.enc",
+      "file": "data/388e59e15534a444ba4246634bf9e7be094e0be20e8c4cc705c2b7c1c5006925-898696f347d46c79.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1123,
-      "sha256": "41fcb594b9693fdfc48c50845702157ebe852ebd3475d8f2246b298637f6bb0f"
+      "size": 1310,
+      "sha256": "0decde5b5f5d03cfb13375d0690ad3c6ab9ad4df8a75570669a5849e259ed63f"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/13.png": {
       "file": "data/4f5a854153a9462da0a979cd2c3274f8efaf05799dadf142c3b0eb80a6444655.enc",
@@ -159,16 +159,16 @@
       "sha256": "4de62f6d36b83be462135b87929442cda212731a4fe7594be8cab2bebbf07f88"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/13a.html": {
-      "file": "data/0b3edb8bc005d05a57b35b680ba41de5f11c153004e3a800b574ad0054bec32d.enc",
+      "file": "data/0b3edb8bc005d05a57b35b680ba41de5f11c153004e3a800b574ad0054bec32d-6e15058b9f473f0e.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1131,
-      "sha256": "afe94b0e1412391f1453942b2c217b76177171b13be59dfff1d867072b66a570"
+      "size": 1318,
+      "sha256": "bc16e009d7b7056bd85b9cb6e41e0c4d226b74fafbc9d3461f5d9180c8b18e16"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/14.html": {
-      "file": "data/498fc8ac8c92a8049bd7eec365c64ba2db2b2ac2be235605f12338e092d7c121.enc",
+      "file": "data/498fc8ac8c92a8049bd7eec365c64ba2db2b2ac2be235605f12338e092d7c121-48e0f406a1e37db4.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "b2fadd8e1ebcd039e79158b2aa98886ea5ded0105505a5c9934ab20f8b2e1c56"
+      "size": 1311,
+      "sha256": "c582a41fb96a1264c09933a8ddb93c00ca88ffe1beb204bd3923c1ede763f548"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/14.png": {
       "file": "data/1933dd000d059ee8274dc68ef76485e25ab25e7534ebaf4e5d807db63608cf75.enc",
@@ -177,16 +177,16 @@
       "sha256": "48f2a0e960eb4c4ec87bb99d40fafa5e27265538b3811d0c9d490cb80812a016"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/14a.html": {
-      "file": "data/e51dd965b0129b2f50b320fc45e9e8445ec15ed052ad7d1776e5896547c812be.enc",
+      "file": "data/e51dd965b0129b2f50b320fc45e9e8445ec15ed052ad7d1776e5896547c812be-49e231fb2d07d063.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1132,
-      "sha256": "357095b102c5ecaf6c839e2e321f3cc1f72cba4161b7b3e301b945eb5f9908f7"
+      "size": 1319,
+      "sha256": "5d8994ee1204351f788bea7abb6fb5015e603fb1964115d9c0b6d1df27b19c14"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/15.html": {
-      "file": "data/18b86c4f7d7129ef8350830f9c4a8a5a4da0780797d74e18bd5a4b1c14c45b5b.enc",
+      "file": "data/18b86c4f7d7129ef8350830f9c4a8a5a4da0780797d74e18bd5a4b1c14c45b5b-35303eb23ffa5c04.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "5b8169471a0bd62ec94fb29f920b39b17d4d3d1469ceb75575ad8161384a4e28"
+      "size": 1311,
+      "sha256": "003e57c6d6f7751c10e35f1bf623058638f542337b0bc9811a801ef5c8dd33ec"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/15.png": {
       "file": "data/fc6fc078e5dcaa2507a6f1209dcacff8789bf159042bb7382a3f6fe6122a542b.enc",
@@ -195,16 +195,16 @@
       "sha256": "d114e82aba627998400ba3b6b896e30e63cd358aa0b31c92e4c68658b30a049c"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/15a.html": {
-      "file": "data/8cce20e620ea236a49b4b2bcde423752549a7567363541f4e02705470104acf9.enc",
+      "file": "data/8cce20e620ea236a49b4b2bcde423752549a7567363541f4e02705470104acf9-86426af7f37acb48.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1132,
-      "sha256": "bb58e57f4dfb4ae208f63af49c61e2c754c38edb19c28b39f15f87febaeed6bf"
+      "size": 1319,
+      "sha256": "118fdabd61b17eb2b7fda70eb9e4e767ba953b3ae2681919fe3e520a3e0e2077"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/16.html": {
-      "file": "data/84f31e44b691307657b25819fa8412d0a7489c50562ec62cfd48ef7b82006da3.enc",
+      "file": "data/84f31e44b691307657b25819fa8412d0a7489c50562ec62cfd48ef7b82006da3-4107daeb3fe14852.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1128,
-      "sha256": "6617b071e29e94d5b5c6b10c0aea171065ba0248d806a55d80f11f591906c301"
+      "size": 1315,
+      "sha256": "b84abfd09e4fb4ed450e159e3b20c97244568157fdc10f51ccc115801810ebf3"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/16.png": {
       "file": "data/2af6c775e1478f2265a169b18aac7acdf332fbc977ba29285343454384edf366.enc",
@@ -213,16 +213,16 @@
       "sha256": "6c5440a3710e5687431dc06d0301f622f82dbfffa96fe8c20164bb26c5e47d90"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/2.html": {
-      "file": "data/7cc3775714702eaa85e557ede904a1d54024ee3c9bb53e68da76a9ba8c33ff39.enc",
+      "file": "data/7cc3775714702eaa85e557ede904a1d54024ee3c9bb53e68da76a9ba8c33ff39-eb8fcc8d9ea56e62.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1119,
-      "sha256": "666ab2597045c2a344e933bafd6c806037ca2493688b597a171f9a2bbf417b40"
+      "size": 1306,
+      "sha256": "4dc1ab14607b78c3a6bde9db6445c68632c598a8fb927a221fabcd60d6736900"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/2closed.html": {
-      "file": "data/8c5a9049d889b97427be61c8080e0ca667ef4076b2b2996e2b05d65ec102e280.enc",
+      "file": "data/8c5a9049d889b97427be61c8080e0ca667ef4076b2b2996e2b05d65ec102e280-27e9fa3d0d7a62fb.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1162,
-      "sha256": "00bbaa00ec2ae391120ebcde489f01dede20125954c153b7394d8f4f1fb5e04c"
+      "size": 1349,
+      "sha256": "7a1c167f44739b159f5c33e5a443495e19e2ff5b011ac153e00a133014b7f191"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/2closed.png": {
       "file": "data/38c9e1459f4e3b651a444a8116b6733f30653fad83faefa28cf416229b82b9b5.enc",
@@ -243,16 +243,16 @@
       "sha256": "a021c86f3588f5729b695a5995c05fc62ec7826422a471c3ba2b6729876ff5e2"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/2opena.html": {
-      "file": "data/fb77a6d99094f51dfba3777e1e9e2727bde6f0a8bd7b58a8c64350cfff9353d4.enc",
+      "file": "data/fb77a6d99094f51dfba3777e1e9e2727bde6f0a8bd7b58a8c64350cfff9353d4-8a66ff84e337d117.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1152,
-      "sha256": "6f00912bfff85b728698349fcbe337ac1e93f9e42fd314d11c7abb5c2c5627a2"
+      "size": 1339,
+      "sha256": "dfe879e8f52e2b855a3945e7e64e55fa8b34200958ea6a6a9ee0749401141d6c"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/3.html": {
-      "file": "data/8785e4932db3524d740eb1a702691999ac4b2b2ffe19c7498fff42591e22450f.enc",
+      "file": "data/8785e4932db3524d740eb1a702691999ac4b2b2ffe19c7498fff42591e22450f-a3fda7a6646cd8f6.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1115,
-      "sha256": "c83f04214e1dca0b688de997d926d1b08c03f14f4d6fa9d4b18bf5f12c6cf7ab"
+      "size": 1302,
+      "sha256": "77357be8406e53cb9f354939f39067cb14134e6977a1316fc968d5af6596a63e"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/3.png": {
       "file": "data/a2af61dfb0f7d727591659bee6adcd280d26fade2d7d9067c8314b325464767c.enc",
@@ -267,16 +267,16 @@
       "sha256": "3e7716e547dde2ac8a37677266f2f40e8545bb57dac11b18c761a40db0d8ecdd"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/3a.html": {
-      "file": "data/afaf83aec38c98cf20d547dcf7e6e044bab04b231e86e489a3729d1b9c1ce8e8.enc",
+      "file": "data/afaf83aec38c98cf20d547dcf7e6e044bab04b231e86e489a3729d1b9c1ce8e8-bc86a768a56e8b3f.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1127,
-      "sha256": "d92d0469e3c8edaff1f6f63c884c424e63ae8744915a1784728c42faf95d36ce"
+      "size": 1314,
+      "sha256": "4284b39000adaf26cc9a00c7a04a9aae2e07e676bc2ee10f6e229458c98dab7f"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/4.html": {
-      "file": "data/2270859ebe76d7b77dbaeafa01188caca1aa5321b547508f54271a83e9fc3be0.enc",
+      "file": "data/2270859ebe76d7b77dbaeafa01188caca1aa5321b547508f54271a83e9fc3be0-a2fd6e4e06f762fc.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1115,
-      "sha256": "6ffa75eda58d520b2952ea1d54000045b23749523fba1a6aefe294a51f4586f9"
+      "size": 1302,
+      "sha256": "c05a13a05fb022ec033b45ffc67ee6067bfbf67a4f5ee8577f32cd1c4d0c647a"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/4.png": {
       "file": "data/c9566a7b5a5c1a92c8c59455a0b8e75485a2627fc5f776b78cf199e96aabc139.enc",
@@ -291,16 +291,16 @@
       "sha256": "b68997c6f0a61ab4bc2d2cb9e24cda1f81e9bea4b770c72bffead4f84dfa053b"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/4a.html": {
-      "file": "data/13a4861b5fb918080479924cedc3147f978011a73e5b4703e33af3d0f9f96714.enc",
+      "file": "data/13a4861b5fb918080479924cedc3147f978011a73e5b4703e33af3d0f9f96714-2bd250b0f3dc27b4.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "11df3f85b8baffe7c3941cb0cf122dd425d402ff40e562e6d2b03bd9fc6143bb"
+      "size": 1311,
+      "sha256": "a5e2f240b246a08141a9040a9db0e7bb187c26c9e225bdc6a76aca20052e62aa"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/5.html": {
-      "file": "data/349bb21501c4f512ad30604caeb8418472254d27f01fed6c9401d9e2c9c657c5.enc",
+      "file": "data/349bb21501c4f512ad30604caeb8418472254d27f01fed6c9401d9e2c9c657c5-2cfb11d36b1c16d3.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1116,
-      "sha256": "72723f551eb3c870aed296f69028ebf52a9f8b1c212a30938deb375aff07a43c"
+      "size": 1303,
+      "sha256": "b64a6b06ab72929581e60bb879ad4207d50a721c94751a5bce7021b1f32404f7"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/5.png": {
       "file": "data/a38c527ddbbe5ea9b3dccd34accd76e709c15f98ae22335a48f16417439c285b.enc",
@@ -309,16 +309,16 @@
       "sha256": "8a4d01bac65d4821003a85b6531906c0bf7d1683b8e90e33e5e935b446f4d9ab"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/5a.html": {
-      "file": "data/67ea7641790d9aa00ca369195f1c1ab8badf441fc66972d9c0d9d0aaef3285bf.enc",
+      "file": "data/67ea7641790d9aa00ca369195f1c1ab8badf441fc66972d9c0d9d0aaef3285bf-77d81a63773fc7fe.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "c8903c1a77017dccc1587a39e0b0bfbc0366cb5c95aa0894a740af8ef8e23371"
+      "size": 1311,
+      "sha256": "49ee25946252815add06a29a7e5e858fcba4668d981aaeeb7dba8ed3b010bf5f"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/6.html": {
-      "file": "data/e0531d5781f2bf3e4bf2335fdb47f3fce44bbae7daee7675f0e91842a471ae08.enc",
+      "file": "data/e0531d5781f2bf3e4bf2335fdb47f3fce44bbae7daee7675f0e91842a471ae08-2794ef09a06a2568.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1116,
-      "sha256": "22bff228a79dc7847f796574dc721300d289c0daaef2ddb00f2b7253fa736d69"
+      "size": 1303,
+      "sha256": "0fc94610619d01a79092c71b8ba59d5b16297f6a40c119f0e08828375c4ccd7c"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/6A.png": {
       "file": "data/bbdc72227ec107d5ad9612251bb2c51a8030a8bc0a3e5d6227edbf478d01ea9a.enc",
@@ -327,16 +327,16 @@
       "sha256": "0f844e49648b4547410d0c4d4ed5e9feee3381e1d25b68db3bf35b6013242903"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/6a.html": {
-      "file": "data/9645a4fe01b7fefc1f27ddc8356a558c30e4cc748ac4e0e963e3732db658ab66.enc",
+      "file": "data/9645a4fe01b7fefc1f27ddc8356a558c30e4cc748ac4e0e963e3732db658ab66-d9639117f388840e.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "6d5496679813bda96c047991a6698156e812b63d4f09c842f870f500ab97e48f"
+      "size": 1311,
+      "sha256": "57fbca943854b332d6607f346191a0ed4306a670b0e85c494023ec9e984cb183"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/7.html": {
-      "file": "data/0a27891813bcdf4f66f67972a1d7299a78dd790477ad8afe7bb910344ad74d53.enc",
+      "file": "data/0a27891813bcdf4f66f67972a1d7299a78dd790477ad8afe7bb910344ad74d53-255ec005ac6ce89d.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1115,
-      "sha256": "ed4d4857f5eda4111ce0c22a0ae074ea8b9d957ff1af3fcc61507d8d24550ae3"
+      "size": 1302,
+      "sha256": "2994763341d6feb5fd6131e6927b80f10c20dd85d1e946697658d5ca052ec6c3"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/7.png": {
       "file": "data/16f6f055889e8ae1e205e117f9ad2dfb3618da278ca58b133e3d2915dbc2c544.enc",
@@ -345,16 +345,16 @@
       "sha256": "e17321ff1b2df5da0d1681a1b65c4c9a5b0af880ccfbb1cfd22f8c793851f877"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/7a.html": {
-      "file": "data/4d260deb06167da0e2a30192db95ffd8489658785a96e95a6d24893c378fef9d.enc",
+      "file": "data/4d260deb06167da0e2a30192db95ffd8489658785a96e95a6d24893c378fef9d-f97e0f4f3a284071.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1123,
-      "sha256": "8ba6dae9c816007b86415897cb447f2fde780df58a555440462b35f153b34dd5"
+      "size": 1310,
+      "sha256": "a495035eff281c1d4395dfe95b06fc90a83975fdac576956c3849152fd96444c"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/8.html": {
-      "file": "data/ace2dc64e0e83eb0f82d7d2aecc408cd5f22bf6cf0d9a407bbe438aa0a6a6ed7.enc",
+      "file": "data/ace2dc64e0e83eb0f82d7d2aecc408cd5f22bf6cf0d9a407bbe438aa0a6a6ed7-37da1e52aa62c65d.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1116,
-      "sha256": "fdd82ade704a99b56bb085f80b8d597f7a6bd5f1d7726c2d16e88ac57190c23f"
+      "size": 1303,
+      "sha256": "1f30cfec60c966bbc47f7b62846b69108c80b3829b3c4133ca5282c5b143cc42"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/8.png": {
       "file": "data/627682baeca488822005e7ec0ada46b6dbbc3b0a82fe9fe22f2e2521b0987d8b.enc",
@@ -363,16 +363,16 @@
       "sha256": "5655bf2790691a74bbe3bef9d89632d90a10d77243a27d5b24a23587bed0a7f1"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/8a.html": {
-      "file": "data/bd6e491fb80681252b85bde3f439b7d8083bd79c0ce8ca598eff4fea03c1426e.enc",
+      "file": "data/bd6e491fb80681252b85bde3f439b7d8083bd79c0ce8ca598eff4fea03c1426e-a18116e0ab1364b4.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "1b9230bb3c1ff4f98b8acebc7e84c226f3e4d0efcec117c6787976c284c79e1b"
+      "size": 1311,
+      "sha256": "06481b3e0b4d5e3bbcf749ad4ecc54970dbd00f35d3aba6c8fd106aed7e3113d"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/9.html": {
-      "file": "data/c523d37ddffde2e669e701849b25653497afdd817f632f3341ec93455ae4b91c.enc",
+      "file": "data/c523d37ddffde2e669e701849b25653497afdd817f632f3341ec93455ae4b91c-9aee090813d598bb.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1116,
-      "sha256": "825d0ebf00d01158915f77898380cb37d991ce1b160efffda4afb7e67c51af2d"
+      "size": 1303,
+      "sha256": "c3cad8369fa08e1ca2cbb1020812808534025a43d657930d5874d144dcf1595d"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/9.png": {
       "file": "data/471156747d32e6990e19425921f83a05f4cc0b9d7fd0dce861665ef2775dc2e2.enc",
@@ -387,10 +387,10 @@
       "sha256": "738e9407d944f2c8b68a1d54d32922282ba9ff217299b932c4b8414c323dd500"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/9a.html": {
-      "file": "data/fb6b98e1c97779882475a16b2632ad94ccf7f75a7392642dbffdc70064eea949.enc",
+      "file": "data/fb6b98e1c97779882475a16b2632ad94ccf7f75a7392642dbffdc70064eea949-15ecee4d0585b655.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1124,
-      "sha256": "c60091a0db31245da884e8c563e7fb0913ad311ee43c0ea59fc418cc9b4d4b6d"
+      "size": 1311,
+      "sha256": "d41cc699274e21f9099fc9d6f9bad786dc31b8e32f92262492af8af19b97d7e0"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/Fire-Button.png": {
       "file": "data/5b1a68c63c6505f35f73580176714505f61be60c01ec3f6f27d9eda0ba6553c5.enc",
@@ -411,10 +411,10 @@
       "sha256": "29d3ac8bd7c8cba7e774c68f84e249763561a80edf78f964313b422edc2f2303"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/Titlescreen.html": {
-      "file": "data/50e58e8a8d702138bdbb2ff48ff8b387326dc1aa649a7e59b53cae32bd5ce97d.enc",
+      "file": "data/50e58e8a8d702138bdbb2ff48ff8b387326dc1aa649a7e59b53cae32bd5ce97d-9fe6cff268173634.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 723,
-      "sha256": "7634195e0b348741b15e2adb6feb3d7f90d214e618456e0dcfa153881f23cbe5"
+      "size": 910,
+      "sha256": "0a6d94fd791845b5012451eeaf9988d4c10ec1b1bcd014de1e1a802efe17b87a"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/down.png": {
       "file": "data/6452dfb00e40fa723035b1c61b1e19b9211ebd98986941f80dd16d678fe6285b.enc",
@@ -423,16 +423,16 @@
       "sha256": "ce6303cdeb2acc816e102b2489d30b886a90bad9664e56b02da874288751ecb3"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/index.html": {
-      "file": "data/a1ed4db521be1e0701707068ad7b1e0ef985ab3e2b0dd6d5754c59c7228630f6.enc",
+      "file": "data/a1ed4db521be1e0701707068ad7b1e0ef985ab3e2b0dd6d5754c59c7228630f6-8d7a5eb62138ec37.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 613,
-      "sha256": "75032bcc46fdea9c38109719c08f09794e8c1fe54a2f38daebf3fba6a5bb0e4c"
+      "size": 800,
+      "sha256": "854abe3dd7b84ba4bb677ba18dfd5cf77b49bd91321974c1654f9212983e81d2"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/new.html": {
-      "file": "data/54c145d2070085dd4e2430b5cece386672d926758d9c9024837c5216413196e9.enc",
+      "file": "data/54c145d2070085dd4e2430b5cece386672d926758d9c9024837c5216413196e9-e3380886f62536a8.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 609,
-      "sha256": "de2392c88b545a8d3dac20eee4df29aa323b31037b0c814d16754760c1a7c893"
+      "size": 796,
+      "sha256": "7cb6eca15ee6219fe0eb76d261f8911c93ee53483d5faf97d45c9f679673c04d"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/strait.png": {
       "file": "data/987ce91b41336da79d13c1dd98f8c07707cb4aa05f003186b3a7bbc23e4a1150.enc",
@@ -441,10 +441,10 @@
       "sha256": "01721d5485f237f024d2dac13e8c3323640d7e950549d7d99dfa3e352dde13f4"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/style.css": {
-      "file": "data/8cc9b2b5109a3c17c9c90db1c5c9285c1d2d7a02a535f58b0cffbe9f3570a362.enc",
+      "file": "data/8cc9b2b5109a3c17c9c90db1c5c9285c1d2d7a02a535f58b0cffbe9f3570a362-a9a6fb96bf7f2f0c.enc",
       "mime": "text/css; charset=utf-8",
-      "size": 1551,
-      "sha256": "d3bfeb05ee0357cb7eb43ccdd0b4b9fdd5a55ed7dc5f282f4b70cfcb285184e4"
+      "size": 1728,
+      "sha256": "90d0235d3e9d8c783f55ad31b33ec40d3aa25ae251e6a095ad7a2c2637cf5ee7"
     },
     "games/doomfiles/DOOM-HTML-main/Doom_HTML/title-screen.png": {
       "file": "data/44e8d1dd24f0f84db43339d43ef91c251e9ae85f2f38e52012fc10d45b14ca78.enc",
@@ -471,10 +471,10 @@
       "sha256": "fe8edeeb98cc6d3b93cf2d57000254b84bd9eba34b4df7ce4b87db8b937b7703"
     },
     "games/flappybird.html": {
-      "file": "data/dac33513b8f03acafe2551d514e7b77c394f7b220d365bfd0f9773683e4c9777.enc",
+      "file": "data/dac33513b8f03acafe2551d514e7b77c394f7b220d365bfd0f9773683e4c9777-819c171d5d382c52.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 9316,
-      "sha256": "0e86bef02af672359073f64ee652481e1ff9a51b8486328fd42cb27272845a00"
+      "size": 11703,
+      "sha256": "9502846ea5f47a4fc60bc29fbb36942ee56bd02d136c8467e8e38663b12f601e"
     },
     "games/gdlitefiles/Build/GeometryDashLite.data.unityweb": {
       "file": "data/d216b4b271bac0c7a9a7f4eea3cdac9bfda3930024f24768b3989d39a364e3b6.enc",
@@ -681,28 +681,28 @@
       "sha256": "4c24dfd28784ad2befb3dafaac6bf1ed4e7cd58cce713d9a0b228d426e812baf"
     },
     "games/geometrydashlite986.html": {
-      "file": "data/4f3a3ddbd5bea41187403e7962d32e3a8c8cba0c5a1914558bae43f5a5d27481.enc",
+      "file": "data/4f3a3ddbd5bea41187403e7962d32e3a8c8cba0c5a1914558bae43f5a5d27481-eeca6d33a205a656.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 7753,
-      "sha256": "3c180fb84657c82ecf3d258276019b8938cc3f147183986cf508b8fd1726c25d"
+      "size": 8718,
+      "sha256": "2b1c622b337123fea51087c9b101e30229742504175cc2ea112d9f267a7429c5"
     },
     "games/tetris.html": {
-      "file": "data/dedcf3116e845f13d58e34f222999f37263a5f44fd691cd5baf5eff450d370d8.enc",
+      "file": "data/dedcf3116e845f13d58e34f222999f37263a5f44fd691cd5baf5eff450d370d8-ec46a3c36d46ac07.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 10094,
-      "sha256": "e78647717482fbb067d19e4d1385fc44ca8597858dbf683bcaa8d165d718b2aa"
+      "size": 13049,
+      "sha256": "daf7b52b41052635611146809056ba546c0093c30e53f8844a823ae778931b50"
     },
     "gra.html": {
-      "file": "data/c308c5329b7070f1623585f6565eca92a77b4b0af7a457e12d93aa2cd8c94a6b.enc",
+      "file": "data/c308c5329b7070f1623585f6565eca92a77b4b0af7a457e12d93aa2cd8c94a6b-41229f1d09c07d2a.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 2042,
-      "sha256": "4dfab460c4d17fb80cfc338c9a504607fa8ce40837c17d06104067e78bc8e2eb"
+      "size": 2213,
+      "sha256": "396e22054d48db20a235fb1d12b1e246ca5267b788489af90b793d899ceaff58"
     },
     "index.html": {
-      "file": "data/0eb547304658805aad788d320f10bf1f292797b5e6d745a3bf617584da017051.enc",
+      "file": "data/0eb547304658805aad788d320f10bf1f292797b5e6d745a3bf617584da017051-b9a124d162edf502.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 1822,
-      "sha256": "2e108dfa100058da99766c84b4fb0c0d5793984b392f2c52c32e01b20e2200f8"
+      "size": 2785,
+      "sha256": "0459ea3d2adbc028589891d032217992fa6bfd2adf8e88ce3141f598e74cfe78"
     },
     "logo.png": {
       "file": "data/ab211233b6576dbb0f8b5826447eeac61e2a833a99ac5d788fbc1a174c3c6ce5.enc",
@@ -711,10 +711,10 @@
       "sha256": "fbc31dc8e449144e817cc955e30dbc1a53739d74de1060a34e0ae19eef3c183d"
     },
     "skibidifish.html": {
-      "file": "data/bca832aaf32e5bc8624fe265e474fac15e55fcddd1b7136a8d8125933b62fc10.enc",
+      "file": "data/bca832aaf32e5bc8624fe265e474fac15e55fcddd1b7136a8d8125933b62fc10-14000388777b143a.enc",
       "mime": "text/html; charset=utf-8",
-      "size": 10955,
-      "sha256": "fdf09084d875ae823a0c4339658b55bebb3dbbc7e10100d603e8fd8f071bdfec"
+      "size": 10537,
+      "sha256": "4bb836cb61ade7aa7ec24df5fb68afec4c22b36ce01aa2ebb440ccfddea483e7"
     }
   },
   "originals": [

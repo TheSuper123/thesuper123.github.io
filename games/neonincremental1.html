@@ -1,548 +1,921 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Tree Exploration – SpinnerRealYT Ultimate</title>
-    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
-
-
-
+  <head>
+    <script src="../assets/theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Przekaźnik — Spinner Games</title>
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
 
     <style>
-        :root {
-            --bg: #020617;
-            --card: #0f172a;
-            --accent: #38bdf8;
-            --text: #e5e7eb;
-            --gold: #facc15;
-            --path: #1e293b;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --void: #6d28d9;
-            --neon: #2dd4bf;
-            --panel: rgba(15, 23, 42, 0.95);
+      :root {
+        --bg: #020617;
+        --card: #0f172a;
+        --accent: #38bdf8;
+        --text: #e5e7eb;
+        --gold: #facc15;
+        --path: #1e293b;
+        --danger: #ef4444;
+        --success: #22c55e;
+        --void: #6d28d9;
+        --neon: #2dd4bf;
+        --panel: rgba(15, 23, 42, 0.95);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        outline: none;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+      }
+
+      /* TŁO VOID - ANIMOWANE */
+      body.zone-void #world-map {
+        background-color: #050510;
+        background-image:
+          radial-gradient(var(--void) 0.5px, transparent 0.5px),
+          linear-gradient(rgba(109, 40, 217, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(109, 40, 217, 0.05) 1px, transparent 1px);
+        background-size:
+          50px 50px,
+          100px 100px,
+          100px 100px;
+        animation: backgroundScroll 60s linear infinite;
+      }
+
+      @keyframes backgroundScroll {
+        from {
+          background-position: 0 0;
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            overflow: hidden;
-            touch-action: none;
-            user-select: none;
+        to {
+          background-position: 500px 500px;
         }
+      }
 
-        /* TŁO VOID - ANIMOWANE */
-        body.zone-void #world-map {
-            background-color: #050510;
-            background-image: 
-                radial-gradient(var(--void) 0.5px, transparent 0.5px),
-                linear-gradient(rgba(109, 40, 217, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(109, 40, 217, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px, 100px 100px, 100px 100px;
-            animation: backgroundScroll 60s linear infinite;
+      #game-viewport {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #world-map {
+        position: absolute;
+        width: 8000px;
+        height: 8000px;
+        transition: transform 0.1s ease-out;
+      }
+
+      /* GRACZ */
+      #player {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        background: var(--accent);
+        box-shadow:
+          0 0 30px var(--accent),
+          inset 0 0 10px rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        z-index: 100;
+        border: 2px solid white;
+        transition: transform 0.1s;
+      }
+
+      /* WĘZŁY (NODES) */
+      .node {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: var(--panel);
+        border: 4px solid var(--path);
+        border-radius: 35px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        z-index: 50;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .node.visible {
+        display: flex;
+        animation: nodeSpawn 0.6s forwards;
+      }
+      .node.can-afford {
+        border-color: var(--success);
+        box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+      }
+      .node.maxed {
+        border-color: var(--gold);
+        box-shadow: 0 0 30px rgba(250, 204, 21, 0.4);
+      }
+
+      .up-num {
+        font-size: 11px;
+        font-weight: 900;
+        color: var(--gold);
+        opacity: 0.8;
+        margin-bottom: 5px;
+      }
+      .node b {
+        font-size: 16px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .node i {
+        font-size: 12px;
+        opacity: 0.7;
+        font-style: normal;
+        margin: 8px 0;
+        height: 32px;
+        overflow: hidden;
+        line-height: 1.2;
+      }
+
+      .lvl-badge {
+        font-size: 12px;
+        background: rgba(255, 255, 255, 0.07);
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+        font-weight: 800;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .cost-txt {
+        font-weight: 900;
+        font-size: 18px;
+        margin-top: auto;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      /* INTERFEJS GÓRNY */
+      #ui-top {
+        position: fixed;
+        top: 40px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 200;
+        pointer-events: none;
+      }
+
+      .currency-container {
+        background: rgba(15, 23, 42, 0.8);
+        padding: 15px 40px;
+        border-radius: 60px;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      }
+
+      .currency {
+        font-size: 50px;
+        font-weight: 900;
+        color: var(--accent);
+        text-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+      }
+      .pps-counter {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--success);
+        margin-top: -5px;
+      }
+
+      /* NOWY SYSTEM STATYSTYK W LEWYM DOLNYM ROGU */
+      #stats-trigger {
+        position: fixed;
+        bottom: 25px;
+        left: 25px;
+        background: var(--card);
+        color: var(--accent);
+        border: 2px solid var(--path);
+        padding: 12px 20px;
+        border-radius: 15px;
+        font-weight: 900;
+        cursor: pointer;
+        z-index: 800;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      #stats-trigger:hover {
+        transform: scale(1.05);
+        border-color: var(--accent);
+      }
+
+      #stats-menu {
+        position: fixed;
+        bottom: 85px;
+        left: 25px;
+        width: 260px;
+        background: var(--panel);
+        border: 2px solid var(--path);
+        border-radius: 25px;
+        padding: 20px;
+        display: none;
+        flex-direction: column;
+        z-index: 799;
+        backdrop-filter: blur(15px);
+        animation: slideIn 0.4s ease-out;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
         }
-
-        @keyframes backgroundScroll {
-            from { background-position: 0 0; }
-            to { background-position: 500px 500px; }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
+      }
 
-        #game-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-        #world-map { position: absolute; width: 8000px; height: 8000px; transition: transform 0.1s ease-out; }
+      .stats-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .stats-header h3 {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: 1px;
+        color: var(--text);
+        opacity: 0.8;
+      }
 
-        /* GRACZ */
-        #player {
-            position: absolute;
-            width: 36px;
-            height: 36px;
-            background: var(--accent);
-            box-shadow: 0 0 30px var(--accent), inset 0 0 10px rgba(255,255,255,0.8);
-            border-radius: 12px;
-            z-index: 100;
-            border: 2px solid white;
-            transition: transform 0.1s;
+      .admin-btn-small {
+        width: 24px;
+        height: 24px;
+        background: var(--void);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: 900;
+        cursor: pointer;
+        display: none;
+        transition: 0.2s;
+      }
+      .admin-btn-small:hover {
+        background: var(--accent);
+        transform: rotate(15deg);
+      }
+
+      .stat-line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .stat-line span:last-child {
+        color: var(--accent);
+      }
+
+      /* PROFIL / KONTO */
+      #account-trigger {
+        position: fixed;
+        top: 25px;
+        left: 25px;
+        background: var(--card);
+        padding: 15px 25px;
+        border-radius: 20px;
+        border-left: 6px solid var(--accent);
+        cursor: pointer;
+        z-index: 400;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        transition: 0.3s;
+        pointer-events: auto;
+      }
+      #account-trigger:hover {
+        transform: translateX(10px);
+        background: #1e293b;
+      }
+
+      /* MODALE I OKNA */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        backdrop-filter: blur(10px);
+      }
+
+      .modal-box {
+        background: var(--card);
+        padding: 40px;
+        border-radius: 35px;
+        border: 2px solid var(--path);
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 15px;
+        background: #020617;
+        border: 2px solid var(--path);
+        border-radius: 12px;
+        color: white;
+        font-size: 18px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      /* PIASKOWNICA GRID */
+      .admin-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .admin-btn {
+        background: var(--path);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 800;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .admin-btn:hover {
+        background: var(--void);
+      }
+
+      /* LINIE POŁĄCZEŃ */
+      #path-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      line {
+        stroke: var(--path);
+        stroke-width: 12;
+        stroke-linecap: round;
+        transition: 0.8s;
+      }
+      line.active {
+        stroke: var(--accent);
+        stroke-dasharray: 25;
+        animation: flowAnim 2s linear infinite;
+        stroke-width: 14;
+      }
+
+      @keyframes flowAnim {
+        from {
+          stroke-dashoffset: 50;
         }
-
-        /* WĘZŁY (NODES) */
-        .node {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: var(--panel);
-            border: 4px solid var(--path);
-            border-radius: 35px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            z-index: 50;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        to {
+          stroke-dashoffset: 0;
         }
-
-        .node.visible { display: flex; animation: nodeSpawn 0.6s forwards; }
-        .node.can-afford { border-color: var(--success); box-shadow: 0 0 25px rgba(34, 197, 94, 0.3); }
-        .node.maxed { border-color: var(--gold); box-shadow: 0 0 30px rgba(250, 204, 21, 0.4); }
-
-        .up-num { font-size: 11px; font-weight: 900; color: var(--gold); opacity: 0.8; margin-bottom: 5px; }
-        .node b { font-size: 16px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .node i { font-size: 12px; opacity: 0.7; font-style: normal; margin: 8px 0; height: 32px; overflow: hidden; line-height: 1.2; }
-
-        .lvl-badge {
-            font-size: 12px;
-            background: rgba(255,255,255,0.07);
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            font-weight: 800;
-            border: 1px solid rgba(255,255,255,0.1);
+      }
+      @keyframes nodeSpawn {
+        0% {
+          opacity: 0;
+          transform: scale(0.4) rotate(-10deg);
         }
-
-        .cost-txt {
-            font-weight: 900;
-            font-size: 18px;
-            margin-top: auto;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        100% {
+          opacity: 1;
+          transform: scale(1) rotate(0deg);
         }
-
-        /* INTERFEJS GÓRNY */
-        #ui-top {
-            position: fixed;
-            top: 40px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 200;
-            pointer-events: none;
-        }
-
-        .currency-container {
-            background: rgba(15, 23, 42, 0.8);
-            padding: 15px 40px;
-            border-radius: 60px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        .currency { font-size: 50px; font-weight: 900; color: var(--accent); text-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
-        .pps-counter { font-size: 18px; font-weight: 800; color: var(--success); margin-top: -5px; }
-
-        /* NOWY SYSTEM STATYSTYK W LEWYM DOLNYM ROGU */
-        #stats-trigger {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            background: var(--card);
-            color: var(--accent);
-            border: 2px solid var(--path);
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-weight: 900;
-            cursor: pointer;
-            z-index: 800;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        #stats-trigger:hover { transform: scale(1.05); border-color: var(--accent); }
-
-        #stats-menu {
-            position: fixed;
-            bottom: 85px;
-            left: 25px;
-            width: 260px;
-            background: var(--panel);
-            border: 2px solid var(--path);
-            border-radius: 25px;
-            padding: 20px;
-            display: none;
-            flex-direction: column;
-            z-index: 799;
-            backdrop-filter: blur(15px);
-            animation: slideIn 0.4s ease-out;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .stats-header h3 { margin: 0; font-size: 14px; letter-spacing: 1px; color: var(--text); opacity: 0.8; }
-
-        .admin-btn-small {
-            width: 24px; height: 24px; background: var(--void); border: none; 
-            border-radius: 6px; color: white; font-weight: 900; cursor: pointer; 
-            display: none; transition: 0.2s;
-        }
-        .admin-btn-small:hover { background: var(--accent); transform: rotate(15deg); }
-
-        .stat-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
-        .stat-line span:last-child { color: var(--accent); }
-
-        /* PROFIL / KONTO */
-        #account-trigger {
-            position: fixed;
-            top: 25px;
-            left: 25px;
-            background: var(--card);
-            padding: 15px 25px;
-            border-radius: 20px;
-            border-left: 6px solid var(--accent);
-            cursor: pointer;
-            z-index: 400;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            transition: 0.3s;
-            pointer-events: auto;
-        }
-        #account-trigger:hover { transform: translateX(10px); background: #1e293b; }
-
-        /* MODALE I OKNA */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; justify-content: center;
-            align-items: center; z-index: 2000; backdrop-filter: blur(10px);
-        }
-
-        .modal-box {
-            background: var(--card); padding: 40px; border-radius: 35px;
-            border: 2px solid var(--path); width: 100%; max-width: 450px; text-align: center;
-        }
-
-        .input-field {
-            width: 100%; padding: 15px; background: #020617; border: 2px solid var(--path);
-            border-radius: 12px; color: white; font-size: 18px; margin: 20px 0; text-align: center;
-        }
-
-        /* PIASKOWNICA GRID */
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .admin-btn {
-            background: var(--path); color: white; border: none; padding: 12px;
-            border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 12px;
-        }
-        .admin-btn:hover { background: var(--void); }
-
-        /* LINIE POŁĄCZEŃ */
-        #path-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        line { stroke: var(--path); stroke-width: 12; stroke-linecap: round; transition: 0.8s; }
-        line.active { stroke: var(--accent); stroke-dasharray: 25; animation: flowAnim 2s linear infinite; stroke-width: 14; }
-
-        @keyframes flowAnim { from { stroke-dashoffset: 50; } to { stroke-dashoffset: 0; } }
-        @keyframes nodeSpawn {
-            0% { opacity: 0; transform: scale(0.4) rotate(-10deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
+      }
     </style>
-<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
-<body class="zone-void">
-
-<div id="ui-top">
-    <div class="currency-container">
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/progress.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <link rel="stylesheet" href="../assets/theme.css" />
+  </head>
+  <body class="zone-void game-page">
+    <div id="ui-top">
+      <div class="currency-container">
         <div class="currency"><span id="points-val">0</span> Δ</div>
         <div class="pps-counter">+<span id="pps-val">0.0</span> / SEKUNDĘ</div>
+      </div>
     </div>
-</div>
 
-<div id="account-trigger" onclick="toggleProfile(true)">
-    <small style="opacity:0.6; display:block; font-size:10px; font-weight: 800;">ZALOGOWANO JAKO:</small>
-    <b id="display-name" style="font-size: 18px; letter-spacing: 1px;">WCZYTYWANIE...</b>
-    <div id="sync-indicator" style="font-size:11px; margin-top:6px; color:var(--success); font-weight: bold;">● SYNCHRONIZACJA OK</div>
-</div>
-
-<button id="stats-trigger" onclick="toggleStats()">STATYSTYKI</button>
-<div id="stats-menu">
-    <div class="stats-header">
-        <h3>SYSTEM MONITORINGU</h3>
-        <button id="admin-question-btn" class="admin-btn-small" onclick="openPiaskownicaAuth()">?</button>
+    <div id="account-trigger" onclick="toggleProfile(true)">
+      <small
+        style="opacity: 0.6; display: block; font-size: 10px; font-weight: 800"
+        >LOKALNY PROFIL</small
+      >
+      <b id="display-name" style="font-size: 18px; letter-spacing: 1px"
+        >WCZYTYWANIE...</b
+      >
+      <div
+        id="sync-indicator"
+        style="
+          font-size: 11px;
+          margin-top: 6px;
+          color: var(--success);
+          font-weight: bold;
+        "
+      >
+        Zapis na urządzeniu
+      </div>
     </div>
-    <div class="stat-line"><span>Waluta Delta:</span> <span id="st-val-delta">0</span></div>
-    <div class="stat-line"><span>Waluta Neon:</span> <span id="st-val-neon">0</span></div>
-    <div class="stat-line"><span>Cząstki Void:</span> <span id="st-val-void">0</span></div>
-    <div class="stat-line"><span>Prędkość:</span> <span id="st-val-speed">0</span></div>
-    <div class="stat-line"><span>Węzły:</span> <span id="st-val-nodes">0</span></div>
-</div>
 
-<div id="modal-admin-auth" class="modal-overlay">
-    <div class="modal-box">
-        <h2 style="color:var(--gold)">NARZĘDZIA PIASKOWNICY</h2>
-        <p style="opacity:0.7">Eksperymentuj z lokalną rozgrywką.</p>
+    <button id="stats-trigger" onclick="toggleStats()">STATYSTYKI</button>
+    <div id="stats-menu">
+      <div class="stats-header">
+        <h3>Twoje zasoby</h3>
+        <button
+          id="admin-question-btn"
+          class="admin-btn-small"
+          onclick="openPiaskownicaAuth()"
+        >
+          ?
+        </button>
+      </div>
+      <div class="stat-line">
+        <span>Waluta Delta:</span> <span id="st-val-delta">0</span>
+      </div>
+      <div class="stat-line">
+        <span>Waluta Neon:</span> <span id="st-val-neon">0</span>
+      </div>
+      <div class="stat-line">
+        <span>Cząstki Void:</span> <span id="st-val-void">0</span>
+      </div>
+      <div class="stat-line">
+        <span>Prędkość:</span> <span id="st-val-speed">0</span>
+      </div>
+      <div class="stat-line">
+        <span>Węzły:</span> <span id="st-val-nodes">0</span>
+      </div>
+    </div>
+
+    <div id="modal-admin-auth" class="modal-overlay">
+      <div class="modal-box">
+        <h2 style="color: var(--gold)">NARZĘDZIA PIASKOWNICY</h2>
+        <p style="opacity: 0.7">Eksperymentuj z lokalną rozgrywką.</p>
         <p>Te narzędzia zmieniają wyłącznie lokalną rozgrywkę.</p>
-        <div style="display:flex; gap:10px;">
-            <button class="admin-btn" style="flex:1; background:var(--success)" onclick="checkPiaskownicaPass()">WEJDŹ</button>
-            <button class="admin-btn" style="flex:1; background:var(--danger)" onclick="closeModals()">ANULUJ</button>
+        <div style="display: flex; gap: 10px">
+          <button
+            class="admin-btn"
+            style="flex: 1; background: var(--success)"
+            onclick="checkPiaskownicaPass()"
+          >
+            WEJDŹ
+          </button>
+          <button
+            class="admin-btn"
+            style="flex: 1; background: var(--danger)"
+            onclick="closeModals()"
+          >
+            ANULUJ
+          </button>
         </div>
+      </div>
     </div>
-</div>
 
-<div id="modal-admin-panel" class="modal-overlay">
-    <div class="modal-box" style="max-width:550px">
-        <h1 style="color:var(--accent); margin:0;">PIASKOWNICA</h1>
-        <p style="font-size:12px; margin-bottom:20px;">Witaj Spinner! Zarządzaj światem gry.</p>
+    <div id="modal-admin-panel" class="modal-overlay">
+      <div class="modal-box" style="max-width: 550px">
+        <h1 style="color: var(--accent); margin: 0">PIASKOWNICA</h1>
+        <p style="font-size: 12px; margin-bottom: 20px">
+          Witaj Spinner! Zarządzaj światem gry.
+        </p>
 
         <div class="admin-grid">
-            <button class="admin-btn" onclick="adminAddPoints(100000)">+100K DELTA</button>
-            <button class="admin-btn" onclick="adminAddPoints(1000000)">+1M DELTA</button>
-            <button class="admin-btn" onclick="adminUnlockAll()">ODBLOKUJ WSZYSTKO</button>
-            <button class="admin-btn" onclick="adminSuperSpeed()">SUPER PRĘDKOŚĆ</button>
-            <button class="admin-btn" onclick="adminResetData()" style="background:var(--danger)">RESETUJ MOJE DANE</button>
-            <button class="admin-btn" onclick="saveData()" style="background:var(--success)">WYMUŚ ZAPIS DB</button>
+          <button class="admin-btn" onclick="adminAddPoints(100000)">
+            +100K DELTA
+          </button>
+          <button class="admin-btn" onclick="adminAddPoints(1000000)">
+            +1M DELTA
+          </button>
+          <button class="admin-btn" onclick="adminUnlockAll()">
+            ODBLOKUJ WSZYSTKO
+          </button>
+          <button class="admin-btn" onclick="adminSuperSpeed()">
+            SUPER PRĘDKOŚĆ
+          </button>
+          <button
+            class="admin-btn"
+            onclick="adminResetData()"
+            style="background: var(--danger)"
+          >
+            RESETUJ MOJE DANE
+          </button>
+          <button
+            class="admin-btn"
+            onclick="saveData()"
+            style="background: var(--success)"
+          >
+            WYMUŚ ZAPIS DB
+          </button>
         </div>
 
-        <button class="admin-btn" style="width:100%; margin-top:20px; padding:15px;" onclick="closeModals()">ZAMKNIJ PANEL</button>
+        <button
+          class="admin-btn"
+          style="width: 100%; margin-top: 20px; padding: 15px"
+          onclick="closeModals()"
+        >
+          ZAMKNIJ PANEL
+        </button>
+      </div>
     </div>
-</div>
 
-<div id="profile-modal" class="modal-overlay">
-    <div class="modal-box">
-        <h2 style="margin:0; font-size:32px; color: var(--accent);">PROFIL GRACZA</h2>
-        <div style="margin: 20px 0; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
-            <div>Użytkownik: <b id="prof-user">...</b></div>
-            <div>Prędkość silnika: <b id="prof-speed">...</b></div>
-            <div>Aktywne węzły: <b id="prof-nodes">...</b></div>
+    <div id="profile-modal" class="modal-overlay">
+      <div class="modal-box">
+        <h2 style="margin: 0; font-size: 32px; color: var(--accent)">
+          PROFIL GRACZA
+        </h2>
+        <div
+          style="
+            margin: 20px 0;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+          "
+        >
+          <div>Użytkownik: <b id="prof-user">...</b></div>
+          <div>Prędkość silnika: <b id="prof-speed">...</b></div>
+          <div>Aktywne węzły: <b id="prof-nodes">...</b></div>
         </div>
-        <button class="admin-btn" style="width:100%; padding:15px; background:var(--path)" onclick="toggleProfile(false)">POWRÓT</button>
+        <button
+          class="admin-btn"
+          style="width: 100%; padding: 15px; background: var(--path)"
+          onclick="toggleProfile(false)"
+        >
+          POWRÓT
+        </button>
+      </div>
     </div>
-</div>
 
-<div id="game-viewport">
-    <div id="world-map">
+    <div id="game-viewport">
+      <div id="world-map">
         <svg id="path-layer"></svg>
         <div id="player"></div>
+      </div>
     </div>
-</div>
 
-<script>
-    // --- KONFIGURACJA BAZY ---
-    const db = ArcadeProgress.database();
+    <script>
+      // --- KONFIGURACJA BAZY ---
+      const db = ArcadeProgress.database();
 
-    const user = ArcadeProgress.playerId || "Gosc";
+      const user = ArcadeProgress.playerId || "Gosc";
 
-    // Stan gry
-    let state = {
-        points: 0, 
+      // Stan gry
+      let state = {
+        points: 0,
         neon: 0,
         void: 0,
-        pps: 0, 
-        pX: 4000, 
-        pY: 4000, 
+        pps: 0,
+        pX: 4000,
+        pY: 4000,
         speed: 8,
-        unlockedNodes: ["up1"], 
-        purchasedLevels: { "up1": 0 }
-    };
+        unlockedNodes: ["up1"],
+        purchasedLevels: { up1: 0 },
+      };
 
-    const nodes = {
-        "up1": { num: 1, x: 4000, y: 4000, name: "Rdzeń Startowy", desc: "Podstawowy generator cząsteczek Δ.", cost: 0, max: 1, pps: 1, next: ["up2"] },
-        "up2": { num: 2, x: 4000, y: 3650, name: "Przekaźnik Mocy", desc: "Zwiększa wydajność przesyłu energii.", cost: 25, max: 50, pps: 2.5, next: ["up3", "up4"] },
-        "up3": { num: 3, x: 3650, y: 3400, name: "Napęd Kwantowy", desc: "Ulepsza silniki Twojego awatara.", cost: 150, max: 15, speed: 1.2, next: ["up5"] },
-        "up4": { num: 4, x: 4350, y: 3400, name: "Kolektor Próżni", desc: "Wysysa energię z otaczającego voidu.", cost: 450, max: 30, pps: 18, next: ["up5"] },
-        "up5": { num: 5, x: 4000, y: 3100, name: "Stabilizator", desc: "Mnoży zysk z poprzednich węzłów.", cost: 1500, max: 40, pps: 65, next: ["up6", "up7"] },
-        "up6": { num: 6, x: 3600, y: 2800, name: "Wzmacniacz", desc: "Czysta moc obliczeniowa.", cost: 5000, max: 50, pps: 180, next: ["up8"] },
-        "up7": { num: 7, x: 4400, y: 2800, name: "Sztuczna Gwiazda", desc: "Miniaturowe słońce wewnątrz sieci.", cost: 12000, max: 30, pps: 500, next: ["up8"] },
-        "up8": { num: 8, x: 4000, y: 2400, name: "Brama Wymiaru", desc: "Ostateczny cel strefy pierwszej.", cost: 50000, max: 1, pps: 2000, next: [] }
-    };
+      const nodes = {
+        up1: {
+          num: 1,
+          x: 4000,
+          y: 4000,
+          name: "Rdzeń Startowy",
+          desc: "Podstawowy generator cząsteczek Δ.",
+          cost: 0,
+          max: 1,
+          pps: 1,
+          next: ["up2"],
+        },
+        up2: {
+          num: 2,
+          x: 4000,
+          y: 3650,
+          name: "Przekaźnik Mocy",
+          desc: "Zwiększa wydajność przesyłu energii.",
+          cost: 25,
+          max: 50,
+          pps: 2.5,
+          next: ["up3", "up4"],
+        },
+        up3: {
+          num: 3,
+          x: 3650,
+          y: 3400,
+          name: "Napęd Kwantowy",
+          desc: "Ulepsza silniki Twojego awatara.",
+          cost: 150,
+          max: 15,
+          speed: 1.2,
+          next: ["up5"],
+        },
+        up4: {
+          num: 4,
+          x: 4350,
+          y: 3400,
+          name: "Kolektor Próżni",
+          desc: "Wysysa energię z otaczającego voidu.",
+          cost: 450,
+          max: 30,
+          pps: 18,
+          next: ["up5"],
+        },
+        up5: {
+          num: 5,
+          x: 4000,
+          y: 3100,
+          name: "Stabilizator",
+          desc: "Mnoży zysk z poprzednich węzłów.",
+          cost: 1500,
+          max: 40,
+          pps: 65,
+          next: ["up6", "up7"],
+        },
+        up6: {
+          num: 6,
+          x: 3600,
+          y: 2800,
+          name: "Wzmacniacz",
+          desc: "Czysta moc obliczeniowa.",
+          cost: 5000,
+          max: 50,
+          pps: 180,
+          next: ["up8"],
+        },
+        up7: {
+          num: 7,
+          x: 4400,
+          y: 2800,
+          name: "Sztuczna Gwiazda",
+          desc: "Miniaturowe słońce wewnątrz sieci.",
+          cost: 12000,
+          max: 30,
+          pps: 500,
+          next: ["up8"],
+        },
+        up8: {
+          num: 8,
+          x: 4000,
+          y: 2400,
+          name: "Brama Wymiaru",
+          desc: "Ostateczny cel strefy pierwszej.",
+          cost: 50000,
+          max: 1,
+          pps: 2000,
+          next: [],
+        },
+      };
 
-    const keys = {};
-    window.onkeydown = e => keys[e.key.toLowerCase()] = true;
-    window.onkeyup = e => keys[e.key.toLowerCase()] = false;
+      const keys = {};
+      window.onkeydown = (e) => (keys[e.key.toLowerCase()] = true);
+      window.onkeyup = (e) => (keys[e.key.toLowerCase()] = false);
 
-    // --- LOGIKA GUI ---
-    function toggleStats() {
-        const menu = document.getElementById('stats-menu');
-        const isOpen = menu.style.display === 'flex';
-        menu.style.display = isOpen ? 'none' : 'flex';
+      // --- LOGIKA GUI ---
+      function toggleStats() {
+        const menu = document.getElementById("stats-menu");
+        const isOpen = menu.style.display === "flex";
+        menu.style.display = isOpen ? "none" : "flex";
 
         // Sprawdzanie czy użytkownik to spinneryt
-        if(true) {
-            document.getElementById('admin-question-btn').style.display = 'block';
+        if (true) {
+          document.getElementById("admin-question-btn").style.display = "block";
         }
-    }
+      }
 
-    function toggleProfile(val) {
-        document.getElementById('profile-modal').style.display = val ? 'flex' : 'none';
-        if(val) {
-            document.getElementById('prof-user').innerText = user;
-            document.getElementById('prof-speed').innerText = state.speed.toFixed(1);
-            document.getElementById('prof-nodes').innerText = state.unlockedNodes.length;
+      function toggleProfile(val) {
+        document.getElementById("profile-modal").style.display = val
+          ? "flex"
+          : "none";
+        if (val) {
+          document.getElementById("prof-user").innerText = user;
+          document.getElementById("prof-speed").innerText =
+            state.speed.toFixed(1);
+          document.getElementById("prof-nodes").innerText =
+            state.unlockedNodes.length;
         }
-    }
+      }
 
-    function openPiaskownicaAuth() {
-        document.getElementById('modal-admin-auth').style.display = 'flex';
-    }
+      function openPiaskownicaAuth() {
+        document.getElementById("modal-admin-auth").style.display = "flex";
+      }
 
-    function closeModals() {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-    }
+      function closeModals() {
+        document
+          .querySelectorAll(".modal-overlay")
+          .forEach((m) => (m.style.display = "none"));
+      }
 
-    function checkPiaskownicaPass() {
+      function checkPiaskownicaPass() {
         closeModals();
-        document.getElementById('modal-admin-panel').style.display = 'flex';
-    }
+        document.getElementById("modal-admin-panel").style.display = "flex";
+      }
 
-    // --- NARZĘDZIA PIASKOWNICY ---
-    function adminAddPoints(amt) { state.points += amt; }
-    function adminUnlockAll() {
-        for(let key in nodes) if(!state.unlockedNodes.includes(key)) state.unlockedNodes.push(key);
-    }
-    function adminSuperSpeed() { state.speed = 40; }
-    function adminResetData() {
-        if(confirm("Czy usunąć lokalny zapis tej gry?")) {
-            db.ref('users/' + user + '/stats/neon_tree').remove();
-            location.reload();
+      // --- NARZĘDZIA PIASKOWNICY ---
+      function adminAddPoints(amt) {
+        state.points += amt;
+      }
+      function adminUnlockAll() {
+        for (let key in nodes)
+          if (!state.unlockedNodes.includes(key)) state.unlockedNodes.push(key);
+      }
+      function adminSuperSpeed() {
+        state.speed = 40;
+      }
+      function adminResetData() {
+        if (confirm("Czy usunąć lokalny zapis tej gry?")) {
+          db.ref("users/" + user + "/stats/neon_tree").remove();
+          location.reload();
         }
-    }
+      }
 
-    // --- SYSTEM ZAPISU / ODCZYTU ---
-    async function loadData() {
-        if(user === "Gosc") {
-            document.getElementById('display-name').innerText = "TRYB GOŚCIA";
-            return;
+      // --- SYSTEM ZAPISU / ODCZYTU ---
+      async function loadData() {
+        if (user === "Gosc") {
+          document.getElementById("display-name").innerText = "TRYB GOŚCIA";
+          return;
         }
-        document.getElementById('display-name').innerText = user.toUpperCase();
+        document.getElementById("display-name").innerText = user.toUpperCase();
         try {
-            const snap = await db.ref('users/' + user + '/stats/neon_tree').once('value');
-            if(snap.exists()) {
-                state = Object.assign({}, state, snap.val());
-            }
-        } catch(e) { console.error(e); }
-    }
+          const snap = await db
+            .ref("users/" + user + "/stats/neon_tree")
+            .once("value");
+          if (snap.exists()) {
+            state = Object.assign({}, state, snap.val());
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
-    function saveData() {
-        if(user !== "Gosc") db.ref('users/' + user + '/stats/neon_tree').set(state);
-    }
+      function saveData() {
+        if (user !== "Gosc")
+          db.ref("users/" + user + "/stats/neon_tree").set(state);
+      }
 
-    // --- INICJALIZACJA MAPY ---
-    function initMap() {
-        const map = document.getElementById('world-map');
-        const svg = document.getElementById('path-layer');
+      // --- INICJALIZACJA MAPY ---
+      function initMap() {
+        const map = document.getElementById("world-map");
+        const svg = document.getElementById("path-layer");
 
         for (let id in nodes) {
-            const n = nodes[id];
-            const div = document.createElement('div');
-            div.className = 'node';
-            div.id = `node-${id}`;
-            div.style.left = (n.x - 100) + 'px';
-            div.style.top = (n.y - 100) + 'px';
-            map.appendChild(div);
+          const n = nodes[id];
+          const div = document.createElement("div");
+          div.className = "node";
+          div.id = `node-${id}`;
+          div.style.left = n.x - 100 + "px";
+          div.style.top = n.y - 100 + "px";
+          map.appendChild(div);
 
-            if(n.next) {
-                n.next.forEach(nxt => {
-                    const target = nodes[nxt];
-                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                    line.setAttribute("x1", n.x); line.setAttribute("y1", n.y);
-                    line.setAttribute("x2", target.x); line.setAttribute("y2", target.y);
-                    line.id = `path-${id}-${nxt}`;
-                    svg.appendChild(line);
-                });
-            }
+          if (n.next) {
+            n.next.forEach((nxt) => {
+              const target = nodes[nxt];
+              const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line",
+              );
+              line.setAttribute("x1", n.x);
+              line.setAttribute("y1", n.y);
+              line.setAttribute("x2", target.x);
+              line.setAttribute("y2", target.y);
+              line.id = `path-${id}-${nxt}`;
+              svg.appendChild(line);
+            });
+          }
         }
         requestAnimationFrame(mainLoop);
-    }
+      }
 
-    // --- GŁÓWNA PĘTLA GRY ---
-    function mainLoop() {
-        let dx = 0, dy = 0;
-        if (keys['w'] || keys['arrowup']) dy -= state.speed;
-        if (keys['s'] || keys['arrowdown']) dy += state.speed;
-        if (keys['a'] || keys['arrowleft']) dx -= state.speed;
-        if (keys['d'] || keys['arrowright']) dx += state.speed;
+      // --- GŁÓWNA PĘTLA GRY ---
+      function mainLoop() {
+        let dx = 0,
+          dy = 0;
+        if (keys["w"] || keys["arrowup"]) dy -= state.speed;
+        if (keys["s"] || keys["arrowdown"]) dy += state.speed;
+        if (keys["a"] || keys["arrowleft"]) dx -= state.speed;
+        if (keys["d"] || keys["arrowright"]) dx += state.speed;
 
-        state.pX += dx; state.pY += dy;
+        state.pX += dx;
+        state.pY += dy;
 
-        const vw = window.innerWidth, vh = window.innerHeight;
-        document.getElementById('world-map').style.transform = `translate(${vw/2 - state.pX}px, ${vh/2 - state.pY}px)`;
+        const vw = window.innerWidth,
+          vh = window.innerHeight;
+        document.getElementById("world-map").style.transform =
+          `translate(${vw / 2 - state.pX}px, ${vh / 2 - state.pY}px)`;
 
-        const pEl = document.getElementById('player');
-        pEl.style.left = (state.pX - 18) + 'px';
-        pEl.style.top = (state.pY - 18) + 'px';
+        const pEl = document.getElementById("player");
+        pEl.style.left = state.pX - 18 + "px";
+        pEl.style.top = state.pY - 18 + "px";
 
         for (let id in nodes) {
-            if (!state.unlockedNodes.includes(id)) continue;
-            const n = nodes[id];
-            const lvl = state.purchasedLevels[id] || 0;
-            const currentCost = Math.floor(n.cost * Math.pow(1.15, lvl));
-            const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
+          if (!state.unlockedNodes.includes(id)) continue;
+          const n = nodes[id];
+          const lvl = state.purchasedLevels[id] || 0;
+          const currentCost = Math.floor(n.cost * Math.pow(1.15, lvl));
+          const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
 
-            if (dist < 100 && state.points >= currentCost && lvl < n.max) {
-                state.points -= currentCost;
-                state.purchasedLevels[id] = lvl + 1;
-                if (n.pps) state.pps += n.pps;
-                if (n.speed) state.speed += n.speed;
-                if (state.purchasedLevels[id] === 1 && n.next) {
-                    n.next.forEach(nxt => {
-                        if (!state.unlockedNodes.includes(nxt)) state.unlockedNodes.push(nxt);
-                    });
-                }
-                saveData();
+          if (dist < 100 && state.points >= currentCost && lvl < n.max) {
+            state.points -= currentCost;
+            state.purchasedLevels[id] = lvl + 1;
+            if (n.pps) state.pps += n.pps;
+            if (n.speed) state.speed += n.speed;
+            if (state.purchasedLevels[id] === 1 && n.next) {
+              n.next.forEach((nxt) => {
+                if (!state.unlockedNodes.includes(nxt))
+                  state.unlockedNodes.push(nxt);
+              });
             }
+            saveData();
+          }
         }
 
         state.points += state.pps / 60;
         updateInterface();
         requestAnimationFrame(mainLoop);
-    }
+      }
 
-    function updateInterface() {
+      function updateInterface() {
         // UI Główne
-        document.getElementById('points-val').innerText = Math.floor(state.points).toLocaleString();
-        document.getElementById('pps-val').innerText = state.pps.toFixed(1);
+        document.getElementById("points-val").innerText = Math.floor(
+          state.points,
+        ).toLocaleString();
+        document.getElementById("pps-val").innerText = state.pps.toFixed(1);
 
         // UI Statystyk
-        document.getElementById('st-val-delta').innerText = Math.floor(state.points).toLocaleString();
-        document.getElementById('st-val-neon').innerText = (state.neon || 0).toLocaleString();
-        document.getElementById('st-val-void').innerText = (state.void || 0).toLocaleString();
-        document.getElementById('st-val-speed').innerText = state.speed.toFixed(1);
-        document.getElementById('st-val-nodes').innerText = state.unlockedNodes.length;
+        document.getElementById("st-val-delta").innerText = Math.floor(
+          state.points,
+        ).toLocaleString();
+        document.getElementById("st-val-neon").innerText = (
+          state.neon || 0
+        ).toLocaleString();
+        document.getElementById("st-val-void").innerText = (
+          state.void || 0
+        ).toLocaleString();
+        document.getElementById("st-val-speed").innerText =
+          state.speed.toFixed(1);
+        document.getElementById("st-val-nodes").innerText =
+          state.unlockedNodes.length;
 
         for (let id in nodes) {
-            const el = document.getElementById(`node-${id}`);
-            if (state.unlockedNodes.includes(id)) {
-                el.classList.add('visible');
-                const n = nodes[id];
-                const lvl = state.purchasedLevels[id] || 0;
-                const cost = Math.floor(n.cost * Math.pow(1.15, lvl));
+          const el = document.getElementById(`node-${id}`);
+          if (state.unlockedNodes.includes(id)) {
+            el.classList.add("visible");
+            const n = nodes[id];
+            const lvl = state.purchasedLevels[id] || 0;
+            const cost = Math.floor(n.cost * Math.pow(1.15, lvl));
 
-                el.innerHTML = `
+            el.innerHTML = `
                     <div class="up-num">SYSTEM #${n.num}</div>
                     <b>${n.name}</b>
                     <i>${n.desc}</i>
                     <div class="lvl-badge">POZIOM: ${lvl} / ${n.max}</div>
-                    <div class="cost-txt" style="color:${lvl >= n.max ? 'var(--gold)' : (state.points >= cost ? 'var(--success)' : 'var(--danger)')}">
-                        ${lvl >= n.max ? 'MAKSYMALNY' : cost.toLocaleString() + ' Δ'}
+                    <div class="cost-txt" style="color:${lvl >= n.max ? "var(--gold)" : state.points >= cost ? "var(--success)" : "var(--danger)"}">
+                        ${lvl >= n.max ? "MAKSYMALNY" : cost.toLocaleString() + " Δ"}
                     </div>
                 `;
 
-                if(state.points >= cost && lvl < n.max) el.classList.add('can-afford');
-                else el.classList.remove('can-afford');
+            if (state.points >= cost && lvl < n.max)
+              el.classList.add("can-afford");
+            else el.classList.remove("can-afford");
 
-                if(lvl >= n.max) el.classList.add('maxed');
+            if (lvl >= n.max) el.classList.add("maxed");
 
-                if (lvl > 0 && n.next) {
-                    n.next.forEach(nxt => {
-                        const l = document.getElementById(`path-${id}-${nxt}`);
-                        if(l) l.classList.add('active');
-                    });
-                }
+            if (lvl > 0 && n.next) {
+              n.next.forEach((nxt) => {
+                const l = document.getElementById(`path-${id}-${nxt}`);
+                if (l) l.classList.add("active");
+              });
             }
+          }
         }
-    }
+      }
 
-    window.onload = async () => {
+      window.onload = async () => {
         await loadData();
         initMap();
-        setInterval(saveData, 20000); 
-    };
-</script>
-</body>
+        setInterval(saveData, 20000);
+      };
+    </script>
+  </body>
 </html>

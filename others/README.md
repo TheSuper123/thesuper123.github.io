@@ -8,7 +8,7 @@ Z bieżącego publicznego drzewa usunięto i zachowano zaszyfrowane:
 
 - Doom HTML z obrazami i pozostałymi plikami projektu;
 - kompilację Unity Geometry Dash Lite z zasobami i wcześniejszym wrapperem;
-- starsze gry Tetris, Flappy Bird, Block Blast i Skibidi Fish;
+- starsze gry Tetris, Flappy Bird i Block Blast oraz poradnik wędkarski z pliku Skibidi Fish;
 - poprzednie `Logo.png`, `logo.png`, `LogoBack.png`;
 - ilustracje katalogowe związane z przeniesionymi grami.
 
@@ -37,9 +37,13 @@ Narzędzie wymaga biblioteki Python `cryptography` (dostępna w przygotowanym ś
 ```sh
 python3 scripts/others_archive.py verify
 python3 scripts/others_archive.py restore --destination /tmp/spinner-others-restored
+# Po edycji odtworzonych plików:
+python3 scripts/others_archive.py update --source /tmp/spinner-others-restored
 ```
 
 `verify` odszyfrowuje wszystkie pliki w pamięci i sprawdza tagi oraz sumy SHA-256. `restore` odtwarza je do nowego katalogu **poza publikowanym checkoutem** i nigdy nie nadpisuje istniejącego katalogu. Nie należy publikować odtworzonych jawnych plików. Pierwsze pakowanie wykonano przez `pack --remove-sources`; przed usunięciem źródeł porównano każdy odszyfrowany plik bajt po bajcie i sprawdzono, czy źródła nie uległy zmianie.
+
+`update` wymaga kompletnego odtworzonego katalogu poza checkoutem. Weryfikuje wcześniejsze szyfrogramy, zachowuje hasło, sól i niezmienione pliki, a zmienione szyfruje z nowymi IV. Nowy manifest jest publikowany atomowo po sprawdzeniu zapisanych szyfrogramów. Jawne pliki pozostają wyłącznie w katalogu roboczym poza serwisem.
 
 Testy automatyczne używają odrębnego tymczasowego archiwum z publicznym hasłem testowym, niezwiązanym z hasłem tego archiwum:
 

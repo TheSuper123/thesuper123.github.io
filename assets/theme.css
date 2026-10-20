@@ -1,0 +1,178 @@
+:root {
+  --surface-2: #ece9df;
+  --surface-3: #e9e4d6;
+  --edge: #bcbeb2;
+  --info-surface: #e5e7ec;
+  --warning-surface: #f5e3d9;
+  --topline: #252720;
+  --board: #eae6da;
+  --board-grid: #d8d2c4;
+  --game-green: #4d765a;
+  --game-gold: #a87524;
+  --game-red: #b54633;
+  --game-blue: #4058a7;
+  --overlay: rgba(244, 241, 232, 0.95);
+}
+html[data-theme="dark"] {
+  --paper: #11140f;
+  --white: #1b2018;
+  --ink: #eeeade;
+  --muted: #a9b39e;
+  --line: #363f30;
+  --orange: #ff966e;
+  --blue: #a9baff;
+  --surface-2: #181d15;
+  --surface-3: #2a3224;
+  --edge: #56624c;
+  --info-surface: #252f39;
+  --warning-surface: #3b2922;
+  --topline: #080a07;
+  --board: #171c14;
+  --board-grid: #2d3727;
+  --game-green: #9fc58b;
+  --game-gold: #e6c074;
+  --game-red: #ed907c;
+  --game-blue: #a9baff;
+  --overlay: rgba(17, 20, 15, 0.96);
+  color-scheme: dark;
+}
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+.topline {
+  background: var(--topline);
+  color: #f4f1e8;
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
+  min-height: 40px;
+}
+.theme-toggle:hover {
+  border-color: var(--orange);
+}
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.header-actions,
+.game-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+html[data-theme="dark"] .hero-art > img {
+  filter: brightness(0.82) saturate(0.88);
+}
+html[data-theme="dark"] .card-image img {
+  filter: brightness(0.82);
+}
+.site-header nav {
+  gap: 24px;
+}
+.game-stage {
+  background: var(--paper);
+}
+.game-stage iframe {
+  background: var(--paper);
+}
+.toast {
+  background: var(--ink);
+  color: var(--paper);
+}
+.vault-card {
+  background: var(--white);
+}
+.vault-password {
+  background: var(--paper);
+  border-color: var(--edge);
+}
+.vault-password input {
+  color: var(--ink);
+}
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.62);
+}
+.google-g {
+  color: var(--game-blue);
+}
+@media (max-width: 760px) {
+  .site-header nav {
+    gap: 12px;
+  }
+  .theme-toggle {
+    padding: 9px;
+    min-width: 38px;
+  }
+  .theme-toggle span {
+    display: none;
+  }
+  .site-header .account-button {
+    font-size: 10px;
+    gap: 6px;
+  }
+}
+@media (max-width: 390px) {
+  .site-header nav {
+    gap: 8px;
+  }
+  .site-header .brand > span {
+    font-size: 25px;
+  }
+  .site-header .brand img {
+    width: 29px;
+    height: 29px;
+  }
+  .site-header .brand-sub {
+    font-size: 5px;
+    letter-spacing: 0.8px;
+  }
+  .site-header .account-button {
+    padding: 9px 7px;
+  }
+  .site-header nav > a {
+    font-size: 10px;
+  }
+  .tiny-arrow {
+    margin-left: 4px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  button,
+  input,
+  select,
+  dialog {
+    transition:
+      background-color 0.18s,
+      color 0.18s,
+      border-color 0.18s;
+  }
+}
+
+.game-stage iframe {
+  min-height: 400px;
+}
+.game-stage {
+  border-color: var(--line);
+}
+
+html {
+  background: var(--paper) !important;
+}

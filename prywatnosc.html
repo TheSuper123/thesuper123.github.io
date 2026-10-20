@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="pl">
   <head>
+    <script src="assets/theme.js"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta
@@ -14,6 +15,7 @@
     <script src="assets/storage.js" defer></script>
     <script src="assets/site.js" defer></script>
     <script src="assets/auth.js" defer></script>
+    <link rel="stylesheet" href="assets/theme.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
@@ -125,20 +127,26 @@
             uruchomieniu logowania. Służą wyłącznie utrzymaniu żądanej sesji.
           </li>
           <li>
+            <strong>Wybrany motyw w bieżącej sesji:</strong>
+            <code>spinner:theme:session</code> w sessionStorage, po użyciu
+            przełącznika jasny/ciemny. Służy zachowaniu zamówionego wyglądu
+            podczas przechodzenia między grami; wygasa z sesją karty.
+          </li>
+          <li>
             <strong>Opcjonalne preferencje:</strong> klucze z prefiksem
             <code>spinner:prefs:</code>, np. ulubione, ostatnio grane i lokalny
-            postęp. Zapisujemy je dopiero po zgodzie, do jej cofnięcia lub
-            usunięcia danych przeglądarki. Nie wysyłamy ich do chmurowego
-            rankingu.
+            postęp oraz motyw na kolejne wizyty. Zapisujemy je dopiero po
+            zgodzie, do jej cofnięcia lub usunięcia danych przeglądarki. Nie
+            wysyłamy ich do chmurowego rankingu.
           </li>
         </ul>
         <p>
           Podstawą opcjonalnego zapisu jest zgoda (art. 6 ust. 1 lit. a RODO,
           jeżeli zapis obejmuje dane osobowe, oraz przepisy o dostępie do
-          pamięci urządzenia). Bez zgody gra działa, ale postęp i wybory
-          pozostają tylko w pamięci bieżącej strony. Cofnięcie zgody jest równie
-          łatwe jak jej udzielenie i usuwa zachowane preferencje, bez wpływu na
-          zgodność wcześniejszego przetwarzania.
+          pamięci urządzenia). Bez zgody gra działa; postęp i ulubione pozostają
+          w pamięci bieżącej strony, a wybrany motyw w sesji karty. Cofnięcie
+          zgody jest równie łatwe jak jej udzielenie i usuwa zachowane
+          preferencje, bez wpływu na zgodność wcześniejszego przetwarzania.
         </p>
         <p>
           <button class="button" data-cookie-settings>

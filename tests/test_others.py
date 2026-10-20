@@ -27,7 +27,7 @@ class ArchiveChecks(unittest.TestCase):
         cls.temp=tempfile.TemporaryDirectory(prefix='spinner-archive-tests-')
         cls.root=Path(cls.temp.name)
         shutil.copytree(ROOT/'others',cls.root/'others',ignore=shutil.ignore_patterns('data','manifest.json','README.md'))
-        for path in ['assets/site.css','assets/mark.svg','assets/fonts/sans.ttf','assets/fonts/serif.ttf','assets/fonts/mono.ttf']:
+        for path in ['assets/site.css','assets/theme.js','assets/theme.css','assets/mark.svg','assets/fonts/sans.ttf','assets/fonts/serif.ttf','assets/fonts/mono.ttf']:
             target=cls.root/path;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/path,target)
         (cls.root/'others/probe.html').write_text('<!doctype html><p>Fixture probe</p>')
         cls.contents={
@@ -37,7 +37,14 @@ class ArchiveChecks(unittest.TestCase):
             'secret.js':b'document.querySelector("#proof").textContent="decrypted script";',
             'secret.svg':b'<svg xmlns="http://www.w3.org/2000/svg" width="5" height="5"><rect width="5" height="5" fill="red"/></svg>'
         }
-        cls.manifest=archive.encrypt_collection(cls.contents,FIXTURE_PASSWORD,cls.root/'others')
+        initial={**cls.contents,'index.html':b'<!doctype html><p>Previous encrypted version</p>'}
+        archive.encrypt_collection(initial,FIXTURE_PASSWORD,cls.root/'others')
+        # Browser tests exercise the updated, versioned ciphertext format too.
+        edited=cls.root/'edited';edited.mkdir()
+        for path,content in cls.contents.items():(edited/path).write_bytes(content)
+        archive.update_collection(cls.root/'others',edited,FIXTURE_PASSWORD)
+        shutil.rmtree(edited)
+        cls.manifest=json.loads((cls.root/'others/manifest.json').read_text())
         cls.server=ThreadingHTTPServer(('127.0.0.1',0),partial(QuietHandler,directory=str(cls.root)))
         Thread(target=cls.server.serve_forever,daemon=True).start()
         cls.base='http://127.0.0.1:'+str(cls.server.server_port)
@@ -84,6 +91,28 @@ class ArchiveChecks(unittest.TestCase):
             self.unlock(page,'incorrect')
             expect(page.locator('#vault-message')).to_have_text('Nieprawidłowe hasło.')
             expect(page.locator('#unlocked-view')).to_be_hidden()
+
+    def test_update_keeps_password_and_unchanged_files_and_rejects_incomplete_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);directory=root/'archive';source=root/'edited';source.mkdir()
+            before=archive.encrypt_collection(self.contents,FIXTURE_PASSWORD,directory)
+            unchanged=directory/before['files']['secret.svg']['file']
+            old_ciphertext=unchanged.read_bytes()
+            for path,content in self.contents.items():(source/path).write_bytes(content)
+            (source/'next.html').write_bytes(b'<p>Updated fixture</p>')
+            with self.assertRaises(ValueError):archive.update_collection(directory,source,'incorrect')
+            changed=archive.update_collection(directory,source,FIXTURE_PASSWORD)
+            self.assertEqual(changed,['next.html'])
+            after,contents=archive.decrypt_collection(directory,FIXTURE_PASSWORD)
+            self.assertEqual(contents['next.html'],b'<p>Updated fixture</p>')
+            self.assertEqual(before['kdf'],after['kdf'])
+            self.assertEqual(before['verifier'],after['verifier'])
+            self.assertEqual(unchanged.read_bytes(),old_ciphertext)
+            self.assertNotEqual(before['files']['next.html']['file'],after['files']['next.html']['file'])
+            self.assertFalse((directory/before['files']['next.html']['file']).exists())
+            (source/'secret.svg').unlink()
+            with self.assertRaises(ValueError):archive.update_collection(directory,source,FIXTURE_PASSWORD)
+            self.assertEqual(archive.decrypt_collection(directory,FIXTURE_PASSWORD)[1],contents)
 
     def test_unlock_all_resources_navigation_lock_and_reload(self):
         with self.page() as page:

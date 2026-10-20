@@ -1,580 +1,838 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <script src="../assets/theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spinner Snake.io - Real Bot Edition</title>
 
-
-
-
-
     <style>
-        :root {
-            --bg-dark: #020617;
-            --panel-bg: rgba(15, 23, 42, 0.95);
-            --accent-blue: #38bdf8;
-            --accent-red: #ef4444;
-            --accent-gold: #facc15;
-            --text-main: #f8fafc;
-            --border: rgba(255, 255, 255, 0.1);
-        }
+      :root {
+        --bg-dark: #020617;
+        --panel-bg: rgba(15, 23, 42, 0.95);
+        --accent-blue: #38bdf8;
+        --accent-red: #ef4444;
+        --accent-gold: #facc15;
+        --text-main: #f8fafc;
+        --border: rgba(255, 255, 255, 0.1);
+      }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: none;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: none;
+      }
 
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+      body {
+        font-family: "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-        header {
-            height: 60px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
+      header {
+        height: 60px;
+        background: var(--panel-bg);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 1000;
+      }
 
-        .logo {
-            font-weight: 900;
-            letter-spacing: -1px;
-            color: var(--accent-blue);
-            font-size: clamp(14px, 4vw, 20px);
-        }
+      .logo {
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: var(--accent-blue);
+        font-size: clamp(14px, 4vw, 20px);
+      }
 
-        .btn-back {
-            text-decoration: none;
-            color: var(--accent-red);
-            font-size: 12px;
-            font-weight: bold;
-            border: 1px solid var(--accent-red);
-            padding: 5px 12px;
-            border-radius: 6px;
-            transition: 0.2s;
-        }
+      .btn-back {
+        text-decoration: none;
+        color: var(--accent-red);
+        font-size: 12px;
+        font-weight: bold;
+        border: 1px solid var(--accent-red);
+        padding: 5px 12px;
+        border-radius: 6px;
+        transition: 0.2s;
+      }
 
-        main {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            background: #000;
-        }
+      main {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        background: #000;
+      }
 
-        #gameCanvas { display: block; }
+      #gameCanvas {
+        display: block;
+      }
 
-        /* OVERLAYS */
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(8px);
-        }
+      /* OVERLAYS */
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        backdrop-filter: blur(8px);
+      }
 
-        .card {
-            background: #0f172a;
-            padding: clamp(20px, 5vw, 40px);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            text-align: center;
-            width: 90%;
-            max-width: 450px;
-        }
+      .card {
+        background: #0f172a;
+        padding: clamp(20px, 5vw, 40px);
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        text-align: center;
+        width: 90%;
+        max-width: 450px;
+      }
 
-        .card h1 {
-            font-size: clamp(24px, 8vw, 38px);
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-        }
+      .card h1 {
+        font-size: clamp(24px, 8vw, 38px);
+        margin-bottom: 20px;
+        background: linear-gradient(to right, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+      }
 
-        input {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: white;
-            font-size: 16px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+      input {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        background: #1e293b;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-        .btn-play {
-            width: 100%;
-            padding: 18px;
-            background: var(--accent-blue);
-            color: #020617;
-            border: none;
-            border-radius: 14px;
-            font-weight: 900;
-            font-size: 18px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+      .btn-play {
+        width: 100%;
+        padding: 18px;
+        background: var(--accent-blue);
+        color: #020617;
+        border: none;
+        border-radius: 14px;
+        font-weight: 900;
+        font-size: 18px;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
 
-        /* HUD */
-        .hud-leaderboard {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(15, 23, 42, 0.8);
-            padding: 10px;
-            border-radius: 12px;
-            width: 150px;
-            pointer-events: none;
-            border: 1px solid var(--border);
-        }
+      /* HUD */
+      .hud-leaderboard {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(15, 23, 42, 0.8);
+        padding: 10px;
+        border-radius: 12px;
+        width: 150px;
+        pointer-events: none;
+        border: 1px solid var(--border);
+      }
 
-        .leader-title { font-size: 10px; color: var(--accent-gold); font-weight: 900; text-align: center; margin-bottom: 5px; }
-        .leader-item { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; }
-        .leader-item.me { color: var(--accent-blue); font-weight: bold; }
+      .leader-title {
+        font-size: 10px;
+        color: var(--accent-gold);
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+      .leader-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        margin-bottom: 2px;
+      }
+      .leader-item.me {
+        color: var(--accent-blue);
+        font-weight: bold;
+      }
 
-        .hud-score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
-            font-weight: 900;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
+      .hud-score {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: 900;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px 15px;
+        border-radius: 20px;
+      }
 
-        /* CONTROLS */
-        #joystick-container {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: none;
-            z-index: 1500;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+      /* CONTROLS */
+      #joystick-container {
+        position: absolute;
+        bottom: 40px;
+        left: 40px;
+        width: 120px;
+        height: 120px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: none;
+        z-index: 1500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
 
-        #joystick-knob {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50px;
-            height: 50px;
-            background: var(--accent-blue);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px var(--accent-blue);
-        }
+      #joystick-knob {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        background: var(--accent-blue);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 15px var(--accent-blue);
+      }
 
+      .mobile-boost-zone {
+        position: absolute;
+        bottom: 40px;
+        right: 40px;
+        width: 80px;
+        height: 80px;
+        background: rgba(239, 68, 68, 0.3);
+        border: 2px solid var(--accent-red);
+        border-radius: 50%;
+        display: none;
+        z-index: 1500;
+        justify-content: center;
+        align-items: center;
+        font-weight: 900;
+        color: white;
+      }
+
+      .minimap {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 100px;
+        height: 100px;
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid var(--border);
+      }
+
+      @media (max-width: 1024px) {
+        #joystick-container,
         .mobile-boost-zone {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            width: 80px;
-            height: 80px;
-            background: rgba(239, 68, 68, 0.3);
-            border: 2px solid var(--accent-red);
-            border-radius: 50%;
-            display: none;
-            z-index: 1500;
-            justify-content: center;
-            align-items: center;
-            font-weight: 900;
-            color: white;
+          display: flex;
         }
-
         .minimap {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 100px;
-            height: 100px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid var(--border);
+          bottom: 130px;
         }
-
-        @media (max-width: 1024px) {
-            #joystick-container, .mobile-boost-zone { display: flex; }
-            .minimap { bottom: 130px; }
-        }
+      }
     </style>
-<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
-<body>
-
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/progress.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <link rel="stylesheet" href="../assets/theme.css" />
+  </head>
+  <body class="game-page">
     <header>
-        <div class="logo">SNAKE.IO ELITE</div>
-        <div id="user-info" style="font-size: 10px; color: #94a3b8;">PROFIL...</div>
-        <a href="../index.html" class="btn-back">WYJDŹ</a>
+      <div class="logo">Snake Arena</div>
+      <div id="user-info" style="font-size: 10px; color: #94a3b8">
+        PROFIL...
+      </div>
+      <a href="../index.html" class="btn-back">WYJDŹ</a>
     </header>
 
     <main id="game-container">
-        <canvas id="gameCanvas"></canvas>
-        <div class="hud-score">MASA: <span id="current-mass">0</span></div>
-        <div class="hud-leaderboard">
-            <div class="leader-title">RANKING</div>
-            <div id="leader-list"></div>
-        </div>
-        <div class="minimap"><canvas id="minimapCanvas" width="100" height="100"></canvas></div>
+      <canvas id="gameCanvas"></canvas>
+      <div class="hud-score">MASA: <span id="current-mass">0</span></div>
+      <div class="hud-leaderboard">
+        <div class="leader-title">LOKALNI RYWALE</div>
+        <div id="leader-list"></div>
+      </div>
+      <div class="minimap">
+        <canvas id="minimapCanvas" width="100" height="100"></canvas>
+      </div>
 
-        <div id="joystick-container"><div id="joystick-knob"></div></div>
-        <div class="mobile-boost-zone" id="boost-btn">BOOST</div>
+      <div id="joystick-container"><div id="joystick-knob"></div></div>
+      <div class="mobile-boost-zone" id="boost-btn">BOOST</div>
 
-        <div id="start-overlay" class="overlay">
-            <div class="card">
-                <h1>WĘŻOWY SZAŁ</h1>
-                <input type="text" id="nickInput" placeholder="TWÓJ NICK" maxlength="15">
-                <button class="btn-play" id="start-btn">ZACZNIJ GRĘ</button>
-            </div>
+      <div id="start-overlay" class="overlay">
+        <div class="card">
+          <h1>Snake Arena</h1>
+          <input
+            type="text"
+            id="nickInput"
+            placeholder="TWÓJ NICK"
+            maxlength="15"
+          />
+          <button class="btn-play" id="start-btn">ZACZNIJ GRĘ</button>
         </div>
+      </div>
 
-        <div id="death-overlay" class="overlay" style="display: none;">
-            <div class="card">
-                <h1 style="color: var(--accent-red);">KONIEC!</h1>
-                <p id="death-info" style="margin-bottom: 20px;">Wynik: 0</p>
-                <button class="btn-play" style="background: var(--accent-red); color: white;" id="restart-btn">RESTART</button>
-            </div>
+      <div id="death-overlay" class="overlay" style="display: none">
+        <div class="card">
+          <h1 style="color: var(--accent-red)">KONIEC!</h1>
+          <p id="death-info" style="margin-bottom: 20px">Wynik: 0</p>
+          <button
+            class="btn-play"
+            style="background: var(--accent-red); color: white"
+            id="restart-btn"
+          >
+            RESTART
+          </button>
         </div>
+      </div>
     </main>
 
     <script>
-        /** --- CONFIG & DATA --- **/
-        const BOT_NAMES = [
-            "Mistrz_Kebab", "Turbo_Ślimak", "Zabójczy_Pączek", "Głodny_Stefan", "Kapitan_Laga",
-            "Marek_Mostowiak", "Ostra_Parówa", "Zły_Pomidor", "Dziki_Wąż", "Kuba_Rozpruwacz",
-            "Szybki_Gonzo", "Cichy_Zabójca", "Twoja_Stara", "Janusz_Biznesu", "Cyber_Kox",
-            "Noob_Killer", "El_Polako", "Smoczy_Ogień", "Ciasteczkowy_Potwór", "Rudy_Lis",
-            "Szalony_Górnik", "Neon_Ninja", "Pogromca_Botów", "Szef_Wszystkich_Szefów",
-            "Młody_Padawan", "Władca_Pikseli", "Król_Areny", "Biały_Wilk", "Czarny_Rycerz"
-        ];
+      /** --- CONFIG & DATA --- **/
+      const BOT_NAMES = [
+        "Mistrz_Kebab",
+        "Turbo_Ślimak",
+        "Zabójczy_Pączek",
+        "Głodny_Stefan",
+        "Kapitan_Laga",
+        "Marek_Mostowiak",
+        "Ostra_Parówa",
+        "Zły_Pomidor",
+        "Dziki_Wąż",
+        "Kuba_Rozpruwacz",
+        "Szybki_Gonzo",
+        "Cichy_Zabójca",
+        "Twoja_Stara",
+        "Janusz_Biznesu",
+        "Cyber_Kox",
+        "Noob_Killer",
+        "El_Polako",
+        "Smoczy_Ogień",
+        "Ciasteczkowy_Potwór",
+        "Rudy_Lis",
+        "Szalony_Górnik",
+        "Neon_Ninja",
+        "Pogromca_Botów",
+        "Szef_Wszystkich_Szefów",
+        "Młody_Padawan",
+        "Władca_Pikseli",
+        "Król_Areny",
+        "Biały_Wilk",
+        "Czarny_Rycerz",
+      ];
 
-        const CFG = {
-            MAP_SIZE: 4000,
-            BASE_SPEED: 3.5,
-            BOOST_SPEED: 7.2,
-            SEG_DIST: 5,
-            COLORS: ['#38bdf8', '#ef4444', '#22c55e', '#eab308', '#a855f7', '#f97316', '#ec4899', '#f472b6', '#ffffff']
-        };
+      const CFG = {
+        MAP_SIZE: 4000,
+        BASE_SPEED: 3.5,
+        BOOST_SPEED: 7.2,
+        SEG_DIST: 5,
+        COLORS: [
+          SpinnerTheme.color("#38bdf8"),
+          SpinnerTheme.color("#ef4444"),
+          SpinnerTheme.color("#22c55e"),
+          SpinnerTheme.color("#eab308"),
+          SpinnerTheme.color("#a855f7"),
+          SpinnerTheme.color("#f97316"),
+          SpinnerTheme.color("#ec4899"),
+          SpinnerTheme.color("#f472b6"),
+          SpinnerTheme.color("#ffffff"),
+        ],
+      };
 
-        const state = {
-            nick: "Gracz_" + Math.floor(Math.random()*999),
-            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-        };
+      const state = {
+        nick: "Gracz_" + Math.floor(Math.random() * 999),
+        isMobile:
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent,
+          ),
+      };
 
-        /** --- MATH HELPERS --- **/
-        class Vec {
-            constructor(x, y) { this.x = x; this.y = y; }
-            add(v) { return new Vec(this.x + v.x, this.y + v.y); }
-            sub(v) { return new Vec(this.x - v.x, this.y - v.y); }
-            mul(n) { return new Vec(this.x * n, this.y * n); }
-            dist(v) { return Math.sqrt((this.x - v.x)**2 + (this.y - v.y)**2); }
+      /** --- MATH HELPERS --- **/
+      class Vec {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+        }
+        add(v) {
+          return new Vec(this.x + v.x, this.y + v.y);
+        }
+        sub(v) {
+          return new Vec(this.x - v.x, this.y - v.y);
+        }
+        mul(n) {
+          return new Vec(this.x * n, this.y * n);
+        }
+        dist(v) {
+          return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2);
+        }
+      }
+
+      /** --- ENTITIES --- **/
+      class Snake {
+        constructor(name, color, startMass = 12) {
+          this.name = name;
+          this.color = color;
+          this.pos = new Vec(
+            Math.random() * CFG.MAP_SIZE,
+            Math.random() * CFG.MAP_SIZE,
+          );
+          this.angle = Math.random() * Math.PI * 2;
+          this.targetAngle = this.angle;
+          this.mass = startMass;
+          this.segments = [];
+          for (let i = 0; i < Math.floor(this.mass); i++)
+            this.segments.push(new Vec(this.pos.x, this.pos.y));
+          this.history = [];
+          this.speed = CFG.BASE_SPEED;
+          this.isBoosting = false;
+          this.dead = false;
         }
 
-        /** --- ENTITIES --- **/
-        class Snake {
-            constructor(name, color, startMass = 12) {
-                this.name = name;
-                this.color = color;
-                this.pos = new Vec(Math.random() * CFG.MAP_SIZE, Math.random() * CFG.MAP_SIZE);
-                this.angle = Math.random() * Math.PI * 2;
-                this.targetAngle = this.angle;
-                this.mass = startMass;
-                this.segments = [];
-                for(let i=0; i < Math.floor(this.mass); i++) this.segments.push(new Vec(this.pos.x, this.pos.y));
-                this.history = [];
-                this.speed = CFG.BASE_SPEED;
-                this.isBoosting = false;
-                this.dead = false;
+        update() {
+          if (this.dead) return;
+
+          // Boost logic
+          if (this.isBoosting && this.mass > 5) {
+            this.speed = CFG.BOOST_SPEED;
+            if (game.tick % 5 === 0) {
+              this.mass -= 0.1;
+              if (this.segments.length > 5 && game.tick % 10 === 0)
+                this.segments.pop();
+              game.spawnFood(
+                this.segments[this.segments.length - 1].x,
+                this.segments[this.segments.length - 1].y,
+                1,
+                true,
+              );
             }
+          } else {
+            this.speed = CFG.BASE_SPEED;
+          }
 
-            update() {
-                if(this.dead) return;
+          // Smooth rotation
+          let diff = this.targetAngle - this.angle;
+          while (diff < -Math.PI) diff += Math.PI * 2;
+          while (diff > Math.PI) diff -= Math.PI * 2;
+          this.angle += diff * 0.15;
 
-                // Boost logic
-                if (this.isBoosting && this.mass > 5) {
-                    this.speed = CFG.BOOST_SPEED;
-                    if (game.tick % 5 === 0) {
-                        this.mass -= 0.1;
-                        if(this.segments.length > 5 && game.tick % 10 === 0) this.segments.pop();
-                        game.spawnFood(this.segments[this.segments.length-1].x, this.segments[this.segments.length-1].y, 1, true);
-                    }
-                } else {
-                    this.speed = CFG.BASE_SPEED;
-                }
+          const vel = new Vec(Math.cos(this.angle), Math.sin(this.angle)).mul(
+            this.speed,
+          );
+          this.pos = this.pos.add(vel);
 
-                // Smooth rotation
-                let diff = this.targetAngle - this.angle;
-                while (diff < -Math.PI) diff += Math.PI * 2;
-                while (diff > Math.PI) diff -= Math.PI * 2;
-                this.angle += diff * 0.15;
+          // Wall collision
+          if (
+            this.pos.x < 0 ||
+            this.pos.x > CFG.MAP_SIZE ||
+            this.pos.y < 0 ||
+            this.pos.y > CFG.MAP_SIZE
+          )
+            this.die();
 
-                const vel = new Vec(Math.cos(this.angle), Math.sin(this.angle)).mul(this.speed);
-                this.pos = this.pos.add(vel);
+          // Segments update
+          this.history.unshift(new Vec(this.pos.x, this.pos.y));
+          if (this.history.length > 1500) this.history.pop();
 
-                // Wall collision
-                if (this.pos.x < 0 || this.pos.x > CFG.MAP_SIZE || this.pos.y < 0 || this.pos.y > CFG.MAP_SIZE) this.die();
-
-                // Segments update
-                this.history.unshift(new Vec(this.pos.x, this.pos.y));
-                if(this.history.length > 1500) this.history.pop();
-
-                for(let i=0; i<this.segments.length; i++) {
-                    const lag = Math.floor((i+1) * (CFG.SEG_DIST / this.speed) * 4);
-                    if(this.history[lag]) {
-                        this.segments[i].x = this.history[lag].x;
-                        this.segments[i].y = this.history[lag].y;
-                    }
-                }
+          for (let i = 0; i < this.segments.length; i++) {
+            const lag = Math.floor((i + 1) * (CFG.SEG_DIST / this.speed) * 4);
+            if (this.history[lag]) {
+              this.segments[i].x = this.history[lag].x;
+              this.segments[i].y = this.history[lag].y;
             }
-
-            die() {
-                if(this.dead) return;
-                this.dead = true;
-                this.segments.forEach((s, i) => { if(i % 3 === 0) game.spawnFood(s.x, s.y, 5); });
-                if(this === game.player) game.onGameOver();
-            }
-
-            draw(ctx, cam) {
-                if(this.dead) return;
-                const r = 14 + (this.mass * 0.03);
-
-                ctx.shadowBlur = 10; ctx.shadowColor = this.color;
-                for(let i = this.segments.length-1; i >= 0; i--) {
-                    const s = this.segments[i];
-                    const size = r * (1 - (i / (this.segments.length * 3)));
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath(); ctx.arc(s.x - cam.x, s.y - cam.y, size, 0, Math.PI*2); ctx.fill();
-
-                    if(i === 0) { // Eyes
-                        ctx.shadowBlur = 0; ctx.fillStyle = 'white';
-                        const ex = (s.x - cam.x) + Math.cos(this.angle + 0.6) * (r*0.6);
-                        const ey = (s.y - cam.y) + Math.sin(this.angle + 0.6) * (r*0.6);
-                        ctx.beginPath(); ctx.arc(ex, ey, r*0.3, 0, Math.PI*2); ctx.fill();
-                        ctx.fillStyle = 'black';
-                        ctx.beginPath(); ctx.arc(ex, ey, r*0.1, 0, Math.PI*2); ctx.fill();
-                    }
-                }
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = 'white'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
-                ctx.fillText(this.name, this.pos.x - cam.x, this.pos.y - cam.y - r - 10);
-            }
+          }
         }
 
-        class Bot extends Snake {
-            constructor(name, color, startMass) {
-                super(name, color, startMass);
-                this.aiTick = Math.random() * 100;
-            }
-            update() {
-                if(this.dead) return;
-                this.aiTick++;
-                if(this.aiTick % 40 === 0) {
-                    // Hunt food
-                    let n = null; let dM = 500;
-                    game.foods.forEach(f => { let d = this.pos.dist(f.pos); if(d < dM) { dM = d; n = f; } });
-                    if(n) this.targetAngle = Math.atan2(n.pos.y - this.pos.y, n.pos.x - this.pos.x);
-
-                    // Avoidance logic
-                    game.snakes.forEach(other => {
-                        if(other === this || other.dead) return;
-                        if(this.pos.dist(other.pos) < 120) {
-                            this.targetAngle += Math.PI/2;
-                            this.isBoosting = true;
-                        }
-                    });
-                    if(Math.random() < 0.05) this.isBoosting = false;
-                }
-                super.update();
-            }
+        die() {
+          if (this.dead) return;
+          this.dead = true;
+          this.segments.forEach((s, i) => {
+            if (i % 3 === 0) game.spawnFood(s.x, s.y, 5);
+          });
+          if (this === game.player) game.onGameOver();
         }
 
-        /** --- CORE ENGINE --- **/
-        const game = {
-            tick: 0, isRunning: false, snakes: [], foods: [], cam: { x: 0, y: 0 },
-            canvas: document.getElementById('gameCanvas'), ctx: null,
+        draw(ctx, cam) {
+          if (this.dead) return;
+          const r = 14 + this.mass * 0.03;
 
-            init() {
-                this.ctx = this.canvas.getContext('2d');
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                this.setupInputs();
+          ctx.shadowBlur = 0;
+          ctx.shadowColor = SpinnerTheme.color(this.color);
+          for (let i = this.segments.length - 1; i >= 0; i--) {
+            const s = this.segments[i];
+            const size = r * (1 - i / (this.segments.length * 3));
+            ctx.fillStyle = SpinnerTheme.color(this.color);
+            ctx.beginPath();
+            ctx.arc(s.x - cam.x, s.y - cam.y, size, 0, Math.PI * 2);
+            ctx.fill();
 
-                // Firebase/Local Nick Sync
-                const nickInput = document.getElementById('nickInput');
-                const userInf = document.getElementById('user-info');
-                const saved = ArcadeProgress.playerId;
-                if(saved) { state.nick = saved; userInf.textContent = "PROFIL: " + saved; nickInput.value = saved; }
+            if (i === 0) {
+              // Eyes
+              ctx.shadowBlur = 0;
+              ctx.fillStyle = SpinnerTheme.color("white");
+              const ex = s.x - cam.x + Math.cos(this.angle + 0.6) * (r * 0.6);
+              const ey = s.y - cam.y + Math.sin(this.angle + 0.6) * (r * 0.6);
+              ctx.beginPath();
+              ctx.arc(ex, ey, r * 0.3, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = SpinnerTheme.color("black");
+              ctx.beginPath();
+              ctx.arc(ex, ey, r * 0.1, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = SpinnerTheme.color("white");
+          ctx.font = "bold 10px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            this.name,
+            this.pos.x - cam.x,
+            this.pos.y - cam.y - r - 10,
+          );
+        }
+      }
 
-                this.loop();
-            },
+      class Bot extends Snake {
+        constructor(name, color, startMass) {
+          super(name, color, startMass);
+          this.aiTick = Math.random() * 100;
+        }
+        update() {
+          if (this.dead) return;
+          this.aiTick++;
+          if (this.aiTick % 40 === 0) {
+            // Hunt food
+            let n = null;
+            let dM = 500;
+            game.foods.forEach((f) => {
+              let d = this.pos.dist(f.pos);
+              if (d < dM) {
+                dM = d;
+                n = f;
+              }
+            });
+            if (n)
+              this.targetAngle = Math.atan2(
+                n.pos.y - this.pos.y,
+                n.pos.x - this.pos.x,
+              );
 
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight - 60;
-            },
+            // Avoidance logic
+            game.snakes.forEach((other) => {
+              if (other === this || other.dead) return;
+              if (this.pos.dist(other.pos) < 120) {
+                this.targetAngle += Math.PI / 2;
+                this.isBoosting = true;
+              }
+            });
+            if (Math.random() < 0.05) this.isBoosting = false;
+          }
+          super.update();
+        }
+      }
 
-            spawnFood(x, y, val, boost = false) {
-                this.foods.push({ pos: new Vec(x, y), val: val, color: boost ? '#fff' : CFG.COLORS[Math.floor(Math.random()*CFG.COLORS.length)], rot: Math.random()*10 });
-            },
+      /** --- CORE ENGINE --- **/
+      const game = {
+        tick: 0,
+        isRunning: false,
+        snakes: [],
+        foods: [],
+        cam: { x: 0, y: 0 },
+        canvas: document.getElementById("gameCanvas"),
+        ctx: null,
 
-            setupInputs() {
-                // Desktop
-                window.addEventListener('mousemove', e => {
-                    if(!state.isMobile && this.player) {
-                        const dx = e.clientX - this.canvas.width/2;
-                        const dy = (e.clientY - 60) - this.canvas.height/2;
-                        this.player.targetAngle = Math.atan2(dy, dx);
-                    }
-                });
-                window.addEventListener('mousedown', () => { if(!state.isMobile && this.player) this.player.isBoosting = true; });
-                window.addEventListener('mouseup', () => { if(!state.isMobile && this.player) this.player.isBoosting = false; });
+        init() {
+          this.ctx = this.canvas.getContext("2d");
+          this.resize();
+          window.addEventListener("resize", () => this.resize());
+          new ResizeObserver(() => this.resize()).observe(
+            document.getElementById("game-container"),
+          );
+          this.setupInputs();
 
-                // Joystick
-                const joyCon = document.getElementById('joystick-container');
-                const joyKnob = document.getElementById('joystick-knob');
-                let activeJoy = false;
+          // Firebase/Local Nick Sync
+          const nickInput = document.getElementById("nickInput");
+          const userInf = document.getElementById("user-info");
+          const saved = ArcadeProgress.playerId;
+          if (saved) {
+            state.nick = saved;
+            userInf.textContent = "PROFIL: " + saved;
+            nickInput.value = saved;
+          }
 
-                joyCon.addEventListener('touchstart', () => activeJoy = true);
-                window.addEventListener('touchmove', e => {
-                    if(!activeJoy) return;
-                    const touch = e.touches[0];
-                    const rect = joyCon.getBoundingClientRect();
-                    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
-                    let dx = touch.clientX - cx, dy = touch.clientY - cy;
-                    const d = Math.sqrt(dx*dx + dy*dy), max = rect.width/2;
-                    if(d > max) { dx *= max/d; dy *= max/d; }
-                    joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-                    if(this.player) this.player.targetAngle = Math.atan2(dy, dx);
-                });
-                window.addEventListener('touchend', () => { activeJoy = false; joyKnob.style.transform = `translate(-50%, -50%)`; });
+          this.loop();
+        },
 
-                document.getElementById('boost-btn').addEventListener('touchstart', e => { e.preventDefault(); if(this.player) this.player.isBoosting = true; });
-                document.getElementById('boost-btn').addEventListener('touchend', () => { if(this.player) this.player.isBoosting = false; });
-            },
+        resize() {
+          this.canvas.width =
+            document.getElementById("game-container").clientWidth;
+          this.canvas.height =
+            document.getElementById("game-container").clientHeight;
+        },
 
-            start() {
-                const inp = document.getElementById('nickInput').value;
-                if(inp) state.nick = inp;
-                document.getElementById('start-overlay').style.display = 'none';
+        spawnFood(x, y, val, boost = false) {
+          this.foods.push({
+            pos: new Vec(x, y),
+            val: val,
+            color: boost
+              ? SpinnerTheme.color("#fff")
+              : CFG.COLORS[Math.floor(Math.random() * CFG.COLORS.length)],
+            rot: Math.random() * 10,
+          });
+        },
 
-                this.snakes = [];
-                this.player = new Snake(state.nick, CFG.COLORS[0], 15);
-                this.snakes.push(this.player);
+        setupInputs() {
+          // Desktop
+          window.addEventListener("mousemove", (e) => {
+            if (!state.isMobile && this.player) {
+              const rect = this.canvas.getBoundingClientRect();
+              const dx = e.clientX - rect.left - rect.width / 2;
+              const dy = e.clientY - rect.top - rect.height / 2;
+              this.player.targetAngle = Math.atan2(dy, dx);
+            }
+          });
+          this.canvas.addEventListener("mousedown", () => {
+            if (!state.isMobile && this.player) this.player.isBoosting = true;
+          });
+          window.addEventListener("mouseup", () => {
+            if (!state.isMobile && this.player) this.player.isBoosting = false;
+          });
 
-                // Spawn Real-like Bots with different masses
-                for(let i=0; i<20; i++) {
-                    const randomName = BOT_NAMES[Math.floor(Math.random()*BOT_NAMES.length)] + "_" + Math.floor(Math.random()*99);
-                    const randomMass = 10 + Math.random() * 200; // Niektóre boty są od razu gigantyczne
-                    this.snakes.push(new Bot(randomName, CFG.COLORS[1 + (i % 7)], randomMass));
+          // Joystick
+          const joyCon = document.getElementById("joystick-container");
+          const joyKnob = document.getElementById("joystick-knob");
+          let activeJoy = false;
+
+          joyCon.addEventListener("touchstart", () => (activeJoy = true));
+          window.addEventListener("touchmove", (e) => {
+            if (!activeJoy) return;
+            const touch = e.touches[0];
+            const rect = joyCon.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2,
+              cy = rect.top + rect.height / 2;
+            let dx = touch.clientX - cx,
+              dy = touch.clientY - cy;
+            const d = Math.sqrt(dx * dx + dy * dy),
+              max = rect.width / 2;
+            if (d > max) {
+              dx *= max / d;
+              dy *= max / d;
+            }
+            joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+            if (this.player) this.player.targetAngle = Math.atan2(dy, dx);
+          });
+          window.addEventListener("touchend", () => {
+            activeJoy = false;
+            joyKnob.style.transform = `translate(-50%, -50%)`;
+          });
+
+          document
+            .getElementById("boost-btn")
+            .addEventListener("touchstart", (e) => {
+              e.preventDefault();
+              if (this.player) this.player.isBoosting = true;
+            });
+          document
+            .getElementById("boost-btn")
+            .addEventListener("touchend", () => {
+              if (this.player) this.player.isBoosting = false;
+            });
+        },
+
+        start() {
+          const inp = document.getElementById("nickInput").value;
+          if (inp) state.nick = inp;
+          document.getElementById("start-overlay").style.display = "none";
+
+          this.snakes = [];
+          this.player = new Snake(state.nick, CFG.COLORS[0], 15);
+          this.snakes.push(this.player);
+
+          // Spawn Real-like Bots with different masses
+          for (let i = 0; i < 20; i++) {
+            const randomName =
+              BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)] +
+              "_" +
+              Math.floor(Math.random() * 99);
+            const randomMass = 10 + Math.random() * 200; // Niektóre boty są od razu gigantyczne
+            this.snakes.push(
+              new Bot(randomName, CFG.COLORS[1 + (i % 7)], randomMass),
+            );
+          }
+
+          this.foods = [];
+          for (let i = 0; i < 400; i++)
+            this.spawnFood(
+              Math.random() * CFG.MAP_SIZE,
+              Math.random() * CFG.MAP_SIZE,
+              Math.random() * 3 + 1,
+            );
+
+          this.isRunning = true;
+        },
+
+        onGameOver() {
+          document.getElementById("death-info").textContent =
+            "TWOJA MASA: " + Math.floor(this.player.mass);
+          document.getElementById("death-overlay").style.display = "flex";
+          this.isRunning = false;
+        },
+
+        update() {
+          if (!this.isRunning) return;
+          this.tick++;
+
+          if (this.player) {
+            this.cam.x = this.player.pos.x - this.canvas.width / 2;
+            this.cam.y = this.player.pos.y - this.canvas.height / 2;
+            document.getElementById("current-mass").textContent = Math.floor(
+              this.player.mass,
+            );
+          }
+
+          this.snakes.forEach((s) => {
+            s.update();
+            for (let i = this.foods.length - 1; i >= 0; i--) {
+              if (s.pos.dist(this.foods[i].pos) < 25 + s.mass * 0.1) {
+                s.mass += this.foods[i].val * 0.3;
+                if (s.mass % 2 < 0.3)
+                  s.segments.push(
+                    new Vec(
+                      s.segments[s.segments.length - 1].x,
+                      s.segments[s.segments.length - 1].y,
+                    ),
+                  );
+                this.foods.splice(i, 1);
+                if (this.foods.length < 400)
+                  this.spawnFood(
+                    Math.random() * CFG.MAP_SIZE,
+                    Math.random() * CFG.MAP_SIZE,
+                    Math.random() * 3 + 1,
+                  );
+              }
+            }
+            this.snakes.forEach((other) => {
+              if (s === other || s.dead || other.dead) return;
+              for (let j = 0; j < other.segments.length; j++) {
+                if (s.pos.dist(other.segments[j]) < 18 + other.mass * 0.05) {
+                  s.die();
+                  break;
                 }
+              }
+            });
+          });
 
-                this.foods = [];
-                for(let i=0; i<400; i++) this.spawnFood(Math.random()*CFG.MAP_SIZE, Math.random()*CFG.MAP_SIZE, Math.random()*3+1);
+          if (this.tick % 60 === 0) this.updateRanking();
+        },
 
-                this.isRunning = true;
-            },
+        draw() {
+          this.ctx.fillStyle = SpinnerTheme.color(
+            SpinnerTheme.color("#020617"),
+          );
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+          this.ctx.strokeStyle = SpinnerTheme.color(
+            SpinnerTheme.color("rgba(56, 189, 248, 0.05)"),
+          );
+          for (let x = -this.cam.x % 100; x < this.canvas.width; x += 100) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, this.canvas.height);
+            this.ctx.stroke();
+          }
+          for (let y = -this.cam.y % 100; y < this.canvas.height; y += 100) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(this.canvas.width, y);
+            this.ctx.stroke();
+          }
+          this.ctx.strokeStyle = SpinnerTheme.color(
+            SpinnerTheme.color("#ef4444"),
+          );
+          this.ctx.lineWidth = 5;
+          this.ctx.strokeRect(
+            -this.cam.x,
+            -this.cam.y,
+            CFG.MAP_SIZE,
+            CFG.MAP_SIZE,
+          );
 
-            onGameOver() {
-                document.getElementById('death-info').textContent = "TWOJA MASA: " + Math.floor(this.player.mass);
-                document.getElementById('death-overlay').style.display = 'flex';
-                this.isRunning = false;
-            },
+          this.foods.forEach((f) => {
+            const sx = f.pos.x - this.cam.x,
+              sy = f.pos.y - this.cam.y;
+            if (
+              sx < -20 ||
+              sx > this.canvas.width + 20 ||
+              sy < -20 ||
+              sy > this.canvas.height + 20
+            )
+              return;
+            this.ctx.fillStyle = SpinnerTheme.color(f.color);
+            this.ctx.beginPath();
+            this.ctx.arc(
+              sx,
+              sy,
+              f.val + 2 + Math.sin(this.tick * 0.1) * 2,
+              0,
+              Math.PI * 2,
+            );
+            this.ctx.fill();
+          });
 
-            update() {
-                if(!this.isRunning) return;
-                this.tick++;
+          this.snakes
+            .sort((a, b) => a.mass - b.mass)
+            .forEach((s) => s.draw(this.ctx, this.cam));
 
-                if(this.player) {
-                    this.cam.x = this.player.pos.x - this.canvas.width/2;
-                    this.cam.y = this.player.pos.y - this.canvas.height/2;
-                    document.getElementById('current-mass').textContent = Math.floor(this.player.mass);
-                }
+          // Minimap
+          const mc = document.getElementById("minimapCanvas"),
+            mtx = mc.getContext("2d");
+          mtx.clearRect(0, 0, 100, 100);
+          this.snakes.forEach((s) => {
+            if (!s.dead) {
+              mtx.fillStyle = SpinnerTheme.color(
+                s === this.player ? SpinnerTheme.color("#fff") : s.color,
+              );
+              mtx.fillRect(s.pos.x * 0.025, s.pos.y * 0.025, 2, 2);
+            }
+          });
+        },
 
-                this.snakes.forEach(s => {
-                    s.update();
-                    for(let i=this.foods.length-1; i>=0; i--) {
-                        if(s.pos.dist(this.foods[i].pos) < 25 + s.mass*0.1) {
-                            s.mass += this.foods[i].val * 0.3;
-                            if(s.mass % 2 < 0.3) s.segments.push(new Vec(s.segments[s.segments.length-1].x, s.segments[s.segments.length-1].y));
-                            this.foods.splice(i, 1);
-                            if(this.foods.length < 400) this.spawnFood(Math.random()*CFG.MAP_SIZE, Math.random()*CFG.MAP_SIZE, Math.random()*3+1);
-                        }
-                    }
-                    this.snakes.forEach(other => {
-                        if(s === other || s.dead || other.dead) return;
-                        for(let j=0; j<other.segments.length; j++) {
-                            if(s.pos.dist(other.segments[j]) < 18 + other.mass*0.05) { s.die(); break; }
-                        }
-                    });
-                });
+        updateRanking() {
+          const sorted = [...this.snakes]
+            .sort((a, b) => b.mass - a.mass)
+            .slice(0, 10);
+          const list = document.getElementById("leader-list");
+          list.innerHTML = "";
+          sorted.forEach((s, i) => {
+            const d = document.createElement("div");
+            d.className = `leader-item ${s === this.player ? "me" : ""}`;
+            d.innerHTML = `<span>${i + 1}. ${s.name}</span><span>${Math.floor(s.mass)}</span>`;
+            list.appendChild(d);
+          });
+        },
 
-                if(this.tick % 60 === 0) this.updateRanking();
-            },
+        loop() {
+          this.update();
+          this.draw();
+          requestAnimationFrame(() => this.loop());
+        },
+      };
 
-            draw() {
-                this.ctx.fillStyle = '#020617'; this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
-                for(let x = -this.cam.x % 100; x < this.canvas.width; x += 100) {
-                    this.ctx.beginPath(); this.ctx.moveTo(x, 0); this.ctx.lineTo(x, this.canvas.height); this.ctx.stroke();
-                }
-                for(let y = -this.cam.y % 100; y < this.canvas.height; y += 100) {
-                    this.ctx.beginPath(); this.ctx.moveTo(0, y); this.ctx.lineTo(this.canvas.width, y); this.ctx.stroke();
-                }
-                this.ctx.strokeStyle = '#ef4444'; this.ctx.lineWidth = 5;
-                this.ctx.strokeRect(-this.cam.x, -this.cam.y, CFG.MAP_SIZE, CFG.MAP_SIZE);
-
-                this.foods.forEach(f => {
-                    const sx = f.pos.x - this.cam.x, sy = f.pos.y - this.cam.y;
-                    if(sx < -20 || sx > this.canvas.width+20 || sy < -20 || sy > this.canvas.height+20) return;
-                    this.ctx.fillStyle = f.color;
-                    this.ctx.beginPath(); this.ctx.arc(sx, sy, f.val + 2 + Math.sin(this.tick*0.1)*2, 0, Math.PI*2); this.ctx.fill();
-                });
-
-                this.snakes.sort((a,b)=>a.mass-b.mass).forEach(s => s.draw(this.ctx, this.cam));
-
-                // Minimap
-                const mc = document.getElementById('minimapCanvas'), mtx = mc.getContext('2d');
-                mtx.clearRect(0,0,100,100);
-                this.snakes.forEach(s => { if(!s.dead) { mtx.fillStyle = s === this.player ? '#fff' : s.color; mtx.fillRect(s.pos.x*0.025, s.pos.y*0.025, 2, 2); } });
-            },
-
-            updateRanking() {
-                const sorted = [...this.snakes].sort((a,b)=>b.mass-a.mass).slice(0, 10);
-                const list = document.getElementById('leader-list'); list.innerHTML = '';
-                sorted.forEach((s, i) => {
-                    const d = document.createElement('div'); d.className = `leader-item ${s === this.player ? 'me' : ''}`;
-                    d.innerHTML = `<span>${i+1}. ${s.name}</span><span>${Math.floor(s.mass)}</span>`;
-                    list.appendChild(d);
-                });
-            },
-
-            loop() { this.update(); this.draw(); requestAnimationFrame(() => this.loop()); }
-        };
-
-        document.getElementById('start-btn').onclick = () => game.start();
-        document.getElementById('restart-btn').onclick = () => { document.getElementById('death-overlay').style.display = 'none'; game.start(); };
-        game.init();
+      document.getElementById("start-btn").onclick = () => game.start();
+      document.getElementById("restart-btn").onclick = () => {
+        document.getElementById("death-overlay").style.display = "none";
+        game.start();
+      };
+      game.init();
     </script>
-</body>
+  </body>
 </html>

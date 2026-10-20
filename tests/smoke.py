@@ -108,6 +108,61 @@ class SiteChecks(unittest.TestCase):
                         self.assertFalse(page.evaluate('document.documentElement.scrollWidth > innerWidth'))
                         expect(page.locator('h1')).to_be_visible()
 
+    def test_theme_follows_system_and_persists_only_as_requested(self):
+        context=self.browser.new_context(color_scheme='dark',reduced_motion='reduce')
+        page=context.new_page()
+        try:
+            page.goto(self.base)
+            expect(page.locator('html')).to_have_attribute('data-theme','dark')
+            expect(page.locator('body')).to_have_css('background-color','rgb(17, 20, 15)')
+            page.get_by_role('button',name='Tylko niezbędne',exact=True).click()
+            page.get_by_role('button',name='Włącz jasny motyw',exact=True).click()
+            page.goto(self.base+'/prywatnosc.html')
+            expect(page.locator('html')).to_have_attribute('data-theme','light')
+            self.assertEqual(page.evaluate('sessionStorage.getItem("spinner:theme:session")'),'light')
+            self.assertEqual(page.evaluate('localStorage.getItem("spinner:prefs:theme")'),None)
+            page.get_by_role('button',name='Zmień ustawienia cookies',exact=False).click()
+            page.locator('#cookie-preferences').check();page.locator('#save-cookies').click()
+            self.assertEqual(page.evaluate('JSON.parse(localStorage.getItem("spinner:prefs:theme"))'),'light')
+            new_tab=context.new_page();new_tab.goto(self.base)
+            expect(new_tab.locator('html')).to_have_attribute('data-theme','light')
+            new_tab.close()
+            page.get_by_role('button',name='Zmień ustawienia cookies',exact=False).click()
+            page.locator('#cookie-preferences').uncheck();page.locator('#save-cookies').click()
+            self.assertEqual(page.evaluate('localStorage.getItem("spinner:prefs:theme")'),None)
+            self.assertEqual(page.evaluate('sessionStorage.getItem("spinner:theme:session")'),'light')
+            page.locator('[data-clear-preferences]').click()
+            self.assertEqual(page.evaluate('sessionStorage.getItem("spinner:theme:session")'),None)
+            expect(page.locator('html')).to_have_attribute('data-theme','dark')
+        finally:context.close()
+
+    def test_every_game_in_both_themes_without_inner_overflow(self):
+        with self.page(390,consent=False) as page:
+            errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+            page.goto(self.base);games=page.evaluate('SpinnerGames')
+            for game in games:
+                with self.subTest(game=game['id']):
+                    page.goto(self.base+'/gra.html?gra='+game['id'])
+                    frame=page.frame_locator('#game-stage iframe')
+                    expect(frame.locator('body')).to_have_attribute('data-game',game['id'])
+                    for mode in ['dark','light']:
+                        page.evaluate('(mode)=>SpinnerTheme.set(mode)',mode)
+                        expect(frame.locator('html')).to_have_attribute('data-theme',mode)
+                        self.assertFalse(page.frames[1].evaluate('document.documentElement.scrollWidth>innerWidth'),game['id'])
+                    self.assertEqual(errors,[])
+            page.goto(self.base+'/gra.html?gra=tictactoe')
+            cells=page.frame_locator('#game-stage iframe').locator('#board button')
+            cells.nth(4).click();expect(cells.nth(4)).to_have_text('X')
+            page.get_by_role('button',name='Włącz ciemny motyw',exact=True).click()
+            expect(cells.nth(4)).to_have_text('X')
+            page.goto(self.base+'/gra.html?gra=saper')
+            frame=page.frame_locator('#game-stage iframe')
+            frame.locator('#game .cell').nth(40).click()
+            opened=frame.locator('#game .cell.open').count()
+            self.assertGreater(opened,0)
+            page.get_by_role('button',name='Włącz jasny motyw',exact=True).click()
+            self.assertEqual(frame.locator('#game .cell.open').count(),opened)
+
     def test_tictactoe_win_ai_lock_and_restart_cancels_pending_move(self):
         with self.page(consent=False) as page:
             page.goto(self.base+'/games/tictactoe.html')
@@ -148,6 +203,19 @@ class SiteChecks(unittest.TestCase):
             expect(page.locator('#bird-overlay')).to_be_visible(timeout=5000)
             expect(page.locator('#bird-start')).to_have_text('Jeszcze raz ↻')
             page.locator('#bird-start').click(); expect(page.locator('#bird-score')).to_have_text('0')
+
+    def test_arena_aim_uses_the_canvas_position_and_resizes_with_its_cabinet(self):
+        with self.page(consent=False) as page:
+            page.goto(self.base+'/games/snake.html')
+            page.locator('#start-btn').click()
+            self.assertTrue(page.evaluate('game.isRunning'))
+            page.wait_for_function('game.canvas.width===document.querySelector("#game-container").clientWidth')
+            rect=page.locator('#gameCanvas').bounding_box()
+            page.mouse.move(rect['x']+rect['width']/2+80,rect['y']+rect['height']/2)
+            self.assertAlmostEqual(page.evaluate('game.player.targetAngle'),0,places=2)
+            page.set_viewport_size({'width':390,'height':844})
+            page.wait_for_function('game.canvas.width===document.querySelector("#game-container").clientWidth')
+            self.assertLess(page.evaluate('game.canvas.width'),390)
 
     def test_real_firebase_sdk_initializes_only_on_request(self):
         with self.page(consent=False) as page:

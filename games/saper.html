@@ -1,381 +1,552 @@
-<!DOCTYPE html>
-<html lang="pl" style="background-color: #020617;">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saper – Spinner Games</title>
+<!doctype html>
+<html lang="pl" style="background-color: #020617">
+  <head>
+    <script src="../assets/theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saper – Spinner Games</title>
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#020617">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#020617" />
 
-<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
-<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
 
+    <style>
+      :root {
+        --bg: #020617;
+        --card: #0f172a;
+        --accent: #38bdf8;
+        --text: #e5e7eb;
+        /* Domyślny rozmiar, nadpiszemy go w JS */
+        --cell-size: 35px;
+      }
 
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
 
+      body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: radial-gradient(circle at top, #1e293b, #020617);
+        background-attachment: fixed;
+        color: var(--text);
+        user-select: none;
+        min-height: 100vh;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
 
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 15px 20px;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+      }
+      header img {
+        height: 32px;
+      }
 
-<style>
-:root{
-  --bg:#020617;
-  --card:#0f172a;
-  --accent:#38bdf8;
-  --text:#e5e7eb;
-  /* Domyślny rozmiar, nadpiszemy go w JS */
-  --cell-size: 35px;
-}
+      .account-box {
+        text-align: right;
+      }
+      .user-info {
+        font-size: 13px;
+        color: var(--accent);
+        font-weight: bold;
+      }
+      .sync-status {
+        font-size: 9px;
+        color: #64748b;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+      nav button {
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 15px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      nav button:hover {
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--accent);
+      }
 
-body {
-  margin: 0; 
-  font-family: Inter, sans-serif;
-  background: radial-gradient(circle at top, #1e293b, #020617);
-  background-attachment: fixed;
-  color: var(--text); 
-  user-select: none;
-  min-height: 100vh;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}
+      main {
+        max-width: 600px;
+        margin: auto;
+        padding: 10px;
+      }
 
-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 20px;
-  background: rgba(15, 23, 42, 0.9); 
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-}
-header img { height: 32px; }
+      .card {
+        background: linear-gradient(180deg, #0f172a, #020617);
+        border-radius: 24px;
+        padding: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow: hidden; /* Zabezpieczenie przed wyciekiem gridu */
+      }
 
-.account-box { text-align: right; }
-.user-info { font-size: 13px; color: var(--accent); font-weight: bold; }
-.sync-status { font-size: 9px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 1px;}
+      h2 {
+        text-align: center;
+        margin-top: 0;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
 
-nav button {
-  background: none; border: none; color: var(--text); font-size: 15px;
-  padding: 8px 14px; border-radius: 10px; cursor: pointer;
-}
-nav button:hover { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
+      #menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+      }
 
-main { max-width: 600px; margin: auto; padding: 10px; }
+      select,
+      button {
+        background: #1e293b;
+        color: white;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 14px;
+        outline: none;
+        -webkit-appearance: none;
+      }
 
-.card {
-  background: linear-gradient(180deg, #0f172a, #020617);
-  border-radius: 24px; padding: 15px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.6);
-  border: 1px solid rgba(255,255,255,0.05);
-  overflow: hidden; /* Zabezpieczenie przed wyciekiem gridu */
-}
+      button {
+        cursor: pointer;
+        background: var(--card);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        font-weight: bold;
+        width: 100%;
+        max-width: 220px;
+      }
+      button:active {
+        transform: scale(0.96);
+      }
 
-h2 { text-align: center; margin-top: 0; font-weight: 800; letter-spacing: -1px; }
+      .game-info-bar {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 350px;
+        font-size: 13px;
+        color: #94a3b8;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 10px;
+      }
 
-#menu {
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  margin-bottom: 15px;
-}
+      #rank-note {
+        font-size: 11px;
+        color: #94a3b8;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+      .rank-active {
+        color: #4ade80 !important;
+        font-weight: bold;
+      }
 
-select, button {
-  background: #1e293b; color: white; border: 1px solid #334155;
-  border-radius: 12px; padding: 10px 12px; font-size: 14px; outline: none;
-  -webkit-appearance: none;
-}
+      #game {
+        display: grid;
+        justify-content: center;
+        margin: 10px auto;
+        gap: 3px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 5px;
+        border-radius: 12px;
+        width: fit-content;
+        max-width: 100%;
+      }
 
-button { 
-    cursor: pointer; background: var(--card); border: 1px solid var(--accent); 
-    color: var(--accent); font-weight: bold; width: 100%; max-width: 220px;
-}
-button:active { transform: scale(0.96); }
+      .cell {
+        width: var(--cell-size);
+        height: var(--cell-size);
+        background: #1e293b;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 800;
+        border-radius: 4px;
+        transition: background 0.1s;
+        font-size: calc(var(--cell-size) * 0.55);
+      }
 
-.game-info-bar {
-    display: flex; justify-content: space-between; width: 100%; max-width: 350px;
-    font-size: 13px; color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 10px;
-}
+      .open {
+        background: #e5e7eb;
+        color: #020617;
+      }
+      .mine {
+        background: #dc2626 !important;
+        color: white;
+      }
+      .flagged {
+        background: #facc15 !important;
+        color: #020617;
+      }
 
-#rank-note {
-    font-size: 11px; color: #94a3b8; text-align: center; margin-bottom: 5px;
-}
-.rank-active { color: #4ade80 !important; font-weight: bold; }
+      .number1 {
+        color: #2563eb;
+      }
+      .number2 {
+        color: #16a34a;
+      }
+      .number3 {
+        color: #dc2626;
+      }
+      .number4 {
+        color: #1e3a8a;
+      }
 
-#game {
-  display: grid; justify-content: center; margin: 10px auto;
-  gap: 3px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 12px;
-  width: fit-content;
-  max-width: 100%;
-}
+      #controls-mobile {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .btn-mode {
+        padding: 12px;
+        flex: 1;
+        max-width: 150px;
+        border-radius: 14px;
+      }
+      .active-mode {
+        background: var(--accent) !important;
+        color: #020617 !important;
+        border-color: var(--accent);
+      }
 
-.cell {
-  width: var(--cell-size); height: var(--cell-size);
-  background: #1e293b; display: flex; justify-content: center; align-items: center;
-  cursor: pointer; font-weight: 800; border-radius: 4px;
-  transition: background 0.1s; font-size: calc(var(--cell-size) * 0.55);
-}
+      #points-info {
+        text-align: center;
+        margin-top: 15px;
+        font-weight: bold;
+        padding: 10px;
+        border-top: 1px solid #334155;
+        font-size: 1.2rem;
+      }
 
-.open { background: #e5e7eb; color: #020617; }
-.mine { background: #dc2626 !important; color: white; }
-.flagged { background: #facc15 !important; color: #020617; }
-
-.number1{color:#2563eb} .number2{color:#16a34a} .number3{color:#dc2626}
-.number4{color:#1e3a8a}
-
-#controls-mobile { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-.btn-mode { padding: 12px; flex: 1; max-width: 150px; border-radius: 14px; }
-.active-mode { background: var(--accent) !important; color: #020617 !important; border-color: var(--accent); }
-
-#points-info {
-    text-align: center; margin-top: 15px; font-weight: bold; padding: 10px;
-    border-top: 1px solid #334155; font-size: 1.2rem;
-}
-
-footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
-</style>
-<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
-<body>
-
-<header>
-  <div style="display:flex; align-items:center; gap:10px;">
-    <img src="../assets/mark.svg" alt="SpinnerRealYT">
-    <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
-  </div>
-  <div class="account-box">
-    <div id="user-display" class="user-info">GUEST</div>
-    <div id="sync-display" class="sync-status">OFFLINE</div>
-  </div>
-</header>
-
-<main>
-  <div class="card" id="main-card">
-    <h2>💣 Saper Elite</h2>
-
-    <div id="menu">
-      <div id="rank-note">Tylko tryb Rankingowy daje punkty!</div>
-      <select id="difficulty-select">
-        <option value="9,10" selected>🏆 Rankingowy (9x9 - 10 bomb)</option>
-        <option value="12,22">Średni (12x12 - 22 bomby)</option>
-        <option value="15,40">Trudny (15x15 - 40 bomb)</option>
-        <option value="7,6">Szybki (7x7 - 6 bomb)</option>
-      </select>
-      <button id="start-btn">NOWA GRA</button>
-
-      <div class="game-info-bar">
-          <div id="info">🚩 0 / 10</div>
-          <div id="timer">⏱️ 0s</div>
+      footer {
+        text-align: center;
+        opacity: 0.5;
+        padding: 30px 20px;
+        font-size: 11px;
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/progress.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <link rel="stylesheet" href="../assets/theme.css" />
+  </head>
+  <body class="game-page">
+    <header>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <img src="../assets/mark.svg" alt="SpinnerRealYT" />
+        <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
       </div>
-    </div>
+      <div class="account-box">
+        <div id="user-display" class="user-info">GUEST</div>
+        <div id="sync-display" class="sync-status">OFFLINE</div>
+      </div>
+    </header>
 
-    <div id="game"></div>
+    <main>
+      <div class="card" id="main-card">
+        <h2>Saper</h2>
 
-    <div id="controls-mobile">
-      <button id="btn-open" class="btn-mode active-mode">Odkryj</button>
-      <button id="btn-flag" class="btn-mode">Flaga</button>
-    </div>
+        <div id="menu">
+          <div id="rank-note">Klasyczna plansza 9 × 9 zapisuje punkty.</div>
+          <select id="difficulty-select">
+            <option value="9,10" selected>Klasyczny (9x9 - 10 bomb)</option>
+            <option value="12,22">Średni (12x12 - 22 bomby)</option>
+            <option value="15,40">Trudny (15x15 - 40 bomb)</option>
+            <option value="7,6">Szybki (7x7 - 6 bomb)</option>
+          </select>
+          <button id="start-btn">NOWA GRA</button>
 
-    <div id="points-info" style="color: var(--accent);">Punkty: 0</div>
-  </div>
-</main>
+          <div class="game-info-bar">
+            <div id="info">⚑ 0 / 10</div>
+            <div id="timer">Czas: 0s</div>
+          </div>
+        </div>
 
-<footer>© 2026 Spinner Games • Graj po swojemu</footer>
+        <div id="game"></div>
 
-<script>
-(() => {
-    const db = ArcadeProgress.database();
-    const loggedUser = ArcadeProgress.playerId;
-    const syncEl = document.getElementById('sync-display');
-    const pointsInfoEl = document.getElementById('points-info');
-    const rankNote = document.getElementById('rank-note');
-    const gameEl = document.getElementById('game');
-    const mainCard = document.getElementById('main-card');
+        <div id="controls-mobile">
+          <button id="btn-open" class="btn-mode active-mode">Odkryj</button>
+          <button id="btn-flag" class="btn-mode">Flaga</button>
+        </div>
 
-    let ROWS=9, COLS=9, MINES_COUNT=10, points=0, gameOver=false, flagMode=false, firstClick=true;
-    let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
-    let seconds = 0, timerInterval = null;
+        <div id="points-info" style="color: var(--accent)">Punkty: 0</div>
+      </div>
+    </main>
 
-    ArcadeProgress.onReady((user) => {
-        if(loggedUser) {
-            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+    <footer>© 2026 Spinner Games • Graj po swojemu</footer>
+
+    <script>
+      (() => {
+        const db = ArcadeProgress.database();
+        const loggedUser = ArcadeProgress.playerId;
+        const syncEl = document.getElementById("sync-display");
+        const pointsInfoEl = document.getElementById("points-info");
+        const rankNote = document.getElementById("rank-note");
+        const gameEl = document.getElementById("game");
+        const mainCard = document.getElementById("main-card");
+
+        let ROWS = 9,
+          COLS = 9,
+          MINES_COUNT = 10,
+          points = 0,
+          gameOver = false,
+          flagMode = false,
+          firstClick = true;
+        let cells = [],
+          minePositions = new Set(),
+          flags = new Set(),
+          opened = new Set();
+        let seconds = 0,
+          timerInterval = null;
+
+        ArcadeProgress.onReady((user) => {
+          if (loggedUser) {
+            document.getElementById("user-display").textContent =
+              loggedUser.toUpperCase();
             loadData();
-        } else if (loggedUser) {
-            document.getElementById('user-display').textContent = loggedUser.toUpperCase();
+          } else if (loggedUser) {
+            document.getElementById("user-display").textContent =
+              loggedUser.toUpperCase();
             syncEl.textContent = "Zapis lokalny";
-        }
-    });
+          }
+        });
 
-    async function loadData() {
-        if(!loggedUser) return;
-        try {
-            const snap = await db.ref('users/' + loggedUser + '/points').once('value');
+        async function loadData() {
+          if (!loggedUser) return;
+          try {
+            const snap = await db
+              .ref("users/" + loggedUser + "/points")
+              .once("value");
             points = snap.exists() ? snap.val() : 0;
             pointsInfoEl.textContent = `Punkty: ${points}`;
             syncEl.textContent = "Zapis lokalny";
-            syncEl.style.color = "#4ade80";
-        } catch(e) { syncEl.textContent = "Error"; }
-    }
+            syncEl.style.color = SpinnerTheme.color("#4ade80");
+          } catch (e) {
+            syncEl.textContent = "Error";
+          }
+        }
 
-    async function savePoints() {
-        if(!loggedUser) return;
-        try {
-            await db.ref('users/' + loggedUser).update({ points: points });
+        async function savePoints() {
+          if (!loggedUser) return;
+          try {
+            await db.ref("users/" + loggedUser).update({ points: points });
             syncEl.textContent = "Zapis lokalny";
-            syncEl.style.color = "#4ade80";
-        } catch(e) { syncEl.textContent = "Błąd zapisu"; }
-    }
+            syncEl.style.color = SpinnerTheme.color("#4ade80");
+          } catch (e) {
+            syncEl.textContent = "Błąd zapisu";
+          }
+        }
 
-    function adjustCellSize() {
-        const cardWidth = mainCard.clientWidth - 40; // Uwzględnia padding card
-        const availableWidth = Math.min(cardWidth, window.innerWidth - 40);
-        // Obliczamy rozmiar tak, by COLS komórek + gapy (3px) mieściły się w szerokości
-        const gapTotal = (COLS - 1) * 3 + 10; 
-        const size = Math.floor((availableWidth - gapTotal) / COLS);
-        // Ograniczamy rozmiar do rozsądnego min/max
-        const finalSize = Math.max(Math.min(size, 45), 18);
-        document.documentElement.style.setProperty('--cell-size', `${finalSize}px`);
-    }
+        function adjustCellSize() {
+          const cardWidth = mainCard.clientWidth - 40; // Uwzględnia padding card
+          const availableWidth = Math.min(cardWidth, window.innerWidth - 40);
+          // Obliczamy rozmiar tak, by COLS komórek + gapy (3px) mieściły się w szerokości
+          const gapTotal = (COLS - 1) * 3 + 10;
+          const size = Math.floor((availableWidth - gapTotal) / COLS);
+          // Ograniczamy rozmiar do rozsądnego min/max
+          const finalSize = Math.max(Math.min(size, 45), 18);
+          document.documentElement.style.setProperty(
+            "--cell-size",
+            `${finalSize}px`,
+          );
+        }
 
-    function createGrid(){
-        adjustCellSize();
-        gameEl.innerHTML=''; cells=[];
-        gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
-        for(let i=0; i<ROWS*COLS; i++){
-            const c=document.createElement('div');
-            c.className='cell';
+        function createGrid() {
+          adjustCellSize();
+          gameEl.innerHTML = "";
+          cells = [];
+          gameEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
+          for (let i = 0; i < ROWS * COLS; i++) {
+            const c = document.createElement("div");
+            c.className = "cell";
             c.onclick = () => handleCellClick(i);
-            c.oncontextmenu = (e) => { e.preventDefault(); toggleFlag(i); };
+            c.oncontextmenu = (e) => {
+              e.preventDefault();
+              toggleFlag(i);
+            };
             gameEl.appendChild(c);
             cells.push(c);
+          }
         }
-    }
 
-    function handleCellClick(i) {
-        if(flagMode) toggleFlag(i);
-        else openCell(i);
-    }
-
-    function neighbors(i){
-        const r=Math.floor(i/COLS), c=i%COLS, res=[];
-        for(let dr=-1; dr<=1; dr++) for(let dc=-1; dc<=1; dc++){
-            if(!dr && !dc) continue;
-            const nr=r+dr, nc=c+dc;
-            if(nr>=0 && nr<ROWS && nc>=0 && nc<COLS) res.push(nr*COLS+nc);
+        function handleCellClick(i) {
+          if (flagMode) toggleFlag(i);
+          else openCell(i);
         }
-        return res;
-    }
 
-    function openCell(i){
-        if(gameOver || opened.has(i) || flags.has(i)) return;
-        if(firstClick){ 
-            firstClick=false; 
-            placeMines(i); 
-            startTimer();
-        }
-        opened.add(i);
-        const c=cells[i];
-        c.classList.add('open');
-        if(minePositions.has(i)){
-            c.textContent='💣'; c.classList.add('mine');
-            return lose();
-        }
-        const n = neighbors(i).filter(idx => minePositions.has(idx)).length;
-        if(n > 0){
-            c.textContent = n; c.classList.add(`number${n}`);
-        } else {
-            neighbors(i).forEach(openCell);
-        }
-        checkWin();
-    }
-
-    function placeMines(firstIndex){
-        minePositions.clear();
-        const firstNeighbors = neighbors(firstIndex);
-        while(minePositions.size < MINES_COUNT){
-            const p = Math.floor(Math.random()*ROWS*COLS);
-            if(p === firstIndex || firstNeighbors.includes(p)) continue;
-            minePositions.add(p);
-        }
-    }
-
-    function toggleFlag(i){
-        if(gameOver || opened.has(i)) return;
-        const c=cells[i];
-        if(flags.has(i)){
-            flags.delete(i); c.textContent=''; c.classList.remove('flagged');
-        } else if(flags.size < MINES_COUNT){
-            flags.add(i); c.textContent='🚩'; c.classList.add('flagged');
-        }
-        document.getElementById('info').textContent=`🚩 ${flags.size} / ${MINES_COUNT}`;
-    }
-
-    function startTimer(){
-        seconds = 0;
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            seconds++;
-            document.getElementById('timer').textContent = `⏱️ ${seconds}s`;
-        }, 1000);
-    }
-
-    function lose(){
-        gameOver=true;
-        clearInterval(timerInterval);
-        document.getElementById('info').textContent='💥 Przegrana!';
-        minePositions.forEach(i => {
-            cells[i].classList.add('mine', 'open');
-            cells[i].textContent='💣';
-        });
-    }
-
-    function checkWin(){
-        if(opened.size === ROWS*COLS - MINES_COUNT){
-            gameOver=true;
-            clearInterval(timerInterval);
-            document.getElementById('info').textContent='🎉 Wygrana!';
-            if(ROWS === 9 && MINES_COUNT === 10) {
-                points += 1;
-                pointsInfoEl.textContent = `Punkty: ${points}`;
-                savePoints();
+        function neighbors(i) {
+          const r = Math.floor(i / COLS),
+            c = i % COLS,
+            res = [];
+          for (let dr = -1; dr <= 1; dr++)
+            for (let dc = -1; dc <= 1; dc++) {
+              if (!dr && !dc) continue;
+              const nr = r + dr,
+                nc = c + dc;
+              if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS)
+                res.push(nr * COLS + nc);
             }
+          return res;
         }
-    }
 
-    function reset(){
-        const val = document.getElementById('difficulty-select').value.split(',');
-        ROWS = parseInt(val[0]);
-        COLS = ROWS;
-        MINES_COUNT = parseInt(val[1]);
+        function openCell(i) {
+          if (gameOver || opened.has(i) || flags.has(i)) return;
+          if (firstClick) {
+            firstClick = false;
+            placeMines(i);
+            startTimer();
+          }
+          opened.add(i);
+          const c = cells[i];
+          c.classList.add("open");
+          if (minePositions.has(i)) {
+            c.textContent = "×";
+            c.classList.add("mine");
+            return lose();
+          }
+          const n = neighbors(i).filter((idx) => minePositions.has(idx)).length;
+          if (n > 0) {
+            c.textContent = n;
+            c.classList.add(`number${n}`);
+          } else {
+            neighbors(i).forEach(openCell);
+          }
+          checkWin();
+        }
 
-        if(ROWS === 9 && MINES_COUNT === 10) {
-            rankNote.textContent = "✓ Tryb Rankingowy Aktywny (+1 pkt)";
+        function placeMines(firstIndex) {
+          minePositions.clear();
+          const firstNeighbors = neighbors(firstIndex);
+          while (minePositions.size < MINES_COUNT) {
+            const p = Math.floor(Math.random() * ROWS * COLS);
+            if (p === firstIndex || firstNeighbors.includes(p)) continue;
+            minePositions.add(p);
+          }
+        }
+
+        function toggleFlag(i) {
+          if (gameOver || opened.has(i)) return;
+          const c = cells[i];
+          if (flags.has(i)) {
+            flags.delete(i);
+            c.textContent = "";
+            c.classList.remove("flagged");
+          } else if (flags.size < MINES_COUNT) {
+            flags.add(i);
+            c.textContent = "⚑";
+            c.classList.add("flagged");
+          }
+          document.getElementById("info").textContent =
+            `⚑ ${flags.size} / ${MINES_COUNT}`;
+        }
+
+        function startTimer() {
+          seconds = 0;
+          clearInterval(timerInterval);
+          timerInterval = setInterval(() => {
+            seconds++;
+            document.getElementById("timer").textContent = `Czas: ${seconds}s`;
+          }, 1000);
+        }
+
+        function lose() {
+          gameOver = true;
+          clearInterval(timerInterval);
+          document.getElementById("info").textContent = "💥 Przegrana!";
+          minePositions.forEach((i) => {
+            cells[i].classList.add("mine", "open");
+            cells[i].textContent = "×";
+          });
+        }
+
+        function checkWin() {
+          if (opened.size === ROWS * COLS - MINES_COUNT) {
+            gameOver = true;
+            clearInterval(timerInterval);
+            document.getElementById("info").textContent = "🎉 Wygrana!";
+            if (ROWS === 9 && MINES_COUNT === 10) {
+              points += 1;
+              pointsInfoEl.textContent = `Punkty: ${points}`;
+              savePoints();
+            }
+          }
+        }
+
+        function reset() {
+          const val = document
+            .getElementById("difficulty-select")
+            .value.split(",");
+          ROWS = parseInt(val[0]);
+          COLS = ROWS;
+          MINES_COUNT = parseInt(val[1]);
+
+          if (ROWS === 9 && MINES_COUNT === 10) {
+            rankNote.textContent = "Plansza punktowana · +1 pkt za wygraną";
             rankNote.className = "rank-active";
-        } else {
-            rankNote.textContent = "Tryb Treningowy (brak punktów)";
+          } else {
+            rankNote.textContent = "Plansza treningowa · bez punktów";
             rankNote.className = "";
+          }
+
+          gameOver = false;
+          firstClick = true;
+          flags.clear();
+          opened.clear();
+          document.getElementById("info").textContent = `⚑ 0 / ${MINES_COUNT}`;
+          document.getElementById("timer").textContent = `Czas: 0s`;
+          clearInterval(timerInterval);
+          createGrid();
         }
 
-        gameOver=false; firstClick=true;
-        flags.clear(); opened.clear();
-        document.getElementById('info').textContent=`🚩 0 / ${MINES_COUNT}`;
-        document.getElementById('timer').textContent = `⏱️ 0s`;
-        clearInterval(timerInterval);
-        createGrid();
-    }
+        document.getElementById("start-btn").onclick = reset;
+        document.getElementById("btn-open").onclick = () => {
+          flagMode = false;
+          document.getElementById("btn-open").classList.add("active-mode");
+          document.getElementById("btn-flag").classList.remove("active-mode");
+        };
+        document.getElementById("btn-flag").onclick = () => {
+          flagMode = true;
+          document.getElementById("btn-flag").classList.add("active-mode");
+          document.getElementById("btn-open").classList.remove("active-mode");
+        };
 
-    document.getElementById('start-btn').onclick = reset;
-    document.getElementById('btn-open').onclick = () => { 
-        flagMode = false; 
-        document.getElementById('btn-open').classList.add('active-mode'); 
-        document.getElementById('btn-flag').classList.remove('active-mode'); 
-    };
-    document.getElementById('btn-flag').onclick = () => { 
-        flagMode = true; 
-        document.getElementById('btn-flag').classList.add('active-mode'); 
-        document.getElementById('btn-open').classList.remove('active-mode'); 
-    };
-
-    window.onresize = () => { if(!firstClick || cells.length > 0) adjustCellSize(); };
-    reset();
-})();
-</script>
-</body>
+        window.onresize = () => {
+          if (!firstClick || cells.length > 0) adjustCellSize();
+        };
+        reset();
+      })();
+    </script>
+  </body>
 </html>

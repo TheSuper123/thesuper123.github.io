@@ -1,265 +1,900 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Polityczny - Spinner Games</title>
-<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
-<style>
-:root{
---bg:#020617;
---card:#0f172a;
---accent:#38bdf8;
---text:#e5e7eb;
-}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at top,#020617,#000);color:var(--text);}
-header{display:flex;align-items:center;gap:15px;padding:15px 20px;background:rgba(15,23,42,.9);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;}
-header img{height:42px}
-nav button{background:none;border:none;color:var(--text);font-size:15px;padding:8px 14px;border-radius:10px;cursor:pointer;}
-nav button:hover,nav button.active{background:rgba(56,189,248,.15);color:var(--accent);}
-main{max-width:1100px;margin:auto;padding:25px}
-.card{background:linear-gradient(180deg,#0f172a,#020617);border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.6);margin-bottom:25px;}
-h1,h2{text-align:center}
-button{background:var(--accent);border:none;padding:8px 14px;border-radius:10px;cursor:pointer;color:#020617;font-weight:700;margin:5px;}
-#quiz-container{display:flex;flex-direction:column;align-items:center;gap:20px;}
-.option{background:#334155;color:white;width:100%;max-width:500px;text-align:center;padding:12px;cursor:pointer;border-radius:10px;transition:0.2s;}
-.option:hover{background:#2563eb;}
-#result{margin-top:15px;text-align:center;font-weight:700;}
-</style>
-<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
-<body>
-<header>
-<img src="../assets/mark.svg" alt="SpinnerRealYT">
-<nav><button onclick="location.href='../index.html'">Menu</button></nav>
-</header>
-<main>
-<div class="card">
-<h2>🗳️ Quiz Polityczny</h2>
-<p style="text-align:center">Odpowiedz "Popieram", "Nie popieram" lub "Nie mam zdania" i sprawdź swój profil polityczny!</p>
-<div id="quiz-container">
-  <div id="question"></div>
-  <div id="options"></div>
-  <div id="result"></div>
-  <button id="next-btn" style="display:none;">Następne pytanie</button>
-  <button id="download-btn" style="display:none;">Pobierz Wyniki PDF</button>
-</div>
-</div>
-</main>
-<footer>© 2026 Spinner Games</footer>
+  <head>
+    <script src="../assets/theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Polityczny - Spinner Games</title>
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #020617;
+        --card: #0f172a;
+        --accent: #38bdf8;
+        --text: #e5e7eb;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        background: radial-gradient(circle at top, #020617, #000);
+        color: var(--text);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 20px;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header img {
+        height: 42px;
+      }
+      nav button {
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 15px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      nav button:hover,
+      nav button.active {
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--accent);
+      }
+      main {
+        max-width: 1100px;
+        margin: auto;
+        padding: 25px;
+      }
+      .card {
+        background: linear-gradient(180deg, #0f172a, #020617);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        margin-bottom: 25px;
+      }
+      h1,
+      h2 {
+        text-align: center;
+      }
+      button {
+        background: var(--accent);
+        border: none;
+        padding: 8px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #020617;
+        font-weight: 700;
+        margin: 5px;
+      }
+      #quiz-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .option {
+        background: #334155;
+        color: white;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        padding: 12px;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: 0.2s;
+      }
+      .option:hover {
+        background: #2563eb;
+      }
+      #result {
+        margin-top: 15px;
+        text-align: center;
+        font-weight: 700;
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/progress.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <link rel="stylesheet" href="../assets/theme.css" />
+  </head>
+  <body class="game-page">
+    <header>
+      <img src="../assets/mark.svg" alt="SpinnerRealYT" />
+      <nav><button onclick="location.href='../index.html'">Menu</button></nav>
+    </header>
+    <main>
+      <div class="card">
+        <h2>️ Quiz Polityczny</h2>
+        <p style="text-align: center">
+          Odpowiedz "Popieram", "Nie popieram" lub "Nie mam zdania" i sprawdź
+          swój profil polityczny!
+        </p>
+        <div id="quiz-container">
+          <div id="question"></div>
+          <div id="options"></div>
+          <div id="result"></div>
+          <button id="next-btn" style="display: none">Następne pytanie</button>
+          <button id="download-btn" style="display: none">
+            Pobierz Wyniki PDF
+          </button>
+        </div>
+      </div>
+    </main>
+    <footer>© 2026 Spinner Games</footer>
 
-<script src="../assets/vendor/jspdf.umd.min.js"></script>
-<script>
-// ===== PYTANIA =====
-const quizData = [
-  // ===== SEKCJA 1: POLSKA (41 pytań) =====
-  { q:"Popieram zwiększenie wydatków na służbę zdrowia.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram obniżenie podatków dla przedsiębiorców.", type:"polska", parties:["Koalicja Obywatelska","Prawo i Sprawiedliwość"] },
-  { q:"Popieram zwiększenie podatków dla najbogatszych.", type:"polska", parties:["Lewica","Razem"] },
-  { q:"Popieram programy socjalne dla rodzin z dziećmi.", type:"polska", parties:["Lewica","Polskie Stronnictwo Ludowe"] },
-  { q:"Popieram wprowadzenie bezpłatnej edukacji wyższej.", type:"polska", parties:["Lewica","Razem"] },
-  { q:"Popieram wprowadzenie dodatkowych ulg podatkowych dla młodych rodzin.", type:"polska", parties:["Polska 2050","Koalicja Obywatelska"] },
-  { q:"Popieram podniesienie minimalnej płacy.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram obniżenie podatku VAT na podstawowe produkty.", type:"polska", parties:["Koalicja Obywatelska","Polskie Stronnictwo Ludowe"] },
-  { q:"Popieram wprowadzenie podatku cyfrowego dla dużych korporacji.", type:"polska", parties:["Lewica","Razem"] },
-  { q:"Popieram wsparcie dla rolników i sektora rolnego.", type:"polska", parties:["Polskie Stronnictwo Ludowe"] },
-  { q:"Popieram zwiększenie finansowania dla nauki i badań.", type:"polska", parties:["Koalicja Obywatelska","Polska 2050"] },
-  { q:"Popieram budowę nowych dróg i autostrad.", type:"polska", parties:["Prawo i Sprawiedliwość","Koalicja Obywatelska"] },
-  { q:"Popieram rozwój kolei i transportu publicznego.", type:"polska", parties:["Koalicja Obywatelska","Polska 2050"] },
-  { q:"Popieram zwiększenie bezpieczeństwa narodowego poprzez większe wydatki na wojsko.", type:"polska", parties:["Prawo i Sprawiedliwość","Konfederacja"] },
-  { q:"Popieram liberalizację prawa do posiadania broni.", type:"polska", parties:["Konfederacja"] },
-  { q:"Popieram zaostrzenie kar za przestępstwa.", type:"polska", parties:["Prawo i Sprawiedliwość","Konfederacja"] },
-  { q:"Popieram programy walki z ubóstwem.", type:"polska", parties:["Lewica","Razem"] },
-  { q:"Popieram zwiększone wsparcie dla osób niepełnosprawnych.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram wprowadzenie ochrony środowiska jako priorytetu państwa.", type:"polska", parties:["Polska 2050","Lewica"] },
-  { q:"Popieram inwestycje w odnawialne źródła energii.", type:"polska", parties:["Polska 2050","Lewica"] },
-  { q:"Popieram rozwój energetyki jądrowej w Polsce.", type:"polska", parties:["Polska 2050","Koalicja Obywatelska"] },
-  { q:"Popieram wprowadzenie zakazu używania plastiku jednorazowego użytku.", type:"polska", parties:["Polska 2050","Lewica"] },
-  { q:"Popieram ograniczenie emisji CO2 przez przemysł.", type:"polska", parties:["Polska 2050","Lewica"] },
-  { q:"Popieram rozwój turystyki i kultury w Polsce.", type:"polska", parties:["Koalicja Obywatelska","Lewica"] },
-  { q:"Popieram wprowadzenie większej kontroli nad mediami społecznościowymi.", type:"polska", parties:["Prawo i Sprawiedliwość"] },
-  { q:"Popieram ograniczenie migracji do Polski.", type:"polska", parties:["Prawo i Sprawiedliwość","Konfederacja"] },
-  { q:"Popieram zwiększenie praw mniejszości narodowych i etnicznych.", type:"polska", parties:["Lewica","Koalicja Obywatelska"] },
-  { q:"Popieram wprowadzenie legalnej eutanazji.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram wprowadzenie edukacji seksualnej w szkołach.", type:"polska", parties:["Lewica","Koalicja Obywatelska"] },
-  { q:"Popieram programy walki z przemocą domową.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram wprowadzenie pełnej równości małżeńskiej dla par LGBT.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram wprowadzenie surowszych kar za przestępstwa gospodarcze.", type:"polska", parties:["Prawo i Sprawiedliwość"] },
-  { q:"Popieram rozwój startupów i innowacyjnych firm.", type:"polska", parties:["Koalicja Obywatelska","Polska 2050"] },
-  { q:"Popieram wprowadzenie kontroli nad cenami leków.", type:"polska", parties:["Lewica","Polska 2050"] },
-  { q:"Popieram rozwój sportu i programów dla młodzieży.", type:"polska", parties:["Koalicja Obywatelska","Lewica"] },
-  { q:"Popieram wprowadzenie bonów mieszkaniowych dla młodych.", type:"polska", parties:["Polska 2050","Lewica"] },
-  { q:"Popieram wsparcie dla sektora kultury i sztuki.", type:"polska", parties:["Koalicja Obywatelska","Lewica"] },
-  { q:"Popieram programy przeciwdziałania smogowi.", type:"polska", parties:["Polska 2050","Lewica"] },
-  { q:"Popieram zwiększenie kontroli nad wydatkami państwa.", type:"polska", parties:["Koalicja Obywatelska"] },
-  { q:"Popieram decentralizację władzy na samorządy lokalne.", type:"polska", parties:["Koalicja Obywatelska","Polska 2050"] },
-  { q:"Popieram wprowadzenie inicjatywy obywatelskiej w legislacji.", type:"polska", parties:["Polska 2050","Koalicja Obywatelska"] },
+    <script src="../assets/vendor/jspdf.umd.min.js"></script>
+    <script>
+      // ===== PYTANIA =====
+      const quizData = [
+        // ===== SEKCJA 1: POLSKA (41 pytań) =====
+        {
+          q: "Popieram zwiększenie wydatków na służbę zdrowia.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram obniżenie podatków dla przedsiębiorców.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Prawo i Sprawiedliwość"],
+        },
+        {
+          q: "Popieram zwiększenie podatków dla najbogatszych.",
+          type: "polska",
+          parties: ["Lewica", "Razem"],
+        },
+        {
+          q: "Popieram programy socjalne dla rodzin z dziećmi.",
+          type: "polska",
+          parties: ["Lewica", "Polskie Stronnictwo Ludowe"],
+        },
+        {
+          q: "Popieram wprowadzenie bezpłatnej edukacji wyższej.",
+          type: "polska",
+          parties: ["Lewica", "Razem"],
+        },
+        {
+          q: "Popieram wprowadzenie dodatkowych ulg podatkowych dla młodych rodzin.",
+          type: "polska",
+          parties: ["Polska 2050", "Koalicja Obywatelska"],
+        },
+        {
+          q: "Popieram podniesienie minimalnej płacy.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram obniżenie podatku VAT na podstawowe produkty.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Polskie Stronnictwo Ludowe"],
+        },
+        {
+          q: "Popieram wprowadzenie podatku cyfrowego dla dużych korporacji.",
+          type: "polska",
+          parties: ["Lewica", "Razem"],
+        },
+        {
+          q: "Popieram wsparcie dla rolników i sektora rolnego.",
+          type: "polska",
+          parties: ["Polskie Stronnictwo Ludowe"],
+        },
+        {
+          q: "Popieram zwiększenie finansowania dla nauki i badań.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Polska 2050"],
+        },
+        {
+          q: "Popieram budowę nowych dróg i autostrad.",
+          type: "polska",
+          parties: ["Prawo i Sprawiedliwość", "Koalicja Obywatelska"],
+        },
+        {
+          q: "Popieram rozwój kolei i transportu publicznego.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Polska 2050"],
+        },
+        {
+          q: "Popieram zwiększenie bezpieczeństwa narodowego poprzez większe wydatki na wojsko.",
+          type: "polska",
+          parties: ["Prawo i Sprawiedliwość", "Konfederacja"],
+        },
+        {
+          q: "Popieram liberalizację prawa do posiadania broni.",
+          type: "polska",
+          parties: ["Konfederacja"],
+        },
+        {
+          q: "Popieram zaostrzenie kar za przestępstwa.",
+          type: "polska",
+          parties: ["Prawo i Sprawiedliwość", "Konfederacja"],
+        },
+        {
+          q: "Popieram programy walki z ubóstwem.",
+          type: "polska",
+          parties: ["Lewica", "Razem"],
+        },
+        {
+          q: "Popieram zwiększone wsparcie dla osób niepełnosprawnych.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram wprowadzenie ochrony środowiska jako priorytetu państwa.",
+          type: "polska",
+          parties: ["Polska 2050", "Lewica"],
+        },
+        {
+          q: "Popieram inwestycje w odnawialne źródła energii.",
+          type: "polska",
+          parties: ["Polska 2050", "Lewica"],
+        },
+        {
+          q: "Popieram rozwój energetyki jądrowej w Polsce.",
+          type: "polska",
+          parties: ["Polska 2050", "Koalicja Obywatelska"],
+        },
+        {
+          q: "Popieram wprowadzenie zakazu używania plastiku jednorazowego użytku.",
+          type: "polska",
+          parties: ["Polska 2050", "Lewica"],
+        },
+        {
+          q: "Popieram ograniczenie emisji CO2 przez przemysł.",
+          type: "polska",
+          parties: ["Polska 2050", "Lewica"],
+        },
+        {
+          q: "Popieram rozwój turystyki i kultury w Polsce.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Lewica"],
+        },
+        {
+          q: "Popieram wprowadzenie większej kontroli nad mediami społecznościowymi.",
+          type: "polska",
+          parties: ["Prawo i Sprawiedliwość"],
+        },
+        {
+          q: "Popieram ograniczenie migracji do Polski.",
+          type: "polska",
+          parties: ["Prawo i Sprawiedliwość", "Konfederacja"],
+        },
+        {
+          q: "Popieram zwiększenie praw mniejszości narodowych i etnicznych.",
+          type: "polska",
+          parties: ["Lewica", "Koalicja Obywatelska"],
+        },
+        {
+          q: "Popieram wprowadzenie legalnej eutanazji.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram wprowadzenie edukacji seksualnej w szkołach.",
+          type: "polska",
+          parties: ["Lewica", "Koalicja Obywatelska"],
+        },
+        {
+          q: "Popieram programy walki z przemocą domową.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram wprowadzenie pełnej równości małżeńskiej dla par LGBT.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram wprowadzenie surowszych kar za przestępstwa gospodarcze.",
+          type: "polska",
+          parties: ["Prawo i Sprawiedliwość"],
+        },
+        {
+          q: "Popieram rozwój startupów i innowacyjnych firm.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Polska 2050"],
+        },
+        {
+          q: "Popieram wprowadzenie kontroli nad cenami leków.",
+          type: "polska",
+          parties: ["Lewica", "Polska 2050"],
+        },
+        {
+          q: "Popieram rozwój sportu i programów dla młodzieży.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Lewica"],
+        },
+        {
+          q: "Popieram wprowadzenie bonów mieszkaniowych dla młodych.",
+          type: "polska",
+          parties: ["Polska 2050", "Lewica"],
+        },
+        {
+          q: "Popieram wsparcie dla sektora kultury i sztuki.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Lewica"],
+        },
+        {
+          q: "Popieram programy przeciwdziałania smogowi.",
+          type: "polska",
+          parties: ["Polska 2050", "Lewica"],
+        },
+        {
+          q: "Popieram zwiększenie kontroli nad wydatkami państwa.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska"],
+        },
+        {
+          q: "Popieram decentralizację władzy na samorządy lokalne.",
+          type: "polska",
+          parties: ["Koalicja Obywatelska", "Polska 2050"],
+        },
+        {
+          q: "Popieram wprowadzenie inicjatywy obywatelskiej w legislacji.",
+          type: "polska",
+          parties: ["Polska 2050", "Koalicja Obywatelska"],
+        },
 
-  // ===== SEKCJA 2: POGLĄDY (41 pytań) =====
-  { q:"Popieram liberalizm gospodarczy (wolny rynek).", type:"poglad", parties:["Liberalizm","Neoliberalizm"] },
-  { q:"Popieram socjaldemokrację.", type:"poglad", parties:["Socjaldemokracja"] },
-  { q:"Popieram socjalliberalizm.", type:"poglad", parties:["Socjalliberalizm"] },
-  { q:"Popieram konserwatyzm społeczny.", type:"poglad", parties:["Konserwatyzm społeczny","Chrześcijański konserwatyzm"] },
-  { q:"Popieram libertarianizm.", type:"poglad", parties:["Libertarianizm","Anarchokapitalizm"] },
-  { q:"Popieram anarchokapitalizm.", type:"poglad", parties:["Anarchokapitalizm"] },
-  { q:"Popieram monarchizm konstytucyjny.", type:"poglad", parties:["Monarchizm konstytucyjny","Monarchizm absolutny"] },
-  { q:"Popieram ekologistyczny progresywizm.", type:"poglad", parties:["Ekologistyczny progresywizm","Zielony liberalizm"] },
-  { q:"Popieram zielony liberalizm.", type:"poglad", parties:["Zielony liberalizm","Liberalizm"] },
-  { q:"Popieram chrześcijański konserwatyzm.", type:"poglad", parties:["Chrześcijański konserwatyzm","Konserwatyzm społeczny"] },
-  { q:"Popieram liberalizm klasyczny.", type:"poglad", parties:["Liberalizm"] },
-  { q:"Popieram neoliberalizm.", type:"poglad", parties:["Neoliberalizm"] },
-  { q:"Popieram egalitaryzm.", type:"poglad", parties:["Egalitaryzm"] },
-  { q:"Popieram populizm lewicowy.", type:"poglad", parties:["Populizm lewicowy"] },
-  { q:"Popieram populizm prawicowy.", type:"poglad", parties:["Populizm prawicowy"] },
-  { q:"Popieram centrystwo polityczne.", type:"poglad", parties:["Centrystwo polityczne"] },
-  { q:"Popieram monarchizm absolutny.", type:"poglad", parties:["Monarchizm absolutny"] },
-  { q:"Popieram anarchizm społeczny.", type:"poglad", parties:["Anarchizm społeczny"] },
-  { q:"Popieram feminizm polityczny.", type:"poglad", parties:["Feminizm polityczny"] },
-  { q:"Popieram progresywizm społeczny.", type:"poglad", parties:["Progresywizm społeczny"] },
-  { q:"Popieram liberalny konserwatyzm.", type:"poglad", parties:["Liberalny konserwatyzm"] },
-  { q:"Popieram chrześcijańsko-demokratyczne wartości.", type:"poglad", parties:["Chrześcijańsko-demokratyczne wartości"] },
-  { q:"Popieram marksizm (w teorii).", type:"poglad", parties:["Marksizm"] },
-  { q:"Popieram socjalizm demokratyczny.", type:"poglad", parties:["Socjalizm demokratyczny"] },
-  { q:"Popieram państwo opiekuńcze.", type:"poglad", parties:["Państwo opiekuńcze"] },
-  { q:"Popieram wolny handel międzynarodowy.", type:"poglad", parties:["Liberalizm","Neoliberalizm"] },
-  { q:"Popieram ekonomiczny protekcjonizm.", type:"poglad", parties:["Ekonomiczny protekcjonizm"] },
-  { q:"Popieram integrację europejską.", type:"poglad", parties:["Integracja europejska","Socjalliberalizm"] },
-  { q:"Popieram suwerenność narodową ponad integrację.", type:"poglad", parties:["Suwerenność narodowa"] },
-  { q:"Popieram federalizm europejski.", type:"poglad", parties:["Federalizm europejski"] },
-  { q:"Popieram neutralność militarną państwa.", type:"poglad", parties:["Neutralność militarna"] },
-  { q:"Popieram silne państwo policyjne.", type:"poglad", parties:["Silne państwo policyjne"] },
-  { q:"Popieram demokratyzację instytucji publicznych.", type:"poglad", parties:["Demokratyzacja instytucji"] },
-  { q:"Popieram ograniczenie roli państwa w gospodarce.", type:"poglad", parties:["Ograniczenie roli państwa"] },
-  { q:"Popieram prawa pracownicze i związki zawodowe.", type:"poglad", parties:["Prawa pracownicze"] },
-  { q:"Popieram wolność słowa bez ograniczeń.", type:"poglad", parties:["Wolność słowa"] },
-  { q:"Popieram równouprawnienie płci.", type:"poglad", parties:["Równouprawnienie płci"] },
-  { q:"Popieram świeckość państwa.", type:"poglad", parties:["Świeckość państwa"] },
-  { q:"Popieram tradycyjne wartości rodzinne.", type:"poglad", parties:["Tradycyjne wartości rodzinne"] },
-  { q:"Popieram liberalizację prawa aborcyjnego.", type:"poglad", parties:["Liberalizm"] },
-  { q:"Popieram ochronę praw zwierząt.", type:"poglad", parties:["Ekologistyczny progresywizm"] },
+        // ===== SEKCJA 2: POGLĄDY (41 pytań) =====
+        {
+          q: "Popieram liberalizm gospodarczy (wolny rynek).",
+          type: "poglad",
+          parties: ["Liberalizm", "Neoliberalizm"],
+        },
+        {
+          q: "Popieram socjaldemokrację.",
+          type: "poglad",
+          parties: ["Socjaldemokracja"],
+        },
+        {
+          q: "Popieram socjalliberalizm.",
+          type: "poglad",
+          parties: ["Socjalliberalizm"],
+        },
+        {
+          q: "Popieram konserwatyzm społeczny.",
+          type: "poglad",
+          parties: ["Konserwatyzm społeczny", "Chrześcijański konserwatyzm"],
+        },
+        {
+          q: "Popieram libertarianizm.",
+          type: "poglad",
+          parties: ["Libertarianizm", "Anarchokapitalizm"],
+        },
+        {
+          q: "Popieram anarchokapitalizm.",
+          type: "poglad",
+          parties: ["Anarchokapitalizm"],
+        },
+        {
+          q: "Popieram monarchizm konstytucyjny.",
+          type: "poglad",
+          parties: ["Monarchizm konstytucyjny", "Monarchizm absolutny"],
+        },
+        {
+          q: "Popieram ekologistyczny progresywizm.",
+          type: "poglad",
+          parties: ["Ekologistyczny progresywizm", "Zielony liberalizm"],
+        },
+        {
+          q: "Popieram zielony liberalizm.",
+          type: "poglad",
+          parties: ["Zielony liberalizm", "Liberalizm"],
+        },
+        {
+          q: "Popieram chrześcijański konserwatyzm.",
+          type: "poglad",
+          parties: ["Chrześcijański konserwatyzm", "Konserwatyzm społeczny"],
+        },
+        {
+          q: "Popieram liberalizm klasyczny.",
+          type: "poglad",
+          parties: ["Liberalizm"],
+        },
+        {
+          q: "Popieram neoliberalizm.",
+          type: "poglad",
+          parties: ["Neoliberalizm"],
+        },
+        {
+          q: "Popieram egalitaryzm.",
+          type: "poglad",
+          parties: ["Egalitaryzm"],
+        },
+        {
+          q: "Popieram populizm lewicowy.",
+          type: "poglad",
+          parties: ["Populizm lewicowy"],
+        },
+        {
+          q: "Popieram populizm prawicowy.",
+          type: "poglad",
+          parties: ["Populizm prawicowy"],
+        },
+        {
+          q: "Popieram centrystwo polityczne.",
+          type: "poglad",
+          parties: ["Centrystwo polityczne"],
+        },
+        {
+          q: "Popieram monarchizm absolutny.",
+          type: "poglad",
+          parties: ["Monarchizm absolutny"],
+        },
+        {
+          q: "Popieram anarchizm społeczny.",
+          type: "poglad",
+          parties: ["Anarchizm społeczny"],
+        },
+        {
+          q: "Popieram feminizm polityczny.",
+          type: "poglad",
+          parties: ["Feminizm polityczny"],
+        },
+        {
+          q: "Popieram progresywizm społeczny.",
+          type: "poglad",
+          parties: ["Progresywizm społeczny"],
+        },
+        {
+          q: "Popieram liberalny konserwatyzm.",
+          type: "poglad",
+          parties: ["Liberalny konserwatyzm"],
+        },
+        {
+          q: "Popieram chrześcijańsko-demokratyczne wartości.",
+          type: "poglad",
+          parties: ["Chrześcijańsko-demokratyczne wartości"],
+        },
+        {
+          q: "Popieram marksizm (w teorii).",
+          type: "poglad",
+          parties: ["Marksizm"],
+        },
+        {
+          q: "Popieram socjalizm demokratyczny.",
+          type: "poglad",
+          parties: ["Socjalizm demokratyczny"],
+        },
+        {
+          q: "Popieram państwo opiekuńcze.",
+          type: "poglad",
+          parties: ["Państwo opiekuńcze"],
+        },
+        {
+          q: "Popieram wolny handel międzynarodowy.",
+          type: "poglad",
+          parties: ["Liberalizm", "Neoliberalizm"],
+        },
+        {
+          q: "Popieram ekonomiczny protekcjonizm.",
+          type: "poglad",
+          parties: ["Ekonomiczny protekcjonizm"],
+        },
+        {
+          q: "Popieram integrację europejską.",
+          type: "poglad",
+          parties: ["Integracja europejska", "Socjalliberalizm"],
+        },
+        {
+          q: "Popieram suwerenność narodową ponad integrację.",
+          type: "poglad",
+          parties: ["Suwerenność narodowa"],
+        },
+        {
+          q: "Popieram federalizm europejski.",
+          type: "poglad",
+          parties: ["Federalizm europejski"],
+        },
+        {
+          q: "Popieram neutralność militarną państwa.",
+          type: "poglad",
+          parties: ["Neutralność militarna"],
+        },
+        {
+          q: "Popieram silne państwo policyjne.",
+          type: "poglad",
+          parties: ["Silne państwo policyjne"],
+        },
+        {
+          q: "Popieram demokratyzację instytucji publicznych.",
+          type: "poglad",
+          parties: ["Demokratyzacja instytucji"],
+        },
+        {
+          q: "Popieram ograniczenie roli państwa w gospodarce.",
+          type: "poglad",
+          parties: ["Ograniczenie roli państwa"],
+        },
+        {
+          q: "Popieram prawa pracownicze i związki zawodowe.",
+          type: "poglad",
+          parties: ["Prawa pracownicze"],
+        },
+        {
+          q: "Popieram wolność słowa bez ograniczeń.",
+          type: "poglad",
+          parties: ["Wolność słowa"],
+        },
+        {
+          q: "Popieram równouprawnienie płci.",
+          type: "poglad",
+          parties: ["Równouprawnienie płci"],
+        },
+        {
+          q: "Popieram świeckość państwa.",
+          type: "poglad",
+          parties: ["Świeckość państwa"],
+        },
+        {
+          q: "Popieram tradycyjne wartości rodzinne.",
+          type: "poglad",
+          parties: ["Tradycyjne wartości rodzinne"],
+        },
+        {
+          q: "Popieram liberalizację prawa aborcyjnego.",
+          type: "poglad",
+          parties: ["Liberalizm"],
+        },
+        {
+          q: "Popieram ochronę praw zwierząt.",
+          type: "poglad",
+          parties: ["Ekologistyczny progresywizm"],
+        },
 
-  // ===== SEKCJA 3: UE (41 pytań) =====
-  { q:"Popieram członkostwo Polski w UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)","Odnowa Europy / Renew Europe"] },
-  { q:"Popieram zwiększenie budżetu UE na cele ekologiczne.", type:"ue", parties:["Europejska Partia Ludowa (EPP)","Europejscy Zieloni / Zieloni Europejscy"] },
-  { q:"Popieram reformę strefy euro.", type:"ue", parties:["Odnowa Europy / Renew Europe","Europejscy Socjaliści i Demokraci (S&D)"] },
-  { q:"Popieram federalizację UE.", type:"ue", parties:["Federalizm europejski"] },
-  { q:"Popieram silniejszą politykę migracyjną UE.", type:"ue", parties:["Europejscy Socjaliści i Demokraci (S&D)"] },
-  { q:"Popieram większe wsparcie dla krajów Europy Wschodniej.", type:"ue", parties:["Unijna Lewica"] },
-  { q:"Popieram wspólną obronę militarno-polityczną UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)","Europejscy Konserwatyści i Reformatorzy (ECR)"] },
-  { q:"Popieram programy walki z bezrobociem w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram unijną politykę klimatyczną.", type:"ue", parties:["Europejscy Zieloni / Zieloni Europejscy"] },
-  { q:"Popieram zwiększenie roli Parlamentu Europejskiego.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram Europejską Partię Ludową (EPP).", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram Europejskich Socjalistów i Demokratów (S&D).", type:"ue", parties:["Europejscy Socjaliści i Demokraci (S&D)"] },
-  { q:"Popieram Odnowę Europy / Renew Europe.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram Europejskich Zielonych / Zielonych Europejskich.", type:"ue", parties:["Europejscy Zieloni / Zieloni Europejscy"] },
-  { q:"Popieram Europejskich Konserwatystów i Reformatorów (ECR).", type:"ue", parties:["Europejscy Konserwatyści i Reformatorzy (ECR)"] },
-  { q:"Popieram Unijną Lewicę.", type:"ue", parties:["Unijna Lewica"] },
-  { q:"Popieram suwerenistyczne partie w UE.", type:"ue", parties:["Suwerenistyczne partie w UE"] },
-  { q:"Popieram liberalne partie gospodarcze w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram współpracę między krajami UE w zakresie technologii.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram wspólne projekty edukacyjne w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram wspólne programy kulturalne w UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)","Europejscy Zieloni / Zieloni Europejscy"] },
-  { q:"Popieram wprowadzenie wspólnej unijnej polityki podatkowej.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram regulacje UE dotyczące prywatności danych.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram jednolity rynek cyfrowy w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram politykę spójności UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram zwiększenie funduszy na badania i rozwój w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram wsparcie UE dla małych i średnich przedsiębiorstw.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram wspólną politykę rolną w UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram większą integrację energetyczną UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram zwiększenie roli UE w walce z pandemią.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram wzmocnienie mechanizmów praworządności w UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)"] },
-  { q:"Popieram zwiększenie udziału obywateli w decyzjach UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram większą przejrzystość działań Komisji Europejskiej.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram rozwój transportu transgranicznego w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram politykę UE wspierającą startupy i innowacje.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram harmonizację systemów edukacyjnych w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram wspólną politykę bezpieczeństwa cybernetycznego w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram rozszerzenie UE o nowe kraje.", type:"ue", parties:["Odnowa Europy / Renew Europe"] },
-  { q:"Popieram koalicje partii centroprawicowych w UE.", type:"ue", parties:["Europejska Partia Ludowa (EPP)","Europejscy Konserwatyści i Reformatorzy (ECR)"] },
-  { q:"Popieram koalicje partii centrolewicowych w UE.", type:"ue", parties:["Odnowa Europy / Renew Europe","Europejscy Socjaliści i Demokraci (S&D)"] },
-  { q:"Popieram większe zaangażowanie UE w politykę globalną.", type:"ue", parties:["Odnowa Europy / Renew Europe"] }
-];
+        // ===== SEKCJA 3: UE (41 pytań) =====
+        {
+          q: "Popieram członkostwo Polski w UE.",
+          type: "ue",
+          parties: [
+            "Europejska Partia Ludowa (EPP)",
+            "Odnowa Europy / Renew Europe",
+          ],
+        },
+        {
+          q: "Popieram zwiększenie budżetu UE na cele ekologiczne.",
+          type: "ue",
+          parties: [
+            "Europejska Partia Ludowa (EPP)",
+            "Europejscy Zieloni / Zieloni Europejscy",
+          ],
+        },
+        {
+          q: "Popieram reformę strefy euro.",
+          type: "ue",
+          parties: [
+            "Odnowa Europy / Renew Europe",
+            "Europejscy Socjaliści i Demokraci (S&D)",
+          ],
+        },
+        {
+          q: "Popieram federalizację UE.",
+          type: "ue",
+          parties: ["Federalizm europejski"],
+        },
+        {
+          q: "Popieram silniejszą politykę migracyjną UE.",
+          type: "ue",
+          parties: ["Europejscy Socjaliści i Demokraci (S&D)"],
+        },
+        {
+          q: "Popieram większe wsparcie dla krajów Europy Wschodniej.",
+          type: "ue",
+          parties: ["Unijna Lewica"],
+        },
+        {
+          q: "Popieram wspólną obronę militarno-polityczną UE.",
+          type: "ue",
+          parties: [
+            "Europejska Partia Ludowa (EPP)",
+            "Europejscy Konserwatyści i Reformatorzy (ECR)",
+          ],
+        },
+        {
+          q: "Popieram programy walki z bezrobociem w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram unijną politykę klimatyczną.",
+          type: "ue",
+          parties: ["Europejscy Zieloni / Zieloni Europejscy"],
+        },
+        {
+          q: "Popieram zwiększenie roli Parlamentu Europejskiego.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram Europejską Partię Ludową (EPP).",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram Europejskich Socjalistów i Demokratów (S&D).",
+          type: "ue",
+          parties: ["Europejscy Socjaliści i Demokraci (S&D)"],
+        },
+        {
+          q: "Popieram Odnowę Europy / Renew Europe.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram Europejskich Zielonych / Zielonych Europejskich.",
+          type: "ue",
+          parties: ["Europejscy Zieloni / Zieloni Europejscy"],
+        },
+        {
+          q: "Popieram Europejskich Konserwatystów i Reformatorów (ECR).",
+          type: "ue",
+          parties: ["Europejscy Konserwatyści i Reformatorzy (ECR)"],
+        },
+        {
+          q: "Popieram Unijną Lewicę.",
+          type: "ue",
+          parties: ["Unijna Lewica"],
+        },
+        {
+          q: "Popieram suwerenistyczne partie w UE.",
+          type: "ue",
+          parties: ["Suwerenistyczne partie w UE"],
+        },
+        {
+          q: "Popieram liberalne partie gospodarcze w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram współpracę między krajami UE w zakresie technologii.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram wspólne projekty edukacyjne w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram wspólne programy kulturalne w UE.",
+          type: "ue",
+          parties: [
+            "Europejska Partia Ludowa (EPP)",
+            "Europejscy Zieloni / Zieloni Europejscy",
+          ],
+        },
+        {
+          q: "Popieram wprowadzenie wspólnej unijnej polityki podatkowej.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram regulacje UE dotyczące prywatności danych.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram jednolity rynek cyfrowy w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram politykę spójności UE.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram zwiększenie funduszy na badania i rozwój w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram wsparcie UE dla małych i średnich przedsiębiorstw.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram wspólną politykę rolną w UE.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram większą integrację energetyczną UE.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram zwiększenie roli UE w walce z pandemią.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram wzmocnienie mechanizmów praworządności w UE.",
+          type: "ue",
+          parties: ["Europejska Partia Ludowa (EPP)"],
+        },
+        {
+          q: "Popieram zwiększenie udziału obywateli w decyzjach UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram większą przejrzystość działań Komisji Europejskiej.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram rozwój transportu transgranicznego w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram politykę UE wspierającą startupy i innowacje.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram harmonizację systemów edukacyjnych w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram wspólną politykę bezpieczeństwa cybernetycznego w UE.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram rozszerzenie UE o nowe kraje.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+        {
+          q: "Popieram koalicje partii centroprawicowych w UE.",
+          type: "ue",
+          parties: [
+            "Europejska Partia Ludowa (EPP)",
+            "Europejscy Konserwatyści i Reformatorzy (ECR)",
+          ],
+        },
+        {
+          q: "Popieram koalicje partii centrolewicowych w UE.",
+          type: "ue",
+          parties: [
+            "Odnowa Europy / Renew Europe",
+            "Europejscy Socjaliści i Demokraci (S&D)",
+          ],
+        },
+        {
+          q: "Popieram większe zaangażowanie UE w politykę globalną.",
+          type: "ue",
+          parties: ["Odnowa Europy / Renew Europe"],
+        },
+      ];
 
-// ===== LOGIKA =====
-let currentQuestion = 0;
-const answers = [];
-const partyScores = {};
-const pogladScores = {};
-const ueScores = {};
+      // ===== LOGIKA =====
+      let currentQuestion = 0;
+      const answers = [];
+      const partyScores = {};
+      const pogladScores = {};
+      const ueScores = {};
 
-function showQuestion(){
-  if(currentQuestion>=quizData.length){
-    showResult();
-    return;
-  }
-  const q = quizData[currentQuestion];
-  document.getElementById("question").textContent = `Pytanie ${currentQuestion+1}: ${q.q}`;
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-  ["Popieram","Nie mam zdania","Nie popieram"].forEach((text,i)=>{
-    const btn = document.createElement("div");
-    btn.className="option";
-    btn.textContent=text;
-    btn.onclick = ()=>selectAnswer(i);
-    optionsDiv.appendChild(btn);
-  });
-  document.getElementById("next-btn").style.display="none";
-}
+      function showQuestion() {
+        if (currentQuestion >= quizData.length) {
+          showResult();
+          return;
+        }
+        const q = quizData[currentQuestion];
+        document.getElementById("question").textContent =
+          `Pytanie ${currentQuestion + 1}: ${q.q}`;
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+        ["Popieram", "Nie mam zdania", "Nie popieram"].forEach((text, i) => {
+          const btn = document.createElement("div");
+          btn.className = "option";
+          btn.textContent = text;
+          btn.onclick = () => selectAnswer(i);
+          optionsDiv.appendChild(btn);
+        });
+        document.getElementById("next-btn").style.display = "none";
+      }
 
-function selectAnswer(i){
-  const q = quizData[currentQuestion];
-  const score = i==0?2:i==1?1:0;
-  // punkty dla polskich partii
-  if(q.type=="polska") q.parties.forEach(p=>partyScores[p]=(partyScores[p]||0)+score);
-  if(q.type=="poglad") q.parties.forEach(p=>pogladScores[p]=(pogladScores[p]||0)+score);
-  if(q.type=="ue") q.parties.forEach(p=>ueScores[p]=(ueScores[p]||0)+score);
-  answers.push({question:q.q,answer:i==0?"Popieram":i==1?"Nie mam zdania":"Nie popieram",score:score});
-  currentQuestion++;
-  document.getElementById("next-btn").style.display="block";
-}
+      function selectAnswer(i) {
+        const q = quizData[currentQuestion];
+        const score = i == 0 ? 2 : i == 1 ? 1 : 0;
+        // punkty dla polskich partii
+        if (q.type == "polska")
+          q.parties.forEach(
+            (p) => (partyScores[p] = (partyScores[p] || 0) + score),
+          );
+        if (q.type == "poglad")
+          q.parties.forEach(
+            (p) => (pogladScores[p] = (pogladScores[p] || 0) + score),
+          );
+        if (q.type == "ue")
+          q.parties.forEach((p) => (ueScores[p] = (ueScores[p] || 0) + score));
+        answers.push({
+          question: q.q,
+          answer:
+            i == 0 ? "Popieram" : i == 1 ? "Nie mam zdania" : "Nie popieram",
+          score: score,
+        });
+        currentQuestion++;
+        document.getElementById("next-btn").style.display = "block";
+      }
 
-document.getElementById("next-btn").onclick=showQuestion;
+      document.getElementById("next-btn").onclick = showQuestion;
 
-function showResult(){
-  const resultDiv = document.getElementById("result");
-  const maxParty = Object.keys(partyScores).reduce((a,b)=>partyScores[a]>partyScores[b]?a:b,"Brak");
-  const maxPoglad = Object.keys(pogladScores).reduce((a,b)=>pogladScores[a]>pogladScores[b]?a:b,"Brak");
-  const maxUE = Object.keys(ueScores).reduce((a,b)=>ueScores[a]>ueScores[b]?a:b,"Brak");
-  resultDiv.innerHTML = `<h3>Twój profil polityczny:</h3>
+      function showResult() {
+        const resultDiv = document.getElementById("result");
+        const maxParty = Object.keys(partyScores).reduce(
+          (a, b) => (partyScores[a] > partyScores[b] ? a : b),
+          "Brak",
+        );
+        const maxPoglad = Object.keys(pogladScores).reduce(
+          (a, b) => (pogladScores[a] > pogladScores[b] ? a : b),
+          "Brak",
+        );
+        const maxUE = Object.keys(ueScores).reduce(
+          (a, b) => (ueScores[a] > ueScores[b] ? a : b),
+          "Brak",
+        );
+        resultDiv.innerHTML = `<h3>Twój profil polityczny:</h3>
     <p>Najbliższa partia w Polsce: <b>${maxParty}</b></p>
     <p>Najbliższy pogląd: <b>${maxPoglad}</b></p>
     <p>Najbliższa partia w UE: <b>${maxUE}</b></p>`;
-  document.getElementById("options").innerHTML="";
-  document.getElementById("next-btn").style.display="none";
-  document.getElementById("download-btn").style.display="block";
-}
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("download-btn").style.display = "block";
+      }
 
-document.getElementById("download-btn").onclick=function(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("📊 Quiz Polityczny - Spinner Games", 10, 20);
-  doc.setFontSize(12);
-  doc.text("Twoje odpowiedzi:", 10, 30);
-  let y=40;
-  answers.forEach((a,i)=>{
-    doc.text(`${i+1}. ${a.question}`,10,y);
-    y+=6;
-    doc.text(`Odpowiedź: ${a.answer} (punkty: ${a.score})`,12,y);
-    y+=8;
-    if(y>270){doc.addPage();y=20;}
-  });
-  doc.addPage();
-  doc.setFontSize(14);
-  doc.text("Wyniki końcowe:",10,20);
-  doc.text(`Najbliższa partia w Polsce: ${Object.keys(partyScores).reduce((a,b)=>partyScores[a]>partyScores[b]?a:b)}`,10,30);
-  doc.text(`Najbliższy pogląd: ${Object.keys(pogladScores).reduce((a,b)=>pogladScores[a]>pogladScores[b]?a:b)}`,10,40);
-  doc.text(`Najbliższa partia w UE: ${Object.keys(ueScores).reduce((a,b)=>ueScores[a]>ueScores[b]?a:b)}`,10,50);
-  doc.save("Quiz_Polityczny_Wyniki.pdf");
-}
+      document.getElementById("download-btn").onclick = function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(18);
+        doc.text("📊 Quiz Polityczny - Spinner Games", 10, 20);
+        doc.setFontSize(12);
+        doc.text("Twoje odpowiedzi:", 10, 30);
+        let y = 40;
+        answers.forEach((a, i) => {
+          doc.text(`${i + 1}. ${a.question}`, 10, y);
+          y += 6;
+          doc.text(`Odpowiedź: ${a.answer} (punkty: ${a.score})`, 12, y);
+          y += 8;
+          if (y > 270) {
+            doc.addPage();
+            y = 20;
+          }
+        });
+        doc.addPage();
+        doc.setFontSize(14);
+        doc.text("Wyniki końcowe:", 10, 20);
+        doc.text(
+          `Najbliższa partia w Polsce: ${Object.keys(partyScores).reduce((a, b) => (partyScores[a] > partyScores[b] ? a : b))}`,
+          10,
+          30,
+        );
+        doc.text(
+          `Najbliższy pogląd: ${Object.keys(pogladScores).reduce((a, b) => (pogladScores[a] > pogladScores[b] ? a : b))}`,
+          10,
+          40,
+        );
+        doc.text(
+          `Najbliższa partia w UE: ${Object.keys(ueScores).reduce((a, b) => (ueScores[a] > ueScores[b] ? a : b))}`,
+          10,
+          50,
+        );
+        doc.save("Quiz_Polityczny_Wyniki.pdf");
+      };
 
-showQuestion();
-</script>
-</body>
+      showQuestion();
+    </script>
+  </body>
 </html>

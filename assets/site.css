@@ -380,7 +380,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #a5a79a;
+  border-bottom: 1px solid var(--edge);
   width: 275px;
   padding: 10px 0;
 }
@@ -433,7 +433,7 @@ h2 {
   transition: background 0.18s;
 }
 .filter:hover {
-  background: #e8e5da;
+  background: var(--surface-2);
 }
 .filter.active {
   background: var(--ink);
@@ -533,7 +533,7 @@ h2 {
   color: var(--orange);
 }
 .favorite:hover {
-  background: #e7e3d7;
+  background: var(--surface-3);
   border-radius: 50%;
 }
 .card-desc {
@@ -598,7 +598,7 @@ h2 {
 }
 .site-footer {
   border-top: 1px solid var(--line);
-  background: #ece9df;
+  background: var(--surface-2);
 }
 .footer-main {
   display: flex;
@@ -692,7 +692,7 @@ dialog p {
   display: block;
   width: 100%;
   background: var(--white);
-  border: 1px solid #bcbeb2;
+  border: 1px solid var(--edge);
   border-radius: 3px;
   padding: 12px;
   margin-top: 6px;
@@ -725,7 +725,7 @@ dialog p {
   gap: 14px;
   align-items: center;
   justify-content: center;
-  border: 1px solid #bcbeb2;
+  border: 1px solid var(--edge);
   border-radius: 3px;
   width: 100%;
   padding: 12px;
@@ -746,7 +746,7 @@ dialog p {
 .message {
   padding: 12px;
   border-left: 3px solid var(--blue);
-  background: #e5e7ec;
+  background: var(--info-surface);
   font-size: 12px;
   line-height: 1.7;
 }
@@ -754,7 +754,7 @@ dialog p {
   display: none;
 }
 .message.error {
-  background: #f5e3d9;
+  background: var(--warning-surface);
   border-color: var(--orange);
 }
 .profile-details {
@@ -765,8 +765,8 @@ dialog p {
   overflow-wrap: anywhere;
 }
 .danger-button {
-  color: #a52d14;
-  border-color: #a52d14;
+  color: var(--game-red);
+  border-color: var(--game-red);
   margin-top: 15px;
 }
 .cookie-panel {
@@ -878,7 +878,7 @@ dialog p {
 .prose li {
   font-size: 14px;
   line-height: 1.9;
-  color: #4b4e44;
+  color: var(--muted);
 }
 .prose a {
   text-decoration: underline;

@@ -5,6 +5,8 @@ const CONTENT_PATH = SCOPE.pathname + "content/";
 const AAD_PREFIX = "spinner-others-v1\0";
 const SESSION_MS = 30 * 60 * 1000;
 const PUBLIC_PATHS = new Set([
+  "assets/theme.js",
+  "assets/theme.css",
   "assets/site.css",
   "assets/game.css",
   "assets/mark.svg",
@@ -70,7 +72,7 @@ async function liveSession() {
 }
 async function decryptFile(path, key, info) {
   const item = info.files[path];
-  if (!item || !/^data\/[a-f0-9]{64}\.enc$/.test(item.file))
+  if (!item || !/^data\/[a-f0-9]{64}(?:-[a-f0-9]{16})?\.enc$/.test(item.file))
     throw new Error("missing");
   const response = await fetch(new URL(item.file, SCOPE), {
     cache: "no-store",

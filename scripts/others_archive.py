@@ -96,6 +96,51 @@ def decrypt_collection(directory,password):
         result[path]=content
     return info,result
 
+def update_collection(directory, source, password):
+    """Publish edited files without exposing plaintext or replacing unchanged ciphertext.
+
+    New ciphertext is written before an atomic manifest switch. Interrupted updates
+    can leave unreferenced ciphertext, but cannot publish a partially updated index.
+    """
+    directory,source=Path(directory),Path(source)
+    info,previous=decrypt_collection(directory,password)
+    paths={}
+    for path in source.rglob('*'):
+        if path.is_symlink():raise ValueError('Symlink in update source tree')
+        if path.is_file():paths[path.relative_to(source).as_posix()]=path
+    if set(paths)!=set(previous):raise ValueError('Update must contain exactly the existing archive files')
+    contents={path:file.read_bytes() for path,file in paths.items()}
+    changed=[path for path in sorted(contents) if contents[path]!=previous[path]]
+    if not changed:return []
+    key,_=derive(password,base64.b64decode(info['kdf']['salt']))
+    aes=AESGCM(key)
+    ivs={directory.joinpath(item['file']).read_bytes()[:12] for item in info['files'].values()}
+    obsolete=[]
+    with tempfile.TemporaryDirectory(prefix='others-update-',dir=directory.parent) as temporary:
+        staging=Path(temporary)
+        for path in changed:
+            content=contents[path]
+            iv=os.urandom(12)
+            while iv in ivs:iv=os.urandom(12)
+            ivs.add(iv)
+            blob=iv+aes.encrypt(iv,content,AAD_PREFIX+path.encode('utf-8'))
+            name=hashlib.sha256(path.encode('utf-8')).hexdigest()+'-'+hashlib.sha256(blob).hexdigest()[:16]+'.enc'
+            target=staging/name;target.write_bytes(blob)
+            written=target.read_bytes()
+            if aes.decrypt(written[:12],written[12:],AAD_PREFIX+path.encode('utf-8'))!=content:
+                raise ValueError('Updated ciphertext verification failed')
+            obsolete.append(info['files'][path]['file'])
+            info['files'][path]={'file':'data/'+name,'mime':media_type(path),'size':len(content),
+                                 'sha256':hashlib.sha256(content).hexdigest()}
+        manifest=staging/'manifest.json'
+        manifest.write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n')
+        for path in changed:
+            destination=directory/info['files'][path]['file']
+            os.replace(staging/destination.name,destination)
+        os.replace(manifest,directory/'manifest.json')
+    for path in obsolete:directory.joinpath(path).unlink()
+    return changed
+
 def source_files(root):
     result=[]
     for name in SOURCE_ENTRIES:
@@ -148,13 +193,19 @@ def pack(root,password,remove):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=['pack','verify','restore'])
+    parser.add_argument('action',choices=['pack','verify','restore','update'])
     parser.add_argument('--root',type=Path,default=ROOT)
     parser.add_argument('--remove-sources',action='store_true')
     parser.add_argument('--destination',type=Path)
+    parser.add_argument('--source',type=Path)
     args=parser.parse_args()
     password=getpass.getpass('Archive password (not saved): ')
     if args.action=='pack':pack(args.root.resolve(),password,args.remove_sources)
+    elif args.action=='update':
+        if not args.source:parser.error('--source is required for update')
+        if args.source.resolve().is_relative_to(args.root.resolve()):parser.error('Update from outside the published checkout')
+        changed=update_collection(args.root/'others',args.source,password)
+        print(f'Updated and verified {len(changed)} encrypted files; unchanged ciphertext retained.')
     else:
         info,contents=decrypt_collection(args.root/'others',password)
         if args.action=='restore':
