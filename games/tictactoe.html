@@ -2,11 +2,11 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Kółko i Krzyżyk – SpinnerRealYT Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kółko i Krzyżyk – Spinner Games</title>
 
-<link rel="icon" type="image/png" href="../Logo.png?v=2">
-<link rel="apple-touch-icon" href="../Logo.png?v=2">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 
 <style>
 :root{
@@ -84,28 +84,28 @@ button#restart { background: var(--accent); color: #020617; font-weight: bold; b
 
 footer{ text-align:center; opacity:.6; padding:25px 10px; font-size: 12px; }
 </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 
 <body>
 
 <header>
-  <img src="../Logo.png" alt="SpinnerRealYT">
+  <img src="../assets/mark.svg" alt="SpinnerRealYT">
   <nav><button onclick="location.href='../index.html'">Menu</button></nav>
 </header>
 
 <main>
   <div class="card">
-    <h2>❌⭕ Kółko i Krzyżyk</h2>
+    <h2>Kółko i krzyżyk</h2>
 
     <div id="controls">
       <div class="row-ctrl">
         <span>Tryb:</span>
         <select id="difficulty">
-          <option value="pvp">👥 2 Graczy (Lokalnie)</option>
-          <option value="amator">🤖 AI: Amator</option>
-          <option value="easy">🤖 AI: Łatwy</option>
-          <option value="medium">🤖 AI: Średni</option>
-          <option value="hard">🤖 AI: Trudny</option>
+          <option value="pvp">2 graczy (lokalnie)</option>
+          <option value="amator">Komputer: Amator</option>
+          <option value="easy">Komputer: Łatwy</option>
+          <option value="medium">Komputer: Średni</option>
+          <option value="hard">Komputer: Trudny</option>
         </select>
       </div>
       <button id="restart">Nowa Gra</button>
@@ -116,7 +116,7 @@ footer{ text-align:center; opacity:.6; padding:25px 10px; font-size: 12px; }
   </div>
 </main>
 
-<footer>© 2026 SpinnerRealYT Games</footer>
+<footer>© 2026 Spinner Games</footer>
 
 <script>
 const boardEl = document.getElementById("board");
@@ -124,17 +124,21 @@ const statusEl = document.getElementById("status");
 const restartBtn = document.getElementById("restart");
 const difficultySelect = document.getElementById("difficulty");
 
-let board, gameOver, currentPlayer;
+let board, gameOver, currentPlayer, aiTimer = null;
 
 function init(){
+  clearTimeout(aiTimer);
+  aiTimer = null;
   board = Array(9).fill(null);
   gameOver = false;
   currentPlayer = "X"; 
   boardEl.innerHTML="";
   updateStatus();
-  
+
   for(let i=0;i<9;i++){
-    const cell=document.createElement("div");
+    const cell=document.createElement("button");
+    cell.type = "button";
+    cell.setAttribute("aria-label", "Pole " + (i + 1));
     cell.className="cell";
     cell.onclick=()=>makeMove(i);
     boardEl.appendChild(cell);
@@ -144,7 +148,7 @@ function init(){
 function updateStatus() {
   if (gameOver) return;
   const isPvP = difficultySelect.value === "pvp";
-  
+
   if (currentPlayer === "X") {
     statusEl.textContent = isPvP ? "Tura: Gracz 1 (❌)" : "Twój ruch (❌)";
     statusEl.style.color = "var(--accent)";
@@ -155,17 +159,17 @@ function updateStatus() {
 }
 
 function makeMove(i){
-  if(gameOver || board[i]) return;
-  
+  if(gameOver || board[i] || (difficultySelect.value !== "pvp" && currentPlayer !== "X")) return;
+
   board[i] = currentPlayer;
   render();
-  
+
   if(checkWin(currentPlayer)){
     const isPvP = difficultySelect.value === "pvp";
     const winner = currentPlayer === "X" ? (isPvP ? "Gracz 1 (❌)" : "Wygrałeś!") : (isPvP ? "Gracz 2 (⭕)" : "AI Wygrało!");
     return end(`🎉 ${winner} wygrywa!`);
   }
-  
+
   if(board.every(Boolean)) return end("🤝 Remis!");
 
   currentPlayer = currentPlayer === "X" ? "O" : "X";
@@ -173,19 +177,21 @@ function makeMove(i){
 
   // Jeśli nie PvP i kolej na "O", wykonaj ruch AI
   if (difficultySelect.value !== "pvp" && currentPlayer === "O") {
-    setTimeout(aiTurn, 500);
+    aiTimer = setTimeout(aiTurn, 500);
   }
 }
 
 function aiTurn(){
-  if(gameOver) return;
+  aiTimer = null;
+  if(gameOver || currentPlayer !== "O" || difficultySelect.value === "pvp") return;
   const move = getAIMove();
+  if (move === undefined) return;
   board[move] = "O";
   render();
-  
+
   if(checkWin("O")) return end("💀 Przegrałeś!");
   if(board.every(Boolean)) return end("🤝 Remis!");
-  
+
   currentPlayer = "X";
   updateStatus();
 }
@@ -196,7 +202,7 @@ function getAIMove(){
 
   if(level==="amator") return empty[Math.floor(Math.random()*empty.length)];
   if(level==="easy" && Math.random()<0.5) return empty[Math.floor(Math.random()*empty.length)];
-  
+
   if(level==="medium" || level==="hard"){
     const win = findWinningMove("O") ?? findWinningMove("X");
     if(win!==null) return win;
@@ -247,6 +253,8 @@ function render(){
   const cells = boardEl.children;
   board.forEach((val, i) => {
     cells[i].textContent = val || "";
+    cells[i].setAttribute("aria-label", "Pole " + (i + 1) + (val ? ": " + val : ": puste"));
+    cells[i].disabled = Boolean(val) || gameOver;
     if(val === "X") cells[i].className = "cell x-color";
     if(val === "O") cells[i].className = "cell o-color";
   });
@@ -254,10 +262,12 @@ function render(){
 
 function end(msg){
   gameOver = true;
+  render();
   statusEl.textContent = msg;
   statusEl.style.color = msg.includes("Remis") ? "#e5e7eb" : (currentPlayer === "X" ? "var(--accent)" : "#f87171");
 }
 
+difficultySelect.onchange = init;
 restartBtn.onclick = init;
 init();
 </script>

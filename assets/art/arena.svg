@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 430">
+  <rect width="600" height="430" fill="#50674a" />
+  <path
+    d="M-20 295q180-210 300-72t340-70"
+    stroke="#bcd1aa"
+    stroke-width="40"
+    fill="none"
+  />
+  <path
+    d="M-20 295q180-210 300-72t340-70"
+    stroke="#697e4b"
+    stroke-width="3"
+    stroke-dasharray="5 12"
+    fill="none"
+  />
+  <path
+    d="m162 113 18 48 48 18-48 18-18 48-18-48-48-18 48-18Z"
+    fill="#e5bb68"
+  />
+  <circle cx="390" cy="299" r="10" fill="#c96c42" />
+  <circle cx="450" cy="80" r="7" fill="#ecddbb" />
+</svg>

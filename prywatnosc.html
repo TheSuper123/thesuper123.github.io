@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Administrator, Firebase, dane logowania, cookies i lokalne preferencje w Spinner Games."
+    />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>Polityka prywatności — Spinner Games</title>
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script src="assets/storage.js" defer></script>
+    <script src="assets/site.js" defer></script>
+    <script src="assets/auth.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Przejdź do treści</a>
+    <div class="topline">
+      <span>MAŁA PRZERWA. DOBRA GRA.</span
+      ><span>BEZ POBIERANIA <i>✳</i> BEZ REKLAM</span>
+    </div>
+    <header class="site-header wrap">
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Spinner Games — strona główna"
+        ><img src="assets/mark.svg" width="38" height="38" alt="" /><span
+          >spinner<span class="brand-sub">NIEZALEŻNY SALON GIER</span></span
+        ></a
+      >
+      <nav aria-label="Menu główne">
+        <a href="index.html#gry">Gry <span class="tiny-arrow">↙</span></a
+        ><a href="o-serwisie.html">O salonie</a
+        ><button class="account-button" data-account>
+          <span class="account-dot"></span
+          ><span data-account-label>Twoje konto</span
+          ><span aria-hidden="true">↗</span>
+        </button>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="page-intro wrap">
+        <div class="eyebrow orange">
+          OSTATNIA AKTUALIZACJA: 20 PAŹDZIERNIKA 2026
+        </div>
+        <h1>Twoja prywatność.<br /><em>Jasne zasady.</em></h1>
+        <p>
+          Poniżej opisujemy dane potrzebne do działania serwisu i zapisy, o
+          których samodzielnie decydujesz.
+        </p>
+      </section>
+      <div class="prose wrap">
+        <h2>1. Administrator i kontakt</h2>
+        <p>
+          Administratorem danych osobowych w serwisie Spinner Games jest Marcel
+          Jaroszewski. Kontakt w sprawach danych osobowych i realizacji praw:
+          <a href="mailto:kontakt@spinnerrealyt.pl">kontakt@spinnerrealyt.pl</a
+          >. Nie wymagamy adresu zamieszkania ani numeru telefonu do utworzenia
+          konta.
+        </p>
+        <h2>2. Przeglądanie i infrastruktura</h2>
+        <p>
+          Strona jest udostępniana przez GitHub Pages (GitHub, Inc., grupa
+          Microsoft). Przy połączeniu dostawca hostingu otrzymuje dane
+          techniczne, takie jak adres IP, czas żądania, adres zasobu i
+          informacje o przeglądarce. Służą dostarczeniu strony oraz
+          bezpieczeństwu. Podstawą przetwarzania danych niezbędnych do ochrony
+          serwisu jest prawnie uzasadniony interes administratora, art. 6 ust. 1
+          lit. f RODO. Informacje o przetwarzaniu przez hosting znajdują się w
+          <a
+            href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+            rel="noopener noreferrer"
+            >polityce GitHub</a
+          >. Nie prowadzimy własnego systemu śledzenia odwiedzin.
+        </p>
+        <h2>3. Konto i Firebase Authentication</h2>
+        <p>
+          Założenie konta jest dobrowolne. Korzystamy z Firebase Authentication,
+          usługi Google. Biblioteki i połączenie z tą usługą są uruchamiane,
+          kiedy otworzysz panel konta albo wznowisz wcześniej rozpoczętą sesję.
+          Google otrzymuje wtedy dane techniczne połączenia.
+        </p>
+        <p>
+          Przy logowaniu e-mailem przetwarzane są adres e-mail, hasło
+          obsługiwane przez usługę uwierzytelniania, identyfikator konta (UID),
+          stan potwierdzenia adresu i opcjonalna nazwa wyświetlana. Przy wyborze
+          Google otrzymujemy dane podstawowego profilu udostępnione przez tę
+          usługę, np. nazwę, e-mail i identyfikator. Kod aplikacji nie zapisuje
+          hasła w localStorage ani nie tworzy publicznej listy adresów e-mail
+          przypisanych do nicków.
+        </p>
+        <p>
+          Dane służą utworzeniu i obsłudze konta, potwierdzaniu adresu, zmianie
+          danych i odzyskiwaniu dostępu. Podstawa: art. 6 ust. 1 lit. b RODO —
+          wykonanie usługi konta na Twoje żądanie. Dane przechowujemy przez czas
+          istnienia konta; po usunięciu dostawca może zachować ograniczone
+          zapisy bezpieczeństwa lub kopie zgodnie ze swoimi zasadami i
+          obowiązkami prawnymi.
+        </p>
+        <p>
+          Sesja logowania korzysta z niezbędnego zapisu Firebase w pamięci
+          przeglądarki; wybieramy trwałość sesyjną, bez opcji stałego logowania.
+          Jej faktyczne zakończenie może zależeć od przywracania sesji przez
+          przeglądarkę — na współdzielonym urządzeniu użyj „Wyloguj się”.
+          Logowanie Google może korzystać z cookies na domenach Google.
+        </p>
+        <h2>4. Cookies i pamięć urządzenia</h2>
+        <p>
+          Cookies i podobne mechanizmy, w tym localStorage, podlegają tym samym
+          zasadom wyboru. Nie używamy Google AdSense, reklamowych cookies,
+          Google Analytics ani pikseli marketingowych.
+        </p>
+        <ul>
+          <li>
+            <strong>Niezbędny zapis decyzji:</strong>
+            <code>spinner:consent:v1</code> w localStorage, maksymalnie 180 dni.
+            Zawiera wybór kategorii, wersję i datę decyzji. Nie jest
+            identyfikatorem reklamowym.
+          </li>
+          <li>
+            <strong>Niezbędna sesja konta:</strong> dane sesji Firebase i
+            znacznik <code>spinner:auth-active</code> w sessionStorage, po
+            uruchomieniu logowania. Służą wyłącznie utrzymaniu żądanej sesji.
+          </li>
+          <li>
+            <strong>Opcjonalne preferencje:</strong> klucze z prefiksem
+            <code>spinner:prefs:</code>, np. ulubione, ostatnio grane i lokalny
+            postęp. Zapisujemy je dopiero po zgodzie, do jej cofnięcia lub
+            usunięcia danych przeglądarki. Nie wysyłamy ich do chmurowego
+            rankingu.
+          </li>
+        </ul>
+        <p>
+          Podstawą opcjonalnego zapisu jest zgoda (art. 6 ust. 1 lit. a RODO,
+          jeżeli zapis obejmuje dane osobowe, oraz przepisy o dostępie do
+          pamięci urządzenia). Bez zgody gra działa, ale postęp i wybory
+          pozostają tylko w pamięci bieżącej strony. Cofnięcie zgody jest równie
+          łatwe jak jej udzielenie i usuwa zachowane preferencje, bez wpływu na
+          zgodność wcześniejszego przetwarzania.
+        </p>
+        <p>
+          <button class="button" data-cookie-settings>
+            Zmień ustawienia cookies ↗
+          </button>
+        </p>
+        <p>
+          <button class="link-button" data-clear-preferences>
+            Usuń lokalne wyniki, ulubione i historię gier
+          </button>
+        </p>
+        <h2>5. Starsza wersja serwisu</h2>
+        <p>
+          W starszej wersji serwisu część danych mogła być zapisana w Firebase
+          Realtime Database według nicku, w tym powiązanie nicku z e-mailem i
+          wyniki gier. Obecna wersja nie odczytuje ani nie zapisuje tej bazy.
+          Usunięcie konta logowania nie usuwa automatycznie tych historycznych
+          danych. Aby objąć żądaniem także dane historyczne, napisz na
+          <a href="mailto:kontakt@spinnerrealyt.pl">kontakt@spinnerrealyt.pl</a>
+          i podaj identyfikator używany w serwisie; nie przesyłaj hasła.
+        </p>
+        <h2>6. Odbiorcy i transfery danych</h2>
+        <p>
+          Dostawcami infrastruktury są GitHub / Microsoft oraz Google / Firebase
+          w zakresie uruchomionych przez Ciebie funkcji konta. Dane mogą być
+          przetwarzane poza Europejskim Obszarem Gospodarczym, w tym w USA.
+          Zastosowanie mają mechanizmy transferowe udostępniane przez dostawców,
+          np. standardowe klauzule umowne, a w stosownych przypadkach decyzje o
+          adekwatności. Szczegóły:
+          <a
+            href="https://firebase.google.com/support/privacy"
+            rel="noopener noreferrer"
+            >prywatność i bezpieczeństwo Firebase</a
+          >
+          oraz
+          <a
+            href="https://policies.google.com/privacy"
+            rel="noopener noreferrer"
+            >polityka Google</a
+          >.
+        </p>
+        <h2>7. Twoje prawa</h2>
+        <p>
+          W granicach RODO masz prawo dostępu do danych, ich sprostowania,
+          usunięcia, ograniczenia przetwarzania, przenoszenia danych oraz
+          wniesienia sprzeciwu wobec przetwarzania opartego na prawnie
+          uzasadnionym interesie. Zgodę możesz wycofać w każdej chwili. Żądania
+          zgłaszaj na adres administratora; w razie potrzeby poprosimy o
+          proporcjonalne potwierdzenie tożsamości. Nie wysyłaj nam hasła ani
+          dokumentu tożsamości bez ustalenia konieczności i bezpiecznej metody.
+        </p>
+        <p>
+          Konto logowania usuniesz w panelu „Twoje konto”, po ponownym
+          uwierzytelnieniu. Możesz też skontaktować się e-mailem. Masz prawo
+          złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych:
+          <a href="https://uodo.gov.pl/">uodo.gov.pl</a>.
+        </p>
+        <h2>8. Dobrowolność i automatyczne decyzje</h2>
+        <p>
+          Do grania nie jest potrzebne konto. Brak danych konta uniemożliwia
+          jedynie korzystanie z logowania i jego obsługi. Odmowa preferencji nie
+          ogranicza dostępu do gier. Nie prowadzimy profilowania reklamowego ani
+          podejmowania decyzji wywołujących skutki prawne w sposób wyłącznie
+          zautomatyzowany.
+        </p>
+        <h2>Szyfrowane archiwum others</h2>
+        <p>
+          Archiwum materiałów do przeglądu jest chronione wspólnym hasłem. Hasło
+          nie jest przesyłane do zewnętrznej usługi ani zapisywane w pamięci
+          trwałej. Przeglądarka wyprowadza klucz z użyciem PBKDF2 i losowej
+          soli, a pliki odszyfrowuje lokalnie. Klucz sesji pozostaje w pamięci
+          service workera; zamknięcie lub odświeżenie bramki blokuje dostęp, a
+          sesja trwa maksymalnie 30 minut. Rejestracja service workera jest
+          mechanizmem technicznym wymaganym do udostępnienia tej funkcji na
+          Twoje żądanie. Nie zapisujemy odszyfrowanych plików przez Cache API;
+          odpowiedzi są oznaczone jako no-store. Logi hostingu mogą obejmować
+          pobranie zaszyfrowanych plików na zasadach opisanych wyżej. Opcjonalny
+          zapis wyników pozostaje objęty wyborem preferencji.
+        </p>
+        <h2>9. Kontakt i zmiany</h2>
+        <p>
+          Gdy piszesz do nas, używamy adresu e-mail i treści wiadomości do
+          odpowiedzi (prawnie uzasadniony interes — art. 6 ust. 1 lit. f RODO;
+          przy realizacji praw również art. 6 ust. 1 lit. c). Korespondencję
+          przechowujemy przez czas obsługi sprawy, a dłużej tylko, gdy wymaga
+          tego obowiązek prawny lub ustalenie i obrona roszczeń. Nie przesyłaj
+          zbędnych danych. Zmiany usług wymagające innego przetwarzania zostaną
+          opisane w tej polityce; gdy potrzebna będzie nowa zgoda, poprosimy o
+          nią przed uruchomieniem funkcji.
+        </p>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand" href="index.html"
+          ><img src="assets/mark.svg" width="30" height="30" alt="" /><span
+            >spinner<span class="brand-sub"
+              >MAŁA PRZERWA. DOBRA GRA.</span
+            ></span
+          ></a
+        >
+        <div class="footer-links">
+          <a href="others/">Others — archiwum</a
+          ><a href="o-serwisie.html">O serwisie</a
+          ><a href="prywatnosc.html">Prywatność</a
+          ><button data-cookie-settings>Ustawienia cookies</button>
+        </div>
+        <span class="footer-note"
+          >Zagraj po swojemu. Wracaj, kiedy chcesz.</span
+        >
+      </div>
+      <div class="wrap footer-bottom">
+        <span>© <span data-year>2026</span> Spinner Games</span
+        ><span
+          >ZROBIONE DLA SAMEJ FRAJDY Z GRANIA
+          <span class="orange">✳</span></span
+        >
+      </div>
+    </footer>
+  </body>
+</html>

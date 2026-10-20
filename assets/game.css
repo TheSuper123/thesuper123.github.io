@@ -1,0 +1,243 @@
+/* Shared arcade cabinet treatment; canvas drawing and game rules stay independent. */
+@font-face {
+  font-family: DM;
+  src: url("fonts/sans.ttf") format("truetype");
+  font-weight: 100 1000;
+  font-display: swap;
+}
+:root {
+  --bg: #f4f1e8;
+  --card: #fffdf7;
+  --accent: #b43e21;
+  --text: #252720;
+  --danger: #bd3922;
+  --coin: #8c6319;
+  color-scheme: light;
+}
+html body {
+  background: #f4f1e8 !important;
+  color: #252720;
+  font-family: DM, Arial, sans-serif;
+  overflow-x: hidden;
+  touch-action: auto;
+}
+html header {
+  background: #f4f1e8;
+  border-bottom: 1px solid #d8d5ca;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+html header img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+html .card {
+  background: #fffdf7;
+  border: 1px solid #d8d5ca;
+  box-shadow: none;
+  border-radius: 5px;
+}
+html h2 {
+  font-size: 24px;
+  letter-spacing: -0.7px;
+  text-shadow: none;
+}
+html button,
+html select {
+  font-family: inherit;
+  border-radius: 4px;
+  box-shadow: none;
+  text-shadow: none;
+}
+html select {
+  background: #fffdf7;
+  color: #252720;
+  border-color: #bcbeb2;
+}
+html button {
+  background: #eeeade;
+  color: #252720;
+  border-color: #c8c5b8;
+}
+html button:hover {
+  border-color: #b43e21;
+}
+html button:focus-visible,
+html a:focus-visible,
+html select:focus-visible {
+  outline: 3px solid #3048b8;
+  outline-offset: 3px;
+}
+html footer {
+  font-size: 10px;
+  color: #65675d;
+  text-shadow: none;
+}
+html .sync-status,
+html #sync-display {
+  color: #65675d !important;
+}
+html .cell {
+  box-shadow: none;
+  text-shadow: none;
+}
+html #board .cell {
+  background: #e9e4d6;
+  border-color: #d3cdbd;
+}
+html #board .x-color {
+  color: #b43e21;
+}
+html #board .o-color {
+  color: #3048b8;
+}
+html #board button.cell {
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+html #game .cell {
+  color: #252720;
+}
+html #game .cell.open {
+  background: #e8e3d7;
+}
+html #game .cell.flagged {
+  background: #e4d8b9;
+}
+html #game .cell.mine {
+  background: #f2b19f;
+}
+html .modal,
+html .overlay-content {
+  background: #fffdf7;
+  color: #252720;
+  border-radius: 5px;
+}
+html #overlay {
+  background: #f4f1e8ed;
+  color: #252720;
+}
+html #overlay h3,
+html #overlay p {
+  color: #252720 !important;
+}
+html #overlay button {
+  background: #252720;
+  color: #f4f1e8;
+}
+html #game-container,
+html #canvas-container {
+  border-color: #474d40;
+  border-radius: 4px;
+}
+html .ctrl-btn,
+html .joy-btn {
+  background: #ece7db;
+  color: #252720;
+  border-color: #bcbeb2;
+  border-radius: 4px;
+}
+html .back-btn {
+  background: #252720;
+  color: #f4f1e8;
+  border-radius: 4px;
+}
+html .stats-bar .stat-item {
+  background: #eae5d9;
+  border-color: #d5d0c3;
+  color: #252720;
+}
+html .active-mode {
+  background: #252720 !important;
+  color: #f4f1e8 !important;
+}
+html .embedded body > header,
+html .embedded body > footer {
+  display: none;
+}
+html.embedded body > header,
+html.embedded body > footer {
+  display: none;
+}
+html.embedded main {
+  padding-top: 20px;
+}
+canvas {
+  max-width: 100%;
+  touch-action: none;
+}
+html .status-text {
+  color: #252720;
+}
+html .rank-info {
+  color: #65675d;
+}
+html details summary {
+  cursor: pointer;
+}
+html #restart,
+html #start-btn,
+html .btn-start {
+  background: #252720;
+  color: #f4f1e8;
+  border-color: #252720;
+}
+html #board button.cell {
+  font-size: clamp(28px, 8vw, 48px);
+  border: 1px solid #d3cdbd;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  border-radius: 4px;
+}
+html #board button.cell:disabled {
+  opacity: 1;
+  cursor: default;
+}
+html.embedded main > .card > h2 {
+  display: none;
+}
+html .x-color {
+  color: #b43e21 !important;
+}
+html .o-color {
+  color: #3048b8 !important;
+}
+@media (max-width: 480px) {
+  html .card {
+    padding: 12px;
+  }
+  html header {
+    padding: 10px 15px;
+  }
+  html main {
+    padding-inline: 10px;
+  }
+  html canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  html #tetris-canvas {
+    max-height: 58dvh;
+    width: auto;
+    max-width: 100%;
+  }
+  html #game .cell {
+    min-width: 0;
+  }
+  html #board {
+    max-width: 100%;
+  }
+  html .cookie-panel {
+    touch-action: auto;
+  }
+  html #controls-mobile {
+    gap: 7px;
+  }
+  html .ctrl-btn {
+    padding: 12px;
+  }
+}

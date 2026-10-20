@@ -2,10 +2,10 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Saper - SpinnerRealYT Games</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saper - Spinner Games</title>
+
+
     <style>
         body { background: #020617; color: white; font-family: 'Inter', sans-serif; text-align: center; margin: 0; overflow-x: hidden; }
         #menu { padding: 15px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(56, 189, 248, 0.2); }
@@ -25,10 +25,10 @@
         img.logo { width: 80px; display: block; margin: 15px auto; filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4)); }
         .rules-note { font-size: 11px; color: #64748b; margin-top: 5px; }
     </style>
-</head>
+<link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/game.css"><script src="assets/storage.js"></script><script src="assets/progress.js"></script><script src="assets/site.js" defer></script><script src="assets/game-ui.js" defer></script></head>
 <body>
 
-<img src="Logo.png" alt="Logo" class="logo">
+<img src="assets/mark.svg" alt="Logo" class="logo">
 
 <div id="menu">
     Rozmiar: <input type="number" id="grid-size" value="9" min="5" max="100">
@@ -53,12 +53,8 @@
 <script>
 (() => {
     // --- KONFIGURACJA FIREBASE ---
-    const firebaseConfig = { 
-        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const loggedUser = localStorage.getItem("sp_logged");
+    const db = ArcadeProgress.database();
+    const loggedUser = ArcadeProgress.playerId;
 
     let ROWS = 9, COLS = 9, MINES_COUNT = 10;
     const gameEl = document.getElementById('game');
@@ -110,7 +106,7 @@
         const cellSize = Math.floor(Math.min(availableWidth / COLS, availableHeight / ROWS, 40));
 
         gameEl.style.gridTemplateColumns = `repeat(${COLS}, ${cellSize}px)`;
-        
+
         for(let i=0; i<ROWS*COLS; i++){
             const cell = document.createElement('div');
             cell.classList.add('cell');
@@ -203,7 +199,7 @@
         if(gameOver) return;
         gameOver = true;
         infoEl.textContent = "🎉 WYGRANA!";
-        
+
         // --- LOGIKA PUNKTACJI ---
         if(ROWS === 9 && COLS === 9) {
             points++;

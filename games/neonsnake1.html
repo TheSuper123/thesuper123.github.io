@@ -2,19 +2,19 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Neon Snake – SpinnerRealYT Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Snake – Spinner Games</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#020617">
 
-<link rel="icon" type="image/png" href="../Logo.png?v=2">
-<link rel="apple-touch-icon" href="../Logo.png?v=2">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
+
+
 
 <style>
 :root{
@@ -129,12 +129,12 @@ select, .start-btn {
 
 footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
 </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 <body>
 
 <header>
   <div style="display:flex; align-items:center; gap:10px;">
-    <img src="../Logo.png" alt="SpinnerRealYT">
+    <img src="../assets/mark.svg" alt="SpinnerRealYT">
     <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
   </div>
   <div class="account-box">
@@ -148,7 +148,7 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
     <h2>🐍 Neon Snake</h2>
 
     <div class="score-header">Score: <span id="score-num">0</span></div>
-    
+
     <div id="game-container">
         <canvas id="game" width="300" height="300"></canvas>
         <div id="overlay">
@@ -172,19 +172,11 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
   </div>
 </main>
 
-<footer>© 2026 SpinnerRealYT Games • iOS 26 Optimized</footer>
+<footer>© 2026 Spinner Games • Graj po swojemu</footer>
 
 <script>
-const firebaseConfig = { 
-    apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-    authDomain: "spinnerrealyt-games.firebaseapp.com",
-    databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
-const loggedUser = localStorage.getItem("sp_logged");
+const db = ArcadeProgress.database();
+const loggedUser = ArcadeProgress.playerId;
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -199,10 +191,11 @@ let food = {};
 let score = 0;
 let highScore = 0;
 let d = "RIGHT";
+let directionChanged = false;
 let game;
 
-auth.onAuthStateChanged(user => {
-    if(user && loggedUser) {
+ArcadeProgress.onReady(user => {
+    if(loggedUser) {
         document.getElementById('user-display').textContent = loggedUser.toUpperCase();
         loadSnakeScore();
     }
@@ -212,8 +205,8 @@ async function loadSnakeScore() {
     try {
         const snap = await db.ref('users/' + loggedUser + '/SnakeScore').once('value');
         highScore = snap.exists() ? snap.val() : 0;
-        bestEl.textContent = "Best SnakeScore: " + highScore;
-        syncEl.textContent = "Synced";
+        bestEl.textContent = "Rekord: " + highScore;
+        syncEl.textContent = "Zapis lokalny";
         syncEl.style.color = "#4ade80";
     } catch(e) { syncEl.textContent = "Error"; }
 }
@@ -225,6 +218,7 @@ function startGame() {
     score = 0;
     scoreEl.textContent = score;
     d = "RIGHT";
+    directionChanged = false;
     spawnFood(gridSize);
     overlay.style.display = "none";
     if(game) clearInterval(game);
@@ -232,27 +226,29 @@ function startGame() {
 }
 
 function spawnFood(gridSize) {
-    food = {
-        x: Math.floor(Math.random() * gridSize) * box,
-        y: Math.floor(Math.random() * gridSize) * box
-    };
+    const free = [];
+    for (let y = 0; y < gridSize; y++) for (let x = 0; x < gridSize; x++) {
+        const cell = {x: x * box, y: y * box};
+        if (!snake.some(part => part.x === cell.x && part.y === cell.y)) free.push(cell);
+    }
+    if (!free.length) { clearInterval(game); gameOver(); return; }
+    food = free[Math.floor(Math.random() * free.length)];
 }
 
 function changeDir(dir) {
-    if(dir == "LEFT" && d != "RIGHT") d = "LEFT";
-    else if(dir == "UP" && d != "DOWN") d = "UP";
-    else if(dir == "RIGHT" && d != "LEFT") d = "RIGHT";
-    else if(dir == "DOWN" && d != "UP") d = "DOWN";
+    if (directionChanged) return;
+    const opposite = {LEFT:"RIGHT",RIGHT:"LEFT",UP:"DOWN",DOWN:"UP"};
+    if (opposite[d] === dir || d === dir) return;
+    d = dir; directionChanged = true;
 }
 
 document.addEventListener("keydown", e => {
-    if(e.keyCode == 37 && d != "RIGHT") d = "LEFT";
-    else if(e.keyCode == 38 && d != "DOWN") d = "UP";
-    else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT";
-    else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+    const direction = {ArrowLeft:"LEFT",ArrowRight:"RIGHT",ArrowUp:"UP",ArrowDown:"DOWN"}[e.key];
+    if (direction) { e.preventDefault(); changeDir(direction); }
 });
 
 function draw(gridSize) {
+    directionChanged = false;
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -278,7 +274,9 @@ function draw(gridSize) {
     if(snakeX == food.x && snakeY == food.y) {
         score++;
         scoreEl.textContent = score;
+        snake.unshift({ x: snakeX, y: snakeY });
         spawnFood(gridSize);
+        snake.shift();
     } else {
         snake.pop();
     }
@@ -288,6 +286,7 @@ function draw(gridSize) {
     if(snakeX < 0 || snakeX >= 300 || snakeY < 0 || snakeY >= 300 || collision(newHead, snake)) {
         clearInterval(game);
         gameOver();
+        return;
     }
 
     snake.unshift(newHead);
@@ -307,10 +306,10 @@ async function gameOver() {
     document.getElementById("status").textContent = "Wynik: " + score;
     if(score > highScore) {
         highScore = score;
-        bestEl.textContent = "Best SnakeScore: " + highScore;
+        bestEl.textContent = "Rekord: " + highScore;
         if(loggedUser) {
             await db.ref('users/' + loggedUser).update({ SnakeScore: highScore });
-            syncEl.textContent = "Saved";
+            syncEl.textContent = "Zapis lokalny";
         }
     }
 }

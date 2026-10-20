@@ -1,0 +1,27 @@
+# Spinner Games
+
+Statyczny salon gier w HTML, CSS i JavaScript. Własne ilustracje wektorowe, fonty serwowane lokalnie, katalog z wyszukiwaniem, ulubione, opcjonalny zapis lokalny i konto Firebase Authentication. Bez reklam i analityki.
+
+Uruchom serwer z katalogu repozytorium:
+
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Testy przeglądarkowe (Python Playwright i Chromium):
+
+```sh
+python3 tests/smoke.py
+python3 tests/test_others.py
+```
+
+- [Uruchomienie, Firebase, zakres testów i działania przed publikacją](docs/URUCHOMIENIE-I-BEZPIECZENSTWO.md)
+- [Lista materiałów wymagających wyjaśnienia praw](docs/PRAWA-DO-MATERIALOW.md)
+- `assets/catalog.js` — opis i lista gier.
+- `assets/site.css`, `assets/art/` — oprawa serwisu.
+- `assets/storage.js` — wybór zgód i zapis preferencji.
+- `assets/auth.js` — konto; bez odczytu historycznej bazy nicków.
+
+Materiały do weryfikacji wydzielono do szyfrowanego [others](others/README.md), dostępnego przez `others/index.html`. Publiczny katalog ma 8 gier. Nowa samodzielna gra zręcznościowa nazywa się Mały lot. Starsze pliki są dostępne wyłącznie po odszyfrowaniu w bieżącym drzewie, ale mogą nadal znajdować się w historii Git i poprzednich publikacjach. Nowa oprawa nie potwierdza praw do dawnych zasobów ani akceptacji przez Google.
+
+Podglądy: [komputer](docs/screenshots/desktop.png), [telefon](docs/screenshots/mobile.png), [ekran gry](docs/screenshots/game-mobile.png).

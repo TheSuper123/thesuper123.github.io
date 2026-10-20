@@ -2,12 +2,12 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon Tree Exploration – SpinnerRealYT Ultimate</title>
-    <link rel="icon" href="../Logo.png">
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+
 
     <style>
         :root {
@@ -25,7 +25,7 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
+
         body {
             margin: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -95,7 +95,7 @@
         .up-num { font-size: 11px; font-weight: 900; color: var(--gold); opacity: 0.8; margin-bottom: 5px; }
         .node b { font-size: 16px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .node i { font-size: 12px; opacity: 0.7; font-style: normal; margin: 8px 0; height: 32px; overflow: hidden; line-height: 1.2; }
-        
+
         .lvl-badge {
             font-size: 12px;
             background: rgba(255,255,255,0.07);
@@ -180,7 +180,7 @@
 
         .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .stats-header h3 { margin: 0; font-size: 14px; letter-spacing: 1px; color: var(--text); opacity: 0.8; }
-        
+
         .admin-btn-small {
             width: 24px; height: 24px; background: var(--void); border: none; 
             border-radius: 6px; color: white; font-weight: 900; cursor: pointer; 
@@ -225,7 +225,7 @@
             border-radius: 12px; color: white; font-size: 18px; margin: 20px 0; text-align: center;
         }
 
-        /* ADMIN PANEL GRID */
+        /* PIASKOWNICA GRID */
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .admin-btn {
             background: var(--path); color: white; border: none; padding: 12px;
@@ -244,7 +244,7 @@
             100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
     </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 <body class="zone-void">
 
 <div id="ui-top">
@@ -264,7 +264,7 @@
 <div id="stats-menu">
     <div class="stats-header">
         <h3>SYSTEM MONITORINGU</h3>
-        <button id="admin-question-btn" class="admin-btn-small" onclick="openAdminAuth()">?</button>
+        <button id="admin-question-btn" class="admin-btn-small" onclick="openPiaskownicaAuth()">?</button>
     </div>
     <div class="stat-line"><span>Waluta Delta:</span> <span id="st-val-delta">0</span></div>
     <div class="stat-line"><span>Waluta Neon:</span> <span id="st-val-neon">0</span></div>
@@ -275,11 +275,11 @@
 
 <div id="modal-admin-auth" class="modal-overlay">
     <div class="modal-box">
-        <h2 style="color:var(--gold)">AUTORYZACJA NADZORCY</h2>
-        <p style="opacity:0.7">Wprowadź klucz bezpieczeństwa SpinnerRealYT</p>
-        <input type="password" id="admin-pass-input" class="input-field" placeholder="KOD DOSTĘPU...">
+        <h2 style="color:var(--gold)">NARZĘDZIA PIASKOWNICY</h2>
+        <p style="opacity:0.7">Eksperymentuj z lokalną rozgrywką.</p>
+        <p>Te narzędzia zmieniają wyłącznie lokalną rozgrywkę.</p>
         <div style="display:flex; gap:10px;">
-            <button class="admin-btn" style="flex:1; background:var(--success)" onclick="checkAdminPass()">WEJDŹ</button>
+            <button class="admin-btn" style="flex:1; background:var(--success)" onclick="checkPiaskownicaPass()">WEJDŹ</button>
             <button class="admin-btn" style="flex:1; background:var(--danger)" onclick="closeModals()">ANULUJ</button>
         </div>
     </div>
@@ -287,9 +287,9 @@
 
 <div id="modal-admin-panel" class="modal-overlay">
     <div class="modal-box" style="max-width:550px">
-        <h1 style="color:var(--accent); margin:0;">ADMIN PANEL</h1>
+        <h1 style="color:var(--accent); margin:0;">PIASKOWNICA</h1>
         <p style="font-size:12px; margin-bottom:20px;">Witaj Spinner! Zarządzaj światem gry.</p>
-        
+
         <div class="admin-grid">
             <button class="admin-btn" onclick="adminAddPoints(100000)">+100K DELTA</button>
             <button class="admin-btn" onclick="adminAddPoints(1000000)">+1M DELTA</button>
@@ -298,7 +298,7 @@
             <button class="admin-btn" onclick="adminResetData()" style="background:var(--danger)">RESETUJ MOJE DANE</button>
             <button class="admin-btn" onclick="saveData()" style="background:var(--success)">WYMUŚ ZAPIS DB</button>
         </div>
-        
+
         <button class="admin-btn" style="width:100%; margin-top:20px; padding:15px;" onclick="closeModals()">ZAMKNIJ PANEL</button>
     </div>
 </div>
@@ -324,12 +324,9 @@
 
 <script>
     // --- KONFIGURACJA BAZY ---
-    const firebaseConfig = { databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const db = ArcadeProgress.database();
 
-    const user = localStorage.getItem("sp_logged") || "Gosc";
-    const pass = localStorage.getItem("sp_pass") || "";
+    const user = ArcadeProgress.playerId || "Gosc";
 
     // Stan gry
     let state = {
@@ -364,9 +361,9 @@
         const menu = document.getElementById('stats-menu');
         const isOpen = menu.style.display === 'flex';
         menu.style.display = isOpen ? 'none' : 'flex';
-        
+
         // Sprawdzanie czy użytkownik to spinneryt
-        if(user.toLowerCase() === "spinneryt") {
+        if(true) {
             document.getElementById('admin-question-btn').style.display = 'block';
         }
     }
@@ -380,7 +377,7 @@
         }
     }
 
-    function openAdminAuth() {
+    function openPiaskownicaAuth() {
         document.getElementById('modal-admin-auth').style.display = 'flex';
     }
 
@@ -388,25 +385,19 @@
         document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
     }
 
-    function checkAdminPass() {
-        const input = document.getElementById('admin-pass-input').value;
-        // Hasło admina (możesz zmienić na własne)
-        if(input === "spinner123" || input === pass) {
-            closeModals();
-            document.getElementById('modal-admin-panel').style.display = 'flex';
-        } else {
-            alert("BŁĘDNE HASŁO!");
-        }
+    function checkPiaskownicaPass() {
+        closeModals();
+        document.getElementById('modal-admin-panel').style.display = 'flex';
     }
 
-    // --- FUNKCJE ADMINA ---
+    // --- NARZĘDZIA PIASKOWNICY ---
     function adminAddPoints(amt) { state.points += amt; }
     function adminUnlockAll() {
         for(let key in nodes) if(!state.unlockedNodes.includes(key)) state.unlockedNodes.push(key);
     }
     function adminSuperSpeed() { state.speed = 40; }
     function adminResetData() {
-        if(confirm("Czy na pewno wyczyścić dane z Firebase?")) {
+        if(confirm("Czy usunąć lokalny zapis tej gry?")) {
             db.ref('users/' + user + '/stats/neon_tree').remove();
             location.reload();
         }
@@ -468,10 +459,10 @@
         if (keys['d'] || keys['arrowright']) dx += state.speed;
 
         state.pX += dx; state.pY += dy;
-        
+
         const vw = window.innerWidth, vh = window.innerHeight;
         document.getElementById('world-map').style.transform = `translate(${vw/2 - state.pX}px, ${vh/2 - state.pY}px)`;
-        
+
         const pEl = document.getElementById('player');
         pEl.style.left = (state.pX - 18) + 'px';
         pEl.style.top = (state.pY - 18) + 'px';
@@ -482,7 +473,7 @@
             const lvl = state.purchasedLevels[id] || 0;
             const currentCost = Math.floor(n.cost * Math.pow(1.15, lvl));
             const dist = Math.hypot(state.pX - n.x, state.pY - n.y);
-            
+
             if (dist < 100 && state.points >= currentCost && lvl < n.max) {
                 state.points -= currentCost;
                 state.purchasedLevels[id] = lvl + 1;
@@ -534,7 +525,7 @@
 
                 if(state.points >= cost && lvl < n.max) el.classList.add('can-afford');
                 else el.classList.remove('can-afford');
-                
+
                 if(lvl >= n.max) el.classList.add('maxed');
 
                 if (lvl > 0 && n.next) {

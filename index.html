@@ -1,403 +1,202 @@
-<!DOCTYPE html> 
-<html lang="pl" style="background-color: #020617;"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
-    <meta name="description" content="SpinnerRealYT Games – graj w klasyczne i nowe gry online, śledź postępy i wygrywaj nagrody w premiumowej platformie gamingowej.">
-    <title>SpinnerRealYT Games | Premium Gaming</title> 
-    <link rel="icon" href="Logo.png"> 
-
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script> 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script> 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6220227113216464" crossorigin="anonymous"></script>
-
-    <style> 
-        :root { 
-            --bg: #020617; 
-            --card: rgba(15, 23, 42, 0.7); 
-            --card-border: rgba(56, 189, 248, 0.2); 
-            --accent: #38bdf8; 
-            --accent-glow: rgba(56, 189, 248, 0.4); 
-            --text: #f1f5f9; 
-            --text-dim: #94a3b8; 
-            --danger: #fb7185; 
-            --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
-        } 
-
-        * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; } 
-        body { 
-            margin: 0; font-family: 'Inter', sans-serif; 
-            background: var(--bg); color: var(--text); 
-            min-height: 100vh; overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, transparent 50%);
-            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-        } 
-
-        header { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 15px 5%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px); 
-            border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 1000; 
-        } 
-
-        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; } 
-        .logo-area img { height: 38px; } 
-        .logo-area span { font-weight: 800; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } 
-
-        .btn-base { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
-            color: var(--text); padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            display: flex; align-items: center; justify-content: center;
-        } 
-        .btn-base:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); } 
-        .btn-base:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .btn-google {
-            background: #fff; color: #000; border: none; width: 100%; padding: 12px;
-            border-radius: 12px; font-weight: bold; margin-bottom: 15px; display: flex;
-            align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-google img { height: 18px; }
-
-        .user-pill {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid var(--accent);
-            padding: 5px 15px; border-radius: 20px;
-            cursor: pointer; font-weight: bold;
-            color: var(--accent); text-transform: uppercase;
-            font-size: 13px; letter-spacing: 1px;
-        }
-        
-        main { max-width: 1200px; margin: auto; padding: 40px 20px; } 
-        .hero { text-align: center; margin-bottom: 60px; }
-        .hero h1 { font-size: 3.5rem; margin: 0; letter-spacing: -2px; }
-
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; } 
-        .game-card { 
-            background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; 
-            padding: 40px 20px; text-align: center; cursor: pointer; position: relative;
-        } 
-        .game-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(15, 23, 42, 0.9); }
-        .tag { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 6px; }
-
-        .web-section { margin-top: 50px; text-align: center; border-top: 1px solid var(--card-border); padding-top: 30px; }
-        .web-btn {
-            background: rgba(56, 189, 248, 0.05); border: 1px solid var(--card-border);
-            color: var(--text-dim); padding: 10px 20px; border-radius: 10px;
-            font-weight: 600; font-size: 13px; cursor: pointer; margin: 5px;
-        }
-        .web-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
-            display: none; align-items: center; justify-content: center; z-index: 9999; 
-        } 
-        .modal-overlay.active { display: flex; } 
-        .modal { 
-            width: 92%; max-width: 420px; background: #0f172a; 
-            padding: 25px; border-radius: 30px; border: 1px solid var(--card-border); 
-            box-shadow: 0 0 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
-            position: relative;
-        } 
-
-        .auth-input { 
-            width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; 
-            background: #1e293b; border: 1px solid #334155; color: white; outline: none; font-size: 14px;
-        }
-        .auth-input:focus { border-color: var(--accent); }
-        
-        .error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; background: rgba(251, 113, 133, 0.1); padding: 8px; border-radius: 8px;} 
-        .success { color: #4ade80; font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 8px;} 
-
-        .profile-avatar { 
-            width: 60px; height: 60px; background: var(--grad); 
-            border-radius: 50%; margin: 0 auto 10px; 
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: #000; font-weight: 900;
-        }
-
-        .settings-section { border-top: 1px solid #334155; margin-top: 20px; padding-top: 15px; }
-        .settings-section h4 { margin: 0 0 10px; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .btn-small { padding: 8px 12px; font-size: 12px; margin-top: 5px; width: 100%; }
-        .btn-danger { background: rgba(251, 113, 133, 0.1); border: 1px solid var(--danger); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; }
-
-        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 13px; margin-top: 30px; }
-    </style> 
-</head> 
-<body> 
-
-<header> 
-    <div class="logo-area" onclick="location.reload()"> 
-        <img src="Logo.png" alt="Logo"> 
-        <span>SPINNER GAMES</span> 
-    </div> 
-    <nav id="nav-auth-container"></nav> 
-</header> 
-
-<main> 
-    <div class="hero">
-        <h1>Graj i <span style="color:var(--accent)">Wygrywaj</span></h1>
-        <p style="color:var(--text-dim)">Wszystkie gry w zasięgu Twojej ręki.</p>
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Mała przerwa, dobra gra. Spinner Games: gry zręcznościowe, łamigłówki i klasyki w przeglądarce. Bez pobierania i bez reklam."
+    />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>Spinner Games — jeszcze jedna runda.</title>
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="assets/fonts/sans.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script src="assets/storage.js" defer></script>
+    <script src="assets/site.js" defer></script>
+    <script src="assets/catalog.js" defer></script>
+    <script src="assets/auth.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Przejdź do treści</a>
+    <div class="topline">
+      <span>MAŁA PRZERWA. DOBRA GRA.</span
+      ><span>BEZ POBIERANIA <i>✳</i> BEZ REKLAM</span>
     </div>
-    <div class="game-grid" id="game-grid"></div> 
-
-    <div class="web-section">
-        <h3 style="color: var(--text); margin-bottom: 15px; font-weight: 800;">Nasze strony internetowe</h3>
-        <button class="web-btn" onclick="showWebConfirm('https://www.spinnerrealyt.pl/', 'spinnerrealyt.pl')">spinnerrealyt.pl</button>
-        <button class="web-btn" onclick="showWebConfirm('https://www.spinnerrealyt.ovh/', 'spinnerrealyt.ovh')">spinnerrealyt.ovh</button>
-    </div>
-</main> 
-
-<footer>© 2026 SpinnerRealYT Games</footer>
-
-<div id="confirm-overlay" class="modal-overlay">
-    <div class="modal" style="text-align: center;">
-        <h2 style="margin: 0 0 15px; color: var(--accent);">Opuszczasz stronę</h2>
-        <p id="confirm-web-text" style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px;"></p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-base" onclick="closeModals()" style="flex: 1;">Anuluj</button>
-            <button id="confirm-web-go" class="btn-base" style="flex: 1; background: var(--accent); color: #000; border: none;">Przejdź</button>
-        </div>
-    </div>
-</div>
-
-<div id="auth-overlay" class="modal-overlay"> 
-    <div class="modal"> 
-        <h2 id="auth-title" style="margin-top:0">Zaloguj się</h2> 
-        <div id="auth-msg"></div> 
-
-        <button class="btn-google" onclick="loginWithGoogle()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
-            Zaloguj przez Google
+    <header class="site-header wrap">
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Spinner Games — strona główna"
+        ><img src="assets/mark.svg" width="38" height="38" alt="" /><span
+          >spinner<span class="brand-sub">NIEZALEŻNY SALON GIER</span></span
+        ></a
+      >
+      <nav aria-label="Menu główne">
+        <a href="#gry" class="nav-current"
+          >Gry <span class="tiny-arrow">↙</span></a
+        ><a href="o-serwisie.html">O salonie</a
+        ><button class="account-button" data-account>
+          <span class="account-dot"></span
+          ><span data-account-label>Twoje konto</span
+          ><span aria-hidden="true">↗</span>
         </button>
-
-        <div style="text-align:center; color:gray; font-size:12px; margin-bottom:15px;">LUB E-MAIL</div>
-
-        <input type="text" id="auth-user" class="auth-input" placeholder="Nick"> 
-        <div id="reg-fields"></div>
-        <input type="password" id="auth-pass" class="auth-input" placeholder="Hasło"> 
-        <button class="btn-base" id="auth-submit" style="width:100%; background: var(--accent); color: #000; border:none; font-weight: bold; padding:15px; margin-bottom:10px;">POTWIERDŹ</button> 
-        <p id="forgot-pass" style="text-align:center; cursor:pointer; font-size: 12px; color: var(--text-dim);" onclick="resetPassword()">Zapomniałeś hasła?</p>
-        <p id="auth-switch" style="text-align:center; cursor:pointer; font-size: 14px; margin-top: 15px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p> 
-        <button class="btn-base" onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px;">Zamknij</button>
-    </div> 
-</div> 
-
-<div id="profile-overlay" class="modal-overlay">
-    <div class="modal">
-        <div id="profile-msg"></div>
-        <div style="text-align: center;">
-            <div id="prof-avatar" class="profile-avatar">S</div>
-            <h2 id="prof-nick" style="margin: 0; color: var(--accent);">NICK</h2>
-            <p id="prof-email" style="color: var(--text-dim); font-size: 13px; margin: 5px 0 15px;"></p>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="hero wrap" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow">
+            <span class="small-cross">✳</span> OTWARTE NA MAŁĄ PRZERWĘ
+          </div>
+          <h1 id="hero-title">
+            Jeszcze<br /><em>jedna</em> runda<span class="orange">.</span>
+          </h1>
+          <p>
+            Te gry znasz. Tego miejsca jeszcze nie.<br />Wybierz swój klasyk i
+            daj sobie chwilę.
+          </p>
+          <a class="button primary" href="#gry"
+            >Znajdź swoją grę <span aria-hidden="true">↘</span></a
+          >
+          <div class="hero-footnote">
+            <span class="mini-line"></span> Żadnych instalacji. Po prostu grasz.
+          </div>
         </div>
-
-        <div class="settings-section">
-            <h4>Zmień adres E-mail</h4>
-            <input type="email" id="new-email" class="auth-input" placeholder="Nowy e-mail">
-            <button class="btn-base btn-small" onclick="updateEmail()">Zaktualizuj E-mail</button>
+        <div class="hero-art">
+          <span class="art-caption">SPINNER OBJECTS / 001</span
+          ><img
+            src="assets/art/arcade.svg"
+            width="640"
+            height="640"
+            alt="Autorska ilustracja pomarańczowego automatu arcade z wężem na ekranie"
+          />
+          <div class="round-stamp" aria-hidden="true">
+            TAK SIĘ<br />ROBI PRZERWĘ<span>↙</span>
+          </div>
+          <span class="art-bottom">INSERT TIME, NOT COINS.</span>
         </div>
-
-        <div class="settings-section">
-            <h4>Zmień Hasło</h4>
-            <input type="password" id="new-pass" class="auth-input" placeholder="Nowe hasło">
-            <button class="btn-base btn-small" onclick="updatePassword()">Zaktualizuj Hasło</button>
+      </section>
+      <div class="category-ribbon" aria-hidden="true">
+        <div class="wrap">
+          <span>STARE DOBRE KLASYKI</span><b>✳</b><span>NOWE MAŁE OBSESJE</span
+          ><b>✳</b><span>JESZCZE JEDNA PRÓBA</span><b>✳</b
+          ><span>TWÓJ CZAS NA GRĘ</span><b>✳</b>
         </div>
-
-        <div class="settings-section" style="background: rgba(251, 113, 133, 0.05); border-radius: 15px; padding: 10px;">
-            <h4 style="color: var(--danger);">Strefa Niebezpieczna</h4>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Wpisz hasło i kliknij 10 razy, aby usunąć konto.</p>
-            <input type="password" id="delete-confirm-pass" class="auth-input" placeholder="Aktualne hasło">
-            <button class="btn-base btn-small btn-danger" id="delete-btn" onclick="handleDeleteStep()">USUŃ KONTO (<span id="del-counter">10</span>)</button>
+      </div>
+      <section class="catalog wrap" id="gry" aria-labelledby="catalog-title">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow muted">01 / WYBIERZ COŚ DLA SIEBIE</div>
+            <h2 id="catalog-title">Dobra gra. <em>I już.</em></h2>
+          </div>
+          <label class="search"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 5 5" /></svg
+            ><span class="sr-only">Szukaj gry</span
+            ><input
+              id="game-search"
+              type="search"
+              placeholder="Na co masz ochotę?"
+              autocomplete="off"
+            /><kbd aria-hidden="true">/</kbd></label
+          >
         </div>
-
-        <button class="btn-base" onclick="logout()" style="width:100%; margin-top: 20px;">WYLOGUJ SIĘ</button>
-        <button class="btn-base" onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px;">Zamknij</button>
-    </div>
-</div>
-
-<script> 
-const games = [ 
-    { file: "games/saper.html", name: "Saper", tag: "CLASSIC" },
-    { file: "saper.html", name: "Saper OG REVAMP", tag: "OG CLASSIC"},
-    { file: "games/neonsnake1.html", name: "Neon Snake", tag: "CLASSIC"},
-    { file: "games/tetris.html", name: "Tetris", tag: "CLASSIC" }, 
-    { file: "games/neonmaze.html", name: "Neonowy Labirynt", tag: "SKILL" }, 
-    { file: "games/tictactoe.html", name: "Kółko i Krzyżyk", tag: "CLASSIC" }, 
-    { file: "games/flappybird.html", name: "Flappy Bird", tag: "CLASSIC" },
-    { file: "flappy.html", name: "Flappy Bird OG", tag: "OG CLASSIC" },
-    { file: "games/blockblast.html", name: "Block Blast", tag: "PUZZLE" },
-    { file: "games/snake.html", name: "Snake", tag: "SKILL" },
-    { file: "games/geometrydashlite986.html", name: "Geometry Game Lite", tag: "NEW!! SKILL" },
-    { file: "games/doom.html", name: "Doom", tag: "CLASSIC" },
-    { file: "games/soon.html", name: "More coming soon!", tag: "SOON" }
-]; 
-
-const firebaseConfig = {
-    apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-    authDomain: "spinnerrealyt-games.firebaseapp.com",
-    databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
-
-let isLoginMode = true;
-let deleteSteps = 10;
-
-function render() {
-    const grid = document.getElementById("game-grid");
-    grid.innerHTML = games.map(g => `
-        <div class="game-card" onclick="window.location.href='${g.file}'">
-            <span class="tag">${g.tag}</span>
-            <h3 style="margin:0; font-size: 1.5rem;">${g.name}</h3>
+        <div class="catalog-toolbar">
+          <div class="filters" role="group" aria-label="Filtruj gry">
+            <button class="filter active" data-filter="all" aria-pressed="true">
+              Wszystkie <span id="total-count">8</span></button
+            ><button class="filter" data-filter="arcade" aria-pressed="false">
+              Zręcznościowe</button
+            ><button class="filter" data-filter="logic" aria-pressed="false">
+              Na główkowanie</button
+            ><button
+              class="filter"
+              data-filter="favorites"
+              aria-pressed="false"
+            >
+              <span aria-hidden="true">♡</span> Ulubione
+            </button>
+          </div>
+          <span
+            class="result-count"
+            id="result-count"
+            aria-live="polite"
+          ></span>
         </div>
-    `).join('');
-
-    const nav = document.getElementById("nav-auth-container");
-    const user = localStorage.getItem("sp_logged");
-    if(user) {
-        nav.innerHTML = `<div class="user-pill" onclick="openProfile()">${user}</div>`;
-    } else {
-        nav.innerHTML = `<button class="btn-base" onclick="document.getElementById('auth-overlay').classList.add('active')">Zaloguj się</button>`;
-    }
-}
-
-// NOWA FUNKCJA: Logowanie przez Google
-async function loginWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const msg = document.getElementById('auth-msg');
-    try {
-        const result = await auth.signInWithPopup(provider);
-        const user = result.user;
-        
-        // Czyścimy nazwę użytkownika z maila lub DisplayName
-        let nick = user.displayName ? user.displayName.split(' ')[0].toLowerCase() : user.email.split('@')[0].toLowerCase();
-        
-        // Zapisujemy mapowanie w bazie, jeśli nie istnieje
-        await db.ref('users_map/' + nick).set({ email: user.email });
-        
-        localStorage.setItem("sp_logged", nick);
-        location.reload();
-    } catch (e) {
-        msg.innerHTML = `<p class="error">${e.message}</p>`;
-    }
-}
-
-function closeModals() { 
-    document.querySelectorAll('.modal-overlay').forEach(m => {
-        m.classList.remove('active');
-    }); 
-}
-
-function maskEmail(email) {
-    if(!email) return "";
-    const [name, domain] = email.split('@');
-    return name[0] + "****" + name[name.length - 1] + "@" + domain;
-}
-
-function showWebConfirm(url, site) {
-    document.getElementById('confirm-web-text').textContent = "Czy chcesz otworzyć " + site + " w nowej karcie?";
-    document.getElementById('confirm-web-go').onclick = function() { window.open(url, '_blank'); closeModals(); };
-    document.getElementById('confirm-overlay').classList.add('active');
-}
-
-function openProfile() {
-    const nick = localStorage.getItem("sp_logged");
-    document.getElementById('prof-nick').textContent = nick.toUpperCase();
-    document.getElementById('prof-avatar').textContent = nick.charAt(0).toUpperCase();
-    deleteSteps = 10;
-    document.getElementById('del-counter').textContent = deleteSteps;
-    
-    db.ref('users_map/' + nick.toLowerCase()).once('value').then(snap => {
-        if(snap.exists()) {
-            document.getElementById('prof-email').textContent = maskEmail(snap.val().email);
-        }
-    });
-    document.getElementById('profile-overlay').classList.add('active');
-}
-
-async function updateEmail() {
-    const newMail = document.getElementById('new-email').value.trim();
-    const msg = document.getElementById('profile-msg');
-    if(!newMail) return;
-    try {
-        await auth.currentUser.verifyBeforeUpdateEmail(newMail);
-        msg.innerHTML = `<p class="success">Link weryfikacyjny wysłany!</p>`;
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
-}
-
-async function updatePassword() {
-    const newPass = document.getElementById('new-pass').value.trim();
-    const msg = document.getElementById('profile-msg');
-    if(!newPass) return;
-    try {
-        await auth.currentUser.updatePassword(newPass);
-        msg.innerHTML = `<p class="success">Hasło zmienione!</p>`;
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
-}
-
-async function handleDeleteStep() {
-    const msg = document.getElementById('profile-msg');
-    const pass = document.getElementById('delete-confirm-pass').value;
-    if(!pass) { msg.innerHTML = `<p class="error">Wpisz hasło!</p>`; return; }
-    deleteSteps--;
-    document.getElementById('del-counter').textContent = deleteSteps;
-    if(deleteSteps <= 0) {
-        try {
-            const user = auth.currentUser;
-            const nick = localStorage.getItem("sp_logged").toLowerCase();
-            const credential = firebase.auth.EmailAuthProvider.credential(user.email, pass);
-            await user.reauthenticateWithCredential(credential);
-            await db.ref('users_map/' + nick).remove();
-            await user.delete();
-            logout();
-        } catch(e) { 
-            deleteSteps = 10;
-            document.getElementById('del-counter').textContent = deleteSteps;
-            msg.innerHTML = `<p class="error">Błąd: ${e.message}</p>`; 
-        }
-    }
-}
-
-function logout() { localStorage.clear(); auth.signOut(); location.reload(); }
-
-function toggleAuth() {
-    isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').textContent = isLoginMode ? "Zaloguj się" : "Rejestracja";
-    document.getElementById('reg-fields').innerHTML = isLoginMode ? "" : '<input type="email" id="auth-email" class="auth-input" placeholder="E-mail">';
-    document.getElementById('auth-switch').textContent = isLoginMode ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się";
-}
-
-document.getElementById('auth-submit').onclick = async () => {
-    const nick = document.getElementById('auth-user').value.trim().toLowerCase();
-    const pass = document.getElementById('auth-pass').value.trim();
-    const msg = document.getElementById('auth-msg');
-    try {
-        if(isLoginMode) {
-            const snap = await db.ref('users_map/' + nick).once('value');
-            if(!snap.exists()) throw new Error("Nick nie istnieje.");
-            const email = snap.val().email;
-            const cred = await auth.signInWithEmailAndPassword(email, pass);
-            if(!cred.user.emailVerified) { await auth.signOut(); throw new Error("Potwierdź e-mail!"); }
-            localStorage.setItem("sp_logged", nick);
-            location.reload();
-        } else {
-            const email = document.getElementById('auth-email').value.trim();
-            const cred = await auth.createUserWithEmailAndPassword(email, pass);
-            await cred.user.sendEmailVerification();
-            await db.ref('users_map/' + nick).set({ email: email });
-            msg.innerHTML = `<p class="success">Potwierdź e-mail: ${email}</p>`;
-        }
-    } catch(e) { msg.innerHTML = `<p class="error">${e.message}</p>`; }
-};
-
-window.onload = render;
-</script> 
-</body> 
+        <div id="game-grid" class="game-grid"></div>
+        <p id="empty-state" class="empty-state" hidden>
+          Tu jeszcze nic nie ma. Zmień wyszukiwanie albo dodaj grę do
+          ulubionych.
+        </p>
+        <noscript
+          ><p>
+            Włącz JavaScript, aby wyszukiwać gry. Zagraj bezpośrednio:
+            <a href="games/tictactoe.html">Kółko i krzyżyk</a>,
+            <a href="games/saper.html">Saper</a>,
+            <a href="flappy.html">Mały lot</a>.
+          </p></noscript
+        >
+      </section>
+      <section class="interlude wrap" aria-labelledby="interlude-title">
+        <div class="interlude-symbol" aria-hidden="true">
+          <svg viewBox="0 0 100 120">
+            <path
+              d="M10 5v65h70M52 40l30 30-30 30"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="6"
+            />
+          </svg>
+        </div>
+        <div>
+          <div class="eyebrow">DOBRZE ZNANE. NA NOWO ODKRYTE.</div>
+          <h2 id="interlude-title">
+            Nie każda chwila<br />musi być <em>produktywna.</em>
+          </h2>
+          <p>
+            Czasem wystarczy ułożyć parę klocków. Albo pobić swój rekord.<br />To
+            miejsce jest właśnie od tego.
+          </p>
+        </div>
+        <a class="text-link" href="o-serwisie.html"
+          >Poznaj nasz salon <span>↗</span></a
+        >
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand" href="index.html"
+          ><img src="assets/mark.svg" width="30" height="30" alt="" /><span
+            >spinner<span class="brand-sub"
+              >MAŁA PRZERWA. DOBRA GRA.</span
+            ></span
+          ></a
+        >
+        <div class="footer-links">
+          <a href="others/">Others — archiwum</a
+          ><a href="o-serwisie.html">O serwisie</a
+          ><a href="prywatnosc.html">Prywatność</a
+          ><button data-cookie-settings>Ustawienia cookies</button>
+        </div>
+        <span class="footer-note"
+          >Zagraj po swojemu. Wracaj, kiedy chcesz.</span
+        >
+      </div>
+      <div class="wrap footer-bottom">
+        <span>© <span data-year>2026</span> Spinner Games</span
+        ><span
+          >ZROBIONE DLA SAMEJ FRAJDY Z GRANIA
+          <span class="orange">✳</span></span
+        >
+      </div>
+    </footer>
+  </body>
 </html>

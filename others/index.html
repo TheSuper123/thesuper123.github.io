@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="same-origin" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; frame-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'"
+    />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>Others — archiwum chronione</title>
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="vault.css" />
+    <script src="vault.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header wrap">
+      <a class="brand" href="../index.html"
+        ><img src="../assets/mark.svg" width="38" height="38" alt="" /><span
+          >spinner<span class="brand-sub">ARCHIWUM / OTHERS</span></span
+        ></a
+      ><a class="link-button" href="../index.html#gry">← Wróć do salonu</a>
+    </header>
+    <main class="wrap vault-main">
+      <section
+        id="locked-view"
+        class="vault-card"
+        aria-labelledby="vault-title"
+      >
+        <div class="eyebrow orange">OTHERS / DOSTĘP OGRANICZONY</div>
+        <div class="vault-symbol" aria-hidden="true">
+          <svg viewBox="0 0 80 80">
+            <path
+              d="M25 35V24a15 15 0 0 1 30 0v11M18 35h44v35H18Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <path d="M40 49v10" stroke="currentColor" stroke-width="4" />
+          </svg>
+        </div>
+        <h1 id="vault-title">Pod kluczem.</h1>
+        <p>
+          Materiały oczekujące na wyjaśnienie praw.<br />Podaj hasło, aby
+          otworzyć archiwum.
+        </p>
+        <form id="unlock-form">
+          <label class="form-field" for="vault-password"
+            >Hasło do archiwum</label
+          >
+          <div class="vault-password">
+            <input
+              id="vault-password"
+              type="password"
+              autocomplete="current-password"
+              required
+              maxlength="1024"
+              spellcheck="false"
+              autocapitalize="none"
+            /><button
+              type="button"
+              id="toggle-password"
+              aria-label="Pokaż hasło"
+              aria-pressed="false"
+            >
+              Pokaż
+            </button>
+          </div>
+          <button
+            class="button primary full-width"
+            id="unlock-button"
+            type="submit"
+            disabled
+          >
+            Otwórz archiwum <span>↗</span>
+          </button>
+        </form>
+        <p class="message" id="vault-message" role="status" aria-live="polite">
+          Przygotowywanie bezpiecznego dostępu…
+        </p>
+        <p class="vault-note">
+          Hasło i klucz odszyfrowania pozostają w pamięci przeglądarki.
+          Zamknięcie lub odświeżenie tej strony blokuje archiwum.
+        </p>
+        <noscript
+          >Do odszyfrowania potrzebna jest przeglądarka z włączonym
+          JavaScript.</noscript
+        >
+      </section>
+      <section id="unlocked-view" hidden aria-label="Odblokowane archiwum">
+        <div class="vault-session">
+          <div>
+            <div class="eyebrow orange">OTHERS / SESJA AKTYWNA</div>
+            <p>Archiwum odblokowane na maksymalnie 30 minut.</p>
+          </div>
+          <button class="button" id="lock-button">
+            Zablokuj <span>↶</span>
+          </button>
+        </div>
+        <div id="archive-container"></div>
+      </section>
+    </main>
+    <footer class="wrap vault-footer">
+      <span>Spinner Games / others</span
+      ><a href="../prywatnosc.html">Prywatność</a>
+    </footer>
+  </body>
+</html>

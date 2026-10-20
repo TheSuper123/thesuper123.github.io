@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r=".7" fill="#b1afa0" />
+    </pattern>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path
+        d="M24 0H0v24"
+        fill="none"
+        stroke="#bbc69a"
+        stroke-width=".5"
+        opacity=".3"
+      />
+    </pattern>
+  </defs>
+  <circle cx="328" cy="332" r="243" fill="#e9e5d8" />
+  <circle cx="328" cy="332" r="243" fill="url(#dots)" />
+  <path d="M78 523h490" stroke="#b6b6a5" stroke-width="1" />
+  <ellipse cx="326" cy="555" rx="178" ry="22" fill="#d3d0c1" />
+  <g transform="rotate(-7 320 340)">
+    <path
+      d="m178 130 258-19 46 45v374l-36 30-257-12-33-33 16-155Z"
+      fill="#282b24"
+    />
+    <path
+      d="m178 130 258-19-6 244 18 43-2 162-257-12-33-33 16-155Z"
+      fill="#e85b36"
+      stroke="#252720"
+      stroke-width="3"
+    />
+    <path
+      d="m436 111 46 45v374l-36 30 2-162-18-43Z"
+      fill="#b43724"
+      stroke="#252720"
+      stroke-width="3"
+    />
+    <path
+      d="m192 148 224-16-2 67-225 13Z"
+      fill="#f3db9c"
+      stroke="#252720"
+      stroke-width="3"
+    />
+    <text
+      x="302"
+      y="184"
+      text-anchor="middle"
+      font-family="Arial,sans-serif"
+      font-weight="900"
+      font-size="28"
+      letter-spacing="4"
+      fill="#252720"
+    >
+      SPINNER
+    </text>
+    <path
+      d="m194 222 213-12-3 129-214 9Z"
+      fill="#282b24"
+      stroke="#252720"
+      stroke-width="3"
+    />
+    <path d="m211 237 176-10-2 96-177 8Z" fill="#b2c67e" />
+    <path d="m211 237 176-10-2 96-177 8Z" fill="url(#grid)" />
+    <path
+      d="m240 307 1-36 51-2v29l34-2v-40l30-2"
+      fill="none"
+      stroke="#303e2f"
+      stroke-width="12"
+      stroke-linejoin="miter"
+    />
+    <rect x="348" y="249" width="16" height="15" fill="#303e2f" />
+    <rect x="358" y="252" width="3" height="3" fill="#d9dfb7" />
+    <path d="m370 290 6 5-6 6-6-6Z" fill="#bc3f29" />
+    <path
+      d="m174 361 256-6 18 43-292 5Z"
+      fill="#f1dba8"
+      stroke="#252720"
+      stroke-width="3"
+    />
+    <ellipse cx="222" cy="385" rx="24" ry="7" fill="#272b25" />
+    <path d="m222 383-2-23" stroke="#252720" stroke-width="6" />
+    <circle
+      cx="220"
+      cy="356"
+      r="13"
+      fill="#3048b8"
+      stroke="#252720"
+      stroke-width="2"
+    />
+    <ellipse
+      cx="350"
+      cy="377"
+      rx="15"
+      ry="8"
+      fill="#3048b8"
+      stroke="#252720"
+      stroke-width="2"
+    />
+    <ellipse
+      cx="391"
+      cy="376"
+      rx="15"
+      ry="8"
+      fill="#e85b36"
+      stroke="#252720"
+      stroke-width="2"
+    />
+    <path
+      d="m156 403 292-5-2 162-257-12-33-33Z"
+      fill="#db4828"
+      stroke="#252720"
+      stroke-width="3"
+    />
+    <path d="m189 433 220-3v98l-220-9Z" fill="#ed714b" />
+    <path
+      d="m205 445 47 74m-16-75 47 75m-16-75 47 76"
+      stroke="#f1dba8"
+      stroke-width="9"
+    />
+    <rect x="351" y="451" width="34" height="48" rx="3" fill="#272b25" />
+    <rect x="363" y="458" width="9" height="24" rx="2" fill="#94978b" />
+    <path
+      d="m458 189 12 13v277"
+      stroke="#db6449"
+      stroke-width="3"
+      fill="none"
+    />
+  </g>
+  <path
+    d="m91 175 10-15m-3 34-16-4m35-23 2-17"
+    stroke="#3048b8"
+    stroke-width="3"
+  />
+  <path d="m515 455 4-13 5 13 14 4-14 5-5 14-4-14-14-5Z" fill="#db4723" />
+  <circle
+    cx="119"
+    cy="446"
+    r="6"
+    fill="none"
+    stroke="#3048b8"
+    stroke-width="2"
+  />
+  <path d="M532 238h22m-11-11v22" stroke="#a09f8f" stroke-width="2" />
+</svg>

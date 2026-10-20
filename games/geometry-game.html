@@ -2,15 +2,15 @@
 <html lang="pl" style="background-color: #020617;">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spinner Dash – Professional Edition</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#020617">
-    <link rel="icon" type="image/png" href="../Logo.png?v=2">
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+
+
+
     <style>
         :root {
             --bg: #020617;
@@ -279,16 +279,16 @@
         }
         .instruction-footer b { color: var(--accent); }
     </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 <body>
     <header>
         <div class="header-left">
-            <img src="../Logo.png" alt="SpinnerLogo">
+            <img src="../assets/mark.svg" alt="SpinnerLogo">
             <button class="btn-back" onclick="location.href='../index.html'">Wstecz</button>
         </div>
         <div class="user-stats">
             <div id="user-name">Guest Player</div>
-            <div id="user-points">Points: 0</div>
+            <div id="user-points">Punkty: 0</div>
         </div>
     </header>
     <main>
@@ -348,22 +348,15 @@
         </div>
     </main>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-            authDomain: "spinnerrealyt-games.firebaseapp.com",
-            databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const auth = firebase.auth();
-        const loggedUser = localStorage.getItem("sp_logged");
+        const db = ArcadeProgress.database();
+        const loggedUser = ArcadeProgress.playerId;
         let userPoints = 0;
-        auth.onAuthStateChanged(user => {
-            if (user && loggedUser) {
+        ArcadeProgress.onReady(user => {
+            if (loggedUser) {
                 document.getElementById('user-name').textContent = loggedUser;
                 db.ref('users/' + loggedUser + '/points').on('value', snap => {
                     userPoints = snap.val() || 0;
-                    document.getElementById('user-points').textContent = `Points: ${userPoints}`;
+                    document.getElementById('user-points').textContent = `Punkty: ${userPoints}`;
                 });
             }
         });
@@ -609,7 +602,7 @@
                 let reward = Math.floor(5 * selectedDifficulty);
                 document.getElementById('pointsAwarded').textContent = `+${reward} PUNKTÓW`;
                 document.getElementById('winScreen').style.display = 'flex';
-                if (loggedUser && auth.currentUser) {
+                if (loggedUser) {
                     db.ref('users/' + loggedUser).update({ points: userPoints + reward });
                 }
             }

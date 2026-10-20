@@ -2,19 +2,19 @@
 <html lang="pl" style="background-color: #020617;">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Saper – SpinnerRealYT Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saper – Spinner Games</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#020617">
 
-<link rel="icon" type="image/png" href="../Logo.png?v=2">
-<link rel="apple-touch-icon" href="../Logo.png?v=2">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
+
+
 
 <style>
 :root{
@@ -132,12 +132,12 @@ button:active { transform: scale(0.96); }
 
 footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; }
 </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 <body>
 
 <header>
   <div style="display:flex; align-items:center; gap:10px;">
-    <img src="../Logo.png" alt="SpinnerRealYT">
+    <img src="../assets/mark.svg" alt="SpinnerRealYT">
     <nav><button onclick="location.href='../index.html'">Wróć</button></nav>
   </div>
   <div class="account-box">
@@ -149,7 +149,7 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
 <main>
   <div class="card" id="main-card">
     <h2>💣 Saper Elite</h2>
-    
+
     <div id="menu">
       <div id="rank-note">Tylko tryb Rankingowy daje punkty!</div>
       <select id="difficulty-select">
@@ -159,7 +159,7 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         <option value="7,6">Szybki (7x7 - 6 bomb)</option>
       </select>
       <button id="start-btn">NOWA GRA</button>
-      
+
       <div class="game-info-bar">
           <div id="info">🚩 0 / 10</div>
           <div id="timer">⏱️ 0s</div>
@@ -172,25 +172,17 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
       <button id="btn-open" class="btn-mode active-mode">Odkryj</button>
       <button id="btn-flag" class="btn-mode">Flaga</button>
     </div>
-    
-    <div id="points-info" style="color: var(--accent);">Points: 0</div>
+
+    <div id="points-info" style="color: var(--accent);">Punkty: 0</div>
   </div>
 </main>
 
-<footer>© 2026 SpinnerRealYT Games • iOS 26 Optimized</footer>
+<footer>© 2026 Spinner Games • Graj po swojemu</footer>
 
 <script>
 (() => {
-    const firebaseConfig = { 
-        apiKey: "AIzaSyByk8GJSoTJ_bgPNjyKnKi3o30E8bQB-qo",
-        authDomain: "spinnerrealyt-games.firebaseapp.com",
-        databaseURL: "https://spinnerrealyt-games-default-rtdb.europe-west1.firebasedatabase.app/" 
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const auth = firebase.auth();
-    const loggedUser = localStorage.getItem("sp_logged");
+    const db = ArcadeProgress.database();
+    const loggedUser = ArcadeProgress.playerId;
     const syncEl = document.getElementById('sync-display');
     const pointsInfoEl = document.getElementById('points-info');
     const rankNote = document.getElementById('rank-note');
@@ -201,13 +193,13 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
     let cells=[], minePositions=new Set(), flags=new Set(), opened=new Set();
     let seconds = 0, timerInterval = null;
 
-    auth.onAuthStateChanged((user) => {
-        if(user && loggedUser) {
+    ArcadeProgress.onReady((user) => {
+        if(loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
             loadData();
         } else if (loggedUser) {
             document.getElementById('user-display').textContent = loggedUser.toUpperCase();
-            syncEl.textContent = "Connecting...";
+            syncEl.textContent = "Zapis lokalny";
         }
     });
 
@@ -216,19 +208,19 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         try {
             const snap = await db.ref('users/' + loggedUser + '/points').once('value');
             points = snap.exists() ? snap.val() : 0;
-            pointsInfoEl.textContent = `Points: ${points}`;
-            syncEl.textContent = "Synced";
+            pointsInfoEl.textContent = `Punkty: ${points}`;
+            syncEl.textContent = "Zapis lokalny";
             syncEl.style.color = "#4ade80";
         } catch(e) { syncEl.textContent = "Error"; }
     }
 
     async function savePoints() {
-        if(!loggedUser || !auth.currentUser) return;
+        if(!loggedUser) return;
         try {
             await db.ref('users/' + loggedUser).update({ points: points });
-            syncEl.textContent = "Saved";
+            syncEl.textContent = "Zapis lokalny";
             syncEl.style.color = "#4ade80";
-        } catch(e) { syncEl.textContent = "Sync Error"; }
+        } catch(e) { syncEl.textContent = "Błąd zapisu"; }
     }
 
     function adjustCellSize() {
@@ -341,7 +333,7 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
             document.getElementById('info').textContent='🎉 Wygrana!';
             if(ROWS === 9 && MINES_COUNT === 10) {
                 points += 1;
-                pointsInfoEl.textContent = `Points: ${points}`;
+                pointsInfoEl.textContent = `Punkty: ${points}`;
                 savePoints();
             }
         }
@@ -352,7 +344,7 @@ footer { text-align: center; opacity: 0.5; padding: 30px 20px; font-size: 11px; 
         ROWS = parseInt(val[0]);
         COLS = ROWS;
         MINES_COUNT = parseInt(val[1]);
-        
+
         if(ROWS === 9 && MINES_COUNT === 10) {
             rankNote.textContent = "✓ Tryb Rankingowy Aktywny (+1 pkt)";
             rankNote.className = "rank-active";

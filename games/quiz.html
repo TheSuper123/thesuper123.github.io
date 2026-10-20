@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Polityczny - SpinnerRealYT Games</title>
-<link rel="icon" href="../Logo.png">
+<title>Quiz Polityczny - Spinner Games</title>
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 <style>
 :root{
 --bg:#020617;
@@ -26,10 +26,10 @@ button{background:var(--accent);border:none;padding:8px 14px;border-radius:10px;
 .option:hover{background:#2563eb;}
 #result{margin-top:15px;text-align:center;font-weight:700;}
 </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 <body>
 <header>
-<img src="../Logo.png" alt="SpinnerRealYT">
+<img src="../assets/mark.svg" alt="SpinnerRealYT">
 <nav><button onclick="location.href='../index.html'">Menu</button></nav>
 </header>
 <main>
@@ -45,9 +45,9 @@ button{background:var(--accent);border:none;padding:8px 14px;border-radius:10px;
 </div>
 </div>
 </main>
-<footer>© 2026 SpinnerRealYT Games</footer>
+<footer>© 2026 Spinner Games</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../assets/vendor/jspdf.umd.min.js"></script>
 <script>
 // ===== PYTANIA =====
 const quizData = [
@@ -239,7 +239,7 @@ document.getElementById("download-btn").onclick=function(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFontSize(18);
-  doc.text("📊 Quiz Polityczny - SpinnerRealYT Games", 10, 20);
+  doc.text("📊 Quiz Polityczny - Spinner Games", 10, 20);
   doc.setFontSize(12);
   doc.text("Twoje odpowiedzi:", 10, 30);
   let y=40;

@@ -2,12 +2,12 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spinner Snake.io - Real Bot Edition</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
+
+
+
 
     <style>
         :root {
@@ -220,7 +220,7 @@
             .minimap { bottom: 130px; }
         }
     </style>
-</head>
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/game.css"><script src="../assets/storage.js"></script><script src="../assets/progress.js"></script><script src="../assets/site.js" defer></script><script src="../assets/game-ui.js" defer></script></head>
 <body>
 
     <header>
@@ -358,14 +358,14 @@
             draw(ctx, cam) {
                 if(this.dead) return;
                 const r = 14 + (this.mass * 0.03);
-                
+
                 ctx.shadowBlur = 10; ctx.shadowColor = this.color;
                 for(let i = this.segments.length-1; i >= 0; i--) {
                     const s = this.segments[i];
                     const size = r * (1 - (i / (this.segments.length * 3)));
                     ctx.fillStyle = this.color;
                     ctx.beginPath(); ctx.arc(s.x - cam.x, s.y - cam.y, size, 0, Math.PI*2); ctx.fill();
-                    
+
                     if(i === 0) { // Eyes
                         ctx.shadowBlur = 0; ctx.fillStyle = 'white';
                         const ex = (s.x - cam.x) + Math.cos(this.angle + 0.6) * (r*0.6);
@@ -419,11 +419,11 @@
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
                 this.setupInputs();
-                
+
                 // Firebase/Local Nick Sync
                 const nickInput = document.getElementById('nickInput');
                 const userInf = document.getElementById('user-info');
-                const saved = localStorage.getItem("sp_logged");
+                const saved = ArcadeProgress.playerId;
                 if(saved) { state.nick = saved; userInf.textContent = "PROFIL: " + saved; nickInput.value = saved; }
 
                 this.loop();
@@ -477,7 +477,7 @@
                 const inp = document.getElementById('nickInput').value;
                 if(inp) state.nick = inp;
                 document.getElementById('start-overlay').style.display = 'none';
-                
+
                 this.snakes = [];
                 this.player = new Snake(state.nick, CFG.COLORS[0], 15);
                 this.snakes.push(this.player);
@@ -552,7 +552,7 @@
                 });
 
                 this.snakes.sort((a,b)=>a.mass-b.mass).forEach(s => s.draw(this.ctx, this.cam));
-                
+
                 // Minimap
                 const mc = document.getElementById('minimapCanvas'), mtx = mc.getContext('2d');
                 mtx.clearRect(0,0,100,100);
