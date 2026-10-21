@@ -942,7 +942,8 @@ dialog p {
 }
 .game-stage:fullscreen iframe {
   width: 100%;
-  height: 100%;
+  height: 100% !important;
+  min-height: 0 !important;
   max-height: none;
 }
 .game-guides {
@@ -968,7 +969,7 @@ dialog p {
 }
 .game-load-error {
   padding: 20px;
-  color: var(--paper);
+  color: var(--muted);
   font-size: 13px;
 }
 .game-load-error a {

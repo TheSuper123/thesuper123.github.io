@@ -27,7 +27,7 @@
       "Przekaźnik",
       "EKSPERYMENT / ROZWÓJ",
     ],
-    "quiz.html": ["quiz", "Quiz polityczny", "Z ARCHIWUM / QUIZ"],
+    "quiz.html": ["quiz", "Quiz opinii", "Z ARCHIWUM / QUIZ"],
     "polls.html": ["polls", "Sondaże", "Z ARCHIWUM / INFORMACJE"],
     "soon.html": ["soon", "Jeszcze chwila", "SALON / ZAPOWIEDŹ"],
   };
@@ -91,7 +91,7 @@
   footer.innerHTML =
     "Spinner Games · <button data-cookie-settings>Ustawienia prywatności</button>";
   // Root-level classic saper gets a cabinet instead of a disconnected fullscreen form.
-  if (kind === "saper-classic") {
+  if (kind === "saper-classic" && !body.querySelector("main")) {
     const main = document.createElement("main"),
       card = document.createElement("div");
     card.className = "card";
@@ -112,13 +112,16 @@
     "bomb-count": "Liczba min",
     nickInput: "Nazwa gracza",
   };
-  for (const [id, text] of Object.entries(labels))
-    document.getElementById(id)?.setAttribute("aria-label", text);
-  document
-    .querySelectorAll("canvas:not(#minimapCanvas)")
-    .forEach((canvas) =>
-      canvas.setAttribute("aria-label", title + " — plansza gry"),
-    );
+  for (const [id, text] of Object.entries(labels)) {
+    const control = document.getElementById(id);
+    if (control && !control.hasAttribute("aria-label"))
+      control.setAttribute("aria-label", text);
+  }
+  document.querySelectorAll("canvas:not(#minimapCanvas)").forEach((canvas) => {
+    if (!canvas.hasAttribute("aria-label"))
+      canvas.setAttribute("aria-label", title + " — plansza gry");
+    if (!canvas.hasAttribute("tabindex")) canvas.tabIndex = 0;
+  });
   document.querySelectorAll("button.ctrl-btn,.joy-btn").forEach((el) => {
     const symbol = el.textContent.trim();
     const text = {
@@ -137,7 +140,11 @@
     }
   });
   const board = document.querySelector("#game:not(canvas)");
-  if (board && ["saper", "saper-classic"].includes(kind)) {
+  if (
+    board &&
+    !board.hasAttribute("data-managed-controls") &&
+    ["saper", "saper-classic"].includes(kind)
+  ) {
     const accessible = () =>
       board.querySelectorAll(".cell").forEach((cell, i) => {
         cell.tabIndex = 0;
@@ -169,6 +176,10 @@
         }
       }
     });
+    if (typeof window.SpinnerGame?.render === "function") {
+      window.SpinnerGame.render();
+      return;
+    }
     if (typeof drawBoard === "function") {
       drawBoard();
       if (typeof p !== "undefined" && p?.draw) p.draw();
@@ -178,6 +189,24 @@
   }
   window.addEventListener("spinner:theme-change", recolor);
   recolor();
+  // A pointer gesture transfers keyboard control to this game, without scrolling
+  // the outer catalog or stealing focus from difficulty and text inputs.
+  const focusGame = () => {
+    const target = document.querySelector(
+      "canvas:not(#minimapCanvas), [data-game-focus], [data-managed-controls]",
+    );
+    target?.focus({ preventScroll: true });
+  };
+  window.SpinnerGameFocus = focusGame;
+  if (window.SpinnerGame && !window.SpinnerGame.focus)
+    window.SpinnerGame.focus = focusGame;
+  document.querySelectorAll("canvas:not(#minimapCanvas)").forEach((canvas) => {
+    canvas.addEventListener(
+      "pointerdown",
+      () => canvas.focus({ preventScroll: true }),
+      { passive: true },
+    );
+  });
   if (!["arena", "incremental", "unity"].includes(kind) && parent !== window) {
     const report = () =>
       parent.postMessage(

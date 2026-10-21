@@ -4,6 +4,12 @@
   const receiptKey = "spinner:consent:v1";
   const prefix = "spinner:prefs:";
   const memory = new Map();
+  let changes = null;
+  try {
+    changes = new BroadcastChannel("spinner:preferences");
+  } catch {
+    /* Storage events remain available. */
+  }
   let choice = null;
   function readChoice() {
     try {
@@ -64,6 +70,7 @@
       memory.clear();
       clearRetained();
       window.dispatchEvent(new Event("spinner:preferences-cleared"));
+      changes?.postMessage({ type: "clear" });
     },
   };
   window.SpinnerStorage = {
@@ -88,6 +95,10 @@
     },
   };
   window.addEventListener("storage", (event) => {
+    if (event.key?.startsWith(prefix)) {
+      memory.delete(event.key.slice(prefix.length));
+      return;
+    }
     if (event.key !== receiptKey) return;
     choice = readChoice();
     if (!choice?.preferences) {
@@ -96,4 +107,11 @@
     }
     window.dispatchEvent(new Event("spinner:consent-change"));
   });
+  if (changes)
+    changes.onmessage = (event) => {
+      if (event.data?.type !== "clear") return;
+      memory.clear();
+      clearRetained();
+      window.dispatchEvent(new Event("spinner:preferences-cleared"));
+    };
 })();

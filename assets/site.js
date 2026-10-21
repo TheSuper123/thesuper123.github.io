@@ -14,6 +14,52 @@
   document
     .querySelectorAll("[data-year]")
     .forEach((el) => (el.textContent = new Date().getFullYear()));
+  // Dialogs in the surrounding player must pause the actual nested game too.
+  // Closing a dialog never resumes a round behind the player's back.
+  const pauseGames = (reason) => {
+    if (typeof window.SpinnerGame?.pause === "function")
+      window.SpinnerGame.pause(reason);
+    else
+      window.dispatchEvent(
+        new CustomEvent("spinner:pause", { detail: { reason } }),
+      );
+    document
+      .querySelectorAll("iframe")
+      .forEach((frame) =>
+        frame.contentWindow?.postMessage(
+          { type: "spinner:pause", reason },
+          location.origin,
+        ),
+      );
+  };
+  const observer = new MutationObserver((records) => {
+    if (
+      records.some(
+        (record) =>
+          record.type === "attributes" &&
+          record.target.tagName === "DIALOG" &&
+          record.target.open,
+      )
+    )
+      pauseGames("dialog");
+  });
+  observer.observe(document.body, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["open"],
+  });
+  window.addEventListener("message", (event) => {
+    if (
+      event.origin === location.origin &&
+      event.source === parent &&
+      parent !== window &&
+      event.data?.type === "spinner:pause"
+    )
+      pauseGames("dialog");
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pauseGames("hidden");
+  });
   if (window.self !== window.top) return;
   const storage = window.SpinnerStorage;
   if (!storage) return;

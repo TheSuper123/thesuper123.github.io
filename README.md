@@ -16,6 +16,7 @@ python3 tests/test_others.py
 ```
 
 - [Uruchomienie, Firebase, zakres testów i działania przed publikacją](docs/URUCHOMIENIE-I-BEZPIECZENSTWO.md)
+- [Przegląd i ulepszenia każdej gry, mechaniki oraz testy](docs/PRZEGLAD-GIER.md)
 - [Lista materiałów wymagających wyjaśnienia praw](docs/PRAWA-DO-MATERIALOW.md)
 - `assets/catalog.js` — opis i lista gier.
 - `assets/site.css`, `assets/art/` — oprawa serwisu.

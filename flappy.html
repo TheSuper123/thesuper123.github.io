@@ -1,93 +1,206 @@
 <!doctype html>
 <html lang="pl">
   <head>
-    <script src="assets/theme.js"></script>
     <meta charset="utf-8" />
+    <script src="assets/theme.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Mały lot — Spinner Games</title>
     <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="assets/site.css" />
     <link rel="stylesheet" href="assets/game.css" />
+    <link rel="stylesheet" href="assets/theme.css" />
     <script src="assets/storage.js"></script>
     <script src="assets/site.js" defer></script>
     <script src="assets/game-ui.js" defer></script>
     <script src="assets/flappy-classic.js" defer></script>
     <style>
-      body {
-        min-height: 100dvh;
-      }
-      main {
-        max-width: 440px;
-        margin: auto;
-        padding: 18px;
+      html body.game-page[data-game="little-flight"] main {
+        max-width: 450px !important;
       }
       #cabinet {
         position: relative;
+        isolation: isolate;
       }
-      canvas {
+      #game {
         width: 100%;
         height: auto;
         display: block;
-        border-radius: 4px;
+        touch-action: none;
+        outline-offset: -4px;
       }
-      #bird-overlay {
+      .flight-hud {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px !important;
+      }
+      .flight-hud span {
+        font: 8px/1.5 Mono;
+        letter-spacing: 0.7px;
+        color: var(--muted);
+      }
+      .flight-hud b {
+        display: block;
+        font: 600 27px/1.2 DM;
+        letter-spacing: -0.9px;
+        color: var(--ink);
+      }
+      .flight-hud span:last-child {
+        text-align: right;
+      }
+      html body.game-page[data-game="little-flight"] #bird-overlay {
         position: absolute;
         inset: 0;
-        display: grid;
-        align-content: center;
-        justify-items: center;
-        gap: 16px;
-        background: #f4f1e8d9;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        background: var(--overlay) !important;
+        border: 0;
+        padding: 24px;
         text-align: center;
-        border: 1px solid #d8d5ca;
-        border-radius: 4px;
-        padding: 20px;
+      }
+      .flight-stamp {
+        font: 9px Mono;
+        letter-spacing: 1.6px;
+        color: var(--orange);
+      }
+      #bird-overlay > * {
+        flex-shrink: 0;
       }
       #bird-overlay h1 {
-        font-size: 30px;
-        letter-spacing: -1px;
+        font: 600 35px/1.05 DM;
+        letter-spacing: -1.5px;
         margin: 0;
+        max-width: 260px;
       }
       #bird-overlay p {
-        font-size: 13px;
+        font: 12px/1.6 DM;
         margin: 0;
+        max-width: 260px;
+        color: var(--muted);
       }
-      #score {
+      .flight-mode-label {
+        display: block;
+        margin: 14px auto;
+        max-width: 100%;
+        font: 9px Mono;
+        color: var(--muted);
+        letter-spacing: 1px;
+        width: 100%;
+      }
+      #bird-difficulty {
+        display: block;
+        width: 100%;
+        margin-top: 5px;
+      }
+      #bird-overlay .button {
+        min-width: 180px;
+      }
+      .flight-overlay-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .flight-overlay-actions [hidden] {
+        display: none !important;
+      }
+      .flight-toolbar {
         display: flex;
         justify-content: space-between;
-        font: 11px Mono;
-        margin-bottom: 12px;
+        gap: 10px;
+        align-items: center;
+        margin-top: 14px;
       }
-      header {
-        padding: 12px 20px;
-        font-size: 12px;
+      .flight-toolbar span {
+        font: 10px/1.5 Mono;
+        color: var(--muted);
       }
-      canvas {
-        touch-action: manipulation;
+      .flight-toolbar button {
+        min-width: 90px;
+      }
+      #bird-flap {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        min-height: 48px;
+        background: var(--ink) !important;
+        color: var(--paper) !important;
+        touch-action: none;
+      }
+      .flight-notes {
+        font: 10px/1.7 Mono;
+        text-align: center;
+        color: var(--muted);
+        margin: 13px 0 0;
+      }
+      .flight-kbd {
+        font: 9px Mono;
+        letter-spacing: 0.5px;
+        color: var(--orange);
+      }
+      @media (max-width: 360px) {
+        #bird-overlay h1 {
+          font-size: 29px;
+        }
+        html body.game-page[data-game="little-flight"] #bird-overlay {
+          gap: 10px;
+          padding: 18px;
+        }
       }
     </style>
-    <link rel="stylesheet" href="assets/theme.css" />
   </head>
   <body class="game-page">
-    <header><a href="index.html#gry">← Spinner Games / katalog</a></header>
+    <header><a href="index.html#gry">Spinner Games / katalog</a></header>
     <main>
-      <div id="score">
-        <span>Wynik: <b id="bird-score">0</b></span
-        ><span>Rekord: <b id="bird-best">0</b></span>
+      <div id="score" class="flight-hud">
+        <span>WYNIK<b id="bird-score">0</b></span
+        ><span>REKORD<b id="bird-best">0</b></span
+        ><span>PIÓRA<b id="bird-feathers">0</b></span>
       </div>
-      <div id="cabinet">
+      <div id="cabinet" data-managed-controls>
         <canvas
           id="game"
           width="360"
           height="500"
+          tabindex="0"
           aria-label="Plansza gry Mały lot"
+          aria-describedby="bird-help"
         ></canvas>
         <div id="bird-overlay">
-          <h1>Mały lot. Wielka frajda.</h1>
-          <p id="bird-message">Spacja lub dotknięcie — podskok.</p>
-          <button class="button primary" id="bird-start">Zagraj ↗</button>
+          <span class="flight-stamp">MAŁY LOT / WYSOKO NAD SADEM</span>
+          <h1 id="bird-title">Jeszcze kawałek nieba.</h1>
+          <p id="bird-message" role="status" aria-live="polite">
+            Bramka daje 1 punkt. Złote pióro — dodatkowe 2. Leć własnym rytmem.
+          </p>
+          <div class="flight-overlay-actions">
+            <button class="button primary" id="bird-start">Zagraj ↗</button
+            ><button class="button primary" id="bird-resume" hidden>
+              Wznów lot
+            </button>
+          </div>
+          <span class="flight-kbd">SPACJA / DOTKNIĘCIE = PODSKOK</span>
         </div>
       </div>
+      <div class="flight-toolbar">
+        <span id="bird-distance">Gotowy do lotu</span
+        ><button type="button" id="bird-pause" disabled>Pauza · P</button>
+      </div>
+      <label class="flight-mode-label" id="bird-mode-label"
+        >TEMPO LOTU<select id="bird-difficulty">
+          <option value="calm">Spokojnie · szerokie przejścia</option>
+          <option value="classic" selected>Klasycznie · złap rytm</option>
+          <option value="quick">Szybko · dla odważnych</option>
+        </select></label
+      >
+      <button type="button" id="bird-flap" disabled data-managed-controls>
+        Podskocz ↑
+      </button>
+      <p id="bird-help" class="flight-notes">
+        Spacja, dotknięcie planszy lub przycisk: podskok.<br />P / Escape:
+        pauza. R: nowy lot.
+      </p>
     </main>
     <footer>Spinner Games</footer>
   </body>

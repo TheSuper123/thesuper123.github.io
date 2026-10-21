@@ -1,144 +1,11 @@
 <!doctype html>
 <html lang="pl">
   <head>
-    <script src="../assets/theme.js"></script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Labirynt – Spinner Games</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="../assets/theme.js"></script>
+    <title>Labirynt — Spinner Games</title>
     <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
-    <style>
-      :root {
-        --bg: #020617;
-        --card: #0f172a;
-        --accent: #38bdf8;
-        --text: #e5e7eb;
-        --danger: #f87171;
-        --coin: #facc15;
-      }
-      * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
-      body {
-        margin: 0;
-        font-family: Inter, system-ui, sans-serif;
-        background: radial-gradient(circle at top, #020617, #000);
-        color: var(--text);
-        overflow: hidden;
-        touch-action: none;
-      }
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 20px;
-        background: rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(10px);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      header img {
-        height: 32px;
-      }
-      nav button {
-        background: rgba(56, 189, 248, 0.1);
-        border: 1px solid var(--accent);
-        color: var(--text);
-        padding: 6px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-      main {
-        max-width: 600px;
-        margin: auto;
-        padding: 10px;
-      }
-      .card {
-        background: linear-gradient(180deg, #0f172a, #020617);
-        border-radius: 24px;
-        padding: 15px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        text-align: center;
-      }
-      #game-container {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1/1;
-        background: #000;
-        border-radius: 15px;
-        border: 2px solid #1e293b;
-        overflow: hidden;
-        margin: 10px 0;
-      }
-      canvas {
-        width: 100%;
-        height: 100%;
-        display: block;
-      }
-      .stats-bar {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        font-size: 13px;
-        flex-wrap: wrap;
-        gap: 5px;
-      }
-      .stat-item {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 5px 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      #lives-txt {
-        color: var(--danger);
-        font-weight: bold;
-      }
-      #coins-txt {
-        color: var(--coin);
-        font-weight: bold;
-      }
-
-      select,
-      .btn-start {
-        background: #1e293b;
-        color: white;
-        border: 1px solid var(--accent);
-        padding: 12px;
-        border-radius: 10px;
-        cursor: pointer;
-        margin: 10px 0;
-        width: 100%;
-      }
-      .btn-start {
-        background: var(--accent);
-        color: var(--bg);
-        font-weight: bold;
-        font-size: 1.1rem;
-      }
-
-      #mobile-controls {
-        display: none;
-        grid-template-areas: ". up ." "left down right";
-        gap: 10px;
-        justify-content: center;
-        margin-top: 10px;
-      }
-      .joy-btn {
-        width: 50px;
-        height: 50px;
-        background: rgba(56, 189, 248, 0.1);
-        border: 1px solid var(--accent);
-        border-radius: 10px;
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        user-select: none;
-      }
-    </style>
     <link rel="stylesheet" href="../assets/site.css" />
     <link rel="stylesheet" href="../assets/game.css" />
     <script src="../assets/storage.js"></script>
@@ -146,335 +13,734 @@
     <script src="../assets/site.js" defer></script>
     <script src="../assets/game-ui.js" defer></script>
     <link rel="stylesheet" href="../assets/theme.css" />
+    <style>
+      .game-page[data-game="maze"] main {
+        max-width: 720px !important;
+      }
+      .maze-panel {
+        text-align: center;
+        background: var(--white);
+        border: 1px solid var(--line);
+        padding: 22px;
+        border-radius: 6px;
+      }
+      .maze-panel h2 {
+        font: 600 26px/1.15 Fraunces;
+        margin: 4px 0 14px;
+      }
+      .maze-panel p {
+        font-size: 12px;
+        color: var(--muted);
+        max-width: 440px;
+        margin: 10px auto 18px;
+      }
+      .maze-toolbar {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 14px 0;
+      }
+      .maze-toolbar label {
+        font: 10px Mono;
+        color: var(--muted);
+        display: grid;
+        gap: 6px;
+        text-align: left;
+      }
+      .maze-toolbar select {
+        min-width: 150px;
+      }
+      .maze-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .maze-stat {
+        font: 10px/1.6 Mono;
+        color: var(--muted);
+        padding: 7px 4px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .maze-stat strong {
+        display: block;
+        font: 600 20px DM;
+        color: var(--ink);
+      }
+      .maze-board {
+        position: relative;
+        max-width: 480px;
+        margin: auto;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+        overflow: hidden;
+        background: var(--board);
+      }
+      #mazeCanvas {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        touch-action: none;
+      }
+      .maze-cover {
+        position: absolute;
+        inset: 0;
+        background: var(--overlay);
+        display: grid;
+        place-items: center;
+        padding: 18px;
+      }
+      .maze-cover[hidden] {
+        display: none;
+      }
+      .maze-cover > div {
+        max-width: 280px;
+      }
+      .maze-cover h3 {
+        font: 600 28px Fraunces;
+      }
+      .maze-cover p {
+        font-size: 12px;
+      }
+      .maze-note {
+        font: 10px/1.7 Mono;
+        color: var(--muted);
+        min-height: 18px;
+        margin: 12px 0 0;
+      }
+      .maze-result {
+        border-left: 3px solid var(--orange);
+        text-align: left;
+        padding: 6px 14px;
+        margin: 14px auto;
+        max-width: 410px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .game-page #mobile-controls {
+        display: grid !important;
+        grid-template-columns: repeat(3, 48px);
+        grid-template-areas: ". up ." "left down right";
+        gap: 6px;
+        justify-content: center;
+        margin-top: 14px;
+      }
+      .maze-legend {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        font: 10px Mono;
+        color: var(--muted);
+        flex-wrap: wrap;
+        margin: 14px 0;
+      }
+      .maze-legend i {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+        background: var(--orange);
+      }
+      .maze-legend .key {
+        background: var(--game-gold);
+        border-radius: 1px;
+        transform: rotate(45deg);
+      }
+      .maze-legend .exit {
+        background: var(--game-green);
+        border-radius: 1px;
+      }
+      .game-page .maze-board:focus-visible {
+        outline: 3px solid var(--blue);
+        outline-offset: 4px;
+      }
+      @media (max-width: 500px) {
+        .maze-panel {
+          padding: 14px 10px;
+        }
+        .maze-stat {
+          font-size: 8px;
+        }
+        .maze-stat strong {
+          font-size: 17px;
+        }
+        .maze-toolbar {
+          gap: 7px;
+        }
+        .maze-toolbar select {
+          min-width: 125px;
+        }
+        .maze-toolbar button {
+          font-size: 10px !important;
+          padding: 10px !important;
+        }
+      }
+    </style>
   </head>
   <body class="game-page">
-    <header>
-      <img src="../assets/mark.svg" alt="SpinnerRealYT" />
-      <nav><button onclick="location.href='../index.html'">Menu</button></nav>
-    </header>
-
     <main>
-      <div class="card">
+      <section class="maze-panel">
         <div id="setup">
-          <h2>Labirynt</h2>
-          <p style="opacity: 0.7; font-size: 14px">Wybierz tryb wyzwania:</p>
-          <select id="difficulty">
-            <option value="amator">Amator (Bez limitów)</option>
-            <option value="easy">Łatwy (5 ❤️ | Życie: 50 🪙)</option>
-            <option value="medium">Średni (3 ❤️ | Życie: 75 🪙)</option>
-            <option value="hard">Trudny (1 ❤️ | Życie: 100 🪙)</option>
-          </select>
-          <button class="btn-start" id="start-btn">Zacznij Przygodę</button>
-        </div>
-
-        <div id="game-ui" style="display: none">
-          <div class="stats-bar">
-            <div class="stat-item" id="level-txt">Poziom: 1</div>
-            <div class="stat-item" id="lives-txt">❤️ ∞</div>
-            <div class="stat-item" id="coins-txt">🪙 0</div>
+          <div class="eyebrow">ODKRYJ / ZBIERZ / WYJDŹ</div>
+          <h2>Nie ma ślepych losowań.</h2>
+          <p>
+            Każdy labirynt ma przejście. Zbierz trzy złote klucze i znajdź
+            wyjście. Zostawiony ślad pomoże wrócić na właściwą drogę.
+          </p>
+          <div class="maze-toolbar">
+            <label
+              >Rozmiar<select id="difficulty">
+                <option value="amator">Spokojny / 9 × 9</option>
+                <option value="easy" selected>Klasyczny / 11 × 11</option>
+                <option value="medium">Większy / 15 × 15</option>
+                <option value="hard">Wyprawa / 19 × 19</option>
+              </select></label
+            ><label
+              >Układ<select id="maze-route">
+                <option value="random">Nowy labirynt</option>
+                <option value="daily">Dzisiejsza trasa</option>
+              </select></label
+            >
           </div>
-          <div id="game-container">
-            <canvas id="mazeCanvas"></canvas>
+          <button class="btn-start" id="start-btn" type="button">
+            Wejdź do labiryntu ↗
+          </button>
+          <p id="maze-best">Własne tempo. Bez limitu czasu.</p>
+        </div>
+        <div id="game-ui" hidden>
+          <div class="maze-stats">
+            <div class="maze-stat">ETAP<strong id="level-txt">1</strong></div>
+            <div class="maze-stat">
+              KLUCZE<strong id="coins-txt">0 / 3</strong>
+            </div>
+            <div class="maze-stat">
+              CZAS<strong id="maze-time">0:00</strong>
+            </div>
+            <div class="maze-stat">KROKI<strong id="maze-steps">0</strong></div>
+          </div>
+          <div
+            class="maze-board"
+            tabindex="0"
+            aria-label="Labirynt. Użyj strzałek lub WASD."
+          >
+            <canvas id="mazeCanvas" width="600" height="600"></canvas>
+            <div id="maze-cover" class="maze-cover" hidden>
+              <div>
+                <h3 id="maze-cover-title">Pauza.</h3>
+                <p id="maze-cover-text">Trasa na Ciebie poczeka.</p>
+                <button id="maze-resume" type="button">Wracam do gry</button>
+              </div>
+            </div>
+          </div>
+          <div class="maze-legend">
+            <span><i></i>Ty</span><span><i class="key"></i>Klucz</span
+            ><span><i class="exit"></i>Wyjście</span>
           </div>
           <div id="mobile-controls">
             <button
               type="button"
               class="joy-btn"
-              style="grid-area: up"
               id="btn-up"
+              style="grid-area: up"
+              aria-label="W górę"
             >
-              ▲
-            </button>
-            <button
+              ▲</button
+            ><button
               type="button"
               class="joy-btn"
-              style="grid-area: left"
               id="btn-left"
+              style="grid-area: left"
+              aria-label="W lewo"
             >
-              ◀
-            </button>
-            <button
+              ◀</button
+            ><button
               type="button"
               class="joy-btn"
-              style="grid-area: down"
               id="btn-down"
+              style="grid-area: down"
+              aria-label="W dół"
             >
-              ▼
-            </button>
-            <button
+              ▼</button
+            ><button
               type="button"
               class="joy-btn"
-              style="grid-area: right"
               id="btn-right"
+              style="grid-area: right"
+              aria-label="W prawo"
             >
               ▶
             </button>
           </div>
+          <div class="maze-toolbar">
+            <button type="button" id="maze-pause">Pauza</button
+            ><button type="button" id="maze-restart">Jeszcze raz</button
+            ><button type="button" id="maze-new">Inna trasa</button
+            ><button type="button" id="maze-next" hidden>
+              Kolejny etap ↗
+            </button>
+          </div>
+          <p class="maze-note" id="maze-message" role="status">
+            Zbierz trzy klucze. Strzałki / WASD · P: pauza.
+          </p>
+          <div id="maze-summary" class="maze-result" hidden></div>
         </div>
-      </div>
+      </section>
     </main>
-
     <script>
-      const canvas = document.getElementById("mazeCanvas");
-      const ctx = canvas.getContext("2d");
-      const setupDiv = document.getElementById("setup");
-      const gameUIDiv = document.getElementById("game-ui");
-      const diffSelect = document.getElementById("difficulty");
-      const mobileCtrl = document.getElementById("mobile-controls");
-
+      "use strict";
+      const canvas = document.getElementById("mazeCanvas"),
+        ctx = canvas.getContext("2d"),
+        prefs = SpinnerStorage.preferences;
+      const directions = {
+        up: [0, -1],
+        right: [1, 0],
+        down: [0, 1],
+        left: [-1, 0],
+      };
+      const keyDirections = {
+        ArrowUp: "up",
+        w: "up",
+        W: "up",
+        ArrowRight: "right",
+        d: "right",
+        D: "right",
+        ArrowDown: "down",
+        s: "down",
+        S: "down",
+        ArrowLeft: "left",
+        a: "left",
+        A: "left",
+      };
       let level = 1,
-        deaths = 0,
         coins = 0,
-        lives = Infinity,
         gameActive = false;
-      let player = { x: 30, y: 30, size: 7, speed: 3.5 };
-      let goal = { x: 370, y: 370, size: 12 };
-      let walls = [],
-        pickups = [],
-        keys = {};
-
-      if ("ontouchstart" in window) mobileCtrl.style.display = "grid";
-
-      function resize() {
-        canvas.width = 400;
-        canvas.height = 400;
-      }
-      resize();
-
-      function initLevel() {
-        player.x = 30;
-        player.y = 30;
-        walls = [];
-        pickups = [];
-
-        const mode = diffSelect.value;
-        let wallCount = 6 + level * 2;
-        let vSpeed = 0;
-
-        if (mode === "easy") {
-          vSpeed = 0.5;
-        }
-        if (mode === "medium") {
-          vSpeed = 1.5;
-          wallCount += 5;
-        }
-        if (mode === "hard") {
-          vSpeed = 2.5;
-          wallCount += 10;
-        }
-
-        // Generowanie ścian
-        for (let i = 0; i < wallCount; i++) {
-          walls.push({
-            x: Math.random() * (canvas.width - 100) + 50,
-            y: Math.random() * (canvas.height - 100) + 50,
-            w: Math.random() > 0.5 ? 50 : 12,
-            h: Math.random() > 0.5 ? 12 : 50,
-            vx:
-              mode !== "amator" && mode !== "easy"
-                ? (Math.random() - 0.5) * (vSpeed + level * 0.2)
-                : 0,
-            vy:
-              mode !== "amator" && mode !== "easy"
-                ? (Math.random() - 0.5) * (vSpeed + level * 0.2)
-                : 0,
-          });
-        }
-
-        // Generowanie monet (tylko poza amatorem)
-        if (mode !== "amator") {
-          for (let i = 0; i < 3 + Math.floor(level / 2); i++) {
-            pickups.push({
-              x: Math.random() * (canvas.width - 60) + 30,
-              y: Math.random() * (canvas.height - 60) + 30,
-              size: 5,
-              collected: false,
-            });
-          }
-        }
-      }
-
-      window.onkeydown = (e) => {
-        if (e.key.startsWith("Arrow")) e.preventDefault();
-        keys[e.key.toLowerCase()] = true;
-      };
-      window.onkeyup = (e) => (keys[e.key.toLowerCase()] = false);
-
-      function bindMobile(id, key) {
-        const btn = document.getElementById(id);
-        btn.ontouchstart = (e) => {
-          e.preventDefault();
-          keys[key] = true;
-        };
-        btn.ontouchend = () => (keys[key] = false);
-        btn.onkeydown = (e) => {
-          if (e.key === " " || e.key === "Enter") {
-            e.preventDefault();
-            keys[key] = true;
-          }
-        };
-        btn.onkeyup = (e) => {
-          if (e.key === " " || e.key === "Enter") keys[key] = false;
-        };
-        btn.onblur = () => (keys[key] = false);
-        btn.onpointerdown = (e) => {
-          e.preventDefault();
-          btn.setPointerCapture(e.pointerId);
-          keys[key] = true;
-        };
-        btn.onpointerup = btn.onpointercancel = () => (keys[key] = false);
-      }
-      bindMobile("btn-up", "arrowup");
-      bindMobile("btn-down", "arrowdown");
-      bindMobile("btn-left", "arrowleft");
-      bindMobile("btn-right", "arrowright");
-
-      function checkLifeSystem() {
-        const mode = diffSelect.value;
-        let cost = 50;
-        if (mode === "medium") cost = 75;
-        if (mode === "hard") cost = 100;
-
-        if (coins >= cost) {
-          coins -= cost;
-          lives++;
-          updateUI();
-        }
-      }
-
-      function updateUI() {
-        document.getElementById("level-txt").textContent = `Poziom: ${level}`;
-        document.getElementById("coins-txt").textContent = `🪙 ${coins}`;
-        document.getElementById("lives-txt").textContent =
-          lives === Infinity ? "❤️ ∞" : `❤️ ${lives}`;
-      }
-
-      function update() {
-        if (!gameActive) return;
-
-        let nextX = player.x,
-          nextY = player.y;
-        if (keys["w"] || keys["arrowup"]) nextY -= player.speed;
-        if (keys["s"] || keys["arrowdown"]) nextY += player.speed;
-        if (keys["a"] || keys["arrowleft"]) nextX -= player.speed;
-        if (keys["d"] || keys["arrowright"]) nextX += player.speed;
-
-        if (nextX > player.size && nextX < canvas.width - player.size)
-          player.x = nextX;
-        if (nextY > player.size && nextY < canvas.height - player.size)
-          player.y = nextY;
-
-        // Monety
-        pickups.forEach((p) => {
-          if (
-            !p.collected &&
-            Math.hypot(player.x - p.x, player.y - p.y) < player.size + p.size
-          ) {
-            p.collected = true;
-            coins += 10;
-            checkLifeSystem();
-            updateUI();
-          }
-        });
-
-        // Ściany
-        walls.forEach((w) => {
-          w.x += w.vx;
-          w.y += w.vy;
-          if (w.x <= 0 || w.x + w.w >= canvas.width) w.vx *= -1;
-          if (w.y <= 0 || w.y + w.h >= canvas.height) w.vy *= -1;
-
-          if (
-            player.x + player.size > w.x &&
-            player.x - player.size < w.x + w.w &&
-            player.y + player.size > w.y &&
-            player.y - player.size < w.y + w.h
-          ) {
-            if (lives !== Infinity) {
-              lives--;
-              if (lives <= 0) {
-                gameActive = false;
-                setupDiv.style.display = "block";
-                gameUIDiv.style.display = "none";
-                document.querySelector("#setup p").textContent =
-                  `Runda zakończona. Osiągnięty poziom: ${level}. Spróbujesz jeszcze raz?`;
-                return;
-              }
+      let held = null,
+        holdDelay = 0,
+        last = 0,
+        animation = 0;
+      const maze = {
+        size: 11,
+        cells: [],
+        keys: [],
+        player: { x: 0, y: 0, drawX: 0, drawY: 0 },
+        visited: new Set(),
+        steps: 0,
+        elapsed: 0,
+        paused: false,
+        won: false,
+        seed: 0,
+        route: "random",
+        mode: "easy",
+        flash: 0,
+        random(seed) {
+          let value = seed >>> 0;
+          return () => {
+            value += 0x6d2b79f5;
+            let t = value;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        },
+        generate(seed) {
+          this.seed = seed >>> 0;
+          const random = this.random(this.seed);
+          this.cells = Array.from({ length: this.size * this.size }, () => 15);
+          const seen = new Set([0]),
+            stack = [0],
+            offsets = [-this.size, 1, this.size, -1],
+            bits = [1, 2, 4, 8],
+            opposite = [4, 8, 1, 2];
+          while (stack.length) {
+            const i = stack[stack.length - 1],
+              x = i % this.size,
+              y = Math.floor(i / this.size);
+            const choices = [];
+            for (let dir = 0; dir < 4; dir++) {
+              const nx = x + Object.values(directions)[dir][0],
+                ny = y + Object.values(directions)[dir][1];
+              if (
+                nx >= 0 &&
+                ny >= 0 &&
+                nx < this.size &&
+                ny < this.size &&
+                !seen.has(i + offsets[dir])
+              )
+                choices.push(dir);
             }
-            player.x = 30;
-            player.y = 30;
-            updateUI();
+            if (!choices.length) {
+              stack.pop();
+              continue;
+            }
+            const dir = choices[Math.floor(random() * choices.length)],
+              next = i + offsets[dir];
+            this.cells[i] &= ~bits[dir];
+            this.cells[next] &= ~opposite[dir];
+            seen.add(next);
+            stack.push(next);
           }
-        });
-
-        if (
-          Math.hypot(player.x - goal.x, player.y - goal.y) <
-          player.size + goal.size
-        ) {
-          level++;
-          updateUI();
-          initLevel();
-        }
-      }
-
-      function draw() {
-        SpinnerTheme.drawBoard(ctx, canvas.width, canvas.height, 25);
-        ctx.shadowBlur = 0;
-
-        // Cel
-        ctx.fillStyle = SpinnerTheme.color("#4ade80");
-        ctx.shadowColor = SpinnerTheme.color("#4ade80");
-        ctx.beginPath();
-        ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Ściany
-        ctx.fillStyle = SpinnerTheme.color("#f87171");
-        ctx.shadowColor = SpinnerTheme.color("#f87171");
-        walls.forEach((w) => ctx.fillRect(w.x, w.y, w.w, w.h));
-
-        // Monety
-        ctx.fillStyle = SpinnerTheme.color("#facc15");
-        ctx.shadowColor = SpinnerTheme.color("#facc15");
-        pickups.forEach((p) => {
-          if (!p.collected) {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
+          const distances = Array(this.cells.length).fill(-1),
+            queue = [0];
+          distances[0] = 0;
+          for (let q = 0; q < queue.length; q++) {
+            const i = queue[q];
+            for (let dir = 0; dir < 4; dir++)
+              if (!(this.cells[i] & bits[dir])) {
+                const next = i + offsets[dir];
+                if (distances[next] < 0) {
+                  distances[next] = distances[i] + 1;
+                  queue.push(next);
+                }
+              }
           }
-        });
-
-        // Gracz
-        ctx.fillStyle = SpinnerTheme.color("#38bdf8");
-        ctx.shadowColor = SpinnerTheme.color("#38bdf8");
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.shadowBlur = 0;
-        update();
-        requestAnimationFrame(draw);
-      }
-
-      document.getElementById("start-btn").onclick = () => {
-        const mode = diffSelect.value;
-        level = 1;
-        coins = 0;
-        if (mode === "easy") lives = 5;
-        if (mode === "medium") lives = 3;
-        if (mode === "hard") lives = 1;
-        if (mode === "amator") lives = Infinity;
-
-        setupDiv.style.display = "none";
-        gameUIDiv.style.display = "block";
-        gameActive = true;
-        updateUI();
-        initLevel();
-        if (!window.mazeLoopStarted) {
-          window.mazeLoopStarted = true;
-          draw();
-        }
+          const candidates = queue
+            .filter((i) => i !== 0 && i !== this.cells.length - 1)
+            .sort((a, b) => distances[a] - distances[b]);
+          this.keys = [0.25, 0.55, 0.82].map((part) => ({
+            cell: candidates[Math.floor((candidates.length - 1) * part)],
+            taken: false,
+          }));
+        },
+        start(options = {}) {
+          const mode =
+            options.mode || document.getElementById("difficulty").value;
+          this.mode = mode;
+          level = options.level || 1;
+          this.size = Math.min(
+            25,
+            ({ amator: 9, easy: 11, medium: 15, hard: 19 }[mode] || 11) +
+              (level - 1) * 2,
+          );
+          this.route = document.getElementById("maze-route").value;
+          const today = new Date()
+            .toISOString()
+            .slice(0, 10)
+            .replaceAll("-", "");
+          const seed =
+            options.seed ??
+            (this.route === "daily"
+              ? Number(today) + this.size
+              : crypto.getRandomValues(new Uint32Array(1))[0]);
+          this.generate(seed);
+          this.player = { x: 0, y: 0, drawX: 0, drawY: 0 };
+          this.visited = new Set([0]);
+          this.steps = 0;
+          this.elapsed = 0;
+          this.paused = false;
+          this.won = false;
+          this.flash = 0;
+          coins = 0;
+          gameActive = true;
+          held = null;
+          document.getElementById("setup").hidden = true;
+          document.getElementById("game-ui").hidden = false;
+          document.getElementById("maze-cover").hidden = true;
+          document.getElementById("maze-summary").hidden = true;
+          document.getElementById("maze-next").hidden = true;
+          document.getElementById("maze-resume").textContent = "Wracam do gry";
+          document.getElementById("maze-pause").textContent = "Pauza";
+          document.getElementById("maze-pause").disabled = false;
+          document.getElementById("maze-message").textContent =
+            "Zbierz trzy klucze. Strzałki / WASD · P: pauza.";
+          this.sync();
+          this.draw();
+        },
+        move(direction) {
+          if (!gameActive || this.paused || this.won) return false;
+          const index = Object.keys(directions).indexOf(direction);
+          if (index < 0) return false;
+          const current = this.player.y * this.size + this.player.x;
+          if (this.cells[current] & (1 << index)) {
+            this.flash = 0.12;
+            return false;
+          }
+          const [dx, dy] = directions[direction];
+          this.player.x += dx;
+          this.player.y += dy;
+          this.steps++;
+          const next = this.player.y * this.size + this.player.x;
+          this.visited.add(next);
+          const key = this.keys.find((key) => key.cell === next && !key.taken);
+          if (key) {
+            key.taken = true;
+            coins++;
+            document.getElementById("maze-message").textContent =
+              coins === 3
+                ? "Masz komplet. Zielone wyjście czeka."
+                : `Klucz ${coins} z 3. Dobra droga.`;
+          }
+          if (next === this.cells.length - 1) {
+            if (coins === 3) this.finish();
+            else
+              document.getElementById("maze-message").textContent =
+                "Wyjście zamknięte. Najpierw zbierz trzy złote klucze.";
+          }
+          this.sync();
+          return true;
+        },
+        sync() {
+          document.getElementById("level-txt").textContent = level;
+          document.getElementById("coins-txt").textContent = coins + " / 3";
+          document.getElementById("maze-steps").textContent = this.steps;
+          document.getElementById("maze-time").textContent =
+            Math.floor(this.elapsed / 60) +
+            ":" +
+            String(Math.floor(this.elapsed % 60)).padStart(2, "0");
+        },
+        pause(value = !this.paused) {
+          if (!gameActive || this.won) return;
+          this.paused = value;
+          held = null;
+          document.getElementById("maze-cover").hidden = !value;
+          document.getElementById("maze-cover-title").textContent = "Pauza.";
+          document.getElementById("maze-cover-text").textContent =
+            "Trasa na Ciebie poczeka. Wznów przyciskiem lub klawiszem P.";
+          document.getElementById("maze-pause").textContent = value
+            ? "Wznów"
+            : "Pauza";
+        },
+        finish() {
+          this.won = true;
+          gameActive = false;
+          held = null;
+          const key = "maze:best:" + this.mode + ":" + this.seed;
+          const before = prefs.get(key, null);
+          const best =
+            before === null ? this.elapsed : Math.min(before, this.elapsed);
+          prefs.set(key, best);
+          const note = document.getElementById("maze-summary");
+          note.hidden = false;
+          note.textContent = `Wyjście znalezione w ${this.steps} krokach. Czas: ${this.elapsed.toFixed(1)} s. ${before !== null && this.elapsed < before ? "Nowy rekord tej trasy!" : "Możesz powtórzyć tę trasę i skrócić drogę."}`;
+          document.getElementById("maze-message").textContent =
+            "Trzy klucze. Jedno wyjście. Udało się.";
+          document.getElementById("maze-pause").disabled = true;
+          document.getElementById("maze-next").hidden = false;
+          this.sync();
+        },
+        draw() {
+          const p = SpinnerTheme.palette,
+            n = this.size,
+            space = canvas.width / n;
+          ctx.clearRect(0, 0, 600, 600);
+          ctx.fillStyle = p.board;
+          ctx.fillRect(0, 0, 600, 600);
+          this.visited.forEach((i) => {
+            ctx.fillStyle = SpinnerTheme.alpha("green", 0.1);
+            ctx.fillRect(
+              (i % n) * space + 3,
+              Math.floor(i / n) * space + 3,
+              space - 6,
+              space - 6,
+            );
+          });
+          ctx.strokeStyle = p.muted;
+          ctx.lineWidth = n > 15 ? 2 : 2.6;
+          ctx.lineCap = "square";
+          ctx.beginPath();
+          for (let i = 0; i < this.cells.length; i++) {
+            const x = (i % n) * space,
+              y = Math.floor(i / n) * space,
+              w = this.cells[i];
+            if (w & 1) {
+              ctx.moveTo(x, y);
+              ctx.lineTo(x + space, y);
+            }
+            if (w & 8) {
+              ctx.moveTo(x, y);
+              ctx.lineTo(x, y + space);
+            }
+            if (i % n === n - 1 && w & 2) {
+              ctx.moveTo(x + space, y);
+              ctx.lineTo(x + space, y + space);
+            }
+            if (i >= n * (n - 1) && w & 4) {
+              ctx.moveTo(x, y + space);
+              ctx.lineTo(x + space, y + space);
+            }
+          }
+          ctx.stroke();
+          const exit = (n - 0.5) * space;
+          ctx.fillStyle =
+            coins === 3 ? p.green : SpinnerTheme.alpha("green", 0.28);
+          ctx.fillRect(
+            exit - space * 0.27,
+            exit - space * 0.27,
+            space * 0.54,
+            space * 0.54,
+          );
+          ctx.fillStyle = p.surface;
+          ctx.font = `600 ${space * 0.35}px DM`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("↗", exit, exit);
+          this.keys.forEach((key) => {
+            if (key.taken) return;
+            const x = ((key.cell % n) + 0.5) * space,
+              y = (Math.floor(key.cell / n) + 0.5) * space;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillStyle = p.gold;
+            ctx.fillRect(
+              -space * 0.13,
+              -space * 0.13,
+              space * 0.26,
+              space * 0.26,
+            );
+            ctx.restore();
+          });
+          const x = (this.player.drawX + 0.5) * space,
+            y = (this.player.drawY + 0.5) * space;
+          ctx.fillStyle = SpinnerTheme.alpha("accent", 0.13);
+          ctx.beginPath();
+          ctx.arc(x, y, space * 0.34, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = this.flash > 0 ? p.red : p.accent;
+          ctx.beginPath();
+          ctx.arc(x, y, space * 0.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = p.surface;
+          ctx.beginPath();
+          ctx.arc(
+            x + space * 0.055,
+            y - space * 0.045,
+            space * 0.04,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+        },
       };
+      window.maze = maze;
+      window.SpinnerGame = {
+        render: () => maze.draw(),
+        pause: () => maze.pause(true),
+      };
+      function frame(now) {
+        const dt = Math.min((now - last) / 1000 || 0, 0.05);
+        last = now;
+        if (gameActive && !maze.paused) {
+          maze.elapsed += dt;
+          maze.flash = Math.max(0, maze.flash - dt);
+          if (held) {
+            holdDelay -= dt;
+            if (holdDelay <= 0) {
+              maze.move(held);
+              holdDelay = 0.095;
+            }
+          }
+        }
+        const follow = 1 - Math.exp(-26 * dt);
+        maze.player.drawX += (maze.player.x - maze.player.drawX) * follow;
+        maze.player.drawY += (maze.player.y - maze.player.drawY) * follow;
+        if (maze.cells.length) {
+          maze.sync();
+          maze.draw();
+        }
+        animation = requestAnimationFrame(frame);
+      }
+      animation = requestAnimationFrame(frame);
+      function typing(event) {
+        return event.target.matches(
+          "input,select,textarea,[contenteditable=true]",
+        );
+      }
+      document.addEventListener("keydown", (event) => {
+        if (typing(event)) return;
+        const direction = keyDirections[event.key];
+        if (direction) {
+          event.preventDefault();
+          if (event.repeat) return;
+          held = direction;
+          holdDelay = 0.18;
+          maze.move(direction);
+        } else if (event.key.toLowerCase() === "p") {
+          if (event.repeat) return;
+          event.preventDefault();
+          maze.pause();
+        } else if (event.key.toLowerCase() === "r" && maze.cells.length) {
+          event.preventDefault();
+          maze.start({ seed: maze.seed, mode: maze.mode, level });
+        }
+      });
+      document.addEventListener("keyup", (event) => {
+        if (keyDirections[event.key] === held) held = null;
+      });
+      for (const [id, direction] of [
+        ["btn-up", "up"],
+        ["btn-right", "right"],
+        ["btn-down", "down"],
+        ["btn-left", "left"],
+      ]) {
+        const button = document.getElementById(id);
+        button.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          button.setPointerCapture(event.pointerId);
+          held = direction;
+          holdDelay = 0.18;
+          maze.move(direction);
+        });
+        for (const name of ["pointerup", "pointercancel", "lostpointercapture"])
+          button.addEventListener(name, () => (held = null));
+        button.addEventListener("keydown", (event) => {
+          if (event.key === " " || event.key === "Enter") {
+            event.preventDefault();
+            if (!event.repeat) maze.move(direction);
+          }
+        });
+      }
+      let touchStart = null;
+      canvas.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse") return;
+        touchStart = { x: event.clientX, y: event.clientY };
+        canvas.setPointerCapture(event.pointerId);
+      });
+      canvas.addEventListener("pointermove", (event) => {
+        if (!touchStart) return;
+        const dx = event.clientX - touchStart.x,
+          dy = event.clientY - touchStart.y;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+        maze.move(
+          Math.abs(dx) > Math.abs(dy)
+            ? dx > 0
+              ? "right"
+              : "left"
+            : dy > 0
+              ? "down"
+              : "up",
+        );
+        touchStart = { x: event.clientX, y: event.clientY };
+      });
+      for (const name of ["pointerup", "pointercancel"])
+        canvas.addEventListener(name, () => (touchStart = null));
+      document.getElementById("start-btn").onclick = () => maze.start();
+      document.getElementById("maze-restart").onclick = () =>
+        maze.start({ seed: maze.seed, mode: maze.mode, level });
+      document.getElementById("maze-new").onclick = () => {
+        document.getElementById("maze-route").value = "random";
+        maze.start();
+      };
+      document.getElementById("maze-next").onclick = () =>
+        maze.start({ mode: maze.mode, level: level + 1 });
+      document.getElementById("maze-pause").onclick = () => maze.pause();
+      document.getElementById("maze-resume").onclick = () => maze.pause(false);
+      window.addEventListener("blur", () => {
+        held = null;
+        maze.pause(true);
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          held = null;
+          maze.pause(true);
+        }
+      });
+      window.addEventListener("spinner:theme-change", () => {
+        if (maze.cells.length) maze.draw();
+      });
     </script>
   </body>
 </html>

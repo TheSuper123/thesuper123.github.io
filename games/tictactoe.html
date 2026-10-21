@@ -1,153 +1,11 @@
 <!doctype html>
 <html lang="pl">
   <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <script src="../assets/theme.js"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kółko i Krzyżyk – Spinner Games</title>
-
+    <title>Kółko i krzyżyk — Spinner Games</title>
     <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
-    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
-
-    <style>
-      :root {
-        --bg: #020617;
-        --card: #0f172a;
-        --accent: #38bdf8;
-        --text: #e5e7eb;
-        --cell-size: clamp(65px, 25vw, 120px);
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family: Inter, system-ui, sans-serif;
-        background: radial-gradient(circle at top, #020617, #000);
-        color: var(--text);
-        overflow-x: hidden;
-      }
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 20px;
-        background: rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(10px);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      header img {
-        height: 32px;
-      }
-
-      nav button {
-        background: rgba(56, 189, 248, 0.1);
-        border: 1px solid var(--accent);
-        color: var(--text);
-        padding: 6px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-
-      main {
-        max-width: 600px;
-        margin: auto;
-        padding: 15px;
-      }
-      .card {
-        background: linear-gradient(180deg, #0f172a, #020617);
-        border-radius: 24px;
-        padding: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      h2 {
-        text-align: center;
-        margin-top: 0;
-        color: var(--accent);
-      }
-
-      #controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      .row-ctrl {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      select,
-      button#restart {
-        background: #1e293b;
-        color: white;
-        border: 1px solid #334155;
-        border-radius: 10px;
-        padding: 8px 12px;
-        cursor: pointer;
-      }
-      button#restart {
-        background: var(--accent);
-        color: #020617;
-        font-weight: bold;
-        border: none;
-      }
-
-      #board {
-        display: grid;
-        grid-template-columns: repeat(3, var(--cell-size));
-        gap: 12px;
-        justify-content: center;
-        margin: 20px auto;
-      }
-      .cell {
-        width: var(--cell-size);
-        height: var(--cell-size);
-        background: #1e293b;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: calc(var(--cell-size) * 0.5);
-        font-weight: 700;
-        cursor: pointer;
-        border-radius: 15px;
-        user-select: none;
-        transition: 0.2s;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .cell:active {
-        transform: scale(0.95);
-      }
-      .cell.x-color {
-        color: var(--accent);
-      }
-      .cell.o-color {
-        color: #f87171;
-      }
-
-      #status {
-        text-align: center;
-        font-size: 1.3rem;
-        font-weight: 600;
-        min-height: 1.6em;
-        padding: 10px;
-        border-radius: 10px;
-      }
-
-      footer {
-        text-align: center;
-        opacity: 0.6;
-        padding: 25px 10px;
-        font-size: 12px;
-      }
-    </style>
     <link rel="stylesheet" href="../assets/site.css" />
     <link rel="stylesheet" href="../assets/game.css" />
     <script src="../assets/storage.js"></script>
@@ -155,235 +13,647 @@
     <script src="../assets/site.js" defer></script>
     <script src="../assets/game-ui.js" defer></script>
     <link rel="stylesheet" href="../assets/theme.css" />
+    <style>
+      body.game-page .ttt-card {
+        padding: 24px !important;
+      }
+      .ttt-intro {
+        font: 600 25px/1.2 DM;
+        letter-spacing: -0.8px;
+        margin-bottom: 5px;
+      }
+      .ttt-caption {
+        font: 10px/1.7 Mono;
+        color: var(--muted);
+        margin: 0 0 20px;
+      }
+      .ttt-controls {
+        display: flex;
+        gap: 12px;
+        align-items: end;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .ttt-controls label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .ttt-controls select {
+        font-size: 11px !important;
+      }
+      .ttt-score {
+        display: grid;
+        grid-template-columns: 1fr 0.8fr 1fr;
+        gap: 8px;
+        margin: 22px 0 0;
+      }
+      .ttt-score > div {
+        text-align: center;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--paper);
+        padding: 11px 6px;
+      }
+      .ttt-score .current {
+        border-color: var(--orange);
+        background: var(--warning-surface);
+      }
+      .ttt-score b {
+        font: 600 24px/1.3 Mono;
+        display: block;
+      }
+      .ttt-score small {
+        font: 9px/1.5 Mono;
+        color: var(--muted);
+      }
+      .ttt-score .mark-x {
+        color: var(--orange);
+      }
+      .ttt-score .mark-o {
+        color: var(--game-blue);
+      }
+      .ttt-board-wrap {
+        position: relative;
+        width: min(100%, 324px);
+        margin: 20px auto;
+      }
+      body.game-page #board {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+        margin: 0;
+      }
+      body.game-page #board .cell {
+        padding: 0;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0;
+        aspect-ratio: 1;
+        border: 1px solid var(--edge);
+        border-bottom-width: 3px;
+        border-radius: 4px !important;
+        background: var(--surface-3);
+        font: 500 clamp(38px, 13vw, 61px) / 1 DM !important;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        opacity: 1;
+        touch-action: manipulation;
+      }
+      body.game-page #board .cell:disabled {
+        cursor: default;
+        opacity: 1;
+      }
+      body.game-page #board .cell:empty:hover {
+        background: var(--paper);
+        border-color: var(--orange);
+      }
+      body.game-page #board .cell.x-color {
+        color: var(--orange);
+      }
+      body.game-page #board .cell.o-color {
+        color: var(--game-blue);
+      }
+      body.game-page #board .cell.winning {
+        background: var(--warning-surface);
+        border-color: var(--orange);
+      }
+      body.game-page #board .cell[data-hint="true"] {
+        border: 2px dashed var(--game-green);
+      }
+      body.game-page #board .cell.just-played {
+        animation: mark-arrive 0.17s ease-out;
+      }
+      .ttt-win-line {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+      }
+      .ttt-win-line line {
+        stroke: var(--orange);
+        stroke-width: 2;
+        stroke-linecap: round;
+        opacity: 0.58;
+      }
+      .ttt-actions {
+        display: flex;
+        gap: 9px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .ttt-actions button {
+        flex: 1;
+        max-width: 170px;
+      }
+      body.game-page #status {
+        font: 600 15px/1.5 DM;
+        margin: 4px 0 12px;
+        padding: 10px 0;
+        min-height: 44px;
+      }
+      .ttt-round {
+        font: 10px Mono;
+        color: var(--muted);
+        text-align: center;
+        margin-top: 15px;
+      }
+      .ttt-note {
+        font-size: 11px !important;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.7;
+        min-height: 38px;
+        margin-top: 15px;
+      }
+      .ttt-reset {
+        text-align: center;
+        margin-top: 14px;
+      }
+      .ttt-reset button {
+        font: 9px Mono !important;
+        min-height: 28px !important;
+        border: 0 !important;
+        background: none !important;
+        text-decoration: underline;
+        color: var(--muted) !important;
+      }
+      .ttt-thinking {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--orange);
+        margin-right: 7px;
+        animation: thinking 0.8s ease-in-out infinite alternate;
+      }
+      @keyframes mark-arrive {
+        from {
+          transform: scale(0.86);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      @keyframes thinking {
+        to {
+          opacity: 0.3;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ttt-thinking,
+        body.game-page #board .cell {
+          animation: none !important;
+          transition: none;
+        }
+      }
+      @media (max-width: 420px) {
+        body.game-page .ttt-card {
+          padding: 18px 12px !important;
+        }
+        .ttt-intro {
+          font-size: 22px;
+        }
+        .ttt-controls {
+          gap: 8px;
+        }
+        .ttt-controls select {
+          padding: 9px 7px !important;
+        }
+        .ttt-actions button {
+          padding: 10px 9px !important;
+          font-size: 11px !important;
+        }
+      }
+    </style>
   </head>
-
   <body class="game-page">
-    <header>
-      <img src="../assets/mark.svg" alt="SpinnerRealYT" />
-      <nav><button onclick="location.href='../index.html'">Menu</button></nav>
-    </header>
-
     <main>
-      <div class="card">
-        <h2>Kółko i krzyżyk</h2>
-
-        <div id="controls">
-          <div class="row-ctrl">
-            <span>Tryb:</span>
-            <select id="difficulty">
+      <section class="card ttt-card">
+        <div class="ttt-intro">Trzy pola. Cała strategia.</div>
+        <p class="ttt-caption">JEDNA RUNDA TO DOPIERO POCZĄTEK</p>
+        <div class="ttt-controls" id="controls">
+          <label
+            >Rywal<select id="difficulty">
               <option value="pvp">2 graczy (lokalnie)</option>
               <option value="amator">Komputer: Amator</option>
               <option value="easy">Komputer: Łatwy</option>
               <option value="medium">Komputer: Średni</option>
               <option value="hard">Komputer: Trudny</option>
-            </select>
-          </div>
-          <button id="restart">Nowa Gra</button>
+            </select></label
+          ><label
+            >Twój znak<select id="play-as">
+              <option value="X">X · zaczynasz</option>
+              <option value="O">O · drugi ruch</option>
+            </select></label
+          >
         </div>
-
-        <div id="board"></div>
-        <div id="status">Zaczyna Gracz 1 (X)</div>
-      </div>
+        <div class="ttt-score">
+          <div id="turn-x">
+            <b id="score-x" class="mark-x">0</b
+            ><small id="label-x">Gracz 1 · X</small>
+          </div>
+          <div><b id="score-draw">0</b><small>remisy</small></div>
+          <div id="turn-o">
+            <b id="score-o" class="mark-o">0</b
+            ><small id="label-o">Gracz 2 · O</small>
+          </div>
+        </div>
+        <div class="ttt-board-wrap">
+          <div
+            id="board"
+            role="group"
+            aria-label="Plansza kółka i krzyżyka"
+          ></div>
+          <svg class="ttt-win-line" viewBox="0 0 100 100" aria-hidden="true">
+            <line id="winning-stroke" hidden />
+          </svg>
+        </div>
+        <div id="status" role="status" aria-live="polite">
+          Zaczyna Gracz 1 (X)
+        </div>
+        <div class="ttt-actions">
+          <button id="restart">Nowa gra</button
+          ><button id="hint-move">Podpowiedź</button>
+        </div>
+        <div class="ttt-round">
+          Runda <span id="round-number">1</span> · wynik serii pozostaje po
+          rewanżu
+        </div>
+        <p id="round-note" class="ttt-note"></p>
+        <div class="ttt-reset">
+          <button id="reset-match">Wyzeruj serię</button>
+        </div>
+        <p class="ttt-caption" style="text-align: center; margin: 16px 0 0">
+          STRZAŁKI: WYBÓR POLA · ENTER: RUCH
+        </p>
+      </section>
     </main>
-
-    <footer>© 2026 Spinner Games</footer>
-
     <script>
-      const boardEl = document.getElementById("board");
-      const statusEl = document.getElementById("status");
-      const restartBtn = document.getElementById("restart");
-      const difficultySelect = document.getElementById("difficulty");
-
-      let board,
-        gameOver,
-        currentPlayer,
-        aiTimer = null;
-
-      function init() {
-        clearTimeout(aiTimer);
-        aiTimer = null;
-        board = Array(9).fill(null);
-        gameOver = false;
-        currentPlayer = "X";
-        boardEl.innerHTML = "";
-        updateStatus();
-
-        for (let i = 0; i < 9; i++) {
-          const cell = document.createElement("button");
-          cell.type = "button";
-          cell.setAttribute("aria-label", "Pole " + (i + 1));
-          cell.className = "cell";
-          cell.onclick = () => makeMove(i);
-          boardEl.appendChild(cell);
-        }
+      "use strict";
+      const boardEl = document.getElementById("board"),
+        statusEl = document.getElementById("status");
+      const difficultySelect = document.getElementById("difficulty"),
+        markSelect = document.getElementById("play-as");
+      const wins = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      const storage = SpinnerStorage.preferences;
+      let board = Array(9).fill(null),
+        currentPlayer = "X",
+        gameOver = false,
+        aiTimer = null,
+        roundToken = 0,
+        winningLine = null,
+        lastMove = -1;
+      let matches = storage.get("tictactoe:matches", {}),
+        score = { X: 0, O: 0, draw: 0 },
+        hinted = -1;
+      if (!matches || typeof matches !== "object") matches = {};
+      const isPvP = () => difficultySelect.value === "pvp";
+      const humanMark = () => markSelect.value;
+      const computerMark = () => (humanMark() === "X" ? "O" : "X");
+      const aiThinking = () =>
+        !isPvP() && !gameOver && currentPlayer === computerMark();
+      function matchKey() {
+        return difficultySelect.value + ":" + (isPvP() ? "both" : humanMark());
       }
-
-      function updateStatus() {
-        if (gameOver) return;
-        const isPvP = difficultySelect.value === "pvp";
-
-        if (currentPlayer === "X") {
-          statusEl.textContent = isPvP ? "Tura: Gracz 1 (X)" : "Twój ruch (X)";
-          statusEl.style.color = "var(--accent)";
-        } else {
-          statusEl.textContent = isPvP ? "Tura: Gracz 2 (O)" : "Ruch AI (O)";
-          statusEl.style.color = SpinnerTheme.color("#f87171");
-        }
+      function readScore() {
+        const value = matches[matchKey()];
+        score =
+          value && ["X", "O", "draw"].every((k) => Number.isFinite(value[k]))
+            ? { ...value }
+            : { X: 0, O: 0, draw: 0 };
       }
-
-      function makeMove(i) {
-        if (
-          gameOver ||
-          board[i] ||
-          (difficultySelect.value !== "pvp" && currentPlayer !== "X")
-        )
-          return;
-
-        board[i] = currentPlayer;
-        render();
-
-        if (checkWin(currentPlayer)) {
-          const isPvP = difficultySelect.value === "pvp";
-          const winner =
-            currentPlayer === "X"
-              ? isPvP
-                ? "Gracz 1 (X)"
-                : "Wygrałeś!"
-              : isPvP
-                ? "Gracz 2 (O)"
-                : "AI Wygrało!";
-          return end(`${winner} wygrywa!`);
-        }
-
-        if (board.every(Boolean)) return end("Remis!");
-
-        currentPlayer = currentPlayer === "X" ? "O" : "X";
-        updateStatus();
-
-        // Jeśli nie PvP i kolej na "O", wykonaj ruch AI
-        if (difficultySelect.value !== "pvp" && currentPlayer === "O") {
-          aiTimer = setTimeout(aiTurn, 500);
-        }
+      function saveScore() {
+        matches[matchKey()] = { ...score };
+        storage.set("tictactoe:matches", matches);
       }
-
-      function aiTurn() {
-        aiTimer = null;
-        if (
-          gameOver ||
-          currentPlayer !== "O" ||
-          difficultySelect.value === "pvp"
-        )
-          return;
-        const move = getAIMove();
-        if (move === undefined) return;
-        board[move] = "O";
-        render();
-
-        if (checkWin("O")) return end("Przegrałeś!");
-        if (board.every(Boolean)) return end("Remis!");
-
-        currentPlayer = "X";
-        updateStatus();
+      function updateScore() {
+        document.getElementById("score-x").textContent = score.X;
+        document.getElementById("score-o").textContent = score.O;
+        document.getElementById("score-draw").textContent = score.draw;
+        document.getElementById("label-x").textContent = isPvP()
+          ? "Gracz 1 · X"
+          : humanMark() === "X"
+            ? "Ty · X"
+            : "Komputer · X";
+        document.getElementById("label-o").textContent = isPvP()
+          ? "Gracz 2 · O"
+          : humanMark() === "O"
+            ? "Ty · O"
+            : "Komputer · O";
+        document.getElementById("round-number").textContent =
+          score.X + score.O + score.draw + (gameOver ? 0 : 1);
+        document
+          .getElementById("turn-x")
+          .classList.toggle("current", !gameOver && currentPlayer === "X");
+        document
+          .getElementById("turn-o")
+          .classList.toggle("current", !gameOver && currentPlayer === "O");
       }
-
-      function getAIMove() {
-        const level = difficultySelect.value;
-        const empty = board
-          .map((v, i) => (v ? null : i))
-          .filter((v) => v !== null);
-
-        if (level === "amator")
-          return empty[Math.floor(Math.random() * empty.length)];
-        if (level === "easy" && Math.random() < 0.5)
-          return empty[Math.floor(Math.random() * empty.length)];
-
-        if (level === "medium" || level === "hard") {
-          const win = findWinningMove("O") ?? findWinningMove("X");
-          if (win !== null) return win;
-        }
-
-        if (level === "hard") return minimax(board, "O").index;
-
-        return empty[Math.floor(Math.random() * empty.length)];
+      function lineFor(b, p) {
+        return wins.find((line) => line.every((i) => b[i] === p)) || null;
       }
-
-      function findWinningMove(p) {
-        for (let i = 0; i < 9; i++) {
-          if (!board[i]) {
-            board[i] = p;
-            if (checkWin(p)) {
-              board[i] = null;
-              return i;
-            }
-            board[i] = null;
-          }
-        }
-        return null;
+      function checkStatic(b, p) {
+        return Boolean(lineFor(b, p));
       }
-
-      function minimax(b, player) {
-        const empty = b.map((v, i) => (v ? null : i)).filter((v) => v !== null);
-        if (checkStatic(b, "X")) return { score: -10 };
-        if (checkStatic(b, "O")) return { score: 10 };
-        if (empty.length === 0) return { score: 0 };
-
-        let moves = [];
-        for (let i of empty) {
-          b[i] = player;
-          const res = minimax(b, player === "O" ? "X" : "O");
-          moves.push({ index: i, score: res.score });
-          b[i] = null;
-        }
-
-        return player === "O"
-          ? moves.reduce((a, b) => (b.score > a.score ? b : a))
-          : moves.reduce((a, b) => (b.score < a.score ? b : a));
-      }
-
       function checkWin(p) {
         return checkStatic(board, p);
       }
-      function checkStatic(b, p) {
-        const w = [
-          [0, 1, 2],
-          [3, 4, 5],
-          [6, 7, 8],
-          [0, 3, 6],
-          [1, 4, 7],
-          [2, 5, 8],
-          [0, 4, 8],
-          [2, 4, 6],
-        ];
-        return w.some((c) => c.every((i) => b[i] === p));
+      function updateStatus() {
+        if (gameOver) return;
+        if (aiThinking())
+          statusEl.innerHTML =
+            '<span class="ttt-thinking" aria-hidden="true"></span>Komputer wybiera ruch…';
+        else
+          statusEl.textContent = isPvP()
+            ? `Tura: Gracz ${currentPlayer === "X" ? 1 : 2} (${currentPlayer})`
+            : `Twój ruch (${currentPlayer})`;
+        statusEl.style.color = "var(--ink)";
+        boardEl.setAttribute("aria-busy", String(aiThinking()));
+        updateScore();
       }
-
+      function paintLine() {
+        const line = document.getElementById("winning-stroke");
+        line.toggleAttribute("hidden", !winningLine);
+        if (!winningLine) return;
+        const a = boardEl.children[winningLine[0]].getBoundingClientRect(),
+          b = boardEl.children[winningLine[2]].getBoundingClientRect(),
+          rect = boardEl.getBoundingClientRect();
+        line.setAttribute(
+          "x1",
+          ((a.left + a.width / 2 - rect.left) / rect.width) * 100,
+        );
+        line.setAttribute(
+          "y1",
+          ((a.top + a.height / 2 - rect.top) / rect.height) * 100,
+        );
+        line.setAttribute(
+          "x2",
+          ((b.left + b.width / 2 - rect.left) / rect.width) * 100,
+        );
+        line.setAttribute(
+          "y2",
+          ((b.top + b.height / 2 - rect.top) / rect.height) * 100,
+        );
+      }
       function render() {
-        const cells = boardEl.children;
-        board.forEach((val, i) => {
-          cells[i].textContent = val || "";
-          cells[i].setAttribute(
+        for (let i = 0; i < 9; i++) {
+          const cell = boardEl.children[i],
+            value = board[i];
+          cell.textContent = value || "";
+          cell.className =
+            "cell" +
+            (value === "X" ? " x-color" : value === "O" ? " o-color" : "") +
+            (winningLine?.includes(i) ? " winning" : "") +
+            (i === lastMove ? " just-played" : "");
+          cell.disabled = Boolean(value) || gameOver;
+          cell.dataset.hint = String(i === hinted && !value);
+          cell.setAttribute(
             "aria-label",
-            "Pole " + (i + 1) + (val ? ": " + val : ": puste"),
+            `Wiersz ${Math.floor(i / 3) + 1}, kolumna ${(i % 3) + 1}: ${value || "puste"}`,
           );
-          cells[i].disabled = Boolean(val) || gameOver;
-          if (val === "X") cells[i].className = "cell x-color";
-          if (val === "O") cells[i].className = "cell o-color";
-        });
+        }
+        paintLine();
       }
-
-      function end(msg) {
+      function end(message, winner = null) {
+        if (gameOver) return;
         gameOver = true;
+        clearTimeout(aiTimer);
+        aiTimer = null;
+        winningLine = winner ? lineFor(board, winner) : null;
+        if (winner) score[winner]++;
+        else score.draw++;
+        saveScore();
         render();
-        statusEl.textContent = msg;
-        statusEl.style.color = msg.includes("Remis")
-          ? SpinnerTheme.color("#e5e7eb")
-          : currentPlayer === "X"
-            ? "var(--accent)"
-            : SpinnerTheme.color("#f87171");
+        updateScore();
+        boardEl.setAttribute("aria-busy", "false");
+        statusEl.textContent = message;
+        document.getElementById("round-note").textContent = winner
+          ? "Trzy znaki, jedna linia. Wynik serii zostaje — rozpocznij rewanż."
+          : "Nikt nie oddał pola. Zmień pierwszy ruch i spróbuj ponownie.";
+        document.getElementById("hint-move").disabled = true;
       }
-
-      difficultySelect.onchange = init;
-      restartBtn.onclick = init;
+      function commitMove(index) {
+        board[index] = currentPlayer;
+        lastMove = index;
+        hinted = -1;
+        render();
+        if (checkWin(currentPlayer)) {
+          const winner = isPvP()
+            ? `Gracz ${currentPlayer === "X" ? 1 : 2} (${currentPlayer}) wygrywa!`
+            : currentPlayer === humanMark()
+              ? `Wygrywasz (${currentPlayer})!`
+              : `Komputer (${currentPlayer}) wygrywa!`;
+          end(winner, currentPlayer);
+          return;
+        }
+        if (board.every(Boolean)) {
+          end("Remis!");
+          return;
+        }
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        updateStatus();
+        scheduleAI();
+      }
+      function makeMove(index, keyboard = false) {
+        if (gameOver || board[index] || aiThinking()) return;
+        commitMove(index);
+        if (keyboard && !gameOver) {
+          const next = board.findIndex((value) => !value);
+          boardEl.children[next]?.focus({ preventScroll: true });
+        }
+      }
+      function scheduleAI() {
+        clearTimeout(aiTimer);
+        aiTimer = null;
+        if (!aiThinking()) return;
+        const token = roundToken;
+        aiTimer = setTimeout(() => {
+          if (token !== roundToken) return;
+          aiTurn();
+        }, 220);
+      }
+      function aiTurn() {
+        aiTimer = null;
+        if (!aiThinking()) return;
+        const move = getAIMove();
+        if (Number.isInteger(move) && !board[move]) commitMove(move);
+      }
+      function findWinningMove(mark, b = board) {
+        for (let i = 0; i < 9; i++)
+          if (!b[i]) {
+            b[i] = mark;
+            const winning = checkStatic(b, mark);
+            b[i] = null;
+            if (winning) return i;
+          }
+        return null;
+      }
+      function minimax(
+        b,
+        player,
+        maximizer = computerMark(),
+        depth = 0,
+        alpha = -Infinity,
+        beta = Infinity,
+      ) {
+        const opponent = maximizer === "X" ? "O" : "X";
+        if (checkStatic(b, maximizer)) return { score: 10 - depth };
+        if (checkStatic(b, opponent)) return { score: depth - 10 };
+        const empty = [4, 0, 2, 6, 8, 1, 3, 5, 7].filter((i) => !b[i]);
+        if (!empty.length) return { score: 0 };
+        let best = {
+          score: player === maximizer ? -Infinity : Infinity,
+          index: empty[0],
+        };
+        for (const index of empty) {
+          b[index] = player;
+          const result = minimax(
+            b,
+            player === "X" ? "O" : "X",
+            maximizer,
+            depth + 1,
+            alpha,
+            beta,
+          );
+          b[index] = null;
+          if (player === maximizer) {
+            if (result.score > best.score)
+              best = { score: result.score, index };
+            alpha = Math.max(alpha, best.score);
+          } else {
+            if (result.score < best.score)
+              best = { score: result.score, index };
+            beta = Math.min(beta, best.score);
+          }
+          if (beta <= alpha) break;
+        }
+        return best;
+      }
+      function getAIMove() {
+        const available = board
+            .map((v, i) => (v ? null : i))
+            .filter((i) => i !== null),
+          level = difficultySelect.value,
+          ai = computerMark(),
+          human = humanMark();
+        const random = () =>
+          available[Math.floor(Math.random() * available.length)];
+        if (level === "amator") return random();
+        if (level === "easy" && Math.random() < 0.35) return random();
+        const tactical = findWinningMove(ai) ?? findWinningMove(human);
+        if (tactical !== null) return tactical;
+        if (level === "hard" || (level === "medium" && Math.random() < 0.65))
+          return minimax([...board], ai, ai).index;
+        if (!board[4]) return 4;
+        const corners = [0, 2, 6, 8].filter((i) => !board[i]);
+        return corners.length
+          ? corners[Math.floor(Math.random() * corners.length)]
+          : random();
+      }
+      function init() {
+        clearTimeout(aiTimer);
+        aiTimer = null;
+        roundToken++;
+        gameOver = false;
+        currentPlayer = "X";
+        board = Array(9).fill(null);
+        winningLine = null;
+        lastMove = -1;
+        hinted = -1;
+        boardEl.replaceChildren();
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "cell";
+          cell.onclick = (event) => makeMove(i, event.detail === 0);
+          cell.onkeydown = (event) => {
+            const delta = {
+              ArrowUp: -3,
+              ArrowDown: 3,
+              ArrowLeft: -1,
+              ArrowRight: 1,
+            }[event.key];
+            if (!delta) return;
+            event.preventDefault();
+            let next = i + delta;
+            while (next >= 0 && next < 9) {
+              if (
+                (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+                Math.floor(next / 3) !== Math.floor(i / 3)
+              )
+                break;
+              if (!board[next]) {
+                boardEl.children[next].focus();
+                break;
+              }
+              next += delta;
+            }
+          };
+          boardEl.append(cell);
+        }
+        markSelect.closest("label").hidden = isPvP();
+        document.getElementById("hint-move").disabled = false;
+        document.getElementById("round-note").textContent =
+          "Zajmij środek, szukaj dwóch linii naraz i pilnuj zagrożeń rywala.";
+        render();
+        updateStatus();
+        scheduleAI();
+      }
+      difficultySelect.onchange = () => {
+        readScore();
+        init();
+      };
+      markSelect.onchange = () => {
+        readScore();
+        init();
+      };
+      document.getElementById("restart").onclick = init;
+      document.getElementById("reset-match").onclick = () => {
+        score = { X: 0, O: 0, draw: 0 };
+        saveScore();
+        init();
+      };
+      document.getElementById("hint-move").onclick = () => {
+        if (gameOver || aiThinking()) return;
+        hinted = minimax([...board], currentPlayer, currentPlayer).index;
+        render();
+        document.getElementById("round-note").textContent =
+          "Zaznaczone pole daje najlepszy wynik przy poprawnej grze obu stron. Decyzja należy do Ciebie.";
+      };
+      window.addEventListener("pagehide", () => {
+        clearTimeout(aiTimer);
+        roundToken++;
+      });
+      window.addEventListener("spinner:preferences-cleared", () => {
+        matches = {};
+        readScore();
+        updateScore();
+      });
+      window.addEventListener("pageshow", (event) => {
+        if (event.persisted && !gameOver) {
+          updateStatus();
+          scheduleAI();
+        }
+      });
+      window.SpinnerGame = { render };
+      new ResizeObserver(paintLine).observe(boardEl);
+      readScore();
       init();
     </script>
   </body>

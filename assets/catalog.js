@@ -10,8 +10,9 @@
       tag: "KLASYK",
       desc: "Jeszcze jeden kęs. Jeszcze jeden zakręt.",
       about:
-        "Zbieraj jedzenie i wydłużaj węża, omijając ściany oraz własny ogon. Przed startem wybierz wielkość planszy i tempo. Planuj zakręty wcześniej — miejsca ubywa z każdym punktem.",
-      controls: "Strzałki lub przyciski kierunkowe na ekranie.",
+        "Zbieraj jabłka i poluj na złoty owoc, który pojawia się po pięciu zwykłych. Wybierz wielkość planszy, jedno z trzech temp oraz ściany lub przechodzenie przez krawędzie. Gra zapamiętuje osobny rekord konfiguracji po zgodzie na zapis.",
+      controls:
+        "Strzałki / WASD, przyciski lub przesunięcie po planszy. P / Spacja: pauza. R: nowa runda.",
     },
     {
       id: "saper",
@@ -22,9 +23,9 @@
       tag: "LOGIKA",
       desc: "Trochę liczenia. Odrobina odwagi.",
       about:
-        "Odkrywaj pola bez trafienia na minę. Liczba pokazuje, ile min sąsiaduje z odkrytym polem. Oznaczaj podejrzane miejsca flagą; pierwszy ruch na tej planszy jest bezpieczny. Wybierz poziom i odkryj wszystkie wolne pola.",
+        "Odkrywaj pola bez min i korzystaj z liczb. Pierwsze pole oraz jego sąsiedztwo są bezpieczne. Jeśli liczba sąsiednich flag zgadza się z odkrytą liczbą, kliknij ją ponownie, aby odsłonić pozostałych sąsiadów. Porównuj czasy na czterech poziomach.",
       controls:
-        "Kliknięcie: odkryj. Prawy przycisk: flaga. Na telefonie przełącz tryb Odkryj / Flaga.",
+        "Kliknięcie / Enter: odkryj. Prawy przycisk, F lub przytrzymanie palca: flaga. Strzałki: wybór pola. Dostępny jest też przełącznik Odkryj / Flaga.",
     },
     {
       id: "tictactoe",
@@ -35,9 +36,9 @@
       tag: "DLA DWÓCH / SOLO",
       desc: "Trzy w linii. Znasz zasady.",
       about:
-        "Ustaw trzy swoje znaki w jednym rzędzie, kolumnie lub po przekątnej. Zagraj z drugą osobą na jednym urządzeniu albo wybierz komputer i poziom trudności. Gdy rywal ma dwa znaki w linii, zablokuj trzecie pole.",
+        "Graj serię z drugą osobą albo z komputerem. W grze z komputerem wybierz X lub O i poziom przeciwnika. Wynik serii zostaje po rewanżu; podpowiedź pomaga znaleźć dobry ruch, a zakończona linia zostaje wyróżniona.",
       controls:
-        "Kliknij lub dotknij wolnego pola. Tryb i poziom wybierzesz nad planszą.",
+        "Kliknięcie lub Enter: postaw znak. Strzałki: wybierz pole. Nad planszą zmienisz rywala i własny znak.",
     },
     {
       id: "maze",
@@ -48,8 +49,9 @@
       tag: "NA ORIENTACJĘ",
       desc: "Każdy ślepy zaułek czegoś uczy.",
       about:
-        "Znajdź trasę przez labirynt i dotrzyj do wyjścia. Przyjrzyj się rozgałęzieniom, zanim skręcisz. Jeśli utkniesz, wróć do ostatniego rozwidlenia i spróbuj innej drogi.",
-      controls: "Strzałki / W, A, S, D lub przyciski kierunkowe na ekranie.",
+        "Każdy układ ma przejście. Zbierz trzy klucze i znajdź wyjście, korzystając ze śladu odwiedzonych pól. Wybierz rozmiar i nową albo dzienną trasę. Po ukończeniu porównaj liczbę kroków i czas; możesz powtórzyć ten sam układ.",
+      controls:
+        "Strzałki / WASD, przyciski lub przesunięcie po planszy. P: pauza. Zbieraj klucze, zanim wejdziesz na metę.",
     },
     {
       id: "geometry",
@@ -60,9 +62,9 @@
       tag: "RYTM I REFLEKS",
       desc: "Jeden skok za późno to też za późno.",
       about:
-        "Przeskakuj przeszkody i wyczuj rytm trasy. W trybie samolotu przytrzymuj przycisk, żeby się wznosić, i puszczaj, żeby opadać. Zacznij od spokojniejszego poziomu; kolejne podejścia pozwolą poznać układ przeszkód.",
+        "Opanuj trzy etapy tej samej trasy: bieg, lot i finałowy bieg. Kolejna próba zachowuje układ przeszkód. Tryb treningowy pozwala wracać do punktów kontrolnych. Zbieraj znaczniki i wybierz tempo; nową trasę możesz wylosować osobno.",
       controls:
-        "Spacja, lewy przycisk myszy lub dotknięcie: skok / wznoszenie.",
+        "Spacja / strzałka w górę / W / dotknięcie: skok. W locie przytrzymuj. P: pauza. R: ponów próbę.",
     },
     {
       id: "arena",
@@ -73,9 +75,9 @@
       tag: "ARENA Z BOTAMI",
       desc: "Więcej węży. Mniej miejsca na błędy.",
       about:
-        "Poruszaj się po arenie, zbieraj jedzenie i unikaj zderzeń. Rywale w tej wersji są sterowani przez komputer — to lokalna gra z botami. Przyspieszenie pomaga uciec, ale wymaga większej kontroli.",
+        "Zbieraj jedzenie na lokalnej arenie z botami i wykonuj trzy cele rundy. Kolejne kąski podtrzymują serię; przyspieszenie zużywa długość węża. Uważaj na granice i ciała rywali. Tabela pokazuje rzeczywisty stan tej rundy, bez fikcyjnych graczy online.",
       controls:
-        "Mysz: kierunek. Przytrzymanie przycisku: przyspieszenie. Na telefonie użyj joysticka.",
+        "Mysz lub strzałki / WASD: kierunek. Przytrzymanie myszy albo przycisku przyspieszenia: sprint. Na telefonie joystick. P: pauza.",
     },
     {
       id: "saper-classic",
@@ -86,8 +88,9 @@
       tag: "Z ARCHIWUM",
       desc: "Surowa plansza, konkretne wyzwanie.",
       about:
-        "Wcześniejsza wersja sapera z wyborem poziomu i podpowiedziami. Odszukaj pola bez min, korzystając z liczb. Ta edycja ma osobny lokalny zapis, więc możesz porównać ją z nowszą wersją.",
-      controls: "Kliknięcie: odkryj. Przełącz tryb flagi, aby oznaczać miny.",
+        "Ustaw własny rozmiar planszy i liczbę min. Pierwsze pole i jego sąsiedztwo są bezpieczne. Łącz odkrywanie sąsiadów z flagami i korzystaj z podpowiedzi, gdy utkniesz. Punktowana jest tylko klasyczna plansza 9 × 9 z 10 minami ukończona bez pomocy.",
+      controls:
+        "Kliknięcie / Enter: odkryj. Prawy przycisk, F lub długie dotknięcie: flaga. Strzałki: wybór pola. Podpowiedź i pauza mają osobne przyciski.",
     },
     {
       id: "little-flight",
@@ -98,8 +101,9 @@
       tag: "ZRĘCZNOŚCIOWA",
       desc: "Jeden podskok. Jeszcze kawałek nieba.",
       about:
-        "Poprowadź małego ptaka pomiędzy przeszkodami. Każda ominięta para to punkt. Ta samodzielna wersja korzysta z figur geometrycznych i własnej oprawy, bez pobranych grafik lub dźwięków innych gier.",
-      controls: "Spacja, kliknięcie albo dotknięcie planszy.",
+        "Przeleć przez bramki i zbieraj złote pióra za dodatkowe punkty. Wybierz jedno z trzech temp i utrzymuj własny rytm. Trasa płynnie zmienia wysokość, a rekord jest osobny dla każdego tempa. Grafika i dźwięki nie wymagają zasobów cudzych gier.",
+      controls:
+        "Spacja, dotknięcie planszy lub przycisk Podskocz: lot. P / Escape: pauza. R: nowa runda.",
     },
   ];
   window.SpinnerGames = games;

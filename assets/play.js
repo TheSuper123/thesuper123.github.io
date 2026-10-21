@@ -2,7 +2,17 @@
   "use strict";
   const id = new URLSearchParams(location.search).get("gra");
   const game = window.SpinnerGames.find((item) => item.id === id);
-  if (!game && new Set(["tetris", "bird", "blocks", "doom"]).has(id)) {
+  if (
+    !game &&
+    new Set([
+      "tetris",
+      "bird",
+      "blocks",
+      "doom",
+      "geometry-lite",
+      "skibidi-fish",
+    ]).has(id)
+  ) {
     location.replace(
       new URL("others/?gra=" + encodeURIComponent(id), window.SpinnerBase),
     );
@@ -27,6 +37,20 @@
   frame.allow = "fullscreen";
   frame.allowFullscreen = true;
   frame.referrerPolicy = "same-origin";
+  const failed = () => {
+    const placeholder = document.querySelector("#game-placeholder");
+    if (!placeholder) return;
+    placeholder.replaceChildren("Nie udało się uruchomić gry. ");
+    const retry = document.createElement("button");
+    retry.className = "link-button";
+    retry.textContent = "Spróbuj ponownie";
+    retry.addEventListener("click", () => {
+      placeholder.replaceChildren("Ponowne uruchamianie…");
+      frame.src = game.file;
+    });
+    placeholder.append(retry);
+  };
+  frame.addEventListener("error", failed);
   frame.addEventListener("load", () => {
     // All catalog targets are local; detect an HTTP error document rather than claiming readiness from a load event.
     try {
@@ -34,8 +58,10 @@
         !frame.contentDocument?.querySelector(
           "canvas, #game, #board, #game-frame, #gameCanvas, #game-wrapper, [data-game=fish], .grid, #grid",
         )
-      )
+      ) {
+        failed();
         return;
+      }
       document.querySelector("#game-placeholder")?.remove();
     } catch {
       /* Browser access restrictions leave the direct link available. */
@@ -94,6 +120,6 @@
       return;
     const height = Number(event.data.height);
     if (Number.isFinite(height))
-      frame.style.height = Math.min(900, Math.max(400, height)) + "px";
+      frame.style.height = Math.min(1600, Math.max(400, height)) + "px";
   });
 })();

@@ -25,7 +25,7 @@ Przełącznik w nagłówku zmienia motyw strony, paneli konta, gier i zagnieżd�
 
 Zmieniono także kolory rysowane na canvasach, plansze, menu, wyniki i przyciski. Włączenie motywu nie resetuje rozgrywki. Poprawiono pozycjonowanie sterowania Snake Areny po zmianie rozmiaru oraz przyciski i ponowne rozpoczęcie Labiryntu. Starszy Przekaźnik, quiz i strony pomocnicze mają tę samą oprawę. W kompilacji Unity Geometry Dash Lite zmieniono stronę osadzenia, loader i sterowanie; grafika wewnątrz skompilowanego silnika pozostaje wcześniejsza i wymaga projektu źródłowego do przebudowy.
 
-Po zmianie wyglądu wykonano 12 testów publicznego serwisu i 8 testów archiwum. Obejmują oba motywy, ich zapis zgodny z wyborem prywatności, zachowanie partii podczas przełączania, pozycję i rozmiar planszy Areny oraz aktualizację szyfrogramów bez zmiany hasła. Osobno sprawdzono rzeczywiste archiwum w Chromium: wszystkie sześć pozycji w obu motywach, przeciąganie klocków, przejścia DOOM-a i pełne załadowanie Unity WebGL.
+Pełny późniejszy przegląd objął mechanikę każdej gry, aktywne rundy, opóźnienia wejścia, tempo przy różnych FPS, pauzę, restart, telefon i archiwum. Szczegółowy zakres, ograniczenia i polecenia testów: [PRZEGLAD-GIER.md](PRZEGLAD-GIER.md).
 
 Aktualne podglądy: [jasny](screenshots/desktop.png), [ciemny](screenshots/desktop-dark.png), [telefon](screenshots/mobile.png), [gra na telefonie](screenshots/game-mobile.png), [zamknięte others](screenshots/others.png).
 
@@ -56,7 +56,7 @@ Lista materiałów do wyjaśnienia: [PRAWA-DO-MATERIALOW.md](PRAWA-DO-MATERIALOW
 
 ## DOOM w archiwum others
 
-Poprawiono ścieżkę osadzenia, brakujące rozszerzenia przejść i strukturę dokumentów, dodano responsywne obrazy oraz opisane przyciski. Brakujący `6.png` zastąpiono istniejącym wariantem tego ujęcia `6A.png`; nie dorabiano cudzych grafik. To zachowany eksperyment HTML oparty na ekranach, a nie działający silnik oryginalnego DOOM-a.
+Poprawiono ścieżkę osadzenia, brakujące rozszerzenia przejść i strukturę dokumentów, dodano responsywne obrazy oraz opisane przyciski. Brakujący `6.png` zastąpiono istniejącym wariantem tego ujęcia `6A.png`; nie dorabiano cudzych grafik. Późniejszy przegląd dodał spójną misję z kluczem, czterema posterunkami i ewakuacją, mapę, klawiaturę, rzeczywiste blokady i poprawne cofanie. To gra oparta na ekranach HTML, nie silnik FPS oryginalnego DOOM-a.
 
 ## Szyfrowane others
 
