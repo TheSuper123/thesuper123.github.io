@@ -14,12 +14,16 @@ Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. 
 
 Pięć dodanych gier i ich 17 testów funkcjonalnych opisano w [NOWE-GRY.md](NOWE-GRY.md). Nie potrzebują odszyfrowania archiwum.
 
+Kolejnych 17 gier, ich wspólny interfejs i 26 scenariuszy testowych opisano w [17-NOWYCH-GIER.md](17-NOWYCH-GIER.md). Publiczny katalog obejmuje 30 gier.
+
 ```sh
 python3 tests/smoke.py
+python3 tests/test_new_games.py
+python3 tests/test_more_games.py
 python3 tests/test_others.py
 ```
 
-Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 13 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
+Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 30 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
 
 ## Wygląd gier i ciemny motyw
 

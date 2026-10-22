@@ -170,6 +170,227 @@
       controls:
         "Strzałki / WASD, przyciski albo gest po planszy. U: cofnij. R: restart poziomu. P: pauza.",
     },
+    {
+      id: "connect-four",
+      name: "Cztery w rzędzie",
+      file: "games/connect-four.html",
+      art: "connect-four",
+      category: "logic",
+      tag: "RUCH PO RUCHU",
+      desc: "Zajmij cztery pola w jednej linii, zanim zrobi to rywal.",
+      about:
+        "Wrzucaj krążki do siedmiu kolumn. Wygraj poziomo, pionowo albo po skosie. Graj z komputerem na dwóch poziomach lub z drugą osobą. Cofnięcie wycofuje także odpowiedź komputera.",
+      controls:
+        "Kliknij kolumnę. Strzałki wybierają pole, Enter zatwierdza. U: cofnij.",
+    },
+    {
+      id: "reversi",
+      name: "Reversi",
+      file: "games/reversi.html",
+      art: "reversi",
+      category: "logic",
+      tag: "ODWRÓĆ SYTUACJĘ",
+      desc: "Przejmuj krążki, dbaj o narożniki, policz przewagę.",
+      about:
+        "Obejmij krążki rywala swoimi z obu stron. Podświetlone punkty wskazują dozwolone ruchy. Brak ruchu oznacza przekazanie kolejki; partia kończy się dopiero, gdy żaden gracz nie może zagrać. Komputer lub lokalna gra we dwoje.",
+      controls:
+        "Kliknij dozwolone pole. Strzałki: wybór, Enter: ruch. U: cofnij.",
+    },
+    {
+      id: "dots-boxes",
+      name: "Kropki i kreski",
+      file: "games/dots-boxes.html",
+      art: "dots-boxes",
+      category: "logic",
+      tag: "DOMKNIJ KWADRAT",
+      desc: "Zamykaj pola. Zyskaj punkt i jeszcze jeden ruch.",
+      about:
+        "Łącz sąsiednie kropki na planszy 4 × 4. Osoba zamykająca kwadrat dostaje punkt oraz dodatkową kolejkę. Wygra właściciel największej liczby pól. Możesz zagrać z komputerem lub z drugą osobą.",
+      controls:
+        "Kliknij wolną kreskę między kropkami. Klawiatura: strzałki i Enter. U: cofnij.",
+    },
+    {
+      id: "mancala",
+      name: "Kalaha",
+      file: "games/mancala.html",
+      art: "mancala",
+      category: "logic",
+      tag: "SIEJ I ZBIERAJ",
+      desc: "Dwanaście dołków, dwa magazyny i jeden sprytny obieg.",
+      about:
+        "Wybierz własny dołek i rozsiej wszystkie kamienie po jednym, pomijając magazyn przeciwnika. Ostatni kamień we własnym magazynie daje dodatkową turę. Ostatni we własnym pustym dołku przejmuje kamienie naprzeciwko. Koniec jednej strony zbiera pozostałe kamienie do magazynów.",
+      controls:
+        "Dolny rząd należy do gracza I. Kliknij dołek. U: cofnij. Komputer lub dwie osoby.",
+    },
+    {
+      id: "fifteen",
+      name: "Piętnastka",
+      file: "games/fifteen.html",
+      art: "fifteen",
+      category: "logic",
+      tag: "JEDNO WOLNE POLE",
+      desc: "Przesuwaj liczby. Zostaw miejsce na ostatni ruch.",
+      about:
+        "Ułóż kafelki rosnąco, pozostawiając puste pole w prawym dolnym rogu. Każde losowanie powstaje z legalnych ruchów, więc można je rozwiązać. Wybierz planszę 3 × 3 lub 4 × 4; skorzystaj z cofania i wskazówki.",
+      controls:
+        "Dotknij kafelka przy pustym polu. Strzałki / WASD: kierunek przesunięcia pustego pola. U: cofnij.",
+    },
+    {
+      id: "lights-out",
+      name: "Zgaś światła",
+      file: "games/lights-out.html",
+      art: "lights-out",
+      category: "logic",
+      tag: "EFEKT SĄSIADA",
+      desc: "Jedno kliknięcie zmienia pięć pól. Znajdź porządek.",
+      about:
+        "Naciśnięcie pola odwraca jego stan i stan czterech sąsiadów. Zgaś całą planszę 4 × 4 albo 5 × 5. Układy powstają z rozwiązanej planszy. Podpowiedź wylicza poprawny ruch z aktualnego stanu.",
+      controls:
+        "Kliknij pole. Strzałki: wybór, Enter: przełącz. U: cofnij. Podpowiedź wyróżnia pole.",
+    },
+    {
+      id: "nonogram",
+      name: "Nonogram",
+      file: "games/nonogram.html",
+      art: "nonogram",
+      category: "logic",
+      tag: "OBRAZ Z LICZB",
+      desc: "Wypełnij kratki i odsłoń mały obrazek.",
+      about:
+        "Liczby opisują kolejne grupy zamalowanych pól w każdym wierszu i kolumnie. Pomiędzy grupami zostaw przynajmniej jedną pustą kratkę. Osiem własnych obrazków, cofanie, oznaczanie pustych pól i sprawdzenie zgodności z liczbami.",
+      controls:
+        "Kliknij, aby wypełnić. Prawy przycisk lub tryb ×: oznacz puste. Strzałki i Enter. U: cofnij.",
+    },
+    {
+      id: "hanoi",
+      name: "Wieże Hanoi",
+      file: "games/hanoi.html",
+      art: "hanoi",
+      category: "logic",
+      tag: "PRZENIEŚ STOS",
+      desc: "Trzy wieże. Każdy krążek ma swoje miejsce.",
+      about:
+        "Przenieś cały stos na prawą wieżę. Wolno przenosić tylko jeden wierzchni krążek, a większy nigdy nie może leżeć na mniejszym. Wybierz od 3 do 7 krążków, cofnij ruch lub poproś o wskazówkę z aktualnej pozycji.",
+      controls:
+        "Wybierz wieżę źródłową i docelową. Klawisze 1–3 działają tak samo. U: cofnij.",
+    },
+    {
+      id: "peg-solitaire",
+      name: "Samotnik",
+      file: "games/peg-solitaire.html",
+      art: "peg-solitaire",
+      category: "logic",
+      tag: "ZOSTAŃ JEDEN",
+      desc: "Przeskocz pionek. Zostaw na planszy tylko jeden.",
+      about:
+        "Przeskocz pionek w linii prostej do pustego pola i zdejmij przeskoczony. Celem jest pozostawienie jednego pionka. Trzy rozmiary wyzwania powstają przez odwracanie legalnych skoków, dlatego każdy start da się ukończyć. Cofanie i restart tego samego układu.",
+      controls:
+        "Wybierz pionek, potem pole za jego sąsiadem. Strzałki i Enter. U: cofnij.",
+    },
+    {
+      id: "codebreaker",
+      name: "Łamacz kodu",
+      file: "games/codebreaker.html",
+      art: "codebreaker",
+      category: "logic",
+      tag: "CZTERY ZNAKI",
+      desc: "Dziesięć prób, sześć znaków i ukryty układ.",
+      about:
+        "Odgadnij cztery cyfry od 1 do 6. Cyfry mogą się powtarzać. Wynik trafień podaje osobno poprawne miejsca i poprawne cyfry w innych miejscach, bez podwójnego liczenia. Masz dziesięć prób.",
+      controls:
+        "Wybierz miejsce i cyfrę albo wpisz 1–6. Strzałki zmieniają miejsce. Enter: sprawdź. Backspace: usuń.",
+    },
+    {
+      id: "word-search",
+      name: "Wykreślanka",
+      file: "games/word-search.html",
+      art: "word-search",
+      category: "logic",
+      tag: "MIĘDZY LITERAMI",
+      desc: "Wypatrz osiem słów ukrytych w gąszczu liter.",
+      about:
+        "Osiem słów z wybranej kategorii ukrywa się w ośmiu kierunkach, także od tyłu. Zaznacz pierwszy i ostatni znak. Każda nowa plansza losuje pozycje; możesz poprosić o wskazanie początku słowa.",
+      controls:
+        "Dotknij początku i końca słowa. Strzałki i Enter wybierają pola. Escape: pauza i anulowanie zaznaczenia.",
+    },
+    {
+      id: "word-guess",
+      name: "Litera po literze",
+      file: "games/word-guess.html",
+      art: "word-guess",
+      category: "logic",
+      tag: "SŁOWO NA DZIŚ?",
+      desc: "Odgadnij słowo, zanim zapełni się siedem pól.",
+      about:
+        "Wybieraj litery polskiego alfabetu i odsłoń słowo z kategorii natura, dom lub podróże. Siedem nietrafionych liter kończy rundę. Trafione i odrzucone litery pozostają widoczne; powtórzenie litery nie odbiera próby.",
+      controls:
+        "Dotknij litery lub wpisz ją na klawiaturze. Polskie znaki działają także z klawiatury ekranowej.",
+    },
+    {
+      id: "echo",
+      name: "Echo",
+      file: "games/echo.html",
+      art: "echo",
+      category: "arcade",
+      tag: "POWTÓRZ RYTM",
+      desc: "Cztery pola. Coraz dłuższy ślad do powtórzenia.",
+      about:
+        "Obserwuj kolejność rozświetlanych pól i odtwórz ją. Każda poprawna seria dopisuje jeden znak. Wybierz spokojny lub szybki pokaz. Pauza zatrzymuje pokaz w tym samym miejscu, bez utraty rundy.",
+      controls:
+        "Klikaj pola lub używaj klawiszy 1–4. Zacznij przyciskiem Pokaż sekwencję. P: pauza.",
+    },
+    {
+      id: "moles",
+      name: "Kretowisko",
+      file: "games/moles.html",
+      art: "moles",
+      category: "arcade",
+      tag: "TRAF W MOMENT",
+      desc: "Trafiaj krety. Omijaj kamienie. Utrzymuj serię.",
+      about:
+        "Masz 30 sekund na trafianie pojawiających się kretów. Kolejne trafienia podnoszą mnożnik, a spóźnienie przerywa serię. Kliknięcie kamienia lub pustego dołka odejmuje punkty. Dwa tempa, rzeczywisty czas rundy i natychmiastowa reakcja na dotyk.",
+      controls:
+        "Dotknij kreta lub użyj klawiszy 1–9 odpowiadających dołkom. P: pauza.",
+    },
+    {
+      id: "pong",
+      name: "Pojedynek",
+      file: "games/pong.html",
+      art: "pong",
+      category: "arcade",
+      tag: "DRUGA STRONA STOŁU",
+      desc: "Ty, komputer i piłka, która wraca coraz szybciej.",
+      about:
+        "Zdobądź siedem punktów przeciw komputerowi. Kąt odbicia zależy od miejsca trafienia w paletkę, a każde odbicie zwiększa tempo. Trzy poziomy rywala, sterowanie palcem i pauza bez utraty serwisu.",
+      controls:
+        "Mysz / palec na planszy albo W, S / strzałki góra, dół: paletka. Spacja: serwis. P: pauza.",
+    },
+    {
+      id: "orbit",
+      name: "Orbita",
+      file: "games/orbit.html",
+      art: "orbit",
+      category: "arcade",
+      tag: "MAŁY STATEK, DUŻO MIEJSCA",
+      desc: "Obracaj się, przyspieszaj i rozbij trzy fale skał.",
+      about:
+        "Steruj statkiem z bezwładnością na zawijającej się planszy. Duże skały rozpadają się na mniejsze. Masz trzy osłony i krótki czas ochrony po zderzeniu. Ukończ trzy fale; kod i wektorowe kształty powstały dla tej strony.",
+      controls:
+        "A, D / lewo, prawo: obrót. W / góra: ciąg. Spacja: strzał. Na telefonie cztery przyciski. P: pauza.",
+    },
+    {
+      id: "stack",
+      name: "Wieża",
+      file: "games/stack.html",
+      art: "stack",
+      category: "arcade",
+      tag: "ZŁAP TEN PION",
+      desc: "Zatrzymaj klocek dokładnie nad poprzednim.",
+      about:
+        "Buduj wieżę z przesuwających się klocków. Wystający fragment odpada, a następne piętro ma szerokość pozostałego. Dokładne trafienie zachowuje szerokość. Tempo rośnie wraz z wysokością. Spróbuj dotrzeć do 25 pięter.",
+      controls:
+        "Dotknij planszy, kliknij przycisk Postaw albo naciśnij Spację / Enter. P: pauza.",
+    },
   ];
   window.SpinnerGames = games;
   const grid = document.querySelector("#game-grid");

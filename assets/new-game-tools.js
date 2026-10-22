@@ -1,4 +1,4 @@
-/* Small, local helpers shared by the five original game implementations. */
+/* Small, local helpers shared by the original game implementations. */
 (() => {
   "use strict";
   const prefs = window.SpinnerStorage.preferences;
