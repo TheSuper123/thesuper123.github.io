@@ -111,3 +111,81 @@
     gap: 8px;
   }
 }
+html:has(.vault-playing),
+body.vault-playing {
+  height: 100dvh;
+  overflow: hidden;
+}
+body.vault-playing {
+  display: flex;
+  flex-direction: column;
+}
+.vault-playing > .site-header {
+  height: 43px;
+  min-height: 43px;
+  padding: 4px 12px;
+  width: 100%;
+  max-width: none;
+}
+.vault-playing > .site-header .brand {
+  font-size: 19px;
+}
+.vault-playing > .site-header .brand-sub {
+  display: none;
+}
+.vault-playing > .site-header img {
+  width: 24px;
+  height: 24px;
+}
+.vault-playing > .vault-main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+.vault-playing #unlocked-view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.vault-playing .vault-session {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 4px 10px;
+  gap: 8px;
+  min-height: 36px;
+}
+.vault-playing .vault-session .eyebrow,
+.vault-playing .vault-session p {
+  font-size: 8px;
+  margin: 0;
+}
+.vault-playing .vault-session button {
+  padding: 5px 9px;
+  min-height: 30px;
+}
+.vault-playing #archive-container {
+  flex: 1;
+  min-height: 0;
+}
+.vault-playing #archive-container iframe {
+  height: 100%;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+}
+.vault-playing > .vault-footer {
+  display: none;
+}
+.vault-playing .vault-session {
+  display: none !important;
+}
+.vault-playing > .site-header #lock-button {
+  padding: 5px 9px;
+  min-height: 30px;
+  font-size: 10px;
+}
+.vault-playing > .site-header > .link-button {
+  font-size: 10px;
+}

@@ -1,0 +1,1 @@
+SpinnerCards.create("freecell");

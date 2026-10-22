@@ -1,5 +1,7 @@
 # Kolejnych 17 gier
 
+To dokumentacja wcześniejszego etapu. Obecnie katalog ma [60 gier i widok dopasowany do ekranu](30-NOWYCH-GIER-I-EKRAN.md).
+
 Katalog rozszerzono z 13 do **30 gier**: 20 logicznych i 10 zręcznościowych. Poniższe implementacje mają własny kod JavaScript, lokalne wektory SVG i oprawę zgodną z jasnym oraz ciemnym motywem salonu. Nie korzystają z pobranych gier, cudzych sprite'ów, zdalnych silników, reklam ani dodatkowych usług.
 
 | Gra / identyfikator w adresie `gra.html?gra=…` | Zasady i funkcje                                                                                                                                                                                                     |

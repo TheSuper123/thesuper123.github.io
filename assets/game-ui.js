@@ -46,6 +46,44 @@
     "pong.html": ["pong", "Pojedynek", "28 / DRUGA STRONA STOŁU"],
     "orbit.html": ["orbit", "Orbita", "29 / MAŁY STATEK, DUŻO MIEJSCA"],
     "stack.html": ["stack", "Wieża", "30 / ZŁAP TEN PION"],
+    "checkers.html": ["checkers", "Warcaby", "31 / BIJ I AWANSUJ"],
+    "hex.html": ["hex", "Mosty Hex", "32 / POŁĄCZ BRZEGI"],
+    "morris.html": ["morris", "Młynek", "33 / TRZY, POTEM RUCH"],
+    "battleships.html": ["battleships", "Okręty", "34 / SZUKAJ NA WODZIE"],
+    "domino.html": ["domino", "Domino", "35 / DOPASUJ KONIEC"],
+    "solitaire.html": ["solitaire", "Pasjans", "36 / PORZĄDEK W KARTACH"],
+    "freecell.html": [
+      "freecell",
+      "Wolne komórki",
+      "37 / CZTERY MIEJSCA ZAPASU",
+    ],
+    "golf.html": ["golf", "Golf karciany", "38 / O JEDNO OCZKO"],
+    "dice.html": ["dice", "Kości", "39 / PIĘĆ KOŚCI"],
+    "nim.html": ["nim", "Nim", "40 / JEDEN STOS NA TURĘ"],
+    "chomp.html": ["chomp", "Ostatni kęs", "41 / OMIŃ NAROŻNIK"],
+    "amazons.html": ["amazons", "Amazonki", "42 / ZOSTAW SOBIE PRZEJŚCIE"],
+    "takuzu.html": ["takuzu", "Równowaga", "43 / POŁOWA ZER, POŁOWA JEDYNEK"],
+    "futoshiki.html": [
+      "futoshiki",
+      "Mniejsze większe",
+      "44 / CYFRY I NIERÓWNOŚCI",
+    ],
+    "skyscrapers.html": ["skyscrapers", "Wieżowce", "45 / WIDOK OD ULICY"],
+    "cages.html": ["cages", "Klatki liczbowe", "46 / LICZBY WE WSPÓŁPRACY"],
+    "shikaku.html": ["shikaku", "Prostokąty", "47 / PODZIEL CAŁĄ PLANSZĘ"],
+    "bridges.html": ["bridges", "Wyspy i mosty", "48 / POŁĄCZ ARCHIPELAG"],
+    "untangle.html": ["untangle", "Rozplącz", "49 / LINIE BEZ KOLIZJI"],
+    "loop.html": ["loop", "Zamknij pętlę", "50 / JEDNA LINIA DOOKOŁA"],
+    "invaders.html": ["invaders", "Najeźdźcy", "51 / TRZY FALE"],
+    "crossing.html": ["crossing", "Przeprawa", "52 / DRUGI BRZEG"],
+    "racer.html": ["racer", "Zakręt", "53 / TRZY PASY"],
+    "platformer.html": ["platformer", "Platformy", "54 / SKOK PO KLUCZ"],
+    "lander.html": ["lander", "Lądownik", "55 / SPOKOJNIE DO ZIEMI"],
+    "pinball.html": ["pinball", "Flipper", "56 / JESZCZE JEDNO ODBICIE"],
+    "archery.html": ["archery", "Łucznik", "57 / DZIESIĘĆ STRZAŁ"],
+    "billiards.html": ["billiards", "Bilard", "58 / SZEŚĆ BIL DO ŁUZ"],
+    "rhythm.html": ["rhythm", "Cztery takty", "59 / RYTM W OCZACH"],
+    "balance.html": ["balance", "Balans", "60 / OSIEM PUNKTÓW"],
     "tetris.html": ["tetris", "Tetris", "OTHERS / UKŁADANKA"],
     "flappybird.html": ["bird", "Flappy Bird", "OTHERS / ZRĘCZNOŚĆ"],
     "blockblast.html": ["blocks", "Block Blast", "OTHERS / UKŁADANKA"],
@@ -78,9 +116,16 @@
   body.dataset.game = kind;
   const base = new URL(
     "../",
-    document.querySelector('script[src$="game-ui.js"]').src,
+    document.querySelector('script[src*="game-ui.js"]').src,
   );
   const oldHeader = body.querySelector(":scope > header");
+  const viewportStyle = document.createElement("link");
+  viewportStyle.rel = "stylesheet";
+  viewportStyle.href = new URL("assets/game-viewport.css", base);
+  document.head.append(viewportStyle);
+  const viewportScript = document.createElement("script");
+  viewportScript.src = new URL("assets/game-viewport.js", base);
+  document.head.append(viewportScript);
   const legacy = document.createElement("div");
   legacy.className = "legacy-status";
   if (oldHeader) {
@@ -241,20 +286,6 @@
       { passive: true },
     );
   });
-  if (!["arena", "incremental", "unity"].includes(kind) && parent !== window) {
-    const report = () =>
-      parent.postMessage(
-        {
-          type: "spinner:game-size",
-          height: Math.ceil(
-            (document.querySelector("main") || body).scrollHeight + 24,
-          ),
-        },
-        location.origin,
-      );
-    new ResizeObserver(report).observe(document.querySelector("main") || body);
-    report();
-  }
   if (kind === "geometry")
     document.querySelectorAll(".diff-card").forEach((card) => {
       card.tabIndex = 0;

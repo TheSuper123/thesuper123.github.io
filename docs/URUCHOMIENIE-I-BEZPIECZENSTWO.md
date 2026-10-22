@@ -8,22 +8,27 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. Gry otwierają się również bez konta i bez dostępu do zewnętrznych usług. Publikacja statycznej strony odbywa się przez GitHub Pages po aktualizacji gałęzi skonfigurowanej jako źródło. Ustawienia produkcyjnego Firebase konfiguruje się osobno w konsoli.
 
+Aktualne rozszerzenie do 60 gier i układ mieszczący planszę razem ze sterowaniem opisano w [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md).
+
 ## Testy
 
 `tests/smoke.py` uruchamia własny serwer na wolnym porcie i przeglądarkę Chromium. Środowisko robocze ma Python Playwright 1.62.0 oraz `/usr/bin/chromium`. W innym środowisku potrzebne są te narzędzia; ścieżkę przeglądarki można podać w `CHROMIUM_PATH`.
 
 Pięć dodanych gier i ich 17 testów funkcjonalnych opisano w [NOWE-GRY.md](NOWE-GRY.md). Nie potrzebują odszyfrowania archiwum.
 
-Kolejnych 17 gier, ich wspólny interfejs i 26 scenariuszy testowych opisano w [17-NOWYCH-GIER.md](17-NOWYCH-GIER.md). Publiczny katalog obejmuje 30 gier.
+Kolejnych 17 gier, ich wspólny interfejs i 26 scenariuszy testowych opisano w [17-NOWYCH-GIER.md](17-NOWYCH-GIER.md). Publiczny katalog obejmuje 60 gier.
 
 ```sh
 python3 tests/smoke.py
 python3 tests/test_new_games.py
 python3 tests/test_more_games.py
+python3 tests/test_thirty_games.py
+python3 tests/test_viewport.py
+python3 tests/test_player_integration.py
 python3 tests/test_others.py
 ```
 
-Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 30 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
+Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 60 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
 
 ## Wygląd gier i ciemny motyw
 

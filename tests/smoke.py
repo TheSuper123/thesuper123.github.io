@@ -1,3 +1,4 @@
+from game_controls import choose_option
 """Browser regression checks. Firebase HTTP responses are simulated; no production accounts are touched."""
 from contextlib import contextmanager
 from functools import partial
@@ -49,7 +50,7 @@ class SiteChecks(unittest.TestCase):
             page.on('request', lambda r: external.append(r.url) if not r.url.startswith(self.base) else None)
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.goto(self.base)
-            expect(page.locator('.game-card')).to_have_count(30)
+            expect(page.locator('.game-card')).to_have_count(60)
             self.assertEqual(page.evaluate('Object.keys(localStorage)'), [])
             page.locator('#game-search').fill('kolko')
             expect(page.locator('.game-card')).to_have_count(1)
@@ -58,7 +59,7 @@ class SiteChecks(unittest.TestCase):
             expect(page.locator('#empty-state')).to_be_visible()
             page.locator('#game-search').fill('')
             page.get_by_role('button', name='Na główkowanie', exact=True).click()
-            expect(page.locator('.game-card')).to_have_count(20)
+            expect(page.locator('.game-card')).to_have_count(40)
             self.assertEqual(external, []); self.assertEqual(errors, [])
 
     def test_consent_favorites_persistence_revocation_and_unrelated_storage(self):
@@ -170,7 +171,7 @@ class SiteChecks(unittest.TestCase):
             for i in [0,3,1,4,2]: cells.nth(i).click()
             expect(page.locator('#status')).to_contain_text('wygrywa')
             self.assertEqual(page.locator('#board button:disabled').count(),9)
-            page.locator('#difficulty').select_option('amator')
+            choose_option(page.locator('#difficulty'),'amator')
             cells.nth(0).click(); cells.nth(1).click()
             self.assertEqual(cells.filter(has_text='X').count(),1)
             page.locator('#restart').click(); page.wait_for_timeout(650)
@@ -215,7 +216,7 @@ class SiteChecks(unittest.TestCase):
             self.assertAlmostEqual(page.evaluate('game.player.targetAngle'),0,places=2)
             page.set_viewport_size({'width':390,'height':844})
             page.wait_for_function('game.canvas.width===document.querySelector("#game-container").clientWidth')
-            self.assertLess(page.evaluate('game.canvas.width'),390)
+            self.assertLessEqual(page.evaluate('game.canvas.width'),390)
 
     def test_real_firebase_sdk_initializes_only_on_request(self):
         with self.page(consent=False) as page:

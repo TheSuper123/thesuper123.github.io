@@ -1,3 +1,4 @@
+from game_controls import choose_option
 """Rules, complete rounds, real inputs, privacy and layout for the next 17 games."""
 import unittest
 from playwright.sync_api import expect
@@ -19,17 +20,17 @@ class SeventeenGames(MoreGames):
         return page.evaluate('MoreGame.snapshot()')
 
     def local(self, page):
-        page.get_by_label('RYWAL', exact=True).select_option('local')
+        choose_option(page.get_by_label('RYWAL', exact=True),'local')
 
     def test_catalog_exactly_seventeen_more_original_local_games(self):
         with self.page() as p:
             catalog=p.evaluate('SpinnerGames')
-            self.assertEqual(len(catalog),30)
-            self.assertEqual(len({g['id'] for g in catalog}),30)
-            self.assertEqual([g['id'] for g in catalog[13:]],GAMES)
-            expect(p.locator('.game-card')).to_have_count(30)
+            self.assertEqual(len(catalog),60)
+            self.assertEqual(len({g['id'] for g in catalog}),60)
+            self.assertEqual([g['id'] for g in catalog[13:30]],GAMES)
+            expect(p.locator('.game-card')).to_have_count(60)
             p.get_by_role('button',name='Na główkowanie',exact=True).click()
-            expect(p.locator('.game-card')).to_have_count(20)
+            expect(p.locator('.game-card')).to_have_count(40)
             p.locator('#game-search').fill('łamacz')
             expect(p.locator('.game-card')).to_have_count(1)
 
@@ -168,7 +169,7 @@ class SeventeenGames(MoreGames):
     def test_sliding_tiles_keyboard_immediate_undo_and_solvable_both_sizes(self):
         with self.page('fifteen') as p:
             for n in [3,4]:
-                p.get_by_label('PLANSZA',exact=True).select_option(str(n));s=self.state(p)
+                choose_option(p.get_by_label('PLANSZA',exact=True),str(n));s=self.state(p)
                 initial=s['board'];empty=initial.index(0)
                 key='ArrowLeft' if empty%n else 'ArrowRight'
                 p.locator('#board button').first.focus();p.keyboard.press(key)
@@ -181,7 +182,7 @@ class SeventeenGames(MoreGames):
     def test_lights_out_exact_solver_on_many_boards_and_complete_game(self):
         with self.page('lights-out') as p:
             for n in [4,5]:
-                p.get_by_label('PLANSZA',exact=True).select_option(str(n))
+                choose_option(p.get_by_label('PLANSZA',exact=True),str(n))
                 for _ in range(5):
                     s=self.state(p);solution=p.evaluate('MoreGame.solve(MoreGame.snapshot().board)')
                     self.assertIsNotNone(solution)
@@ -206,7 +207,7 @@ class SeventeenGames(MoreGames):
             p.get_by_role('button',name='Cofnij',exact=True).click()
             self.assertEqual(self.state(p)['board'][0],0)
             for i in range(8):
-                p.get_by_label('OBRAZEK',exact=True).select_option(str(i))
+                choose_option(p.get_by_label('OBRAZEK',exact=True),str(i))
                 p.evaluate('''()=>{for(const[i,v]of MoreGame.snapshot().solution.entries())if(v)MoreGame.move(i);}''')
                 self.assertEqual(self.state(p)['phase'],'won')
                 expect(p.locator('#more-result-text')).to_contain_text('Wszystkie liczby')
@@ -217,7 +218,7 @@ class SeventeenGames(MoreGames):
             self.assertFalse(p.evaluate('MoreGame.move(0,1)'))
             p.get_by_role('button',name='Cofnij',exact=True).click()
             for n in [3,4,7]:
-                p.get_by_label('KRĄŻKI',exact=True).select_option(str(n))
+                choose_option(p.get_by_label('KRĄŻKI',exact=True),str(n))
                 p.evaluate('''()=>{for(let i=0;i<130&&MoreGame.snapshot().phase!=='won';i++){const s=MoreGame.snapshot(),next=MoreGame.nextMove(s.towers);if(!next||!MoreGame.move(...next))throw Error('Invalid Hanoi hint');}}''')
                 s=self.state(p);self.assertEqual(s['phase'],'won');self.assertEqual(s['moves'],2**n-1)
                 self.assertEqual(s['towers'],[[],[],list(range(n,0,-1))])
@@ -225,7 +226,7 @@ class SeventeenGames(MoreGames):
     def test_peg_solitaire_certificates_are_legal_for_every_difficulty(self):
         with self.page('peg-solitaire') as p:
             for target in [8,12,20]:
-                p.get_by_label('WYZWANIE',exact=True).select_option(str(target))
+                choose_option(p.get_by_label('WYZWANIE',exact=True),str(target))
                 s=self.state(p);board=s['board'][:]
                 self.assertEqual(board.count(1),target)
                 for a,b,c in s['certificate']:
@@ -254,7 +255,7 @@ class SeventeenGames(MoreGames):
     def test_peg_generator_keeps_promised_size_even_with_constant_random(self):
         with self.page('peg-solitaire',init='Math.random=()=>0') as p:
             for target in [8,12,20]:
-                p.get_by_label('WYZWANIE',exact=True).select_option(str(target))
+                choose_option(p.get_by_label('WYZWANIE',exact=True),str(target))
                 self.assertEqual(self.state(p)['board'].count(1),target)
                 p.evaluate('''()=>{for(const[a,,c]of MoreGame.snapshot().certificate)if(!MoreGame.move(a,c))throw Error('Invalid fallback');}''')
                 self.assertEqual(self.state(p)['phase'],'won')
@@ -262,7 +263,7 @@ class SeventeenGames(MoreGames):
     def test_word_search_every_category_and_reverse_endpoint_selection(self):
         with self.page('word-search') as p:
             for cat in ['natura','dom','droga']:
-                p.get_by_label('SŁOWA',exact=True).select_option(cat)
+                choose_option(p.get_by_label('SŁOWA',exact=True),cat)
                 s=self.state(p)
                 self.assertEqual(len(s['placements']),8)
                 for placement in s['placements']:

@@ -52,6 +52,7 @@
         phase = won ? "won" : "lost";
         timer.stop();
         H.onPause();
+        window.dispatchEvent(new Event("spinner:input-reset"));
         extra
           .querySelectorAll("[data-held]")
           .forEach((b) => b.removeAttribute("data-held"));
@@ -75,6 +76,7 @@
         phase = "paused";
         timer.stop();
         H.onPause();
+        window.dispatchEvent(new Event("spinner:input-reset"));
         extra
           .querySelectorAll("[data-held]")
           .forEach((b) => b.removeAttribute("data-held"));
@@ -199,14 +201,19 @@
       hold(text, key, keys, parent = extra) {
         const b = H.button(text, () => {}, parent, "mo-hold");
         b.dataset.key = key;
-        const stop = () => {
+        const pointers = new Set();
+        const stop = (event) => {
+          if (event?.pointerId !== undefined) pointers.delete(event.pointerId);
+          else pointers.clear();
+          if (pointers.size) return;
           keys.delete(key);
           b.removeAttribute("data-held");
         };
         b.onpointerdown = (e) => {
-          if (e.button !== 0 || !e.isPrimary || !H.active()) return;
+          if (e.button !== 0 || !H.active()) return;
           e.preventDefault();
           b.setPointerCapture(e.pointerId);
+          pointers.add(e.pointerId);
           H.start();
           keys.add(key);
           b.dataset.held = "true";
@@ -225,6 +232,7 @@
         };
         b.addEventListener("blur", stop);
         window.addEventListener("blur", stop);
+        window.addEventListener("spinner:input-reset", stop);
         return b;
       },
       canvas(width, height) {

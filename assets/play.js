@@ -22,6 +22,30 @@
     document.querySelector("#game-title").textContent = "Tej gry tu nie ma.";
     return;
   }
+  // Older encrypted archive wrappers also use this shared player.
+  if (!document.querySelector("#player-guide")) {
+    const oldStage = document.querySelector("#game-stage"),
+      main = document.querySelector("#main");
+    if (oldStage && main) {
+      const style = document.createElement("link");
+      style.rel = "stylesheet";
+      style.href = new URL("assets/player-screen.css", window.SpinnerBase);
+      document.head.append(style);
+      document.body.classList.add("player-page");
+      main.replaceChildren(oldStage);
+      const header = document.createElement("header");
+      header.className = "site-header player-bar";
+      header.innerHTML =
+        '<a class="player-home" href="index.html" aria-label="Archiwum others">←</a><h1 id="game-title"></h1><nav class="player-tools" aria-label="Narzędzia gry"><div id="game-actions" hidden><button id="restart-game" aria-label="Od początku">↻</button><button id="fullscreen-game" aria-label="Pełny ekran">⛶</button></div><button id="player-help" aria-label="Zasady i sterowanie">?</button></nav>';
+      document.body.prepend(header);
+      const dialog = document.createElement("dialog");
+      dialog.id = "player-guide";
+      dialog.setAttribute("aria-label", "Zasady i sterowanie");
+      dialog.innerHTML =
+        '<button class="dialog-close" data-close aria-label="Zamknij zasady">×</button><p id="game-category"></p><div id="game-guides" hidden><h2 id="game-subtitle"></h2><p id="game-description"></p><h3>Sterowanie</h3><p id="game-controls"></p></div>';
+      document.body.append(dialog);
+    }
+  }
   document.title = game.name + " — Spinner Games";
   document.querySelector("#game-title").textContent = game.name;
   document.querySelector("#game-subtitle").textContent = game.desc;
@@ -30,6 +54,9 @@
   document.querySelector("#game-category").textContent = game.tag;
   document.querySelector("#game-guides").hidden = false;
   document.querySelector("#game-actions").hidden = false;
+  const guide = document.querySelector("#player-guide");
+  document.querySelector("#player-help").onclick = () => guide.showModal();
+  guide.querySelector("[data-close]").onclick = () => guide.close();
   const stage = document.querySelector("#game-stage");
   const frame = document.createElement("iframe");
   frame.title = game.name + " — rozgrywka";
@@ -105,21 +132,15 @@
         );
       }
     });
-  document.addEventListener(
-    "fullscreenchange",
-    () =>
-      (document.querySelector("#fullscreen-game").textContent =
-        document.fullscreenElement ? "Zamknij pełny ekran ⛶" : "Pełny ekran ⛶"),
-  );
-  window.addEventListener("message", (event) => {
-    if (
-      event.origin !== location.origin ||
-      event.source !== frame.contentWindow ||
-      event.data?.type !== "spinner:game-size"
-    )
-      return;
-    const height = Number(event.data.height);
-    if (Number.isFinite(height))
-      frame.style.height = Math.min(1600, Math.max(400, height)) + "px";
+  document.addEventListener("fullscreenchange", () => {
+    const button = document.querySelector("#fullscreen-game"),
+      active = Boolean(document.fullscreenElement);
+    button.textContent = active ? "↙" : "⛶";
+    button.setAttribute(
+      "aria-label",
+      active ? "Zamknij pełny ekran" : "Pełny ekran",
+    );
+    button.title = button.getAttribute("aria-label");
   });
+  // The iframe follows the available viewport. Content never enlarges the page.
 })();

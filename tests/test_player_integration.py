@@ -83,18 +83,18 @@ class PlayerChecks(unittest.TestCase):
             self.assertIsNone(frame.evaluate('SpinnerStorage.preferences.get("fixture-score")'))
             self.assertIsNone(page.evaluate('localStorage.getItem("spinner:prefs:fixture-score")'))
 
-    def test_game_height_can_fit_controls_and_fullscreen_overrides_inline_height(self):
+    def test_player_ignores_content_height_and_fullscreen_uses_available_screen(self):
         with self.page() as page:
             page.route('**/games/neonsnake1.html',lambda route:route.fulfill(content_type='text/html',body=GAME))
             frame=self.open(page)
             frame.evaluate('document.querySelector("main").style.minHeight="1176px"')
-            expect(page.locator('#game-stage iframe')).to_have_css('height','1200px')
+            self.assertAlmostEqual(page.locator('#game-stage iframe').bounding_box()['height'],page.evaluate('innerHeight')-48,delta=2)
             page.locator('#fullscreen-game').click()
             page.wait_for_function('Boolean(document.fullscreenElement)')
             rect=page.locator('#game-stage iframe').bounding_box()
             self.assertAlmostEqual(rect['height'],page.evaluate('innerHeight'),delta=2)
             page.evaluate('document.exitFullscreen()')
             page.wait_for_function('!document.fullscreenElement')
-            expect(page.locator('#game-stage iframe')).to_have_css('height','1200px')
+            self.assertAlmostEqual(page.locator('#game-stage iframe').bounding_box()['height'],page.evaluate('innerHeight')-48,delta=2)
 
 if __name__=='__main__':unittest.main(verbosity=2)

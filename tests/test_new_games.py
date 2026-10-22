@@ -1,3 +1,4 @@
+from game_controls import choose_option
 """Functional gameplay checks for all five new, self-contained games."""
 from contextlib import contextmanager
 from functools import partial
@@ -54,7 +55,7 @@ class NewGames(unittest.TestCase):
         page=context.new_page();page.set_default_timeout(7000);errors=[];external=[];failures=[]
         if clock:page.clock.install()
         page.on('pageerror',lambda e:errors.append(str(e)))
-        page.on('request',lambda r:external.append(r.url) if not r.url.startswith(self.base) else None)
+        page.on('request',lambda r:external.append(r.url) if not (r.url.startswith(self.base) or r.url.startswith('blob:'+self.base)) else None)
         page.on('response',lambda r:failures.append(r.url) if r.status>=400 else None)
         try:
             page.goto(self.base+('/games/'+game+'.html' if game else '/'))
@@ -64,15 +65,15 @@ class NewGames(unittest.TestCase):
 
     def test_catalog_has_exactly_five_new_games_search_and_favorites(self):
         with self.page(consent=True) as page:
-            expect(page.locator('.game-card')).to_have_count(30)
+            expect(page.locator('.game-card')).to_have_count(60)
             games=page.evaluate('SpinnerGames')
-            self.assertEqual(len({game['id'] for game in games}),30)
+            self.assertEqual(len({game['id'] for game in games}),60)
             self.assertEqual([game['id'] for game in games[8:13]],GAMES)
             page.get_by_role('button',name='Dodaj do ulubionych: Memory',exact=True).click();page.reload()
             expect(page.get_by_role('button',name='Usuń z ulubionych: Memory',exact=True)).to_have_attribute('aria-pressed','true')
             page.locator('#game-search').fill('sudoku');expect(page.locator('.game-card')).to_have_count(1)
             page.locator('#game-search').fill('');page.get_by_role('button',name='Na główkowanie',exact=True).click()
-            expect(page.locator('.game-card')).to_have_count(20)
+            expect(page.locator('.game-card')).to_have_count(40)
 
     def test_all_new_games_in_player_both_themes_and_mobile_widths(self):
         with self.page(width=390) as page:
@@ -154,7 +155,7 @@ class NewGames(unittest.TestCase):
 
     def test_memory_full_round_record_keyboard_and_frozen_pause(self):
         with self.page('memory',consent=True) as page:
-            page.locator('#memory-level').select_option('6');page.locator('[data-index="0"]').focus();page.keyboard.press('Enter')
+            choose_option(page.locator('#memory-level'),'6');page.locator('[data-index="0"]').focus();page.keyboard.press('Enter')
             self.assertEqual(page.evaluate('MemoryGame.snapshot().open'),[0])
             page.keyboard.press('ArrowRight');self.assertEqual(page.evaluate('document.activeElement.dataset.index'),'1')
             page.evaluate('SpinnerGame.pause("dialog")');before=page.evaluate('MemoryGame.snapshot()');page.wait_for_timeout(300)

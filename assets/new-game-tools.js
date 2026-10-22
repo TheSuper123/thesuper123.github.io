@@ -76,6 +76,8 @@
       if (event.detail === 0 && !element.disabled) action();
     });
     window.addEventListener("blur", stop);
+    window.addEventListener("spinner:input-reset", stop);
+    window.addEventListener("spinner:pause", stop);
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) stop();
     });

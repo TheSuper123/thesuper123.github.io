@@ -30,6 +30,10 @@ Oficjalne punkty odniesienia: [Google Publisher Policies](https://support.google
 
 Zwykle można korzystać z własnych wyników generowania w granicach warunków konkretnego narzędzia, również komercyjnie, jeżeli jego warunki na to pozwalają. Samo użycie AI nie potwierdza jednak legalności wszystkich elementów obrazu. Trzeba sprawdzić prawo do użytych materiałów wejściowych, cudze postacie i logotypy, podobieństwo do istniejących prac, ewentualny wizerunek osób oraz znaki towarowe. Wygenerowana grafika nie musi również podlegać wyłącznej ochronie prawnoautorskiej; w Polsce i UE znaczenie ma wkład twórczy człowieka. Warunki konkretnego generatora i sposób powstania każdej starszej grafiki nie zostały przekazane.
 
+## Nowe 30 gier
+
+Kolejnych 30 pozycji ma samodzielnie napisane implementacje i nowe lokalne SVG. Nie wykorzystano pobranych kompilacji, sprite’ów, zdalnych silników ani zewnętrznych słowników. Lista i zakres: [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md). To osobne realizacje klasycznych zasad; nie deklarujemy wyłączności na gatunki, powszechne nazwy ani proste figury.
+
 ## Aktualny podział
 
-Publiczny katalog ma 30 gier. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.
+Publiczny katalog ma 60 gier. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.

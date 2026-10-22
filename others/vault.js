@@ -32,6 +32,8 @@
     });
   }
   function hideArchive() {
+    document.body.classList.remove("vault-playing");
+    $(".vault-session").append($("#lock-button"));
     clearTimeout(timer);
     $("#archive-container").replaceChildren();
     $("#unlocked-view").hidden = true;
@@ -138,6 +140,8 @@
       $("#unlock-form").reset();
       $("#locked-view").hidden = true;
       $("#unlocked-view").hidden = false;
+      document.body.classList.add("vault-playing");
+      $(".site-header").append($("#lock-button"));
       const frame = document.createElement("iframe");
       frame.id = "archive-frame";
       frame.title = "Others — odszyfrowane archiwum";

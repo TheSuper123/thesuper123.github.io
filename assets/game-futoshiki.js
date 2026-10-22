@@ -1,0 +1,1 @@
+SpinnerLatin.create("futoshiki");

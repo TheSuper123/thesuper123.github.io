@@ -1,0 +1,122 @@
+html:has(.player-page),
+body.player-page {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body.player-page {
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.player-page .player-bar {
+  width: 100%;
+  max-width: none;
+  flex: 0 0 48px;
+  min-height: 48px;
+  padding: 5px 12px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+.player-bar .player-home {
+  display: flex;
+  flex-shrink: 0;
+}
+.player-bar h1 {
+  min-width: 0;
+  flex: 1;
+  font: 600 18px/1.2 Fraunces;
+  letter-spacing: -0.5px;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.player-bar nav.player-tools,
+.player-bar #game-actions {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.player-bar .player-tools button {
+  width: 34px;
+  height: 34px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--ink);
+  font: 19px/1 DM;
+}
+.player-bar .theme-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+.player-bar .theme-toggle span {
+  display: none;
+}
+.player-page main#main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+.player-page .game-stage {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: var(--paper);
+}
+.player-page .game-stage iframe {
+  width: 100%;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none;
+  display: block;
+  border: 0;
+}
+.player-page .game-stage:fullscreen {
+  width: 100vw;
+  height: 100dvh;
+}
+.player-page #game-placeholder {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  padding: 24px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+.player-page #game-placeholder button {
+  margin: 12px;
+}
+.player-page #game-actions[hidden] {
+  display: none;
+}
+.player-page dialog {
+  max-height: calc(100dvh - 28px);
+  overflow: auto;
+}
+@media (max-width: 360px) {
+  .player-page .player-bar {
+    gap: 6px;
+    padding-inline: 7px;
+  }
+  .player-bar .player-tools button {
+    width: 30px;
+  }
+  .player-bar h1 {
+    font-size: 16px;
+  }
+}
