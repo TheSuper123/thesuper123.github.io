@@ -12,12 +12,14 @@ Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. 
 
 `tests/smoke.py` uruchamia własny serwer na wolnym porcie i przeglądarkę Chromium. Środowisko robocze ma Python Playwright 1.62.0 oraz `/usr/bin/chromium`. W innym środowisku potrzebne są te narzędzia; ścieżkę przeglądarki można podać w `CHROMIUM_PATH`.
 
+Pięć dodanych gier i ich 17 testów funkcjonalnych opisano w [NOWE-GRY.md](NOWE-GRY.md). Nie potrzebują odszyfrowania archiwum.
+
 ```sh
 python3 tests/smoke.py
 python3 tests/test_others.py
 ```
 
-Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 8 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
+Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 13 gier publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
 
 ## Wygląd gier i ciemny motyw
 

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="../assets/theme.js"></script>
+    <title>Paletka — Spinner Games</title>
+    <meta
+      name="description"
+      content="Trzy ściany z cegieł i jedna piłka. Miejsce odbicia od paletki zmienia jej kierunek — celuj świadomie."
+    />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="../assets/new-games.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <script src="../assets/new-game-tools.js" defer></script>
+    <script src="../assets/game-breakout.js" defer></script>
+  </head>
+  <body class="game-page new-game-page" data-game="breakout">
+    <header><a href="../index.html#gry">Spinner Games / katalog</a></header>
+    <main class="ng-main">
+      <section class="ng-cabinet" aria-label="Paletka">
+        <div class="ng-intro">
+          <div>
+            <div class="ng-edition">11 / DOBRE ODBICIE</div>
+            <h2>Odbij. Rozbij. Powtórz.</h2>
+            <p>
+              Trzy ściany z cegieł i jedna piłka. Miejsce odbicia od paletki
+              zmienia jej kierunek — celuj świadomie.
+            </p>
+          </div>
+          <svg
+            class="ng-mark"
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M20 3v34M3 20h34M8 8l24 24M8 32 32 8" />
+          </svg>
+        </div>
+        <div class="ng-hud">
+          <div class="ng-stat">
+            <small>PUNKTY</small><strong id="breakout-score">0</strong>
+          </div>
+          <div class="ng-stat">
+            <small>PIŁKI</small><strong id="breakout-lives">3</strong>
+          </div>
+          <div class="ng-stat">
+            <small>ŚCIANA</small><strong id="breakout-level">1 / 3</strong>
+          </div>
+        </div>
+        <div class="ng-toolbar">
+          <label
+            >TEMPO<select id="breakout-speed">
+              <option value="calm">Spokojnie</option>
+              <option value="normal" selected>Klasycznie</option>
+              <option value="fast">Szybko</option>
+            </select></label
+          ><button id="breakout-new">Nowa runda</button
+          ><button id="breakout-pause">Pauza</button>
+        </div>
+        <div class="ng-stage breakout-stage">
+          <canvas
+            id="game"
+            class="breakout-canvas"
+            width="780"
+            height="520"
+            tabindex="0"
+            aria-label="Paletka, piłka i cegły"
+            data-managed-controls
+          ></canvas>
+          <div id="breakout-cover" class="ng-cover">
+            <strong id="breakout-cover-title">Dobry kąt robi różnicę.</strong>
+            <p id="breakout-cover-copy">
+              Przesuń paletkę i podaj piłkę, gdy będziesz gotowy.
+            </p>
+            <div class="ng-toolbar">
+              <button id="breakout-start" class="ng-primary">Zagraj</button
+              ><button id="breakout-retry" hidden>Od początku</button>
+            </div>
+          </div>
+        </div>
+        <div class="breakout-touch" aria-label="Sterowanie paletką">
+          <button id="breakout-left" aria-label="Paletka w lewo">←</button
+          ><button id="breakout-launch" class="ng-primary">
+            Podaj / Spacja</button
+          ><button id="breakout-right" aria-label="Paletka w prawo">→</button>
+        </div>
+        <p id="breakout-status" class="ng-status" role="status">
+          Masz trzy piłki na całą rundę.
+        </p>
+        <p id="breakout-record" class="ng-level-status"></p>
+        <p class="ng-help">
+          Mysz / palec na planszy lub strzałki / A, D: paletka.<br />Spacja:
+          podaj · P: pauza. Zmiana tempa rozpoczyna nową rundę.
+        </p>
+      </section>
+    </main>
+    <footer>Spinner Games</footer>
+  </body>
+</html>

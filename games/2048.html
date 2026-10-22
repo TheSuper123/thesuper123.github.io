@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="../assets/theme.js"></script>
+    <title>2048 — Spinner Games</title>
+    <meta
+      name="description"
+      content="Łącz jednakowe liczby. Jeden ruch przesuwa całą planszę — zostaw sobie miejsce na następny."
+    />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="../assets/new-games.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <script src="../assets/new-game-tools.js" defer></script>
+    <script src="../assets/game-2048.js" defer></script>
+  </head>
+  <body class="game-page new-game-page" data-game="2048">
+    <header><a href="../index.html#gry">Spinner Games / katalog</a></header>
+    <main class="ng-main">
+      <section class="ng-cabinet" aria-label="2048">
+        <div class="ng-intro">
+          <div>
+            <div class="ng-edition">09 / LICZBY W RUCHU</div>
+            <h2>Dwa razy bliżej.</h2>
+            <p>
+              Łącz jednakowe liczby. Jeden ruch przesuwa całą planszę — zostaw
+              sobie miejsce na następny.
+            </p>
+          </div>
+          <svg
+            class="ng-mark"
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M20 3v34M3 20h34M8 8l24 24M8 32 32 8" />
+          </svg>
+        </div>
+        <div class="ng-hud">
+          <div class="ng-stat">
+            <small>WYNIK</small><strong id="tiles-score">0</strong>
+          </div>
+          <div class="ng-stat">
+            <small>REKORD</small><strong id="tiles-best">0</strong>
+          </div>
+          <div class="ng-stat">
+            <small>RUCHY</small><strong id="tiles-moves">0</strong>
+          </div>
+        </div>
+        <div class="ng-toolbar">
+          <button id="tiles-new" class="ng-primary">Nowa gra</button
+          ><button id="tiles-undo" disabled>Cofnij</button
+          ><button id="tiles-pause">Pauza</button>
+        </div>
+        <div class="ng-stage">
+          <div
+            id="board"
+            class="tiles-board"
+            role="grid"
+            tabindex="0"
+            data-managed-controls
+            aria-label="Plansza 2048"
+          ></div>
+          <div class="ng-cover" id="tiles-cover" hidden>
+            <strong id="tiles-cover-title">Chwila przerwy.</strong>
+            <p id="tiles-cover-copy"></p>
+            <div class="ng-toolbar">
+              <button id="tiles-continue" class="ng-primary">Wznów</button
+              ><button id="tiles-again">Nowa gra</button>
+            </div>
+          </div>
+        </div>
+        <div class="ng-directions" aria-label="Kierunek ruchu">
+          <button
+            class="ng-direction-up"
+            data-direction="up"
+            aria-label="Przesuń w górę"
+          >
+            ↑</button
+          ><button
+            class="ng-direction-left"
+            data-direction="left"
+            aria-label="Przesuń w lewo"
+          >
+            ←</button
+          ><button data-direction="down" aria-label="Przesuń w dół">↓</button
+          ><button data-direction="right" aria-label="Przesuń w prawo">
+            →
+          </button>
+        </div>
+        <p id="tiles-status" class="ng-status" role="status">
+          Połącz dwie jednakowe liczby, żeby zrobić miejsce.
+        </p>
+        <p class="ng-help">
+          Strzałki / WASD lub gest po planszy. U: cofnij · P: pauza.<br />Po
+          zdobyciu 2048 możesz grać dalej.
+        </p>
+      </section>
+    </main>
+    <footer>Spinner Games</footer>
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="../assets/theme.js"></script>
+    <title>Sudoku — Spinner Games</title>
+    <meta
+      name="description"
+      content="W każdym wierszu, kolumnie i kwadracie 3 × 3 użyj cyfr od 1 do 9. Każda nowa plansza ma jedno rozwiązanie."
+    />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="../assets/new-games.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <script src="../assets/new-game-tools.js" defer></script>
+    <script src="../assets/game-sudoku.js" defer></script>
+  </head>
+  <body class="game-page new-game-page" data-game="sudoku">
+    <header><a href="../index.html#gry">Spinner Games / katalog</a></header>
+    <main class="ng-main">
+      <section class="ng-cabinet" aria-label="Sudoku">
+        <div class="ng-intro">
+          <div>
+            <div class="ng-edition">12 / DZIEWIĘĆ NA DZIEWIĘĆ</div>
+            <h2>Każda cyfra ma miejsce.</h2>
+            <p>
+              W każdym wierszu, kolumnie i kwadracie 3 × 3 użyj cyfr od 1 do 9.
+              Każda nowa plansza ma jedno rozwiązanie.
+            </p>
+          </div>
+          <svg
+            class="ng-mark"
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M20 3v34M3 20h34M8 8l24 24M8 32 32 8" />
+          </svg>
+        </div>
+        <div class="ng-hud">
+          <div class="ng-stat">
+            <small>CZAS</small><strong id="sudoku-time">0:00</strong>
+          </div>
+          <div class="ng-stat">
+            <small>WYPEŁNIONE</small><strong id="sudoku-filled">0 / 81</strong>
+          </div>
+          <div class="ng-stat">
+            <small>PODPOWIEDZI</small><strong id="sudoku-hints">0</strong>
+          </div>
+        </div>
+        <div class="ng-toolbar">
+          <label
+            >POZIOM<select id="sudoku-level">
+              <option value="easy">Spokojnie</option>
+              <option value="normal" selected>Klasycznie</option>
+              <option value="hard">Wytrwale</option>
+            </select></label
+          ><button id="sudoku-new" class="ng-primary">Nowa plansza</button
+          ><button id="sudoku-pause">Pauza</button>
+        </div>
+        <div class="ng-stage">
+          <div
+            id="board"
+            class="sudoku-board"
+            role="grid"
+            aria-label="Plansza Sudoku"
+            data-managed-controls
+          ></div>
+          <div class="ng-cover" id="sudoku-cover" hidden>
+            <strong id="sudoku-cover-title">Chwila przerwy.</strong>
+            <p id="sudoku-cover-copy"></p>
+            <button id="sudoku-resume" class="ng-primary">Wznów</button>
+          </div>
+        </div>
+        <div class="sudoku-pad" aria-label="Wpisz cyfrę">
+          <button type="button" data-digit="1" aria-label="Wpisz 1">1</button
+          ><button type="button" data-digit="2" aria-label="Wpisz 2">2</button
+          ><button type="button" data-digit="3" aria-label="Wpisz 3">3</button
+          ><button type="button" data-digit="4" aria-label="Wpisz 4">4</button
+          ><button type="button" data-digit="5" aria-label="Wpisz 5">5</button
+          ><button type="button" data-digit="6" aria-label="Wpisz 6">6</button
+          ><button type="button" data-digit="7" aria-label="Wpisz 7">7</button
+          ><button type="button" data-digit="8" aria-label="Wpisz 8">8</button
+          ><button type="button" data-digit="9" aria-label="Wpisz 9">9</button>
+        </div>
+        <div class="ng-toolbar">
+          <button id="sudoku-note" aria-pressed="false">Notatki · N</button
+          ><button id="sudoku-erase">Wymaż</button
+          ><button id="sudoku-undo" disabled>Cofnij</button
+          ><button id="sudoku-hint">Podpowiedź</button
+          ><button id="sudoku-check">Sprawdź</button>
+        </div>
+        <p id="sudoku-status" class="ng-status" role="status">
+          Wybierz pole. Zegar ruszy przy pierwszym wpisie.
+        </p>
+        <p id="sudoku-record" class="ng-level-status"></p>
+        <p class="ng-help">
+          Strzałki: wybór pola · 1–9: wpisz · Backspace: wymaż.<br />N: notatki
+          · U / Ctrl+Z: cofnij · P: pauza.
+        </p>
+      </section>
+    </main>
+    <footer>Spinner Games</footer>
+  </body>
+</html>

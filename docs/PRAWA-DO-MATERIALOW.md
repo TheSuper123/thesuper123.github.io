@@ -31,4 +31,4 @@ Zwykle można korzystać z własnych wyników generowania w granicach warunków 
 
 ## Aktualny podział
 
-Publiczny katalog ma 8 gier. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.
+Publiczny katalog ma 13 gier. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.

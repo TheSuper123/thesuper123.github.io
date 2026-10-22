@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="../assets/theme.js"></script>
+    <title>Memory — Spinner Games</title>
+    <meta
+      name="description"
+      content="Dwanaście autorskich znaków, kilka par i Twoja pamięć. Odkrywaj spokojnie — zegar ruszy z pierwszą kartą."
+    />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="../assets/new-games.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js" defer></script>
+    <script src="../assets/new-game-tools.js" defer></script>
+    <script src="../assets/game-memory.js" defer></script>
+  </head>
+  <body class="game-page new-game-page" data-game="memory">
+    <header><a href="../index.html#gry">Spinner Games / katalog</a></header>
+    <main class="ng-main">
+      <section class="ng-cabinet" aria-label="Memory">
+        <div class="ng-intro">
+          <div>
+            <div class="ng-edition">10 / DOBRA PAMIĘĆ</div>
+            <h2>Zapamiętaj ten moment.</h2>
+            <p>
+              Dwanaście autorskich znaków, kilka par i Twoja pamięć. Odkrywaj
+              spokojnie — zegar ruszy z pierwszą kartą.
+            </p>
+          </div>
+          <svg
+            class="ng-mark"
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M20 3v34M3 20h34M8 8l24 24M8 32 32 8" />
+          </svg>
+        </div>
+        <div class="ng-hud">
+          <div class="ng-stat">
+            <small>CZAS</small><strong id="memory-time">0:00</strong>
+          </div>
+          <div class="ng-stat">
+            <small>PRÓBY</small><strong id="memory-moves">0</strong>
+          </div>
+          <div class="ng-stat">
+            <small>PARY</small><strong id="memory-pairs">0 / 8</strong>
+          </div>
+        </div>
+        <div class="ng-toolbar">
+          <label
+            >ROZMIAR<select id="memory-level">
+              <option value="6">6 par · rozgrzewka</option>
+              <option value="8" selected>8 par · klasycznie</option>
+              <option value="12">12 par · wyzwanie</option>
+            </select></label
+          ><button id="memory-new" class="ng-primary">Rozdaj od nowa</button
+          ><button id="memory-pause">Pauza</button>
+        </div>
+        <div class="ng-stage">
+          <div
+            id="board"
+            class="memory-board"
+            data-managed-controls
+            role="grid"
+            aria-label="Karty Memory"
+          ></div>
+          <div id="memory-cover" class="ng-cover" hidden>
+            <strong id="memory-cover-title">Chwila przerwy.</strong>
+            <p id="memory-cover-copy"></p>
+            <div class="ng-toolbar">
+              <button id="memory-resume" class="ng-primary">Wznów</button
+              ><button id="memory-again">Jeszcze raz</button>
+            </div>
+          </div>
+        </div>
+        <p id="memory-status" class="ng-status" role="status">
+          Odkryj pierwszą kartę.
+        </p>
+        <p id="memory-record" class="ng-level-status"></p>
+        <p class="ng-help">
+          Kliknij lub dotknij kartę. Strzałki: wybór · Enter / Spacja:
+          odkryj.<br />P: pauza. Rekordy są osobne dla każdego rozmiaru.
+        </p>
+      </section>
+    </main>
+    <footer>Spinner Games</footer>
+  </body>
+</html>

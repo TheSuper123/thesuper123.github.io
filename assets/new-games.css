@@ -1,0 +1,492 @@
+html body.game-page.new-game-page main.ng-main {
+  max-width: 760px !important;
+  padding: 16px 24px 28px !important;
+}
+html body.game-page.new-game-page[data-game="breakout"] main.ng-main {
+  max-width: 980px !important;
+}
+.ng-cabinet {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 24px;
+  min-width: 0;
+}
+.ng-intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+.ng-intro h2 {
+  font:
+    600 30px/1.1 Fraunces,
+    Georgia,
+    serif !important;
+  margin: 7px 0 10px;
+  letter-spacing: -1px;
+}
+.ng-intro p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0;
+  max-width: 450px;
+}
+.ng-edition {
+  font: 9px Mono;
+  letter-spacing: 1.2px;
+  color: var(--orange);
+}
+.ng-mark {
+  color: var(--orange);
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+.ng-hud {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.ng-stat {
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  border-radius: 3px;
+  background: var(--paper);
+  min-width: 0;
+}
+.ng-stat small {
+  display: block;
+  color: var(--muted);
+  font: 8px Mono;
+  letter-spacing: 0.7px;
+  margin-bottom: 5px;
+}
+.ng-stat strong {
+  display: block;
+  font: 600 25px/1.2 DM;
+  letter-spacing: -0.8px;
+  overflow-wrap: anywhere;
+}
+.ng-toolbar {
+  display: flex;
+  gap: 9px;
+  align-items: end;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.ng-toolbar label {
+  font: 9px Mono;
+  color: var(--muted);
+}
+.ng-toolbar label select {
+  display: block;
+  margin-top: 5px;
+}
+.ng-toolbar .ng-primary,
+.new-game-page .ng-primary {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  border-color: var(--ink) !important;
+}
+.ng-toolbar button[data-held="true"],
+.ng-directions button[data-held="true"] {
+  background: var(--orange) !important;
+  color: var(--paper) !important;
+}
+.ng-help {
+  font: 10px/1.8 Mono;
+  color: var(--muted);
+  text-align: center;
+  margin: 16px 0 0;
+}
+.ng-status {
+  font: 12px/1.7 DM;
+  min-height: 40px;
+  text-align: center;
+  color: var(--muted);
+  margin: 15px 0 0;
+}
+.ng-status[data-result="win"] {
+  color: var(--game-green);
+}
+.ng-status[data-result="error"] {
+  color: var(--game-red);
+}
+.ng-stage {
+  position: relative;
+  margin: auto;
+  max-width: 480px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ng-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--overlay);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  gap: 13px;
+}
+.ng-cover strong {
+  font:
+    600 30px/1.15 Fraunces,
+    Georgia,
+    serif;
+  letter-spacing: -1px;
+}
+.ng-cover p {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 290px;
+  margin: 0;
+}
+.ng-cover .ng-toolbar {
+  margin: 0;
+}
+.new-game-page [hidden] {
+  display: none !important;
+}
+.ng-directions {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  gap: 7px;
+  justify-content: center;
+  margin-top: 16px;
+}
+.ng-directions button {
+  width: 48px;
+  height: 44px;
+  padding: 8px !important;
+}
+.ng-directions svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  margin: auto;
+}
+.ng-direction-up {
+  grid-column: 2;
+}
+.ng-direction-left {
+  grid-column: 1;
+}
+.ng-directions button {
+  touch-action: none;
+}
+.tiles-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  padding: 10px;
+  background: var(--board);
+  border: 1px solid var(--edge);
+  border-radius: 4px;
+  touch-action: none;
+  outline-offset: 4px;
+}
+.number-tile {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  background: var(--surface-3);
+  color: var(--ink);
+  font: 650 clamp(22px, 6vw, 43px) / 1 DM;
+  letter-spacing: -1.2px;
+  border: 1px solid var(--line);
+}
+.number-tile[data-value="2"] {
+  background: var(--white);
+}
+.number-tile[data-value="4"] {
+  background: var(--info-surface);
+  color: var(--game-blue);
+}
+.number-tile[data-value="8"],
+.number-tile[data-value="16"] {
+  background: var(--game-green);
+  color: var(--paper);
+}
+.number-tile[data-value="32"],
+.number-tile[data-value="64"] {
+  background: var(--game-gold);
+  color: var(--paper);
+}
+.number-tile[data-high="true"] {
+  background: var(--orange);
+  color: var(--paper);
+  font-size: clamp(20px, 5.6vw, 35px);
+}
+.number-tile.is-merge {
+  outline: 2px solid var(--orange);
+  outline-offset: -3px;
+}
+.memory-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+.memory-board[data-pairs="12"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.new-game-page .mem-card {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px !important;
+  background: var(--board);
+  border: 1px solid var(--edge);
+  position: relative;
+  min-height: 0;
+  touch-action: manipulation;
+}
+.mem-card svg {
+  width: 85%;
+  height: 85%;
+  max-width: 58px;
+  max-height: 58px;
+}
+.mem-card .mem-back {
+  font: italic 26px Fraunces;
+  color: var(--muted);
+}
+.new-game-page .mem-card[data-face="true"] {
+  background: var(--paper);
+  color: var(--orange);
+  border-color: var(--orange);
+}
+.new-game-page .mem-card[data-matched="true"] {
+  background: var(--surface-2);
+  border-color: var(--game-green);
+  color: var(--game-green);
+  opacity: 1;
+}
+.mem-card[data-matched="true"]:after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--game-green);
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+.sudoku-board {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  border: 2px solid var(--ink);
+  background: var(--line);
+  gap: 1px;
+  touch-action: manipulation;
+}
+.new-game-page .sudoku-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-height: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--white);
+  color: var(--game-blue);
+  font: 550 clamp(18px, 4.9vw, 30px) / 1 DM;
+  position: relative;
+}
+.new-game-page .sudoku-cell[data-fixed="true"] {
+  color: var(--ink);
+  font-weight: 650;
+  background: var(--paper);
+}
+.new-game-page .sudoku-cell[data-peer="true"] {
+  background: var(--surface-2);
+}
+.new-game-page .sudoku-cell[data-same="true"] {
+  background: var(--info-surface);
+}
+.new-game-page .sudoku-cell[data-selected="true"] {
+  background: var(--warning-surface);
+  box-shadow: inset 0 0 0 2px var(--orange) !important;
+  z-index: 1;
+}
+.new-game-page .sudoku-cell[data-conflict="true"] {
+  color: var(--game-red);
+  background: var(--warning-surface);
+}
+.new-game-page .sudoku-cell[data-right="true"] {
+  border-right: 2px solid var(--ink) !important;
+}
+.new-game-page .sudoku-cell[data-bottom="true"] {
+  border-bottom: 2px solid var(--ink) !important;
+}
+.sudoku-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  font: 8px/1.3 Mono;
+  color: var(--muted);
+}
+.sudoku-notes span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sudoku-pad {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 5px;
+  max-width: 480px;
+  margin: 14px auto;
+}
+.new-game-page .sudoku-pad button {
+  padding: 8px 0;
+  min-height: 40px;
+  font-size: 18px;
+}
+.new-game-page button[aria-pressed="true"] {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: var(--warning-surface);
+}
+.breakout-stage {
+  max-width: 820px;
+  border: 1px solid var(--edge);
+  background: var(--board);
+}
+.new-game-page .breakout-canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3/2;
+  touch-action: none;
+}
+.breakout-touch {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 8px;
+  max-width: 540px;
+  margin: 14px auto;
+}
+.breakout-touch button {
+  touch-action: none;
+  min-height: 44px;
+}
+.sokoban-stage {
+  max-width: 520px;
+  border: 1px solid var(--edge);
+  background: var(--board);
+}
+.new-game-page .sokoban-canvas {
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+.ng-level-status {
+  font: 10px Mono;
+  color: var(--muted);
+  text-align: center;
+  margin: 7px 0;
+}
+@media (max-width: 600px) {
+  html body.game-page.new-game-page main.ng-main {
+    padding: 12px !important;
+  }
+  .ng-cabinet {
+    padding: 17px 12px;
+  }
+  .ng-intro {
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .ng-intro h2 {
+    font-size: 25px !important;
+  }
+  .ng-intro p {
+    font-size: 11px;
+  }
+  .ng-mark {
+    width: 32px;
+    height: 32px;
+  }
+  .ng-stat {
+    padding: 10px 9px;
+  }
+  .ng-stat strong {
+    font-size: 23px;
+  }
+  .ng-stat small {
+    font-size: 7px;
+    letter-spacing: 0.4px;
+  }
+  .ng-cover {
+    padding: 16px;
+  }
+  .ng-cover strong {
+    font-size: 25px;
+  }
+  .memory-board {
+    gap: 7px;
+  }
+  .memory-board[data-pairs="12"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .new-game-page .mem-card {
+    padding: 9px !important;
+  }
+  .ng-toolbar {
+    gap: 7px;
+  }
+  .ng-toolbar button {
+    font-size: 11px;
+    padding: 9px 11px;
+  }
+  .tiles-board {
+    gap: 7px;
+    padding: 8px;
+  }
+  .sudoku-pad {
+    gap: 3px;
+  }
+  .new-game-page .sudoku-pad button {
+    font-size: 17px;
+  }
+  .sudoku-notes {
+    font-size: 6px;
+    padding: 0;
+  }
+  .ng-status {
+    font-size: 11px;
+  }
+  .ng-help {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .number-tile.is-merge {
+    animation: ng-tile-pop 0.16s ease-out;
+  }
+  .mem-card[data-face="true"] {
+    animation: ng-tile-pop 0.15s ease-out;
+  }
+  @keyframes ng-tile-pop {
+    from {
+      transform: scale(0.93);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+}

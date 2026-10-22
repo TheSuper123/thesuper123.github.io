@@ -105,6 +105,71 @@
       controls:
         "Spacja, dotknięcie planszy lub przycisk Podskocz: lot. P / Escape: pauza. R: nowa runda.",
     },
+    {
+      id: "2048",
+      name: "2048",
+      file: "games/2048.html",
+      art: "2048",
+      category: "logic",
+      tag: "LICZBY W RUCHU",
+      desc: "Dwa razy bliżej. Jeszcze jedno połączenie.",
+      about:
+        "Przesuwaj całą planszę i łącz jednakowe liczby. Każdy kafelek łączy się najwyżej raz w ruchu. Cel to 2048, ale potem możesz grać dalej. Cofnięcie pomaga przemyśleć ostatnią decyzję.",
+      controls:
+        "Strzałki / WASD, przyciski lub gest po planszy. U: cofnij. P: pauza.",
+    },
+    {
+      id: "memory",
+      name: "Memory",
+      file: "games/memory.html",
+      art: "memory",
+      category: "logic",
+      tag: "PAMIĘĆ",
+      desc: "Widziałeś już ten znak. Tylko gdzie?",
+      about:
+        "Odkryj wszystkie pary autorskich znaków. Wybierz talię z 6, 8 lub 12 parami. Zegar rusza przy pierwszej karcie, a rekord uwzględnia liczbę prób i czas. Pauza zasłania planszę.",
+      controls:
+        "Kliknięcie / dotknięcie / Enter: odkryj kartę. Strzałki: wybierz. P: pauza.",
+    },
+    {
+      id: "breakout",
+      name: "Paletka",
+      file: "games/breakout.html",
+      art: "breakout",
+      category: "arcade",
+      tag: "ODBIJ I ROZBIJ",
+      desc: "Dobry kąt robi różnicę.",
+      about:
+        "Odbijaj piłkę i rozbij trzy ściany cegieł. Masz trzy piłki na całą rundę. Miejsce odbicia od paletki zmienia kierunek lotu; mocniejsze cegły potrzebują dwóch trafień. Wybierz jedno z trzech temp.",
+      controls:
+        "Mysz / palec na planszy albo strzałki / A, D: paletka. Spacja: podaj piłkę. P: pauza.",
+    },
+    {
+      id: "sudoku",
+      name: "Sudoku",
+      file: "games/sudoku.html",
+      art: "sudoku",
+      category: "logic",
+      tag: "9 × 9",
+      desc: "Każda cyfra ma swoje miejsce.",
+      about:
+        "Uzupełnij cyfry od 1 do 9 w wierszach, kolumnach i kwadratach 3 × 3. Każda generowana plansza ma jedno rozwiązanie. Korzystaj z notatek, cofania i sprawdzania wpisów. Rekordy czasu dotyczą rund bez podpowiedzi.",
+      controls:
+        "Wybierz pole i wpisz 1–9 lub użyj przycisków. N: notatki. Backspace: wymaż. U / Ctrl+Z: cofnij. P: pauza.",
+    },
+    {
+      id: "sokoban",
+      name: "Skrzynki",
+      file: "games/sokoban.html",
+      art: "sokoban",
+      category: "logic",
+      tag: "PLANOWANIE",
+      desc: "Najpierw pomyśl. Potem popchnij.",
+      about:
+        "Przesuń wszystkie skrzynie na zaznaczone cele w ośmiu własnych magazynach. Skrzynie można tylko pchać. Każdy początkowy układ da się rozwiązać; po złym ruchu skorzystaj z cofania lub zacznij poziom od nowa.",
+      controls:
+        "Strzałki / WASD, przyciski albo gest po planszy. U: cofnij. R: restart poziomu. P: pauza.",
+    },
   ];
   window.SpinnerGames = games;
   const grid = document.querySelector("#game-grid");
