@@ -1,6 +1,6 @@
 # Pięć nowych gier
 
-Ten etap rozszerzył publiczny katalog do 13 pozycji. Późniejszy etap dodał [kolejnych 17 gier](17-NOWYCH-GIER.md); po kolejnym rozszerzeniu katalog ma [60 gier](30-NOWYCH-GIER-I-EKRAN.md). Poniżej opisano wcześniejsze pięć własnych implementacji bez zewnętrznych silników, pobranych grafik, kont i połączeń sieciowych podczas rozgrywki.
+Ten etap rozszerzył publiczny katalog do 13 pozycji. Późniejszy etap dodał [kolejnych 17 gier](17-NOWYCH-GIER.md); aktualnie katalog ma [100 pozycji](100-GIER-I-KOMPAS.md). Poniżej opisano wcześniejsze pięć własnych implementacji bez zewnętrznych silników, pobranych grafik, kont i połączeń sieciowych podczas rozgrywki.
 
 | Gra      | Rozgrywka i funkcje                                                                                                                                                            |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

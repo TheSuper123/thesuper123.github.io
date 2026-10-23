@@ -84,6 +84,74 @@
     "billiards.html": ["billiards", "Bilard", "58 / SZEŚĆ BIL DO ŁUZ"],
     "rhythm.html": ["rhythm", "Cztery takty", "59 / RYTM W OCZACH"],
     "balance.html": ["balance", "Balans", "60 / OSIEM PUNKTÓW"],
+    "chess.html": ["chess", "Szachy", "61 / KRÓL POD OCHRONĄ"],
+    "go.html": ["go", "Go", "62 / ODDECHY I TERYTORIUM"],
+    "backgammon.html": ["backgammon", "Tryktrak", "63 / PIĘTNAŚCIE DO DOMU"],
+    "pentago.html": ["pentago", "Obróć pięć", "64 / ĆWIERĆ OBROTU"],
+    "gomoku.html": ["gomoku", "Gomoku", "65 / PIĘĆ W RZĘDZIE"],
+    "ataxx.html": ["ataxx", "Ataxx", "66 / SKOPIUJ I PRZEJMIJ"],
+    "konane.html": ["konane", "Konane", "67 / SKOK PRZEZ RYWALA"],
+    "fox-geese.html": ["fox-geese", "Lis i gęsi", "68 / JEDEN PRZECIW STADU"],
+    "kakuro.html": ["kakuro", "Kakuro", "69 / SUMY BEZ POWTÓREK"],
+    "nurikabe.html": ["nurikabe", "Nurikabe", "70 / WYSPY W MORZU"],
+    "kuromasu.html": ["kuromasu", "Kuromasu", "71 / WIDOK OD LICZBY"],
+    "hitori.html": ["hitori", "Hitori", "72 / SKREŚL POWTÓRZENIA"],
+    "star-battle.html": [
+      "star-battle",
+      "Gwiezdne regiony",
+      "73 / JEDNA W KAŻDYM",
+    ],
+    "tents.html": ["tents", "Namioty", "74 / OBÓZ PRZY DRZEWACH"],
+    "fleet-puzzle.html": [
+      "fleet-puzzle",
+      "Ukryta flota",
+      "75 / OKRĘTY Z LICZB",
+    ],
+    "akari.html": ["akari", "Latarnie", "76 / ŚWIATŁO BEZ KOLIZJI"],
+    "netwalk.html": ["netwalk", "Rurociąg", "77 / POŁĄCZ CAŁĄ SIEĆ"],
+    "rush-hour.html": ["rush-hour", "Wyjazd", "78 / ZRÓB MIEJSCE"],
+    "knight-tour.html": [
+      "knight-tour",
+      "Droga skoczka",
+      "79 / TRZYDZIEŚCI SZEŚĆ SKOKÓW",
+    ],
+    "eight-queens.html": [
+      "eight-queens",
+      "Osiem hetmanów",
+      "80 / OSOBNE PRZEKĄTNE",
+    ],
+    "paths.html": ["paths", "Sześć ścieżek", "81 / POŁĄCZ PARY"],
+    "polyomino.html": ["polyomino", "Pięć pól", "82 / SZEŚĆ WŁASNYCH FIGUR"],
+    "twenty-four.html": ["twenty-four", "Dokładnie 24", "83 / CZTERY LICZBY"],
+    "cryptogram.html": ["cryptogram", "Szyfrogram", "84 / PODSTAW LITERY"],
+    "typing.html": ["typing", "Maszynopis", "85 / MINUTA NA TEKST"],
+    "stroop.html": ["stroop", "Kolor słowa", "86 / ODRUCH POD KONTROLĄ"],
+    "mental-math.html": [
+      "mental-math",
+      "Rachunek w głowie",
+      "87 / DWADZIEŚCIA DZIAŁAŃ",
+    ],
+    "capitals.html": ["capitals", "Stolice", "88 / PIĘTNAŚCIE PODRÓŻY"],
+    "asteroids.html": [
+      "asteroids",
+      "Pas asteroid",
+      "89 / BEZWŁADNOŚĆ W KOSMOSIE",
+    ],
+    "artillery.html": ["artillery", "Artyleria", "90 / POJEDYNEK NA WZGÓRZACH"],
+    "curling.html": ["curling", "Curling", "91 / KAMIENIE DO DOMU"],
+    "minigolf.html": ["minigolf", "Minigolf", "92 / TRZY AUTORSKIE TORY"],
+    "bowling.html": ["bowling", "Kręgle", "93 / DZIESIĘĆ RUND"],
+    "darts.html": ["darts", "Rzutki 501", "94 / ZAMKNIJ PODWÓJNĄ"],
+    "helicopter.html": ["helicopter", "Jaskinia", "95 / CIĄGŁY LOT"],
+    "tower-defense.html": ["tower-defense", "Obrona trasy", "96 / PIĘĆ FAL"],
+    "fishing.html": ["fishing", "Na ryby", "97 / NAPNIJ I POLUZUJ"],
+    "skiing.html": ["skiing", "Slalom", "98 / DWADZIEŚCIA BRAMEK"],
+    "volleyball.html": ["volleyball", "Siatkówka", "99 / PIŁKA NAD SIATKĄ"],
+    "political-compass.html": [
+      "political-compass",
+      "Kompas polityczny",
+      "100 / PIĘĆ OSI POGLĄDÓW",
+    ],
     "tetris.html": ["tetris", "Tetris", "OTHERS / UKŁADANKA"],
     "flappybird.html": ["bird", "Flappy Bird", "OTHERS / ZRĘCZNOŚĆ"],
     "blockblast.html": ["blocks", "Block Blast", "OTHERS / UKŁADANKA"],
@@ -121,11 +189,19 @@
   const oldHeader = body.querySelector(":scope > header");
   const viewportStyle = document.createElement("link");
   viewportStyle.rel = "stylesheet";
-  viewportStyle.href = new URL("assets/game-viewport.css", base);
+  viewportStyle.href = new URL("assets/game-viewport.css?v=100", base);
   document.head.append(viewportStyle);
   const viewportScript = document.createElement("script");
-  viewportScript.src = new URL("assets/game-viewport.js", base);
-  document.head.append(viewportScript);
+  viewportScript.src = new URL("assets/game-viewport.js?v=100", base);
+  // Deferred game engines may still be initializing while readyState is
+  // "interactive". Move their real controls only after that entire queue.
+  if (document.readyState === "loading" || document.currentScript?.defer)
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => document.head.append(viewportScript),
+      { once: true },
+    );
+  else document.head.append(viewportScript);
   const legacy = document.createElement("div");
   legacy.className = "legacy-status";
   if (oldHeader) {

@@ -36,4 +36,8 @@ Kolejnych 30 pozycji ma samodzielnie napisane implementacje i nowe lokalne SVG. 
 
 ## Aktualny podział
 
-Publiczny katalog ma 60 gier. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.
+Publiczny katalog ma 100 pozycji. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.
+
+## Rozszerzenie do stu pozycji
+
+Kolejne 39 gier i kompas mają własny kod oraz 40 nowych ilustracji wektorowych w `assets/art/`. Nie pobierano cudzych sprite’ów, map, kompilacji, zdjęć polityków ani logotypów partii. Szyfrogramy archiwum nie były zmieniane. Klasyczne nazwy gier i reguły nie oznaczają licencji na cudze wydania. Teksty kompasu i współrzędne modeli są autorskie, jawne i opisane jako orientacyjne; nie używa się marki ani oprawy zewnętrznego testu politycznego. Szczegóły zasad i ograniczeń znajdują się w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md).

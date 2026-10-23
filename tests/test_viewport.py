@@ -1,9 +1,29 @@
 """No scrolling between the board and controls, in real player and standalone pages."""
 import unittest
+import time
 from playwright.sync_api import expect
 from test_more_games import MoreGames
 
 class ViewportChecks(MoreGames):
+    def test_slow_game_engine_initialization_still_puts_settings_in_options(self):
+        with self.page(width=390) as p:
+            def delayed(route):
+                time.sleep(.2)
+                route.continue_()
+            p.route('**/assets/game-backgammon.js',delayed)
+            p.goto(self.base+'/games/backgammon.html');self.settled(p)
+            expect(p.locator('.gv-actions select')).to_have_count(0)
+            expect(p.locator('.gv-settings select')).to_have_count(1)
+            p.locator('.gv-options').click();p.get_by_label('RYWAL',exact=True).select_option('local')
+            p.get_by_role('button',name='Zamknij opcje',exact=True).click()
+            self.assertEqual(p.evaluate('MoreGame.snapshot().mode'),'local')
+            before=p.evaluate('MoreGame.snapshot().board')
+            for width,height,columns in [(320,568,6),(844,390,12),(390,844,6)]:
+                p.set_viewport_size({'width':width,'height':height});self.settled(p)
+                expect(p.locator('#board')).to_have_attribute('data-columns',str(columns))
+                self.assert_screen(p,'responsive backgammon')
+                self.assertEqual(p.evaluate('MoreGame.snapshot().board'),before)
+
     def settled(self,frame):
         frame.wait_for_function('document.body.dataset.viewportReady')
         frame.evaluate('document.fonts.ready')
@@ -27,10 +47,10 @@ class ViewportChecks(MoreGames):
             self.assertLessEqual(r['x']+r['w'],data['w']+1,(game,r,data))
             self.assertLessEqual(r['y']+r['h'],data['h']+1,(game,r,data))
 
-    def test_all_sixty_games_fit_board_and_controls_on_small_portrait_landscape_desktop(self):
+    def test_all_hundred_games_fit_board_and_controls_on_small_portrait_landscape_desktop(self):
         with self.page() as p:
             games=p.evaluate('SpinnerGames')
-            self.assertEqual(len(games),60)
+            self.assertEqual(len(games),100)
             for width,height in [(320,568),(390,844),(844,390),(1440,900)]:
                 p.set_viewport_size({'width':width,'height':height})
                 for game in games:
@@ -41,7 +61,7 @@ class ViewportChecks(MoreGames):
                         self.assertEqual(p.evaluate('scrollY'),0)
                         self.assertLessEqual(p.evaluate('document.documentElement.scrollHeight'),height+1)
 
-    def test_all_sixty_standalone_pages_fit_without_hidden_scrollbars_covering_controls(self):
+    def test_all_hundred_standalone_pages_fit_without_hidden_scrollbars_covering_controls(self):
         with self.page(width=390) as p:
             games=p.evaluate('SpinnerGames');p.set_viewport_size({'width':390,'height':650})
             for game in games:

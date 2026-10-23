@@ -144,7 +144,7 @@
             link.rel = "stylesheet";
             link.dataset.viewportStyle = "";
             link.href = document.querySelector(
-              'link[href$="game-viewport.css"]',
+              'link[href*="game-viewport.css"]',
             ).href;
             doc.head.append(link);
           }
@@ -208,6 +208,7 @@
           ratio = columns / Math.ceil(grid.children.length / columns);
       }
       if (kind === "mancala") ratio = 2.7;
+      if (kind === "backgammon") ratio = innerWidth < 550 ? 1.4 : 2.35;
       if (kind === "hanoi") ratio = 1.9;
       if (kind === "codebreaker") ratio = 1.8;
       if (kind === "word-guess") ratio = 2.5;
@@ -241,6 +242,10 @@
           ),
         );
         grid?.style.setProperty("--cell-size", size + "px");
+      }
+      if (kind === "political-compass") {
+        width = r.width;
+        height = r.height;
       }
       for (const [key, value] of [
         ["width", width],

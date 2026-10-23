@@ -25,12 +25,12 @@ class SeventeenGames(MoreGames):
     def test_catalog_exactly_seventeen_more_original_local_games(self):
         with self.page() as p:
             catalog=p.evaluate('SpinnerGames')
-            self.assertEqual(len(catalog),60)
-            self.assertEqual(len({g['id'] for g in catalog}),60)
+            self.assertEqual(len(catalog),100)
+            self.assertEqual(len({g['id'] for g in catalog}),100)
             self.assertEqual([g['id'] for g in catalog[13:30]],GAMES)
-            expect(p.locator('.game-card')).to_have_count(60)
+            expect(p.locator('.game-card')).to_have_count(100)
             p.get_by_role('button',name='Na główkowanie',exact=True).click()
-            expect(p.locator('.game-card')).to_have_count(40)
+            expect(p.locator('.game-card')).to_have_count(64)
             p.locator('#game-search').fill('łamacz')
             expect(p.locator('.game-card')).to_have_count(1)
 

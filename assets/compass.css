@@ -1,0 +1,326 @@
+.co-board {
+  width: 100%;
+  height: 100%;
+}
+.co-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.8vmin, 15px);
+  padding: clamp(10px, 2.5vmin, 24px);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  min-height: 0;
+  overflow: auto;
+  container-type: inline-size;
+}
+.co-kicker {
+  font: 500 10px var(--font-mono, monospace);
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.co-card progress {
+  width: 100%;
+  height: 4px;
+  accent-color: var(--orange);
+}
+.co-card h3 {
+  font: 500 clamp(18px, 5cqi, 30px) / 1.3 var(--font-display, Georgia);
+  margin: 0;
+}
+.co-card p {
+  font-size: clamp(11px, 2.7cqi, 14px);
+  line-height: 1.5;
+  margin: 0;
+}
+.co-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: auto;
+}
+.co-choices button {
+  min-height: 38px !important;
+  white-space: normal !important;
+  font-size: clamp(10px, 2.6cqi, 13px) !important;
+  text-align: left;
+  padding: 9px !important;
+}
+.co-choices button[aria-pressed="true"],
+.co-tabs button[aria-pressed="true"] {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.co-choices button:nth-child(5) {
+  border-color: var(--orange) !important;
+}
+.co-caption {
+  color: var(--muted);
+  font-size: 10px !important;
+  line-height: 1.45;
+}
+.co-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.co-tabs button {
+  padding: 6px !important;
+  min-height: 30px !important;
+  font-size: 11px !important;
+}
+.co-result-content {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 2px;
+}
+.co-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.co-plot-wrap {
+  flex: 1;
+  min-height: 140px;
+  text-align: center;
+}
+.co-plot-wrap svg {
+  display: block;
+  width: 100%;
+  max-height: 290px;
+  margin: auto;
+  color: var(--ink);
+}
+.co-plot-wrap svg text {
+  fill: currentColor;
+  font:
+    11px "DM Sans",
+    sans-serif;
+}
+.co-quadrant {
+  fill: var(--surface-2);
+}
+.co-grid-line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 0.6;
+}
+.co-axis-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.co-you {
+  fill: var(--orange);
+  stroke: var(--paper);
+  stroke-width: 2;
+}
+.co-you-ring {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.co-scales {
+  display: grid;
+  gap: 9px;
+  flex: 1;
+}
+.co-scale-heading,
+.co-scale-ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+}
+.co-scale-ends {
+  font-size: 9px;
+  color: var(--muted);
+}
+.co-meter {
+  margin: 7px 5px;
+  height: 2px;
+  background: var(--line);
+  position: relative;
+}
+.co-meter:before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  height: 8px;
+  top: -3px;
+  width: 1px;
+  background: var(--muted);
+}
+.co-meter i {
+  position: absolute;
+  display: block;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--orange);
+  transform: translateX(-50%);
+}
+.co-profile {
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+}
+.co-profile h4 {
+  font-size: 15px;
+  margin: 0 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.co-profile p {
+  margin: 7px 0;
+}
+.co-profile a {
+  font-size: 11px;
+  text-decoration: underline;
+}
+.co-profile small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.co-badge {
+  font: 500 11px monospace;
+  white-space: nowrap;
+  color: var(--orange);
+}
+.co-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.co-result-actions button {
+  font-size: 10px !important;
+  padding: 7px !important;
+  min-height: 30px !important;
+}
+.co-answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+  gap: 5px;
+}
+.co-answer-row p {
+  grid-column: 1/-1;
+}
+.co-answer-row small {
+  font-size: 11px;
+}
+.co-method-dialog {
+  width: min(700px, calc(100vw - 24px));
+  max-height: 85dvh;
+  padding: 20px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.co-method-dialog p {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.co-table {
+  font-size: 11px;
+  width: 100%;
+  border-collapse: collapse;
+}
+.co-table caption {
+  text-align: left;
+  margin: 10px 0;
+}
+.co-table td,
+.co-table th {
+  border-top: 1px solid var(--line);
+  padding: 7px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.co-method-dialog > button {
+  min-height: 36px;
+  padding: 7px 14px;
+}
+@container (min-width:520px) {
+  .co-overview {
+    flex-direction: row;
+    align-items: center;
+  }
+  .co-scales {
+    min-width: 200px;
+  }
+  .co-card h3 {
+    font-size: 25px;
+  }
+  .co-choices {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-height: 520px) {
+  .co-card {
+    padding: 10px;
+    gap: 6px;
+  }
+  .co-card h3 {
+    font-size: 19px;
+  }
+  .co-choices button {
+    min-height: 31px !important;
+    padding: 5px !important;
+  }
+  .co-card .co-caption {
+    font-size: 9px !important;
+  }
+  .co-scales {
+    gap: 6px;
+  }
+  .co-scale-ends {
+    font-size: 8px;
+  }
+}
+
+body[data-game="political-compass"] .gv-actions button {
+  font-size: 10px !important;
+  padding: 5px !important;
+  min-width: 0 !important;
+  min-height: 30px !important;
+}
+.co-card .co-choices button {
+  line-height: 1.25;
+}
+
+.co-plot-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.co-plot-wrap svg {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  max-height: 290px;
+}
+.co-plot-wrap .co-caption {
+  flex: 0 0 auto;
+}
+.co-choices {
+  margin-top: 0;
+}
+.co-card:has(.co-choices) h3 {
+  margin-block: auto;
+}
+@container (max-width:360px) {
+  .co-card h3 {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .co-card .co-caption {
+    font-size: 9px !important;
+  }
+}

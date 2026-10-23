@@ -50,7 +50,7 @@ class SiteChecks(unittest.TestCase):
             page.on('request', lambda r: external.append(r.url) if not r.url.startswith(self.base) else None)
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.goto(self.base)
-            expect(page.locator('.game-card')).to_have_count(60)
+            expect(page.locator('.game-card')).to_have_count(100)
             self.assertEqual(page.evaluate('Object.keys(localStorage)'), [])
             page.locator('#game-search').fill('kolko')
             expect(page.locator('.game-card')).to_have_count(1)
@@ -59,7 +59,7 @@ class SiteChecks(unittest.TestCase):
             expect(page.locator('#empty-state')).to_be_visible()
             page.locator('#game-search').fill('')
             page.get_by_role('button', name='Na główkowanie', exact=True).click()
-            expect(page.locator('.game-card')).to_have_count(40)
+            expect(page.locator('.game-card')).to_have_count(64)
             self.assertEqual(external, []); self.assertEqual(errors, [])
 
     def test_consent_favorites_persistence_revocation_and_unrelated_storage(self):

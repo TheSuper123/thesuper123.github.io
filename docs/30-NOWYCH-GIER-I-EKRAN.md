@@ -1,5 +1,7 @@
 # Kolejnych 30 gier i rozgrywka na jednym ekranie
 
+Opis historycznej zmiany 30 → 60. Aktualne 100 pozycji i kompas opisano w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md).
+
 Katalog rozszerzono z 30 do **60 gier** (40 logicznych, 20 zręcznościowych). Każda nowa pozycja ma lokalną implementację, własne ilustracje SVG i zasady dostępne w odtwarzaczu. Nie pobierano zewnętrznych kompilacji, sprite’ów ani silników. Gry działają bez konta i bez reklam; wyszukiwarka uwzględnia również identyfikatory, np. `futoshiki` i `freecell`.
 
 ## Plansza razem ze sterowaniem

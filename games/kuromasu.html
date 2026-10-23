@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="../assets/theme.js"></script>
+    <title>Kuromasu — Spinner Games</title>
+    <meta
+      name="description"
+      content="Policz to, co widać aż do czarnego pola."
+    />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="../assets/new-games.css" />
+    <link rel="stylesheet" href="../assets/more-games.css" />
+    <link rel="stylesheet" href="../assets/thirty-games.css" />
+    <link rel="stylesheet" href="../assets/hundred-games.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js?v=100" defer></script>
+    <script src="../assets/new-game-tools.js?v=100" defer></script>
+    <script src="../assets/more-game-tools.js?v=100" defer></script>
+    <script src="../assets/thirty-tools.js" defer></script>
+    <script src="../assets/hundred-tools.js" defer></script>
+    <script src="../assets/game-kuromasu.js" defer></script>
+  </head>
+  <body
+    class="game-page new-game-page more-game-page hundred-page"
+    data-game="kuromasu"
+  >
+    <header><a href="../index.html#gry">Spinner Games / katalog</a></header>
+    <main class="ng-main">
+      <section class="ng-cabinet" aria-label="Kuromasu">
+        <div class="ng-intro">
+          <div>
+            <div class="ng-edition">71 / WIDOK OD LICZBY</div>
+            <h2>Kuromasu.</h2>
+            <p>Policz to, co widać aż do czarnego pola.</p>
+          </div>
+          <svg
+            class="ng-mark"
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M20 3v34M3 20h34M8 8l24 24M8 32 32 8" />
+          </svg>
+        </div>
+        <div class="ng-hud">
+          <div class="ng-stat">
+            <small id="more-label-0">GRA</small
+            ><strong id="more-stat-0">0</strong>
+          </div>
+          <div class="ng-stat">
+            <small id="more-label-1">GRA</small
+            ><strong id="more-stat-1">0</strong>
+          </div>
+          <div class="ng-stat">
+            <small id="more-label-2">GRA</small
+            ><strong id="more-stat-2">0</strong>
+          </div>
+        </div>
+        <div class="ng-toolbar" id="more-controls">
+          <button id="more-new" class="ng-primary">Nowa runda</button
+          ><button id="more-pause">Pauza</button>
+        </div>
+        <div class="ng-stage">
+          <div
+            id="board"
+            class="mo-board"
+            data-managed-controls
+            role="group"
+            aria-label="Kuromasu — plansza"
+          ></div>
+          <div id="more-cover" class="ng-cover" hidden>
+            <strong>Gra zaczeka.</strong>
+            <p>Rozgrywka jest zatrzymana. Wróć we własnym tempie.</p>
+            <button id="more-resume" class="ng-primary">Wznów</button>
+          </div>
+        </div>
+        <div id="more-extra" class="mo-extra"></div>
+        <p id="more-status" class="ng-status" role="status"></p>
+        <div id="more-result" class="mo-result" hidden>
+          <strong id="more-result-text"></strong
+          ><button id="more-again" class="ng-primary">Jeszcze raz</button>
+        </div>
+        <p id="more-record" class="ng-level-status"></p>
+        <p id="more-help" class="ng-help">
+          Wybierz Czarne lub Białe i oznacz pole. Stałych liczb nie można
+          zasłonić. U: cofnij.
+        </p>
+      </section>
+    </main>
+    <footer>Spinner Games</footer>
+  </body>
+</html>

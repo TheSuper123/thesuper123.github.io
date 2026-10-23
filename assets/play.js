@@ -103,15 +103,16 @@
   stage.prepend(frame);
   const prefs = window.SpinnerStorage.preferences;
   const recent = prefs.get("recent", []);
-  prefs.set(
-    "recent",
-    [
-      game.id,
-      ...(Array.isArray(recent)
-        ? recent.filter((item) => item !== game.id)
-        : []),
-    ].slice(0, 6),
-  );
+  if (game.id !== "political-compass")
+    prefs.set(
+      "recent",
+      [
+        game.id,
+        ...(Array.isArray(recent)
+          ? recent.filter((item) => item !== game.id)
+          : []),
+      ].slice(0, 6),
+    );
   document.querySelector("#restart-game").addEventListener("click", () => {
     frame.src = game.file;
   });

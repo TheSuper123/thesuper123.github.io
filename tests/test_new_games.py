@@ -65,15 +65,15 @@ class NewGames(unittest.TestCase):
 
     def test_catalog_has_exactly_five_new_games_search_and_favorites(self):
         with self.page(consent=True) as page:
-            expect(page.locator('.game-card')).to_have_count(60)
+            expect(page.locator('.game-card')).to_have_count(100)
             games=page.evaluate('SpinnerGames')
-            self.assertEqual(len({game['id'] for game in games}),60)
+            self.assertEqual(len({game['id'] for game in games}),100)
             self.assertEqual([game['id'] for game in games[8:13]],GAMES)
             page.get_by_role('button',name='Dodaj do ulubionych: Memory',exact=True).click();page.reload()
             expect(page.get_by_role('button',name='Usuń z ulubionych: Memory',exact=True)).to_have_attribute('aria-pressed','true')
             page.locator('#game-search').fill('sudoku');expect(page.locator('.game-card')).to_have_count(1)
             page.locator('#game-search').fill('');page.get_by_role('button',name='Na główkowanie',exact=True).click()
-            expect(page.locator('.game-card')).to_have_count(40)
+            expect(page.locator('.game-card')).to_have_count(64)
 
     def test_all_new_games_in_player_both_themes_and_mobile_widths(self):
         with self.page(width=390) as page:
