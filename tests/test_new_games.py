@@ -48,8 +48,8 @@ class NewGames(unittest.TestCase):
     def tearDownClass(cls):
         cls.browser.close();cls.playwright.stop();cls.server.shutdown();cls.server.server_close()
     @contextmanager
-    def page(self,game=None,consent=False,width=1000,init=None,clock=False):
-        context=self.browser.new_context(viewport={'width':width,'height':950},has_touch=width<600,reduced_motion='reduce')
+    def page(self,game=None,consent=False,width=1000,init=None,clock=False,service_workers='allow'):
+        context=self.browser.new_context(viewport={'width':width,'height':950},has_touch=width<600,reduced_motion='reduce',service_workers=service_workers)
         # Nested games read the parent's receipt; they must not simulate a fresh
         # consent decision (and revoke page memory) on every iframe load.
         context.add_init_script('if(window.self===window.top)localStorage.setItem("spinner:consent:v1",JSON.stringify({version:1,preferences:'+str(consent).lower()+',savedAt:Date.now()}))')

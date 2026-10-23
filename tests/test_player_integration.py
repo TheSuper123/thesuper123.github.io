@@ -35,7 +35,8 @@ class PlayerChecks(unittest.TestCase):
         cls.browser.close();cls.playwright.stop();cls.server.shutdown();cls.server.server_close()
     @contextmanager
     def page(self):
-        context=self.browser.new_context(viewport={'width':390,'height':844},reduced_motion='reduce')
+        # These tests deliberately replace the game response with a controlled fixture.
+        context=self.browser.new_context(viewport={'width':390,'height':844},reduced_motion='reduce',service_workers='block')
         context.add_init_script('localStorage.setItem("spinner:consent:v1",JSON.stringify({version:1,preferences:true,savedAt:Date.now()}))')
         page=context.new_page();page.set_default_timeout(7000)
         try:yield page

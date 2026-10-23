@@ -1053,7 +1053,7 @@ dialog p {
   .site-header nav > a {
     font-size: 12px;
   }
-  .site-header nav > a:nth-child(2) {
+  .site-header nav > a[href="o-serwisie.html"] {
     display: none;
   }
   .account-button {

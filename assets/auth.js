@@ -85,6 +85,8 @@
     });
   }
   function initialize() {
+    if (!navigator.onLine)
+      return Promise.reject({ code: "auth/network-request-failed" });
     if (!authPromise)
       authPromise = (async () => {
         if (!window.firebase?.initializeApp)
@@ -214,6 +216,13 @@
   document.addEventListener("click", (event) => {
     if (event.target.closest("[data-account]")) {
       dialog.showModal();
+      if (!navigator.onLine) {
+        message(
+          "Jesteś offline. Gry działają bez konta; połącz się z internetem, aby skorzystać z logowania.",
+          true,
+        );
+        return;
+      }
       run(async () => {
         await initialize();
         message("");

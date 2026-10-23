@@ -3,7 +3,10 @@
   <head>
     <script src="assets/theme.js"></script>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
     <meta
       name="description"
       content="Administrator, Firebase, dane logowania, cookies i lokalne preferencje w Spinner Games."
@@ -11,11 +14,15 @@
     <meta name="theme-color" content="#f4f1e8" />
     <title>Polityka prywatności — Spinner Games</title>
     <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="assets/site.css" />
     <script src="assets/storage.js" defer></script>
     <script src="assets/site.js" defer></script>
     <script src="assets/auth.js" defer></script>
     <link rel="stylesheet" href="assets/theme.css" />
+    <link rel="stylesheet" href="assets/pwa.css" />
+    <script src="assets/pwa.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
@@ -45,7 +52,7 @@
     <main id="main">
       <section class="page-intro wrap">
         <div class="eyebrow orange">
-          OSTATNIA AKTUALIZACJA: 20 PAŹDZIERNIKA 2026
+          OSTATNIA AKTUALIZACJA: 23 PAŹDZIERNIKA 2026
         </div>
         <h1>Twoja prywatność.<br /><em>Jasne zasady.</em></h1>
         <p>
@@ -160,6 +167,35 @@
           <button class="link-button" data-clear-preferences>
             Usuń lokalne wyniki, ulubione i historię gier
           </button>
+        </p>
+        <h3 id="offline">Aplikacja i gry offline</h3>
+        <p>
+          Po otwarciu strony przeglądarka może zapisać publiczne pliki aplikacji
+          w Cache Storage, przy pomocy service workera. Otwierane gry są
+          zapisywane do działania offline; przycisk „Pobierz 100 gier offline”
+          pobiera cały publiczny katalog. Jest to zapis plików potrzebny do
+          dostarczenia zamówionej funkcji offline, niezależny od zgody na
+          opcjonalne wyniki i preferencje. Nie jest identyfikatorem użytkownika.
+        </p>
+        <p>
+          Pamięć o nazwie zaczynającej się od
+          <code>spinner-public-</code> zawiera wyłącznie publiczny kod, strony,
+          ilustracje i fonty. Nie zapisuje haseł, odpowiedzi ani wyników
+          kompasu, odpowiedzi Firebase ani odszyfrowanych materiałów Others.
+          Logowanie i archiwum wymagają internetu. Pliki pozostają do ich
+          usunięcia, zastąpienia podczas aktualizacji lub wyczyszczenia przez
+          przeglądarkę. iOS może samodzielnie usunąć je przy braku miejsca.
+          Próba uzyskania trwalszego przechowywania po pełnym pobraniu zależy od
+          decyzji przeglądarki.
+        </p>
+        <p>
+          Pliki usuniesz przez „Usuń pobrane pliki aplikacji” na stronie
+          <a href="aplikacja.html">Pobierz aplikację</a> lub w ustawieniach
+          danych witryn przeglądarki. Usunięcie samej ikony z ekranu
+          początkowego nie musi usunąć danych witryny. Czyszczenie plików
+          offline nie usuwa osobno zapisanych ulubionych, wyników, sesji konta
+          ani danych archiwum. Przy dalszym korzystaniu z serwisu otwierane
+          publiczne pliki mogą ponownie trafić do pamięci offline.
         </p>
         <h3>Kompas polityczny</h3>
         <p>

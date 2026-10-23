@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <script src="assets/theme.js"></script>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Dodaj Spinner Games do ekranu początkowego iPhone’a i pobierz 100 gier do grania bez internetu. Instrukcja instalacji i przygotowanie offline."
+    />
+    <meta name="theme-color" content="#f4f1e8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Spinner" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>Pobierz aplikację — Spinner Games</title>
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/theme.css" />
+    <link rel="stylesheet" href="assets/pwa.css" />
+    <script src="assets/storage.js" defer></script>
+    <script src="assets/site.js" defer></script>
+    <script src="assets/auth.js" defer></script>
+    <script src="assets/pwa.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Przejdź do treści</a>
+    <div class="topline">
+      <span>MAŁA PRZERWA. DOBRA GRA.</span
+      ><span>TERAZ TAKŻE OFFLINE <i>✳</i> BEZ REKLAM</span>
+    </div>
+    <header class="site-header wrap">
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Spinner Games — strona główna"
+        ><img src="assets/mark.svg" width="38" height="38" alt="" /><span
+          >spinner<span class="brand-sub">NIEZALEŻNY SALON GIER</span></span
+        ></a
+      >
+      <nav aria-label="Menu główne">
+        <a href="index.html#gry">Gry <span class="tiny-arrow">↙</span></a
+        ><a href="o-serwisie.html">O salonie</a
+        ><button class="account-button" data-account>
+          <span class="account-dot"></span
+          ><span data-account-label>Twoje konto</span
+          ><span aria-hidden="true">↗</span>
+        </button>
+      </nav>
+    </header>
+    <main id="main" class="wrap">
+      <section class="app-hero" aria-labelledby="app-title">
+        <div>
+          <div class="eyebrow orange">SPINNER / EDYCJA KIESZONKOWA</div>
+          <h1 id="app-title">Mały ekran.<br /><em>Cały salon.</em></h1>
+          <p class="app-lead">
+            Na przerwę. Do pociągu. Tam, gdzie zasięg ma wolne. Dodaj Spinner do
+            ekranu początkowego iPhone’a i zabierz ze sobą wszystkie 100 gier.
+          </p>
+          <a class="button primary" href="#offline-panel"
+            >Przygotuj do gry offline <span aria-hidden="true">↓</span></a
+          >
+          <div class="app-badges">
+            <span>iPHONE + SAFARI</span><span>BEZ APP STORE</span
+            ><span>BEZ REKLAM</span>
+          </div>
+          <p class="app-installed" data-app-installed hidden>
+            ✓ Korzystasz już z aplikacji z ekranu początkowego.
+          </p>
+        </div>
+        <div class="app-device-scene" aria-hidden="true">
+          <div class="app-phone">
+            <small>TWÓJ PRYWATNY SALON</small
+            ><strong>Jeszcze<br /><em>jedna runda.</em></strong>
+            <div class="app-phone-grid">
+              <img src="assets/art/snake.svg" alt="" /><img
+                src="assets/art/2048.svg"
+                alt=""
+              /><img src="assets/art/memory.svg" alt="" /><img
+                src="assets/art/saper.svg"
+                alt=""
+              />
+            </div>
+            <span>✳ 100 GIER. ZERO ZASIĘGU.</span>
+          </div>
+          <div class="app-device-stamp">
+            ZABIERZ ZE SOBĄ<strong>Offline.</strong>NA TWOICH ZASADACH
+          </div>
+        </div>
+      </section>
+      <p class="app-network" data-network-state role="status" hidden></p>
+      <aside
+        id="app-update"
+        class="app-update"
+        hidden
+        aria-labelledby="app-update-title"
+      >
+        <strong id="app-update-title">Czeka nowa wersja salonu.</strong>
+        <p>
+          Dokończ rundę, a potem odśwież aplikację. Pobrane gry są
+          przygotowywane w nowej wersji przed aktualizacją.
+        </p>
+        <button class="button" id="app-update-button">
+          Zaktualizuj i odśwież ↻
+        </button>
+      </aside>
+      <section
+        class="app-offline"
+        id="offline-panel"
+        aria-labelledby="offline-title"
+      >
+        <div>
+          <div class="eyebrow">01 / NAJPIERW ZAPAKUJ GRY</div>
+          <h2 id="offline-title">Przygotowujemy aplikację…</h2>
+          <p id="offline-detail" role="status">
+            Pierwsze przygotowanie wymaga internetu. Po pobraniu gier dodaj
+            aplikację do ekranu początkowego.
+          </p>
+          <noscript
+            ><p>
+              Włącz JavaScript, aby pobrać gry i przygotować aplikację do
+              działania offline.
+            </p></noscript
+          >
+        </div>
+        <div>
+          <label class="sr-only" for="offline-progress"
+            >Pobieranie plików do działania offline</label
+          >
+          <progress id="offline-progress" max="1" value="0" hidden></progress>
+          <div class="app-count" id="offline-count"></div>
+          <div class="app-offline-actions">
+            <button class="button primary" id="offline-download" disabled>
+              Pobierz 100 gier offline ↓</button
+            ><button class="link-button" id="offline-cancel" hidden>
+              Wstrzymaj pobieranie
+            </button>
+          </div>
+          <button class="link-button" id="offline-clear" disabled>
+            Usuń pobrane pliki aplikacji
+          </button>
+          <button class="button" id="offline-retry" hidden>
+            Spróbuj przygotować ponownie ↻
+          </button>
+          <p class="app-offline-note">
+            Pobranie plików służy zamówionej funkcji offline, niezależnie od
+            opcjonalnego zapisu wyników i ulubionych.
+            <a href="prywatnosc.html#offline">Jak to działa?</a>
+          </p>
+        </div>
+      </section>
+      <section class="app-instructions" aria-labelledby="install-title">
+        <div class="eyebrow">02 / WŁASNA IKONA NA iPHONIE</div>
+        <h2 id="install-title">Trzy kroki.<br /><em>I jesteś u siebie.</em></h2>
+        <ol class="app-steps">
+          <li>
+            <h3>Otwórz w Safari.</h3>
+            <p>
+              Wejdź na tę stronę w <strong>Safari na iPhonie</strong>. Jeśli
+              jesteś w przeglądarce wewnątrz komunikatora, skopiuj adres i
+              otwórz go w Safari. Przygotuj zestaw offline przyciskiem powyżej.
+            </p>
+          </li>
+          <li>
+            <h3>Dodaj na ekran.</h3>
+            <p>
+              Otwórz menu <strong>Udostępnij</strong> (kwadrat ze strzałką w
+              górę), a następnie <strong>Dodaj do ekranu początkowego</strong>.
+              W zależności od wersji Safari udostępnianie może być w menu
+              „Więcej”.
+            </p>
+          </li>
+          <li>
+            <h3>Jeszcze jedno „Dodaj”.</h3>
+            <p>
+              Jeżeli widzisz opcję
+              <strong>Otwieraj jako aplikację internetową</strong>, włącz ją i
+              wybierz <strong>Dodaj</strong>. Uruchom Spinner z nowej ikony —
+              bez paska przeglądarki.
+            </p>
+          </li>
+        </ol>
+        <p>
+          <strong>Przed wyjściem bez zasięgu:</strong> otwórz Spinner z nowej
+          ikony, wejdź ponownie w „Pobierz aplikację” i sprawdź komunikat
+          „Gotowe”. Jeśli iPhone utworzył osobną pamięć aplikacji, pobierz w
+          niej zestaw jeszcze raz. Na koniec sprawdź wybraną grę w trybie
+          samolotowym.
+        </p>
+        <p>
+          Gry działają bez konta. Logowanie, linki zewnętrzne i archiwum Others
+          wymagają internetu. iOS może usunąć pobrane pliki, np. gdy brakuje
+          miejsca; wtedy połącz się z internetem i pobierz je ponownie. Samo
+          dodanie ikony nie potwierdza pobrania gier.
+        </p>
+      </section>
+      <section class="app-soon" aria-labelledby="android-title">
+        <div>
+          <div class="eyebrow orange">NASTĘPNY PRZYSTANEK</div>
+          <h2 id="android-title">Wkrótce na Androida.</h2>
+        </div>
+        <p>
+          Osobna instrukcja instalacji dla Androida jest w przygotowaniu. W
+          przeglądarce możesz grać już teraz.
+        </p>
+      </section>
+      <a class="text-link" href="index.html#gry">← Wróć do salonu</a
+      ><br /><br /><br />
+    </main>
+    <dialog id="offline-remove-dialog" aria-labelledby="offline-remove-title">
+      <button
+        class="dialog-close"
+        data-close
+        aria-label="Zamknij usuwanie plików"
+      >
+        ×
+      </button>
+      <div class="eyebrow">PAMIĘĆ URZĄDZENIA</div>
+      <h2 id="offline-remove-title">Usunąć pobrane gry?</h2>
+      <p>
+        Usuniemy pliki aplikacji z pamięci offline. Następne uruchomienie może
+        wymagać internetu. Wyniki, ulubione, konto i archiwum Others mają osobne
+        ustawienia.
+      </p>
+      <button class="button primary" id="offline-remove-confirm">
+        Usuń pliki offline
+      </button>
+      <button class="button" data-close>Zostaw gry</button>
+    </dialog>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand" href="index.html"
+          ><img src="assets/mark.svg" width="30" height="30" alt="" /><span
+            >spinner<span class="brand-sub"
+              >MAŁA PRZERWA. DOBRA GRA.</span
+            ></span
+          ></a
+        >
+        <div class="footer-links">
+          <a href="index.html#gry">Wszystkie gry</a
+          ><a href="prywatnosc.html">Prywatność</a
+          ><button data-cookie-settings>Ustawienia cookies</button>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>© <span data-year>2026</span> Spinner Games</span
+        ><span>100 GIER. ZAWSZE DOBRA PRZERWA.</span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,459 @@
+/* A pocket-sized edition of the same paper-and-ink arcade. */
+.app-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 8px;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.app-invite {
+  margin-block: 0 70px;
+  border: 1px solid var(--ink);
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  padding: 30px;
+  background: var(--surface-2);
+}
+.app-invite > img {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  transform: rotate(-7deg);
+  box-shadow: 4px 5px 0 var(--ink);
+}
+.app-invite h2 {
+  font:
+    36px/1.1 Fraunces,
+    serif;
+  margin: 7px 0;
+  letter-spacing: -1px;
+}
+.app-invite p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.app-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 60px;
+  align-items: center;
+  padding-block: 68px 76px;
+}
+.app-hero h1 {
+  font:
+    76px/0.98 Fraunces,
+    serif;
+  letter-spacing: -4px;
+  margin: 22px 0;
+}
+.app-hero h1 em,
+.app-invite h2 em,
+.app-instructions h2 em {
+  font-weight: 400;
+}
+.app-lead {
+  max-width: 460px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.app-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  font:
+    10px/1.5 Mono,
+    monospace;
+}
+.app-badges span {
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+}
+.app-badges span:first-child {
+  border-color: var(--ink);
+}
+.app-device-scene {
+  min-height: 430px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 27px,
+    var(--line) 28px,
+    transparent 29px
+  );
+}
+.app-phone {
+  width: 218px;
+  border: 7px solid #252720;
+  border-radius: 38px;
+  padding: 38px 19px 22px;
+  background: #eeeadf;
+  color: #252720;
+  box-shadow: 12px 15px 0 var(--line);
+  transform: rotate(8deg);
+  position: relative;
+}
+.app-phone::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 15px;
+  background: #252720;
+  border-radius: 20px;
+}
+.app-phone > small {
+  font:
+    8px Mono,
+    monospace;
+  letter-spacing: 1px;
+}
+.app-phone > strong {
+  display: block;
+  font:
+    34px/1 Fraunces,
+    serif;
+  margin: 10px 0 18px;
+  letter-spacing: -1px;
+}
+.app-phone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.app-phone-grid img {
+  width: 100%;
+  border: 1px solid #252720;
+  border-radius: 3px;
+  aspect-ratio: 1.15;
+  object-fit: cover;
+}
+.app-phone > span {
+  display: block;
+  margin-top: 20px;
+  border-top: 1px solid #bcbeb2;
+  padding-top: 14px;
+  font:
+    9px Mono,
+    monospace;
+}
+.app-device-stamp {
+  position: absolute;
+  left: 0;
+  bottom: 12px;
+  background: #db4723;
+  color: #f4f1e8;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font:
+    10px/1.6 Mono,
+    monospace;
+  transform: rotate(-13deg);
+  border: 1px solid #252720;
+}
+.app-device-stamp strong {
+  font:
+    italic 31px/1.1 Fraunces,
+    serif;
+}
+.app-installed {
+  padding: 10px 14px;
+  border: 1px solid var(--game-green);
+  color: var(--game-green);
+  font-size: 13px;
+}
+.app-offline {
+  padding: 32px;
+  border: 1px solid var(--ink);
+  background: var(--white);
+  margin-bottom: 70px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 45px;
+  box-shadow: 5px 5px 0 var(--line);
+  scroll-margin-top: 20px;
+}
+.app-offline h2 {
+  font:
+    32px/1.12 Fraunces,
+    serif;
+  margin: 12px 0;
+  letter-spacing: -1px;
+}
+.app-offline p,
+.app-offline small {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.app-offline progress {
+  appearance: none;
+  width: 100%;
+  height: 9px;
+  border: 1px solid var(--ink);
+  background: var(--surface-2);
+  accent-color: var(--orange);
+  display: block;
+  margin-top: 9px;
+}
+.app-offline progress::-webkit-progress-bar {
+  background: var(--surface-2);
+}
+.app-offline progress::-webkit-progress-value {
+  background: var(--orange);
+}
+.app-offline progress::-moz-progress-bar {
+  background: var(--orange);
+}
+.app-offline-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  align-items: center;
+}
+.app-offline button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.app-offline .link-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.app-count {
+  min-height: 20px;
+  font:
+    10px/1.5 Mono,
+    monospace;
+  color: var(--muted);
+  margin-top: 9px;
+}
+.app-offline .app-offline-note {
+  font-size: 11px;
+  margin-top: 16px;
+}
+.app-instructions {
+  padding-bottom: 75px;
+}
+.app-instructions h2 {
+  font:
+    48px/1.1 Fraunces,
+    serif;
+  letter-spacing: -2px;
+  margin: 14px 0 32px;
+}
+.app-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.app-steps li {
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+  counter-increment: step;
+}
+.app-steps li::before {
+  content: "0" counter(step);
+  font:
+    12px Mono,
+    monospace;
+  color: var(--orange);
+}
+.app-steps h3 {
+  font:
+    24px/1.2 Fraunces,
+    serif;
+  margin: 18px 0 12px;
+}
+.app-steps p,
+.app-instructions > p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.app-steps strong {
+  color: var(--ink);
+}
+.app-soon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  border-block: 1px solid var(--line);
+  padding-block: 22px;
+  margin-bottom: 65px;
+}
+.app-soon h2 {
+  font:
+    26px Fraunces,
+    serif;
+  margin: 0;
+}
+.app-soon p {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 420px;
+  margin: 0;
+}
+.app-network {
+  font:
+    10px/1.5 Mono,
+    monospace;
+  color: var(--game-green);
+  border: 1px solid var(--line);
+  padding: 9px 12px;
+  margin: 0 0 20px;
+}
+.app-update {
+  border: 1px solid var(--orange);
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.app-update p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.app-standalone body:not(.player-page) {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.app-standalone .salon-player {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+[hidden] {
+  display: none !important;
+}
+@media (max-width: 900px) {
+  .app-hero {
+    gap: 30px;
+  }
+  .app-hero h1 {
+    font-size: 60px;
+    letter-spacing: -3px;
+  }
+  .app-invite {
+    grid-template-columns: 65px minmax(0, 1fr);
+    gap: 20px;
+  }
+  .app-invite > img {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+  }
+  .app-invite > a {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .app-device-stamp {
+    left: -10px;
+  }
+}
+@media (max-width: 600px) {
+  .app-hero {
+    grid-template-columns: 1fr;
+    padding-block: 38px;
+    gap: 26px;
+  }
+  .app-hero h1 {
+    font-size: 59px;
+  }
+  .app-lead {
+    font-size: 15px;
+  }
+  .app-device-scene {
+    min-height: 375px;
+    max-width: 300px;
+    width: 100%;
+    justify-self: center;
+  }
+  .app-phone {
+    width: 195px;
+    padding: 35px 15px 20px;
+  }
+  .app-phone > strong {
+    font-size: 30px;
+  }
+  .app-device-stamp {
+    width: 96px;
+    height: 96px;
+    font-size: 9px;
+    bottom: 5px;
+    left: 2px;
+  }
+  .app-device-stamp strong {
+    font-size: 28px;
+  }
+  .app-offline {
+    padding: 23px 18px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 45px;
+  }
+  .app-offline h2 {
+    font-size: 29px;
+  }
+  .app-offline-actions {
+    gap: 15px;
+  }
+  .app-offline-actions .button {
+    width: 100%;
+  }
+  .app-instructions h2 {
+    font-size: 38px;
+    letter-spacing: -1px;
+  }
+  .app-steps {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .app-steps h3 {
+    margin-top: 12px;
+  }
+  .app-instructions {
+    padding-bottom: 30px;
+  }
+  .app-soon {
+    display: block;
+  }
+  .app-soon p {
+    margin-top: 12px;
+  }
+  .app-invite {
+    padding: 22px 18px;
+    grid-template-columns: 50px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .app-invite h2 {
+    font-size: 28px;
+  }
+  .app-invite > img {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+  .app-invite > a {
+    grid-column: 1/-1;
+    width: 100%;
+  }
+}

@@ -8,6 +8,8 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. Gry otwierają się również bez konta i bez dostępu do zewnętrznych usług. Publikacja statycznej strony odbywa się przez GitHub Pages po aktualizacji gałęzi skonfigurowanej jako źródło. Ustawienia produkcyjnego Firebase konfiguruje się osobno w konsoli.
 
+Przy zmianach publicznych plików przed publikacją odśwież listę offline przez `python3 scripts/build_offline_pack.py` i sprawdź ją opcją `--check`. Instalację na iPhonie, przechowywanie plików oraz aktualizacje opisuje [APLIKACJA-OFFLINE.md](APLIKACJA-OFFLINE.md).
+
 Aktualny katalog 100 pozycji i edukacyjny kompas opisano w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md). Nowe odkrywanie gier, trasa dnia i szybka runda są opisane w [ODKRYWANIE-SALONU.md](ODKRYWANIE-SALONU.md). Układ planszy i sterowania opisano też w [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md).
 
 ## Testy
@@ -20,6 +22,7 @@ Kolejnych 17 gier, ich wspólny interfejs i 26 scenariuszy testowych opisano w [
 
 ```sh
 python3 tests/smoke.py
+python3 tests/test_pwa.py
 python3 tests/test_new_games.py
 python3 tests/test_more_games.py
 python3 tests/test_thirty_games.py

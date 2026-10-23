@@ -12,6 +12,7 @@ Testy przeglądarkowe (Python Playwright i Chromium):
 
 ```sh
 python3 tests/smoke.py
+python3 tests/test_pwa.py
 python3 tests/test_salon.py
 python3 tests/test_others.py
 python3 tests/test_new_games.py
@@ -24,6 +25,7 @@ python3 tests/test_player_integration.py
 ```
 
 - [Uruchomienie, Firebase, zakres testów i działania przed publikacją](docs/URUCHOMIENIE-I-BEZPIECZENSTWO.md)
+- [Aplikacja na iPhonie, pobieranie offline i aktualizacje](docs/APLIKACJA-OFFLINE.md)
 - [Odkrywanie salonu: nastrój, losowanie, trasa dnia i szybka runda](docs/ODKRYWANIE-SALONU.md)
 - [Przegląd i ulepszenia każdej gry, mechaniki oraz testy](docs/PRZEGLAD-GIER.md)
 - [Pięć nowych gier — funkcje i weryfikacja](docs/NOWE-GRY.md)

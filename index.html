@@ -3,7 +3,10 @@
   <head>
     <script src="assets/theme.js"></script>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
     <meta
       name="description"
       content="Mała przerwa, dobra gra. Spinner Games: gry zręcznościowe, łamigłówki i klasyki w przeglądarce. Bez pobierania i bez reklam."
@@ -11,6 +14,11 @@
     <meta name="theme-color" content="#f4f1e8" />
     <title>Spinner Games — jeszcze jedna runda.</title>
     <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Spinner" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link
       rel="preload"
       href="assets/fonts/sans.ttf"
@@ -27,6 +35,8 @@
     <script src="assets/auth.js" defer></script>
     <link rel="stylesheet" href="assets/theme.css" />
     <link rel="stylesheet" href="assets/salon.css?v=1" />
+    <link rel="stylesheet" href="assets/pwa.css" />
+    <script src="assets/pwa.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
@@ -55,6 +65,24 @@
       </nav>
     </header>
     <main id="main">
+      <div class="wrap">
+        <p class="app-network" data-network-state role="status" hidden></p>
+        <aside
+          id="app-update"
+          class="app-update"
+          hidden
+          aria-labelledby="app-update-title"
+        >
+          <strong id="app-update-title">Nowa wersja salonu jest gotowa.</strong>
+          <p>
+            Dokończ rundę i zaktualizuj aplikację. Pobrane gry zostaną
+            przygotowane w nowej wersji.
+          </p>
+          <button class="button" id="app-update-button">
+            Zaktualizuj i odśwież ↻
+          </button>
+        </aside>
+      </div>
       <section class="hero wrap" aria-labelledby="hero-title">
         <div class="hero-copy">
           <div class="eyebrow">
@@ -80,6 +108,9 @@
           <div class="hero-footnote">
             <span class="mini-line"></span> 100 gier i testów. Bez instalacji.
           </div>
+          <a class="app-hero-link" href="aplikacja.html"
+            >Na iPhonie? Pobierz aplikację <span aria-hidden="true">↗</span></a
+          >
         </div>
         <div class="hero-art">
           <span class="art-caption">SPINNER OBJECTS / 001</span
@@ -303,6 +334,17 @@
           >Poznaj nasz salon <span>↗</span></a
         >
       </section>
+      <section class="app-invite wrap" aria-labelledby="pocket-title">
+        <img src="assets/icons/app-192.png" width="80" height="80" alt="" />
+        <div>
+          <div class="eyebrow">SPINNER / EDYCJA KIESZONKOWA</div>
+          <h2 id="pocket-title">Cały salon. <em>W kieszeni.</em></h2>
+          <p>100 gier na iPhonie. Także wtedy, gdy zasięg ma wolne.</p>
+        </div>
+        <a class="button primary" href="aplikacja.html"
+          >Pobierz aplikację <span aria-hidden="true">↗</span></a
+        >
+      </section>
     </main>
     <dialog
       id="salon-roulette"
@@ -408,6 +450,7 @@
           ></a
         >
         <div class="footer-links">
+          <a href="aplikacja.html">Pobierz aplikację</a>
           <a href="others/">Others — archiwum</a
           ><a href="o-serwisie.html">O serwisie</a
           ><a href="prywatnosc.html">Prywatność</a

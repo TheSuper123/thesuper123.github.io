@@ -121,7 +121,8 @@ class SalonChecks(MoreGames):
             self.assertNotEqual(result['again'],result['b'])
 
     def test_daily_progress_is_awarded_only_after_successful_real_load_and_retry(self):
-        with self.page(width=390) as p:
+        # Playwright routes do not intercept a worker's network fetches.
+        with self.page(width=390,service_workers='block') as p:
             game=p.evaluate('SpinnerSalonDay.route().games[0]');pattern='**/'+game['file']
             p.route(pattern,lambda r:r.fulfill(content_type='text/html',body='<!doctype html><p>Unavailable game</p>'))
             p.evaluate('(id)=>SpinnerSalon.openGame(id)',game['id'])

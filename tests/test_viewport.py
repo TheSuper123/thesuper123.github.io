@@ -6,7 +6,7 @@ from test_more_games import MoreGames
 
 class ViewportChecks(MoreGames):
     def test_slow_game_engine_initialization_still_puts_settings_in_options(self):
-        with self.page(width=390) as p:
+        with self.page(width=390,service_workers='block') as p:
             def delayed(route):
                 time.sleep(.2)
                 route.continue_()
