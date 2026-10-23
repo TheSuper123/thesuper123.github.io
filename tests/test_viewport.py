@@ -50,7 +50,7 @@ class ViewportChecks(MoreGames):
     def test_all_hundred_games_fit_board_and_controls_on_small_portrait_landscape_desktop(self):
         with self.page() as p:
             games=p.evaluate('SpinnerGames')
-            self.assertEqual(len(games),100)
+            self.assertEqual(len(games),101)
             for width,height in [(320,568),(390,844),(844,390),(1440,900)]:
                 p.set_viewport_size({'width':width,'height':height})
                 for game in games:

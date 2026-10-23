@@ -36,8 +36,12 @@ Kolejnych 30 pozycji ma samodzielnie napisane implementacje i nowe lokalne SVG. 
 
 ## Aktualny podział
 
-Publiczny katalog ma 100 pozycji. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.
+Publiczny katalog ma 101 pozycji. Tetris, Doom, starsze Flappy Bird, Block Blast, Geometry Dash Lite, Skibidi Fish i poprzednie logotypy znajdują się w zaszyfrowanym `others`; obejmuje to 115 wcześniejszych plików. Fonty OFL i biblioteki z dołączonymi licencjami pozostają publiczne, ponieważ mamy określone warunki ich użycia. Szczegóły techniczne i ograniczenia: [others/README.md](../others/README.md). Hasło nie zmienia statusu prawnego materiałów ani nie usuwa starszych kopii z historii publicznego repozytorium.
 
 ## Rozszerzenie do stu pozycji
 
 Kolejne 39 gier i kompas mają własny kod oraz 40 nowych ilustracji wektorowych w `assets/art/`. Nie pobierano cudzych sprite’ów, map, kompilacji, zdjęć polityków ani logotypów partii. Szyfrogramy archiwum nie były zmieniane. Klasyczne nazwy gier i reguły nie oznaczają licencji na cudze wydania. Teksty kompasu i współrzędne modeli są autorskie, jawne i opisane jako orientacyjne; nie używa się marki ani oprawy zewnętrznego testu politycznego. Szczegóły zasad i ograniczeń znajdują się w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md).
+
+## Gra 101 — 23 października 2026
+
+Ostatnia warta wykorzystuje ogólne mechaniki bossfightu bullet hell, z własnym Nadzorcą, geometrią pocisków, dialogami, sekwencjami i syntetyczną muzyką. Nie przeniesiono wyglądu Sansa, grafik, nagrań, tekstów, nazewnictwa menu ani przebiegu scen z Undertale. Podstawą rozdzielenia jest samodzielna realizacja ogólnych zasad, bez przejmowania rozpoznawalnych elementów utworu. Kod i oprawa nowej gry są publiczne; archiwum nie było zmieniane. Szczegóły: [101-OSTATNIA-WARTA.md](101-OSTATNIA-WARTA.md). To opis implementacji, nie indywidualna opinia prawna.

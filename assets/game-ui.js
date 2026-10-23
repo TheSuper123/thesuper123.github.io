@@ -153,6 +153,7 @@
       "100 / PIĘĆ OSI POGLĄDÓW",
     ],
     "tetris.html": ["tetris", "Tetris", "OTHERS / UKŁADANKA"],
+    "last-watch.html": ["last-watch", "Ostatnia warta", "101 / BOSSFIGHT"],
     "flappybird.html": ["bird", "Flappy Bird", "OTHERS / ZRĘCZNOŚĆ"],
     "blockblast.html": ["blocks", "Block Blast", "OTHERS / UKŁADANKA"],
     "doom.html": ["doom", "Doom HTML", "OTHERS / EKSPERYMENT"],

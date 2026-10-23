@@ -16,9 +16,9 @@ class ThirtyGames(MoreGames):
     def test_catalog_exactly_thirty_additions_distinct_local_assets(self):
         with self.page() as p:
             games=p.evaluate('SpinnerGames')
-            self.assertEqual(len(games),100);self.assertEqual(len({g['id'] for g in games}),100)
+            self.assertEqual(len(games),101);self.assertEqual(len({g['id'] for g in games}),101)
             self.assertEqual([g['id'] for g in games[30:60]],IDS)
-            expect(p.locator('.game-card')).to_have_count(100)
+            expect(p.locator('.game-card')).to_have_count(101)
             p.get_by_role('button',name='Na główkowanie',exact=True).click();expect(p.locator('.game-card')).to_have_count(64)
             p.locator('#game-search').fill('futoshiki');expect(p.locator('.game-card')).to_have_count(1)
             p.locator('#game-search').fill('mniejsze');expect(p.locator('.game-card')).to_have_count(1)

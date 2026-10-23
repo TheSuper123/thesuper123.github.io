@@ -1,0 +1,545 @@
+/* An original copper automaton, ruled paper and a live signal chamber. */
+.bossfight-page .bf-stage {
+  max-width: none;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.bf-surface {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.bf-scene {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 30%;
+  display: grid;
+  grid-template-columns: minmax(95px, 32%) minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  align-items: center;
+  column-gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.bf-boss-label {
+  font:
+    9px/1.3 Mono,
+    monospace;
+  letter-spacing: 1.6px;
+  grid-column: 2;
+}
+.bf-boss-label span {
+  display: block;
+  font-size: 7px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+.bf-warden {
+  height: 100%;
+  max-height: 160px;
+  width: 100%;
+  grid-column: 1;
+  grid-row: 1/4;
+  overflow: visible;
+}
+.bf-shadow {
+  fill: var(--ink);
+  opacity: 0.14;
+}
+.bf-shell {
+  fill: var(--surface-3);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+.bf-wing {
+  fill: var(--orange);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+.bf-ribs,
+.bf-antennas {
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+.bf-iris {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 2;
+  transform-origin: 125px 102px;
+}
+.bf-iris path {
+  fill: var(--orange);
+  stroke: none;
+}
+.bf-eye {
+  fill: var(--ink);
+}
+.bf-wave-name {
+  font:
+    600 23px/1.1 Fraunces,
+    serif;
+  grid-column: 2;
+  letter-spacing: -0.6px;
+  margin-top: 7px;
+}
+.bf-boss-line {
+  font:
+    10px/1.6 Mono,
+    monospace;
+  color: var(--muted);
+  grid-column: 2;
+  max-width: 250px;
+  margin-top: 7px;
+}
+.bf-surface[data-stage="defense"] .bf-body {
+  animation: bf-hover 3s ease-in-out infinite;
+}
+.bf-surface[data-stage="defense"] .bf-iris {
+  animation: bf-turn 9s linear infinite;
+}
+.bf-surface[data-tier="3"] .bf-iris {
+  animation-duration: 4s;
+}
+.bf-arena-box {
+  position: absolute;
+  inset: 33% 3% 4%;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+.bf-arena-box canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  touch-action: none;
+  background: transparent;
+  border: 0;
+}
+.bf-rule {
+  position: absolute;
+  left: 50%;
+  top: 2%;
+  transform: translateX(-50%);
+  max-width: 95%;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 4px 8px;
+  font:
+    8px/1.4 Mono,
+    monospace;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.bf-rule:empty {
+  display: none;
+}
+.bf-rule[data-rule="still"] {
+  background: var(--game-gold);
+  color: var(--paper);
+}
+.bf-rule[data-rule="move"] {
+  background: var(--game-blue);
+  color: var(--paper);
+}
+.bf-wide .bf-scene {
+  inset: 0 auto 0 0;
+  height: 100%;
+  width: 26%;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 8px;
+  border-right: 1px solid var(--line);
+  border-bottom: 0;
+  text-align: center;
+  gap: 4px;
+}
+.bf-wide .bf-warden {
+  height: 52%;
+  min-height: 0;
+  order: 1;
+  flex: 1;
+}
+.bf-wide .bf-boss-label {
+  order: 0;
+  font-size: 9px;
+}
+.bf-wide .bf-wave-name {
+  order: 2;
+  font-size: 21px;
+}
+.bf-wide .bf-boss-line {
+  order: 3;
+  font-size: 9px;
+}
+.bf-wide .bf-arena-box {
+  inset: 6% 2% 6% 28%;
+}
+.bf-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background: var(--overlay);
+  gap: 12px;
+}
+.bf-kicker {
+  font:
+    8px/1.5 Mono,
+    monospace;
+  color: var(--orange);
+  letter-spacing: 1.3px;
+}
+.bf-overlay h2 {
+  font:
+    600 34px/1.1 Fraunces,
+    serif;
+  margin: 0;
+  letter-spacing: -1px;
+}
+.bf-overlay h2 span {
+  color: var(--orange);
+}
+.bf-overlay > p {
+  font:
+    12px/1.7 DM,
+    sans-serif;
+  margin: 0;
+  max-width: 440px;
+  color: var(--muted);
+}
+.bf-overlay > small {
+  font:
+    9px/1.5 Mono,
+    monospace;
+  color: var(--muted);
+}
+.bf-legend {
+  display: flex;
+  gap: 7px 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font:
+    10px/1.5 Mono,
+    monospace;
+  margin-block: 5px;
+}
+.bf-overlay > button {
+  min-height: 42px;
+  padding: 10px 22px;
+  font:
+    600 12px DM,
+    sans-serif;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+}
+.bf-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(440px, 100%);
+  gap: 9px;
+}
+.bf-choices button {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px;
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  color: var(--ink);
+  min-height: 64px;
+}
+.bf-choices button:first-child {
+  background: var(--ink);
+  color: var(--paper);
+}
+.bf-choices button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.bf-choices b {
+  font:
+    9px Mono,
+    monospace;
+  color: var(--orange);
+}
+.bf-choices span {
+  font:
+    600 17px/1.2 Fraunces,
+    serif;
+}
+.bf-choices small {
+  font:
+    10px/1.5 DM,
+    sans-serif;
+  display: block;
+  margin-top: 5px;
+  opacity: 0.7;
+}
+.bf-dial {
+  width: 125px;
+  height: 125px;
+}
+.bf-dial svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 3;
+}
+.bf-dial svg > path {
+  stroke: var(--orange);
+  stroke-width: 10;
+}
+#bf-needle {
+  transform-origin: 60px 60px;
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+#bf-needle circle {
+  fill: var(--ink);
+  stroke: var(--paper);
+}
+.bossfight-page .bf-input {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  width: 100%;
+}
+.bossfight-page .bf-input button {
+  width: 42px;
+  height: 44px;
+  padding: 0;
+  min-height: 44px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  font:
+    600 20px DM,
+    sans-serif;
+}
+.bossfight-page .bf-input .bf-jump {
+  width: 52px;
+  font-size: 11px;
+  border-color: var(--ink);
+}
+.bossfight-page .bf-input .bf-slow {
+  width: 57px;
+  font-size: 10px;
+}
+.bossfight-page .bf-input button[data-held="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.bossfight-page .ng-stat meter {
+  width: 100%;
+  height: 4px;
+  display: block;
+  margin-top: 5px;
+  border: none;
+  border-radius: 0;
+  background: var(--surface-3);
+}
+.bossfight-page .ng-stat meter::-webkit-meter-bar {
+  border: 0;
+  border-radius: 0;
+  background: var(--surface-3);
+}
+.bossfight-page .ng-stat meter::-webkit-meter-optimum-value {
+  background: var(--game-blue);
+}
+.bossfight-page #bf-core::-webkit-meter-optimum-value {
+  background: var(--orange);
+}
+.bossfight-page .ng-stat meter::-moz-meter-bar {
+  background: var(--game-blue);
+}
+.bossfight-page #bf-mode-label {
+  font-size: 7px;
+  margin-top: 4px;
+}
+.bossfight-page #more-status {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bossfight-page #more-help p {
+  text-align: left;
+  font:
+    11px/1.8 DM,
+    sans-serif;
+}
+.bossfight-page .bf-result {
+  background: var(--overlay);
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+  padding: 24px;
+}
+.bossfight-page .bf-result strong {
+  font:
+    600 23px/1.4 Fraunces,
+    serif;
+  max-width: 420px;
+}
+.bossfight-page .bf-result button {
+  min-height: 42px;
+}
+@keyframes bf-hover {
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes bf-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 600px) {
+  .bf-overlay {
+    padding: 15px 12px;
+    gap: 9px;
+  }
+  .bf-overlay h2 {
+    font-size: 28px;
+  }
+  .bf-overlay > p {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .bf-overlay > small {
+    font-size: 8px;
+  }
+  .bf-legend {
+    font-size: 8px;
+    gap: 5px 10px;
+    margin: 0;
+  }
+  .bf-choices {
+    gap: 6px;
+  }
+  .bf-choices button {
+    min-height: 56px;
+    padding: 9px;
+    gap: 7px;
+  }
+  .bf-choices span {
+    font-size: 16px;
+  }
+  .bf-choices small {
+    font-size: 9px;
+    margin-top: 3px;
+  }
+  .bf-dial {
+    width: 90px;
+    height: 90px;
+  }
+  .bf-scene {
+    padding: 7px 11px;
+    column-gap: 6px;
+  }
+  .bf-wave-name {
+    font-size: 20px;
+  }
+  .bf-boss-line {
+    font-size: 8px;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .bossfight-page .bf-input button {
+    width: 38px;
+  }
+  .bossfight-page .bf-input .bf-jump {
+    width: 46px;
+  }
+  .bossfight-page .bf-input .bf-slow {
+    width: 54px;
+  }
+  .bf-rule {
+    font-size: 7px;
+    padding: 3px 5px;
+  }
+}
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .bf-overlay {
+    padding: 10px;
+    gap: 5px;
+  }
+  .bf-overlay h2 {
+    font-size: 22px;
+  }
+  .bf-overlay > p {
+    font-size: 10px;
+    line-height: 1.4;
+    max-width: 520px;
+  }
+  #bf-intro-note,
+  .bf-legend,
+  #bf-timing-note {
+    display: none;
+  }
+  .bf-overlay > button {
+    min-height: 34px;
+    padding: 6px 20px;
+  }
+  .bf-choices {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(640px, 100%);
+    gap: 6px;
+  }
+  .bf-choices button {
+    min-height: 50px;
+    padding: 8px;
+    gap: 6px;
+  }
+  .bf-choices span {
+    font-size: 15px;
+  }
+  .bf-choices small {
+    font-size: 8px;
+  }
+  .bf-dial {
+    width: 65px;
+    height: 65px;
+  }
+  .bf-wide .bf-boss-label {
+    font-size: 7px;
+  }
+  .bf-wide .bf-boss-label span,
+  .bf-wide .bf-boss-line {
+    display: none;
+  }
+  .bf-wide .bf-wave-name {
+    font-size: 17px;
+  }
+  .bf-wide .bf-scene {
+    padding: 8px 5px;
+  }
+  .bossfight-page .bf-result {
+    gap: 9px;
+    padding: 12px;
+  }
+  .bossfight-page .bf-result strong {
+    font-size: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bf-body,
+  .bf-iris {
+    animation: none !important;
+  }
+}

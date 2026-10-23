@@ -16,7 +16,7 @@ class SalonChecks(MoreGames):
 
     def test_landing_is_lazy_local_and_keeps_catalog_at_one_hundred(self):
         with self.page(width=390) as p:
-            expect(p.locator('.game-card')).to_have_count(100)
+            expect(p.locator('.game-card')).to_have_count(101)
             expect(p.locator('#salon-picks a')).to_have_count(4)
             expect(p.locator('#salon-day-games a')).to_have_count(3)
             self.assertEqual(len(p.frames),1)
@@ -68,7 +68,7 @@ class SalonChecks(MoreGames):
             p.get_by_role('button',name='Zamknij losowanie',exact=True).click()
             p.get_by_role('button',name='Ulubione',exact=False).first.click()
             for b in p.locator('[data-salon-random]').all():expect(b).to_be_disabled()
-            p.get_by_role('button',name='Wszystkie 100',exact=True).click()
+            p.get_by_role('button',name='Wszystkie 101',exact=True).click()
             p.get_by_role('button',name='Dodaj do ulubionych: Sudoku',exact=True).click()
             p.get_by_role('button',name='Ulubione',exact=False).first.click()
             p.locator('[data-salon-random]').first.click();self.assertEqual(self.snapshot(p)['selection'],'sudoku')
@@ -177,7 +177,7 @@ class SalonChecks(MoreGames):
             p.clock.set_fixed_time(datetime(2026,10,23,22,0,1,tzinfo=timezone.utc));p.clock.run_for(60010)
             self.assertNotEqual(self.snapshot(p)['daily'],before)
             expect(p.locator('#salon-day-date')).to_have_attribute('datetime','2026-10-24')
-            expect(p.locator('.game-card')).to_have_count(100)
+            expect(p.locator('.game-card')).to_have_count(101)
 
     def test_help_pauses_actual_game_restart_and_escape_close_inner_options_before_overlay(self):
         with self.page(width=390) as p:

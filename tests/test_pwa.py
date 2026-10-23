@@ -93,7 +93,7 @@ class PWAChecks(MoreGames):
         self.assertEqual(manifest['display'], 'standalone')
         self.assertEqual(manifest['scope'], './')
         self.assertEqual(manifest['start_url'], './index.html')
-        self.assertEqual(PACK['games'], 100)
+        self.assertEqual(PACK['games'], 101)
         self.assertTrue(set(PACK['core']) <= set(PACK['files']))
         self.assertFalse(any('others/' in p or 'firebase' in p.lower() for p in PACK['files']))
         with self.app() as p:
@@ -120,7 +120,7 @@ class PWAChecks(MoreGames):
             cold.on('pageerror', lambda e: errors.append(str(e)))
             response = cold.goto(self.base + '/index.html')
             self.assertTrue(response.from_service_worker)
-            expect(cold.locator('.game-card')).to_have_count(100)
+            expect(cold.locator('.game-card')).to_have_count(101)
             games = cold.evaluate('SpinnerGames')
             for game in games:
                 with self.subTest(game=game['id']):
@@ -131,6 +131,11 @@ class PWAChecks(MoreGames):
                     frame.wait_for_function('document.body.dataset.viewportReady === "true"')
                     expect(frame.locator('#gameCanvas' if game['id']=='arena' else '.gv-cabinet')).to_be_visible()
                     self.assertFalse(frame.evaluate('document.documentElement.scrollWidth>innerWidth'))
+            cold.goto(self.base + '/gra.html?gra=last-watch')
+            expect(cold.locator('#game-placeholder')).to_have_count(0)
+            boss=cold.frames[1]
+            boss.locator('#bf-start').click()
+            boss.wait_for_function('BossFight.snapshot().stage==="defense"')
             cold.goto(self.base + '/index.html')
             cold.evaluate("SpinnerSalon.openGame('snake')")
             expect(cold.locator('.salon-player-loading')).to_have_count(0)
@@ -155,7 +160,7 @@ class PWAChecks(MoreGames):
             response = p.evaluate("fetch('assets/game-memory.js?v=future').then(r=>r.status)")
             self.assertEqual(response, 200)
             p.goto(self.base + '/salon/index.html')
-            expect(p.locator('.game-card')).to_have_count(100)
+            expect(p.locator('.game-card')).to_have_count(101)
             p.evaluate("[...document.images].forEach(i=>i.loading='eager')")
             p.wait_for_function('[...document.images].filter(i=>i.getAttribute("src")).every(i=>i.complete && i.naturalWidth>0)')
             p.goto(self.base + '/salon/games/chess.html')

@@ -50,7 +50,7 @@ class SiteChecks(unittest.TestCase):
             page.on('request', lambda r: external.append(r.url) if not r.url.startswith(self.base) else None)
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.goto(self.base)
-            expect(page.locator('.game-card')).to_have_count(100)
+            expect(page.locator('.game-card')).to_have_count(101)
             self.assertEqual(page.evaluate('Object.keys(localStorage)'), [])
             page.locator('#game-search').fill('kolko')
             expect(page.locator('.game-card')).to_have_count(1)

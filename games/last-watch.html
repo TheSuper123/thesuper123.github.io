@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <script src="../assets/theme.js"></script>
+    <title>Ostatnia warta — Spinner Games</title>
+    <meta
+      name="description"
+      content="Gra 101. Autorski bossfight: dwanaście sekwencji, zmienna grawitacja i jeden uparty Nadzorca."
+    />
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../assets/game.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="../assets/new-games.css" />
+    <link rel="stylesheet" href="../assets/more-games.css" />
+    <link rel="stylesheet" href="../assets/bossfight.css" />
+    <script src="../assets/storage.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/game-ui.js?v=101" defer></script>
+    <script src="../assets/new-game-tools.js" defer></script>
+    <script src="../assets/more-game-tools.js" defer></script>
+    <script src="../assets/bossfight-rules.js" defer></script>
+    <script src="../assets/game-last-watch.js" defer></script>
+  </head>
+  <body
+    class="game-page new-game-page more-game-page bossfight-page"
+    data-game="last-watch"
+  >
+    <header><a href="../index.html#gry">Spinner Games / katalog</a></header>
+    <main class="ng-main">
+      <section class="ng-cabinet" aria-label="Ostatnia warta — bossfight">
+        <div class="ng-intro">
+          <div>
+            <div class="ng-edition">101 / NIE ODDAM TEGO PRZEJŚCIA</div>
+            <h2>Ostatnia warta.</h2>
+            <p>
+              Autorski pojedynek z Nadzorcą. Przetrwaj dwanaście sekwencji i
+              przeciąż rdzeń albo poznaj protokół, który go wyłączy.
+            </p>
+          </div>
+        </div>
+        <div class="ng-hud">
+          <div class="ng-stat">
+            <small id="more-label-0">ENERGIA</small
+            ><strong id="more-stat-0">64 / 64</strong
+            ><meter
+              id="bf-health"
+              min="0"
+              max="64"
+              value="64"
+              aria-label="Energia gracza"
+            ></meter>
+          </div>
+          <div class="ng-stat">
+            <small id="more-label-1">RDZEŃ</small
+            ><strong id="more-stat-1">144</strong
+            ><meter
+              id="bf-core"
+              min="0"
+              max="144"
+              value="144"
+              aria-label="Energia Nadzorcy"
+            ></meter>
+          </div>
+          <div class="ng-stat">
+            <small id="more-label-2">SEKWENCJA</small
+            ><strong id="more-stat-2">01 / 12</strong
+            ><small id="bf-mode-label">WYZWANIE</small>
+          </div>
+        </div>
+        <div class="ng-toolbar" id="more-controls">
+          <button id="more-new">Od początku</button
+          ><button id="more-pause">Pauza</button
+          ><button id="bf-sound" aria-pressed="false">Dźwięk: wył.</button>
+        </div>
+        <div class="ng-stage bf-stage">
+          <div id="board" class="bf-surface" data-managed-controls>
+            <div class="bf-scene" aria-hidden="true">
+              <div class="bf-boss-label">
+                NADZORCA <span>PROTOKÓŁ / 101</span>
+              </div>
+              <svg class="bf-warden" viewBox="0 0 250 230" fill="none">
+                <ellipse class="bf-shadow" cx="125" cy="214" rx="63" ry="5" />
+                <g class="bf-body">
+                  <path
+                    class="bf-wing"
+                    d="m104 88-57-46-25 78 36-14-16 55 59-36m45-37 57-46 25 78-36-14 16 55-59-36"
+                  />
+                  <path
+                    class="bf-shell"
+                    d="m125 20 43 34 12 78-55 63-55-63 12-78Z"
+                  />
+                  <path
+                    class="bf-ribs"
+                    d="m81 68 44 22 44-22M74 101l51 24 51-24m-41 56 7 43-17 12-17-12 7-43"
+                  />
+                  <g class="bf-iris">
+                    <circle cx="125" cy="102" r="31" />
+                    <path
+                      d="m125 65 9 20 22 5-17 15 2 23-16-12-16 12 2-23-17-15 22-5Z"
+                    />
+                  </g>
+                  <path class="bf-eye" d="m125 90 12 12-12 12-12-12Z" />
+                  <path
+                    class="bf-antennas"
+                    d="M125 20V4m-8 0h16M83 54 64 28m103 26 19-26"
+                  />
+                </g>
+              </svg>
+              <div id="bf-wave-name" class="bf-wave-name">Ostatnia warta</div>
+              <div class="bf-boss-line" id="bf-dialogue">
+                To przejście jest zamknięte.
+              </div>
+            </div>
+            <div class="bf-arena-box">
+              <canvas
+                id="game"
+                width="640"
+                height="400"
+                tabindex="0"
+                aria-label="Arena bossfightu. Strzałki lub WASD: ruch. Spacja: skok przy grawitacji. Shift: precyzja."
+              ></canvas
+              ><span id="bf-rule" class="bf-rule"></span>
+            </div>
+            <div class="bf-overlay" id="bf-intro">
+              <div class="bf-kicker">101 / AUTORSKI BOSSFIGHT</div>
+              <h2>Ostatnia warta<span>.</span></h2>
+              <p>
+                Nadzorca nie przepuszcza nikogo. Przetrwaj jego protokół.
+                Odpowiedz impulsem albo znajdź sposób na wyłączenie strażnika.
+              </p>
+              <div class="bf-legend">
+                <span>◇ Twoja iskra</span><span>▧ Stój w miejscu</span
+                ><span>⠿ Pozostań w ruchu</span>
+              </div>
+              <button id="bf-start" class="ng-primary">
+                Rozpocznij próbę ↗</button
+              ><small id="bf-intro-note"
+                >Trudna walka. Trening i wybór sekwencji są w Opcjach.</small
+              >
+            </div>
+            <div class="bf-overlay" id="bf-choices" hidden>
+              <div class="bf-kicker" id="bf-turn-label">TWOJA KOLEJ</div>
+              <h2 id="bf-menu-title">Masz chwilę.</h2>
+              <p id="bf-menu-note">
+                Wybierz odpowiedź. Ataki zatrzymują się na czas decyzji.
+              </p>
+              <div class="bf-choices">
+                <button data-bf-action="strike">
+                  <b>01</b
+                  ><span
+                    >Impuls<small>Dostrój i uderz w rdzeń.</small></span
+                  ></button
+                ><button data-bf-action="heal">
+                  <b>02</b
+                  ><span
+                    >Naprawa<small id="bf-heal-note"
+                      >+22 energii · 3 ładunki</small
+                    ></span
+                  ></button
+                ><button data-bf-action="scan">
+                  <b>03</b
+                  ><span
+                    >Skan<small id="bf-scan-note"
+                      >Poznaj protokół · 0 / 3</small
+                    ></span
+                  ></button
+                ><button data-bf-action="release" hidden>
+                  <b>04</b
+                  ><span
+                    >Wyłącz protokół<small
+                      >Otwórz przejście bez zniszczenia.</small
+                    ></span
+                  >
+                </button>
+              </div>
+            </div>
+            <div class="bf-overlay" id="bf-timing" hidden>
+              <div class="bf-kicker">DOSTRÓJ IMPULS</div>
+              <h2>W pomarańczowy wycinek.</h2>
+              <div class="bf-dial" aria-hidden="true">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="46" />
+                  <path d="M43 17a46 46 0 0 1 34 0" />
+                  <g id="bf-needle">
+                    <path d="M60 60V20" />
+                    <circle cx="60" cy="60" r="5" />
+                  </g>
+                </svg>
+              </div>
+              <button id="bf-confirm" class="ng-primary">
+                Wyślij impuls · Enter
+              </button>
+              <p id="bf-timing-note">
+                Im bliżej środka wycinka, tym mocniejszy impuls.
+              </p>
+            </div>
+          </div>
+          <div id="more-cover" class="ng-cover" hidden>
+            <strong>Gra zaczeka.</strong>
+            <p>Wznów, kiedy będziesz gotowy.</p>
+            <button id="more-resume" class="ng-primary">Wznów</button>
+          </div>
+        </div>
+        <div
+          id="more-extra"
+          class="mo-extra bf-input"
+          role="group"
+          aria-label="Sterowanie na ekranie"
+        >
+          <button data-bf-input="left" aria-label="W lewo">←</button
+          ><button data-bf-input="up" aria-label="W górę">↑</button
+          ><button data-bf-input="down" aria-label="W dół">↓</button
+          ><button data-bf-input="right" aria-label="W prawo">→</button
+          ><button data-bf-input="jump" class="bf-jump">Skok</button
+          ><button data-bf-input="slow" class="bf-slow">Precyzja</button>
+        </div>
+        <p id="more-status" class="ng-status" role="status">
+          Przycisk Rozpocznij uruchamia walkę.
+        </p>
+        <div id="more-result" class="mo-result bf-result" hidden>
+          <strong id="more-result-text"></strong
+          ><button id="more-again" class="ng-primary">
+            Spróbuj jeszcze raz
+          </button>
+        </div>
+        <p id="more-record" class="ng-level-status"></p>
+        <div id="more-help" class="ng-help">
+          <p>
+            Strzałki / WASD: ruch. W trybie grawitacji poruszasz się wzdłuż
+            ściany; kierunek przeciwny do przyciągania albo Spacja wykonuje
+            skok. Przytrzymaj, aby skoczyć wyżej. Shift / Precyzja: wolniejszy,
+            dokładniejszy ruch. Przyciski reagują już na dotknięcie; możesz
+            używać kilku palców.
+          </p>
+          <p>
+            Pomarańczowe ostrzeżenie pojawia się przed laserem. Kreskowane pole
+            ▧ jest bezpieczne, kiedy stoisz; kropkowane ⠿ wymaga rzeczywistej
+            zmiany pozycji. Krótki błysk iskry oznacza ochronę po trafieniu, a
+            przegrzanie stopniowo odbiera energię tylko podczas obrony.
+          </p>
+          <p>
+            Po każdej sekwencji wybierz Impuls, Naprawę lub Skan. Trzy skany i
+            przetrwanie dwunastej sekwencji pozwalają wyłączyć protokół. Aby
+            wygrać siłą, trzeba przejść wszystkie 12 sekwencji i wyczerpać
+            rdzeń. P / Escape: pauza. Enter: rozpoczęcie / potwierdzenie
+            impulsu. W menu działają 1–4.
+          </p>
+          <p>
+            Trening ma mniejsze obrażenia i wolniejsze pociski; wybierzesz w nim
+            konkretną sekwencję. Rekordy dotyczą wyłącznie pełnego Wyzwania.
+            Przeciwnik, ilustracje, teksty, sekwencje i syntetyczne sygnały
+            dźwiękowe są autorskie; gra nie jest powiązana z Undertale.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer>Spinner Games / 101</footer>
+  </body>
+</html>

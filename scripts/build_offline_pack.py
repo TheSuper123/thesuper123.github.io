@@ -15,8 +15,8 @@ OUTPUT = ROOT / 'assets/offline-pack.js'
 
 def build():
     games = re.findall(r'\bfile: "([^"]+)"', (ROOT / 'assets/catalog.js').read_text())
-    if len(games) != 100 or len(set(games)) != 100:
-        raise ValueError('Expected exactly 100 distinct catalog game files')
+    if not games or len(set(games)) != len(games):
+        raise ValueError('Expected a nonempty catalog of distinct game files')
     roots = ['index.html', 'gra.html', 'aplikacja.html', 'o-serwisie.html',
              'prywatnosc.html', 'offline.html', 'manifest.webmanifest']
     assets = [p.relative_to(ROOT).as_posix() for p in (ROOT / 'assets').rglob('*')

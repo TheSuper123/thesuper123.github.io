@@ -10,7 +10,7 @@ Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. 
 
 Przy zmianach publicznych plików przed publikacją odśwież listę offline przez `python3 scripts/build_offline_pack.py` i sprawdź ją opcją `--check`. Instalację na iPhonie, przechowywanie plików oraz aktualizacje opisuje [APLIKACJA-OFFLINE.md](APLIKACJA-OFFLINE.md).
 
-Aktualny katalog 100 pozycji i edukacyjny kompas opisano w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md). Nowe odkrywanie gier, trasa dnia i szybka runda są opisane w [ODKRYWANIE-SALONU.md](ODKRYWANIE-SALONU.md). Układ planszy i sterowania opisano też w [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md).
+Aktualny katalog 101 pozycji i edukacyjny kompas opisano w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md). Nowe odkrywanie gier, trasa dnia i szybka runda są opisane w [ODKRYWANIE-SALONU.md](ODKRYWANIE-SALONU.md). Układ planszy i sterowania opisano też w [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md).
 
 ## Testy
 
@@ -18,7 +18,7 @@ Aktualny katalog 100 pozycji i edukacyjny kompas opisano w [100-GIER-I-KOMPAS.md
 
 Pięć dodanych gier i ich 17 testów funkcjonalnych opisano w [NOWE-GRY.md](NOWE-GRY.md). Nie potrzebują odszyfrowania archiwum.
 
-Kolejnych 17 gier, ich wspólny interfejs i 26 scenariuszy testowych opisano w [17-NOWYCH-GIER.md](17-NOWYCH-GIER.md). Publiczny katalog obejmuje 100 pozycji.
+Kolejnych 17 gier, ich wspólny interfejs i 26 scenariuszy testowych opisano w [17-NOWYCH-GIER.md](17-NOWYCH-GIER.md). Publiczny katalog obejmuje 101 pozycji.
 
 ```sh
 python3 tests/smoke.py
@@ -33,7 +33,7 @@ python3 tests/test_player_integration.py
 python3 tests/test_others.py
 ```
 
-Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 100 pozycji publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
+Testy sprawdzają katalog, odmowę i cofnięcie zgody, trwałość ulubionych, brak zewnętrznych żądań podczas zwykłego grania, układ mobilny, wszystkie 101 pozycji publicznego katalogu i ruchy komputera oraz rzeczywiste uruchomienie SDK Firebase. Operacje konta testowane są z symulowanymi odpowiedziami HTTP usługi Firebase. Nie tworzą, nie modyfikują ani nie usuwają kont produkcyjnych. Testy nie potwierdzają ustawień usługodawcy ani dostarczania wiadomości e-mail.
 
 ## Wygląd gier i ciemny motyw
 

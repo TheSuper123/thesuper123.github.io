@@ -18,10 +18,10 @@ class HundredGames(MoreGames):
     def test_catalog_has_one_hundred_unique_games_and_quiz_filter(self):
         with self.page() as p:
             games=p.evaluate('SpinnerGames')
-            self.assertEqual(len(games),100)
-            self.assertEqual(len({g['id'] for g in games}),100)
-            self.assertEqual([g['id'] for g in games[60:]],IDS)
-            expect(p.locator('.game-card')).to_have_count(100)
+            self.assertEqual(len(games),101)
+            self.assertEqual(len({g['id'] for g in games}),101)
+            self.assertEqual([g['id'] for g in games[60:100]],IDS)
+            expect(p.locator('.game-card')).to_have_count(101)
             p.get_by_role('button',name='Quizy i testy',exact=True).click()
             expect(p.locator('.game-card')).to_have_count(5)
             p.locator('#game-search').fill('kompas');expect(p.locator('.game-card')).to_have_count(1)

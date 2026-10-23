@@ -34,12 +34,13 @@
     document.querySelectorAll("[data-network-state]").forEach((el) => {
       el.hidden = navigator.onLine;
       el.textContent = state?.ready
-        ? "Offline — 100 gier pod ręką"
+        ? `Offline — ${state.games} gier pod ręką`
         : "Offline — dostępne są wcześniej pobrane gry";
     });
     const title = $("#offline-title");
     if (!title) return;
     const downloading = busy || state?.downloading;
+    const gameCount = state?.games || window.SpinnerGames?.length || 101;
     title.textContent = !supported
       ? "Ta przeglądarka nie obsługuje trybu offline."
       : feedbackTitle
@@ -53,7 +54,7 @@
               : !navigator.onLine
                 ? "Połącz się, żeby dokończyć pobieranie."
                 : state
-                  ? "Zabierz wszystkie 100 gier."
+                  ? `Zabierz wszystkie ${gameCount} gier.`
                   : "Przygotowujemy aplikację…";
     $("#offline-detail").textContent =
       error ||
@@ -71,7 +72,7 @@
     progress.value = state?.completed || 0;
     progress.hidden = !state;
     $("#offline-count").textContent = state
-      ? `${state.completed} / ${state.total} plików${state.ready ? " · 100 gier" : ""}`
+      ? `${state.completed} / ${state.total} plików${state.ready ? ` · ${state.games} gier` : ""}`
       : "";
     const button = $("#offline-download");
     button.disabled =
@@ -81,10 +82,10 @@
       !navigator.onLine ||
       Boolean(state?.ready);
     button.textContent = state?.ready
-      ? "100 gier pobranych ✓"
+      ? `${gameCount} gier pobranych ✓`
       : state?.completed
-        ? "Dokończ pobieranie 100 gier ↓"
-        : "Pobierz 100 gier offline ↓";
+        ? `Dokończ pobieranie ${gameCount} gier ↓`
+        : `Pobierz ${gameCount} gier offline ↓`;
     $("#offline-cancel").hidden = !downloading;
     $("#offline-clear").disabled =
       !registration?.active || downloading || !state?.completed;

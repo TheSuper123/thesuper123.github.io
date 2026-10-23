@@ -1279,6 +1279,19 @@
       controls:
         "Przyciski lub 1–5: stopień zgody, 0: pomiń. Wstecz zmienia wcześniejsze odpowiedzi. Metoda ujawnia wzór i profile; wynik można pobrać albo wyczyścić.",
     },
+    {
+      id: "last-watch",
+      name: "Ostatnia warta",
+      file: "games/last-watch.html",
+      art: "last-watch",
+      category: "arcade",
+      tag: "101 / BOSSFIGHT",
+      desc: "Dwanaście sekwencji. Jeden uparty Nadzorca.",
+      about:
+        "Autorski bossfight bullet hell z trzema etapami i dwunastoma sekwencjami: bramami, ostrzeganymi laserami, wachlarzami pocisków, zmianami grawitacji i regułami ruchu lub bezruchu. Po obronie dostrój impuls, napraw energię albo zeskanuj protokół. Możesz przeciążyć rdzeń lub po trzech skanach i dwunastu sekwencjach wyłączyć strażnika. Trening pozwala wybrać sekwencję; rekord dotyczy pełnego wyzwania.",
+      controls:
+        "Strzałki / WASD: ruch. Spacja lub kierunek przeciwny do przyciągania: skok; przytrzymanie daje wyższy skok. Shift / Precyzja: wolniejszy ruch. Enter: start / impuls. 1–4: decyzja między atakami. P: pauza. Na telefonie używaj kilku przycisków jednocześnie.",
+    },
   ];
   window.SpinnerGames = games;
   const grid = document.querySelector("#game-grid");

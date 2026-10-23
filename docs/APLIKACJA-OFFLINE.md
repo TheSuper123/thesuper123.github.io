@@ -1,6 +1,6 @@
 # Spinner na ekranie początkowym i offline
 
-Publiczna aplikacja webowa (PWA), bez pakietu z App Store. Strona `aplikacja.html` zawiera instrukcję Safari na iPhonie, pobieranie zestawu wszystkich 100 gier, postęp, wstrzymanie, wznowienie i usuwanie plików. Odnośnik jest przy głównym haśle, w osobnym panelu na stronie głównej i w stopce. Android ma zapowiedź osobnej instrukcji instalacji.
+Publiczna aplikacja webowa (PWA), bez pakietu z App Store. Strona `aplikacja.html` zawiera instrukcję Safari na iPhonie, pobieranie zestawu wszystkich 101 gier, postęp, wstrzymanie, wznowienie i usuwanie plików. Odnośnik jest przy głównym haśle, w osobnym panelu na stronie głównej i w stopce. Android ma zapowiedź osobnej instrukcji instalacji.
 
 ## Instalacja na iPhonie
 
@@ -37,6 +37,6 @@ python3 tests/test_pwa.py
 
 Generator uwzględnia zawartość plików i workera w wersji cache. Nie edytuj ręcznie wygenerowanej listy. Zmiana samej dokumentacji lub testów nie zmienia wersji. Ikony powstają z własnego znaku SVG przez `python3 scripts/build_app_icons.py` (Playwright + Chromium).
 
-Dziesięć testów używa prawdziwego service workera w Chromium: pobranie, 100 uruchomień bez sieci, nowe okno bez pamięci dokumentu, zmiany query string, katalog z ilustracjami i szybka runda offline, logowanie offline bez żądań SDK, niepełny transfer, ponowienie, wstrzymanie, czyszczenie, aktualizacja bez utraty zestawu, zachowanie starego zestawu przy nieudanej aktualizacji, ponowienie pierwszego przygotowania, osobny zakres archiwum oraz dwie instalacje w różnych podkatalogach tej samej domeny. Weryfikacja wizualna obejmuje jasny i ciemny motyw oraz szerokości 320, 390, 844 i 1440 px. Automatyzacja Chromium nie zastępuje ręcznego testu instalacji na fizycznym iPhonie.
+Dziesięć testów używa prawdziwego service workera w Chromium: pobranie, 101 uruchomień bez sieci, nowe okno bez pamięci dokumentu, zmiany query string, katalog z ilustracjami i szybka runda offline, logowanie offline bez żądań SDK, niepełny transfer, ponowienie, wstrzymanie, czyszczenie, aktualizacja bez utraty zestawu, zachowanie starego zestawu przy nieudanej aktualizacji, ponowienie pierwszego przygotowania, osobny zakres archiwum oraz dwie instalacje w różnych podkatalogach tej samej domeny. Weryfikacja wizualna obejmuje jasny i ciemny motyw oraz szerokości 320, 390, 844 i 1440 px. Automatyzacja Chromium nie zastępuje ręcznego testu instalacji na fizycznym iPhonie.
 
 Podglądy: [komputer](screenshots/pwa/desktop.png), [iPhone](screenshots/pwa/iphone.png), [ciemny motyw](screenshots/pwa/iphone-dark.png), [gotowy zestaw bez sieci](screenshots/pwa/offline-ready.png).
