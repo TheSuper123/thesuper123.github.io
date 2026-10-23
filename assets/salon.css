@@ -1,0 +1,1119 @@
+/* An editorial corner of the arcade: a ticket, a shortlist and a little luck. */
+.salon-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.salon-random {
+  gap: 10px;
+  background: var(--paper);
+}
+.salon-random svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  flex-shrink: 0;
+}
+.salon-random svg path {
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.salon-random:hover {
+  background: var(--white);
+}
+.salon-coin {
+  position: absolute;
+  left: 3%;
+  bottom: 13%;
+  width: 134px;
+  height: 134px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  box-shadow: 5px 6px 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(-11deg);
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.salon-coin > span {
+  font: 38px/1 DM;
+}
+.salon-coin small {
+  font: 8px/1.5 Mono;
+  margin: 3px 0;
+  letter-spacing: 0.4px;
+}
+.salon-coin strong {
+  font: italic 27px/1 Fraunces;
+}
+.salon-coin:hover {
+  transform: rotate(4deg) translateY(-4px);
+  box-shadow: 3px 9px 0 var(--ink);
+}
+.salon-discovery {
+  padding-block: 62px 72px;
+}
+.salon-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.salon-heading h2 {
+  font-size: clamp(30px, 3.3vw, 47px);
+  font-weight: 600;
+  letter-spacing: -1.8px;
+  line-height: 1.12;
+  margin: 12px 0 0;
+}
+.salon-heading h2 em {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 500;
+  color: var(--orange);
+}
+.salon-text-link {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  min-height: 40px;
+  padding: 6px 0;
+  white-space: nowrap;
+}
+.salon-text-link:hover {
+  color: var(--orange);
+}
+.salon-text-link span {
+  font-size: 22px;
+  line-height: 1;
+}
+.salon-discovery-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 42px;
+  align-items: start;
+}
+.salon-mood-area {
+  min-width: 0;
+}
+.salon-moods {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.salon-moods button {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: left;
+  border: 1px solid var(--line);
+  padding: 14px 12px;
+  min-height: 112px;
+  position: relative;
+  border-radius: 3px;
+  background: var(--white);
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    transform 0.18s;
+}
+.salon-moods button > span {
+  font: 28px/1.2 DM;
+  margin-bottom: 10px;
+  color: var(--orange);
+}
+.salon-moods strong {
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+.salon-moods small {
+  font-size: 9px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.salon-moods button[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.salon-moods button[aria-pressed="true"] small {
+  color: var(--paper);
+  opacity: 0.72;
+}
+.salon-moods button[aria-pressed="true"] > span {
+  color: var(--orange);
+}
+.salon-moods button:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+.salon-picks-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 10px;
+}
+.salon-picks-heading p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+.salon-picks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 20px;
+}
+.salon-pick {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 18px;
+  gap: 12px;
+  align-items: center;
+  min-height: 85px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+.salon-pick > img {
+  width: 92px;
+  aspect-ratio: 1.32;
+  object-fit: cover;
+  border-radius: 2px;
+  transition: transform 0.2s;
+}
+.salon-pick strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+}
+.salon-pick small {
+  font: 8px/1.6 Mono;
+  color: var(--muted);
+  display: block;
+  margin-top: 7px;
+}
+.salon-pick > span:last-child {
+  font-size: 23px;
+  color: var(--orange);
+  transition: transform 0.2s;
+}
+.salon-pick:hover > span:last-child {
+  transform: translate(2px, -2px);
+}
+.salon-pick:hover strong {
+  color: var(--orange);
+}
+.salon-small-note {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.salon-mood-area > .salon-small-note {
+  margin: 15px 0 0;
+}
+.salon-ticket {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 22px 24px;
+  position: relative;
+  box-shadow: 5px 5px 0 var(--surface-3);
+  margin-top: 0;
+  min-width: 0;
+}
+.salon-ticket::before,
+.salon-ticket::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+  top: 148px;
+}
+.salon-ticket::before {
+  left: -9px;
+}
+.salon-ticket::after {
+  right: -9px;
+}
+.salon-ticket-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.salon-ticket-top .eyebrow {
+  font-size: 8px;
+  letter-spacing: 0.7px;
+}
+.salon-ticket-top > span:last-child {
+  font-size: 20px;
+  color: var(--orange);
+}
+.salon-ticket-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.salon-ticket-title h3 {
+  font:
+    500 34px/1.1 Fraunces,
+    Georgia,
+    serif;
+  letter-spacing: -1px;
+  margin: 12px 0;
+}
+.salon-ticket-title h3 span {
+  color: var(--orange);
+}
+.salon-ticket time {
+  font: 9px Mono;
+  letter-spacing: 0.7px;
+  opacity: 0.7;
+}
+.salon-ticket > p {
+  font-size: 11px;
+  line-height: 1.65;
+  margin: 0 0 17px;
+  opacity: 0.72;
+}
+.salon-day-games {
+  padding: 12px 0 6px;
+  margin: 0;
+  list-style: none;
+  border-top: 1px dashed color-mix(in srgb, var(--paper) 35%, transparent);
+}
+.salon-day-games li + li {
+  border-top: 1px solid color-mix(in srgb, var(--paper) 17%, transparent);
+}
+.salon-day-games a {
+  display: grid;
+  grid-template-columns: 17px 54px minmax(0, 1fr) 16px;
+  gap: 10px;
+  align-items: center;
+  padding: 13px 0;
+  min-height: 72px;
+}
+.salon-day-games .salon-stop-number {
+  font: 9px Mono;
+  opacity: 0.55;
+}
+.salon-day-games img {
+  width: 54px;
+  height: 43px;
+  object-fit: cover;
+  border-radius: 1px;
+}
+.salon-day-games strong {
+  font-size: 13px;
+  line-height: 1.25;
+  display: block;
+}
+.salon-day-games small {
+  font: 7px/1.6 Mono;
+  letter-spacing: 0.5px;
+  display: block;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+.salon-day-games .salon-stop-state {
+  font-size: 19px;
+  color: var(--orange);
+}
+.salon-day-games a:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.salon-day-games a[data-opened="true"] small {
+  opacity: 1;
+  color: var(--orange);
+}
+.salon-ticket-bottom {
+  border-top: 1px dashed color-mix(in srgb, var(--paper) 35%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px 0 8px;
+}
+.salon-ticket-bottom > span:first-child {
+  font: 9px Mono;
+}
+.salon-ticket-bottom > span:last-child {
+  font: 17px Mono;
+  letter-spacing: 3px;
+  color: var(--orange);
+}
+.salon-ticket p.salon-ticket-note {
+  font-size: 8px;
+  line-height: 1.6;
+  opacity: 0.6;
+  margin: 0;
+}
+.salon-ticket[data-complete="true"] {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+}
+.salon-catalog-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  margin: -11px 0 25px;
+  padding: 0 0 8px;
+}
+.salon-catalog-note > span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.game-card .card-meta {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.game-card .card-meta:before {
+  display: none;
+}
+.game-card .card-meta-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-meta-label:before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+}
+.card-quick {
+  font: 9px DM;
+  min-height: 36px;
+  padding: 6px 0 6px 8px;
+  letter-spacing: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.card-quick span {
+  font-size: 17px;
+  color: var(--orange);
+}
+.card-quick:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.salon-roulette {
+  max-width: 560px;
+  width: calc(100% - 32px);
+  padding: 30px;
+  border-radius: 3px;
+  overflow: auto;
+  box-shadow: 7px 7px 0 var(--ink);
+  max-height: calc(100dvh - 28px);
+}
+.salon-roulette > h2 {
+  font-size: 36px;
+  letter-spacing: -1.4px;
+  line-height: 1.15;
+  font-weight: 600;
+  margin: 12px 0;
+}
+.salon-roulette h2 em {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 500;
+}
+.salon-roulette > .eyebrow {
+  font-size: 8px;
+  padding-right: 25px;
+}
+.salon-roulette > .dialog-close {
+  top: 12px;
+  right: 12px;
+}
+.salon-roulette > p:not(.salon-small-note):not(.sr-only) {
+  font-size: 12px;
+  min-height: 38px;
+  color: var(--muted);
+}
+.salon-slot {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.salon-slot > img {
+  width: 100%;
+  max-height: 235px;
+  object-fit: cover;
+}
+.salon-slot-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 18px;
+  background: var(--ink);
+  color: var(--paper);
+  min-height: 60px;
+}
+.salon-slot-label .eyebrow {
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--orange);
+  max-width: 40%;
+}
+.salon-slot-label h3 {
+  font: 500 24px/1.1 Fraunces;
+  margin: 0;
+  text-align: right;
+}
+.salon-slot-mark {
+  position: absolute;
+  top: 3px;
+  left: calc(50% - 10px);
+  font-size: 21px;
+  color: var(--orange);
+  z-index: 1;
+  text-shadow: 0 2px var(--paper);
+}
+.salon-slot[data-spinning="true"] {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+.salon-slot[data-spinning="true"] > img {
+  filter: blur(1px);
+  transform: scale(1.015);
+}
+.salon-roulette-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.salon-roulette-actions button {
+  flex: 1;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+.salon-player {
+  width: min(1280px, calc(100vw - 32px));
+  height: calc(100dvh - 32px);
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 10px 10px 0 #0003;
+}
+.salon-player[open] {
+  display: flex;
+  flex-direction: column;
+}
+.salon-player-bar {
+  height: 48px;
+  flex: 0 0 48px;
+  border-bottom: 1px solid var(--line);
+  padding: 5px 10px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.salon-player-bar > img {
+  flex-shrink: 0;
+}
+.salon-player-bar h2 {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font:
+    600 18px/1.2 Fraunces,
+    Georgia,
+    serif;
+  margin: 0;
+  letter-spacing: -0.4px;
+}
+.salon-player-bar nav {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.salon-player-bar button,
+.salon-player-bar a {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  font: 19px/1 DM;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--ink);
+  padding: 2px;
+}
+.salon-player-bar nav > *:hover {
+  border-color: var(--orange);
+}
+.salon-player-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+.salon-player-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: var(--paper);
+}
+.salon-player-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 13px;
+  padding: 30px;
+  background: var(--paper);
+  font-size: 13px;
+}
+.salon-player-loading > span {
+  font-size: 38px;
+  color: var(--orange);
+}
+.salon-player-loading a {
+  font-size: 11px;
+  text-decoration: underline;
+}
+.salon-player-loading button {
+  border: 1px solid var(--ink);
+  padding: 10px 18px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.salon-game-guide {
+  border-radius: 3px;
+}
+.salon-game-guide h2 {
+  font: 500 30px/1.2 Fraunces;
+  margin-block: 18px;
+}
+.salon-game-guide h3 {
+  font-size: 13px;
+  margin-top: 25px;
+}
+.salon-game-guide p {
+  font-size: 13px;
+  line-height: 1.75;
+}
+html:has(.salon-player[open]),
+html:has(.salon-player[open]) body {
+  overflow: hidden;
+}
+.salon-player-loading[data-error="true"] > span {
+  color: var(--game-red);
+}
+html[data-theme="dark"] .salon-pick > img,
+html[data-theme="dark"] .salon-day-games img,
+html[data-theme="dark"] .salon-slot > img {
+  filter: brightness(0.85);
+}
+html[data-theme="dark"] .salon-ticket {
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 5px 5px 0 var(--surface-3);
+  border: 1px solid var(--line);
+}
+html[data-theme="dark"] .salon-ticket::before,
+html[data-theme="dark"] .salon-ticket::after {
+  background: var(--paper);
+}
+html[data-theme="dark"] .salon-day-games {
+  border-color: var(--line);
+}
+html[data-theme="dark"] .salon-day-games li + li {
+  border-color: var(--line);
+}
+html[data-theme="dark"] .salon-ticket-bottom {
+  border-color: var(--line);
+}
+.salon-discovery [hidden],
+.salon-hero-actions [hidden],
+.hero-art > .salon-coin[hidden],
+.salon-catalog-note[hidden] {
+  display: none !important;
+}
+@media (max-width: 1100px) {
+  .salon-discovery-grid {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 28px;
+  }
+  .salon-moods {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .salon-moods button {
+    min-height: 87px;
+    padding: 12px 12px 12px 48px;
+    justify-content: center;
+  }
+  .salon-moods button > span {
+    position: absolute;
+    left: 12px;
+    top: 20px;
+  }
+  .salon-pick {
+    grid-template-columns: 65px minmax(0, 1fr);
+    gap: 9px;
+  }
+  .salon-pick > img {
+    width: 65px;
+  }
+  .salon-pick > span:last-child {
+    display: none;
+  }
+  .salon-pick strong {
+    font-size: 13px;
+  }
+  .salon-pick small {
+    font-size: 7px;
+  }
+  .salon-coin {
+    width: 110px;
+    height: 110px;
+    left: 0;
+    bottom: 16%;
+  }
+  .salon-coin > span {
+    font-size: 30px;
+  }
+  .salon-coin strong {
+    font-size: 24px;
+  }
+  .salon-coin small {
+    font-size: 7px;
+  }
+}
+@media (max-width: 850px) {
+  .salon-discovery-grid {
+    grid-template-columns: 1fr;
+  }
+  .salon-moods {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .salon-moods button {
+    padding: 13px;
+    min-height: 115px;
+    justify-content: start;
+  }
+  .salon-moods button > span {
+    position: static;
+  }
+  .salon-pick {
+    grid-template-columns: 85px minmax(0, 1fr) 20px;
+    gap: 12px;
+  }
+  .salon-pick > img {
+    width: 85px;
+  }
+  .salon-pick > span:last-child {
+    display: block;
+  }
+  .salon-pick strong {
+    font-size: 15px;
+  }
+  .salon-ticket {
+    padding: 22px 24px;
+  }
+  .salon-ticket::before,
+  .salon-ticket::after {
+    top: 136px;
+  }
+  .salon-day-games {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .salon-day-games li + li {
+    border-top: 0;
+    border-left: 1px solid color-mix(in srgb, var(--paper) 17%, transparent);
+    padding-left: 16px;
+  }
+  .salon-day-games a {
+    grid-template-columns: 15px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .salon-day-games img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1.4;
+    grid-column: 2;
+  }
+  .salon-day-games a > span:nth-last-child(2) {
+    grid-column: 2;
+  }
+  .salon-stop-state {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .salon-ticket-title {
+    justify-content: start;
+    gap: 22px;
+  }
+  .salon-ticket > p br {
+    display: none;
+  }
+  .salon-ticket-title h3 {
+    margin-top: 7px;
+  }
+  .salon-ticket-top > span:last-child {
+    position: absolute;
+    right: 25px;
+    top: 29px;
+    font-size: 30px;
+  }
+}
+@media (max-width: 600px) {
+  .salon-discovery {
+    padding-block: 36px 45px;
+  }
+  .salon-heading {
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 22px;
+  }
+  .salon-heading h2 {
+    font-size: 33px;
+    max-width: 260px;
+    letter-spacing: -1.2px;
+  }
+  .salon-heading > .salon-text-link {
+    font-size: 9px;
+    white-space: normal;
+    gap: 6px;
+    max-width: 56px;
+    text-align: right;
+    line-height: 1.4;
+    margin-top: 29px;
+  }
+  .salon-heading .eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
+  .salon-moods {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .salon-moods button {
+    padding: 12px 10px 12px 43px;
+    min-height: 76px;
+    justify-content: center;
+  }
+  .salon-moods button > span {
+    position: absolute;
+    left: 10px;
+    top: 18px;
+    font-size: 25px;
+  }
+  .salon-moods strong {
+    font-size: 11px;
+  }
+  .salon-moods small {
+    font-size: 8px;
+  }
+  .salon-picks-heading {
+    margin-top: 13px;
+  }
+  .salon-picks-heading p {
+    font-size: 10px;
+    max-width: 60%;
+    line-height: 1.4;
+  }
+  .salon-picks-heading button {
+    font-size: 10px;
+  }
+  .salon-picks {
+    gap: 12px;
+  }
+  .salon-pick {
+    grid-template-columns: minmax(0, 1fr) 17px;
+    gap: 9px;
+    padding-bottom: 10px;
+  }
+  .salon-pick > img {
+    width: 100%;
+    aspect-ratio: 1.6;
+    grid-column: 1/-1;
+  }
+  .salon-pick strong {
+    font-size: 14px;
+  }
+  .salon-pick small {
+    font-size: 7px;
+    margin-top: 5px;
+  }
+  .salon-pick > span:last-child {
+    font-size: 20px;
+  }
+  .salon-discovery-grid {
+    gap: 25px;
+  }
+  .salon-ticket {
+    padding: 20px;
+  }
+  .salon-ticket-title h3 {
+    font-size: 33px;
+  }
+  .salon-day-games {
+    display: block;
+    padding-block: 8px;
+  }
+  .salon-day-games li + li {
+    border-top: 1px solid color-mix(in srgb, var(--paper) 17%, transparent);
+    border-left: 0;
+    padding-left: 0;
+  }
+  .salon-day-games a {
+    grid-template-columns: 17px 54px minmax(0, 1fr) 16px;
+    gap: 10px;
+    padding-block: 10px;
+    min-height: 64px;
+  }
+  .salon-day-games img {
+    grid-column: auto;
+    width: 54px;
+    height: 40px;
+    aspect-ratio: auto;
+  }
+  .salon-day-games a > span:nth-last-child(2) {
+    grid-column: auto;
+  }
+  .salon-stop-state {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .salon-ticket-top > span:last-child {
+    position: static;
+    font-size: 20px;
+  }
+  .salon-ticket-title h3 {
+    margin-top: 10px;
+  }
+  .salon-ticket::before,
+  .salon-ticket::after {
+    top: 138px;
+  }
+  .salon-hero-actions {
+    gap: 9px;
+  }
+  .salon-hero-actions .button {
+    padding: 12px 14px;
+    font-size: 11px;
+    gap: 12px;
+  }
+  .salon-hero-actions .button > span {
+    font-size: 20px;
+  }
+  .salon-coin {
+    width: 102px;
+    height: 102px;
+    bottom: 16%;
+    left: 1%;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .salon-coin > span {
+    font-size: 27px;
+  }
+  .salon-coin strong {
+    font-size: 23px;
+  }
+  .salon-coin small {
+    font-size: 6px;
+  }
+  .salon-catalog-note {
+    align-items: center;
+    margin-top: -8px;
+  }
+  .salon-catalog-note > span {
+    font-size: 9px;
+    max-width: 50%;
+  }
+  .salon-catalog-note button {
+    font-size: 10px;
+  }
+  .game-card .card-meta {
+    align-items: start;
+    flex-direction: column;
+    gap: 0;
+  }
+  .card-quick {
+    padding-left: 0;
+    min-height: 32px;
+    font-size: 9px;
+  }
+  .salon-roulette {
+    padding: 24px 20px;
+    width: calc(100% - 26px);
+    max-height: calc(100dvh - 26px);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .salon-roulette > h2 {
+    font-size: 30px;
+    max-width: 240px;
+  }
+  .salon-slot > img {
+    max-height: 175px;
+  }
+  .salon-slot-label {
+    padding: 10px 12px;
+    min-height: 55px;
+  }
+  .salon-slot-label h3 {
+    font-size: 22px;
+  }
+  .salon-slot-label .eyebrow {
+    font-size: 7px;
+  }
+  .salon-roulette-actions .button {
+    font-size: 11px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .salon-player {
+    width: 100vw;
+    height: 100dvh;
+    margin: 0;
+    max-width: 100vw;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .salon-player-bar {
+    padding-inline: 7px;
+    gap: 7px;
+  }
+  .salon-player-bar h2 {
+    font-size: 16px;
+  }
+  .salon-player-bar nav {
+    gap: 4px;
+  }
+  .salon-player-bar nav > * {
+    width: 29px;
+    height: 32px;
+  }
+  .salon-player-bar > img {
+    width: 23px;
+    height: 23px;
+  }
+}
+@media (max-height: 520px) and (min-width: 550px) {
+  .salon-roulette {
+    max-width: 700px;
+    padding: 18px 24px;
+    display: none;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 24px;
+  }
+  .salon-roulette[open] {
+    display: grid;
+  }
+  .salon-roulette > .eyebrow {
+    grid-column: 1;
+  }
+  .salon-roulette > h2 {
+    grid-column: 1;
+    margin: 0;
+    font-size: 30px;
+  }
+  .salon-roulette > .salon-small-note {
+    grid-column: 1;
+    margin: 0;
+  }
+  .salon-slot {
+    grid-column: 2;
+    grid-row: 1/6;
+  }
+  .salon-slot > img {
+    max-height: 150px;
+  }
+  .salon-slot-label h3 {
+    font-size: 20px;
+  }
+  .salon-slot-label {
+    padding: 10px;
+    min-height: 52px;
+  }
+  .salon-roulette-actions {
+    grid-column: 1;
+    gap: 6px;
+  }
+  .salon-roulette-actions .button {
+    padding: 8px 10px;
+    font-size: 10px;
+    gap: 7px;
+  }
+  .salon-roulette > p:not(.salon-small-note):not(.sr-only) {
+    grid-column: 1;
+    min-height: 0;
+    font-size: 11px;
+    margin: 0;
+  }
+  .salon-roulette > .dialog-close {
+    top: 4px;
+    right: 4px;
+    width: 25px;
+    height: 25px;
+    font-size: 21px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .salon-coin,
+  .salon-moods button,
+  .salon-pick > img,
+  .salon-pick > span:last-child,
+  .salon-random {
+    transition: none !important;
+  }
+  .salon-coin:hover {
+    transform: rotate(-11deg);
+  }
+  .salon-moods button:hover {
+    transform: none;
+  }
+  .salon-slot[data-spinning="true"] > img {
+    filter: none;
+    transform: none;
+  }
+}
+
+.salon-random:disabled,
+.salon-coin:disabled {
+  cursor: not-allowed;
+}
+.salon-player[hidden],
+.salon-discovery[hidden] {
+  display: none !important;
+}

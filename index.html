@@ -21,9 +21,12 @@
     <link rel="stylesheet" href="assets/site.css" />
     <script src="assets/storage.js" defer></script>
     <script src="assets/site.js" defer></script>
-    <script src="assets/catalog.js?v=100" defer></script>
+    <script src="assets/catalog.js?v=salon-1" defer></script>
+    <script src="assets/salon-day.js?v=1" defer></script>
+    <script src="assets/salon.js?v=1" defer></script>
     <script src="assets/auth.js" defer></script>
     <link rel="stylesheet" href="assets/theme.css" />
+    <link rel="stylesheet" href="assets/salon.css?v=1" />
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
@@ -64,9 +67,16 @@
             Te gry znasz. Tego miejsca jeszcze nie.<br />Wybierz swój klasyk i
             daj sobie chwilę.
           </p>
-          <a class="button primary" href="#gry"
-            >Znajdź swoją grę <span aria-hidden="true">↘</span></a
-          >
+          <div class="salon-hero-actions">
+            <a class="button primary" href="#gry"
+              >Znajdź swoją grę <span aria-hidden="true">↘</span></a
+            ><button class="button salon-random" data-salon-random hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path d="M7 7h.01M17 7h.01M12 12h.01M7 17h.01M17 17h.01" /></svg
+              >Zdaję się na los
+            </button>
+          </div>
           <div class="hero-footnote">
             <span class="mini-line"></span> 100 gier i testów. Bez instalacji.
           </div>
@@ -83,6 +93,15 @@
             TAK SIĘ<br />ROBI PRZERWĘ<span>↙</span>
           </div>
           <span class="art-bottom">INSERT TIME, NOT COINS.</span>
+          <button
+            class="salon-coin"
+            data-salon-random
+            hidden
+            aria-label="Zakręć i wylosuj grę"
+          >
+            <span aria-hidden="true">↻</span><small>NIE WIESZ W CO?</small
+            ><strong>Zakręć.</strong>
+          </button>
         </div>
       </section>
       <div class="category-ribbon" aria-hidden="true">
@@ -92,10 +111,114 @@
           ><span>TWÓJ CZAS NA GRĘ</span><b>✳</b>
         </div>
       </div>
+      <section
+        class="salon-discovery wrap"
+        hidden
+        id="odkrywaj"
+        aria-labelledby="discovery-title"
+      >
+        <div class="salon-heading">
+          <div>
+            <div class="eyebrow muted">01 / MAŁY PLAN NA WOLNĄ CHWILĘ</div>
+            <h2 id="discovery-title">Na co masz dziś <em>ochotę?</em></h2>
+          </div>
+          <a href="#gry" class="salon-text-link"
+            >Cały katalog <span aria-hidden="true">↓</span></a
+          >
+        </div>
+        <div class="salon-discovery-grid">
+          <div class="salon-mood-area">
+            <div class="salon-moods" role="group" aria-label="Wybierz nastrój">
+              <button
+                data-salon-mood="slow"
+                aria-pressed="true"
+                aria-controls="salon-picks"
+              >
+                <span aria-hidden="true">◒</span><strong>Bez pośpiechu</strong
+                ><small>Głowa na luzie.</small>
+              </button>
+              <button
+                data-salon-mood="think"
+                aria-pressed="false"
+                aria-controls="salon-picks"
+              >
+                <span aria-hidden="true">⌘</span><strong>Pokombinuję</strong
+                ><small>Jeszcze jeden pomysł.</small>
+              </button>
+              <button
+                data-salon-mood="quick"
+                aria-pressed="false"
+                aria-controls="salon-picks"
+              >
+                <span aria-hidden="true">↯</span><strong>Trochę refleksu</strong
+                ><small>Ręce do roboty.</small>
+              </button>
+              <button
+                data-salon-mood="together"
+                aria-pressed="false"
+                aria-controls="salon-picks"
+              >
+                <span aria-hidden="true">↔</span><strong>We dwoje</strong
+                ><small>Podaj dalej ekran.</small>
+              </button>
+            </div>
+            <div class="salon-picks-heading">
+              <p id="salon-mood-note" role="status">
+                Spokojne układy, własne tempo.
+              </p>
+              <button id="salon-more-picks" class="salon-text-link">
+                Inny zestaw <span aria-hidden="true">↻</span>
+              </button>
+            </div>
+            <div
+              id="salon-picks"
+              class="salon-picks"
+              aria-label="Gry na wybrany nastrój"
+            ></div>
+            <p class="salon-small-note">
+              Kliknij grę. Zagraj tutaj. Katalog zaczeka.
+            </p>
+          </div>
+          <aside class="salon-ticket" aria-labelledby="salon-day-title">
+            <div class="salon-ticket-top">
+              <span class="eyebrow">BILET NA MAŁĄ PRZERWĘ</span
+              ><span aria-hidden="true"
+                ><svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 40 40"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M20 3v34M3 20h34M8 8l24 24M8 32 32 8" /></svg
+              ></span>
+            </div>
+            <div class="salon-ticket-title">
+              <h3 id="salon-day-title">Trasa dnia<span>.</span></h3>
+              <time id="salon-day-date"></time>
+            </div>
+            <p>
+              Trzy przystanki. Coś do pomyślenia,<br />coś na refleks i mała
+              ciekawostka.
+            </p>
+            <ol id="salon-day-games" class="salon-day-games"></ol>
+            <div class="salon-ticket-bottom">
+              <span id="salon-day-progress" role="status"
+                >0 / 3 uruchomionych</span
+              ><span id="salon-day-punches" aria-hidden="true">○ ○ ○</span>
+            </div>
+            <p class="salon-ticket-note">
+              Liczymy uruchomienia, nie wygrane. Nowa trasa o północy czasu
+              polskiego.
+            </p>
+          </aside>
+        </div>
+      </section>
       <section class="catalog wrap" id="gry" aria-labelledby="catalog-title">
         <div class="section-heading">
           <div>
-            <div class="eyebrow muted">01 / WYBIERZ COŚ DLA SIEBIE</div>
+            <div class="eyebrow muted">02 / WYBIERZ COŚ DLA SIEBIE</div>
             <h2 id="catalog-title">Dobra gra. <em>I już.</em></h2>
           </div>
           <label class="search"
@@ -134,6 +257,12 @@
             id="result-count"
             aria-live="polite"
           ></span>
+        </div>
+        <div class="salon-catalog-note" hidden>
+          <span>Masz ochotę na niespodziankę?</span
+          ><button class="salon-text-link" data-salon-random hidden>
+            Losuj z katalogu <span aria-hidden="true">↻</span>
+          </button>
         </div>
         <div id="game-grid" class="game-grid"></div>
         <p id="empty-state" class="empty-state" hidden>
@@ -175,6 +304,100 @@
         >
       </section>
     </main>
+    <dialog
+      id="salon-roulette"
+      class="salon-roulette"
+      aria-labelledby="salon-roulette-title"
+    >
+      <button class="dialog-close" data-close aria-label="Zamknij losowanie">
+        ×
+      </button>
+      <div class="eyebrow">MAŁA DECYZJA PO STRONIE LOSU</div>
+      <h2 id="salon-roulette-title">A może <em>właśnie to?</em></h2>
+      <p id="salon-roulette-pool" class="salon-small-note"></p>
+      <div class="salon-slot" id="salon-slot">
+        <span class="salon-slot-mark" aria-hidden="true">▼</span
+        ><img id="salon-slot-art" alt="" width="600" height="430" />
+        <div class="salon-slot-label">
+          <span id="salon-slot-tag" class="eyebrow"></span>
+          <h3 id="salon-slot-name"></h3>
+        </div>
+      </div>
+      <p id="salon-slot-desc"></p>
+      <p id="salon-roulette-status" class="sr-only" role="status"></p>
+      <div class="salon-roulette-actions">
+        <button id="salon-roulette-play" class="button primary">
+          Gram w to <span aria-hidden="true">↗</span></button
+        ><button id="salon-roulette-again" class="button">
+          Jeszcze raz <span aria-hidden="true">↻</span>
+        </button>
+      </div>
+    </dialog>
+    <dialog
+      id="salon-player"
+      class="salon-player"
+      aria-labelledby="salon-player-title"
+    >
+      <header class="salon-player-bar">
+        <img src="assets/mark.svg" width="25" height="25" alt="" />
+        <h2 id="salon-player-title"></h2>
+        <nav aria-label="Narzędzia szybkiej rundy">
+          <button
+            id="salon-player-theme"
+            aria-label="Zmień motyw gry"
+            title="Zmień motyw"
+          >
+            ◐</button
+          ><button
+            id="salon-player-restart"
+            aria-label="Zacznij grę od początku"
+            title="Od początku"
+          >
+            ↻</button
+          ><button
+            id="salon-player-help"
+            aria-label="Zasady tej gry"
+            title="Zasady"
+          >
+            ?</button
+          ><a
+            id="salon-player-page"
+            aria-label="Otwórz nową rundę na osobnej stronie"
+            title="Osobna strona — nowa runda"
+            >↗</a
+          ><button
+            id="salon-player-close"
+            aria-label="Zamknij grę i wróć do katalogu"
+            title="Zamknij (Escape)"
+          >
+            ×
+          </button>
+        </nav>
+      </header>
+      <div id="salon-player-stage" class="salon-player-stage"></div>
+    </dialog>
+    <dialog
+      id="salon-game-guide"
+      class="salon-game-guide"
+      aria-labelledby="salon-guide-title"
+    >
+      <button
+        class="dialog-close"
+        data-close
+        aria-label="Zamknij zasady szybkiej rundy"
+      >
+        ×
+      </button>
+      <div class="eyebrow">SZYBKA RUNDA / ZASADY</div>
+      <h2 id="salon-guide-title"></h2>
+      <p id="salon-guide-about"></p>
+      <h3>Sterowanie</h3>
+      <p id="salon-guide-controls"></p>
+      <p class="salon-small-note">
+        Po zamknięciu zasad wznów grę jej przyciskiem. Escape zamyka okno
+        szybkiej rundy; P zatrzymuje większość gier.
+      </p>
+    </dialog>
     <footer class="site-footer">
       <div class="wrap footer-main">
         <a class="brand" href="index.html"

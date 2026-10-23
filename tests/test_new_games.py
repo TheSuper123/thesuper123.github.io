@@ -50,7 +50,9 @@ class NewGames(unittest.TestCase):
     @contextmanager
     def page(self,game=None,consent=False,width=1000,init=None,clock=False):
         context=self.browser.new_context(viewport={'width':width,'height':950},has_touch=width<600,reduced_motion='reduce')
-        context.add_init_script('localStorage.setItem("spinner:consent:v1",JSON.stringify({version:1,preferences:'+str(consent).lower()+',savedAt:Date.now()}))')
+        # Nested games read the parent's receipt; they must not simulate a fresh
+        # consent decision (and revoke page memory) on every iframe load.
+        context.add_init_script('if(window.self===window.top)localStorage.setItem("spinner:consent:v1",JSON.stringify({version:1,preferences:'+str(consent).lower()+',savedAt:Date.now()}))')
         if init:context.add_init_script(init)
         page=context.new_page();page.set_default_timeout(7000);errors=[];external=[];failures=[]
         if clock:page.clock.install()

@@ -1284,8 +1284,10 @@
   const grid = document.querySelector("#game-grid");
   if (!grid) return;
   const prefs = window.SpinnerStorage.preferences;
-  const history = prefs.get("recent", []);
-  if (Array.isArray(history)) {
+  function renderRecent() {
+    document.querySelector(".recent-strip")?.remove();
+    const history = prefs.get("recent", []);
+    if (!Array.isArray(history)) return;
     const recentGames = history
       .map((id) => games.find((game) => game.id === id))
       .filter(Boolean)
@@ -1303,18 +1305,19 @@
         strip.append(link);
       }
       document.querySelector(".catalog-toolbar").after(strip);
-      window.addEventListener("spinner:preferences-cleared", () =>
-        strip.remove(),
-      );
     }
   }
+  window.addEventListener("spinner:recent-change", renderRecent);
+  window.addEventListener("spinner:preferences-cleared", renderRecent);
+  renderRecent();
   let favorites = new Set(
     (Array.isArray(prefs.get("favorites", []))
       ? prefs.get("favorites", [])
       : []
     ).filter((id) => games.some((game) => game.id === id)),
   );
-  let filter = "all";
+  let filter = "all",
+    visible = [];
   const search = document.querySelector("#game-search");
   const fold = (text) =>
     text
@@ -1332,13 +1335,14 @@
             : game.category === filter)) &&
         fold(game.name + " " + game.desc + " " + game.id).includes(query),
     );
+    visible = list;
     grid.replaceChildren();
     for (const game of list) {
       const article = document.createElement("article");
       article.className = "game-card";
       const url = "gra.html?gra=" + encodeURIComponent(game.id);
       const selected = favorites.has(game.id);
-      article.innerHTML = `<a class="card-image" href="${url}" tabindex="-1" aria-hidden="true"><img src="assets/art/${game.art}.svg" alt="" width="600" height="430" loading="lazy"><span class="card-number">SG / ${String(games.indexOf(game) + 1).padStart(2, "0")}</span><span class="card-open">↗</span></a><div class="card-info"><h3><a href="${url}">${game.name}</a></h3><button class="favorite" aria-label="${selected ? "Usuń z ulubionych" : "Dodaj do ulubionych"}: ${game.name}" aria-pressed="${selected}">${selected ? "♥" : "♡"}</button></div><p class="card-desc">${game.desc}</p><div class="card-meta">${game.tag}</div>`;
+      article.innerHTML = `<a class="card-image" href="${url}" tabindex="-1" aria-hidden="true"><img src="assets/art/${game.art}.svg" alt="" width="600" height="430" loading="lazy"><span class="card-number">SG / ${String(games.indexOf(game) + 1).padStart(2, "0")}</span><span class="card-open">↗</span></a><div class="card-info"><h3><a href="${url}">${game.name}</a></h3><button class="favorite" aria-label="${selected ? "Usuń z ulubionych" : "Dodaj do ulubionych"}: ${game.name}" aria-pressed="${selected}">${selected ? "♥" : "♡"}</button></div><p class="card-desc">${game.desc}</p><div class="card-meta"><span class="card-meta-label">${game.tag}</span><a class="card-quick" href="${url}" data-salon-play="${game.id}" aria-label="Zagraj tutaj: ${game.name}">Zagraj tutaj <span aria-hidden="true">↗</span></a></div>`;
       article.querySelector(".favorite").addEventListener("click", () => {
         if (favorites.has(game.id)) favorites.delete(game.id);
         else favorites.add(game.id);
@@ -1359,6 +1363,7 @@
     document.querySelector("#result-count").textContent =
       `${String(list.length).padStart(2, "0")} / ${games.length} GIER`;
     document.querySelector("#total-count").textContent = games.length;
+    window.dispatchEvent(new Event("spinner:catalog-change"));
   }
   search.addEventListener("input", render);
   document.querySelectorAll("[data-filter]").forEach((button) =>
@@ -1375,5 +1380,6 @@
     favorites.clear();
     render();
   });
+  window.SpinnerCatalog = { visible: () => [...visible] };
   render();
 })();

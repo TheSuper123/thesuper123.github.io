@@ -89,7 +89,19 @@
         failed();
         return;
       }
+      if (new URLSearchParams(location.search).get("rywal") === "local") {
+        const opponent = frame.contentDocument.querySelector(
+          'select[aria-label="RYWAL"]',
+        );
+        if (opponent?.querySelector('option[value="local"]')) {
+          opponent.value = "local";
+          opponent.dispatchEvent(
+            new frame.contentWindow.Event("change", { bubbles: true }),
+          );
+        }
+      }
       document.querySelector("#game-placeholder")?.remove();
+      window.SpinnerSalonDay?.markOpened(game.id);
     } catch {
       /* Browser access restrictions leave the direct link available. */
     }

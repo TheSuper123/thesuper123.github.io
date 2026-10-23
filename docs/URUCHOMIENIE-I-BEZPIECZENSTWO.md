@@ -8,7 +8,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. Gry otwierają się również bez konta i bez dostępu do zewnętrznych usług. Publikacja statycznej strony odbywa się przez GitHub Pages po aktualizacji gałęzi skonfigurowanej jako źródło. Ustawienia produkcyjnego Firebase konfiguruje się osobno w konsoli.
 
-Aktualny katalog 100 pozycji i edukacyjny kompas opisano w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md). Układ planszy i sterowania opisano też w [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md).
+Aktualny katalog 100 pozycji i edukacyjny kompas opisano w [100-GIER-I-KOMPAS.md](100-GIER-I-KOMPAS.md). Nowe odkrywanie gier, trasa dnia i szybka runda są opisane w [ODKRYWANIE-SALONU.md](ODKRYWANIE-SALONU.md). Układ planszy i sterowania opisano też w [30-NOWYCH-GIER-I-EKRAN.md](30-NOWYCH-GIER-I-EKRAN.md).
 
 ## Testy
 
