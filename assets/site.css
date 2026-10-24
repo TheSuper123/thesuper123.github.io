@@ -248,6 +248,9 @@ img {
 .button:hover {
   transform: translateY(-2px);
 }
+dialog .button:hover {
+  transform: none;
+}
 .primary {
   background: var(--ink);
   color: var(--paper);
@@ -1417,6 +1420,9 @@ dialog p {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .button:hover {
+    transform: none;
+  }
   :root {
     scroll-behavior: auto;
   }

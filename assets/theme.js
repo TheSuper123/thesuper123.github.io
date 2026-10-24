@@ -54,7 +54,10 @@
         const consent = JSON.parse(localStorage.getItem("spinner:consent:v1"));
         const saved = JSON.parse(localStorage.getItem("spinner:prefs:theme"));
         if (
-          consent?.preferences &&
+          consent?.version === 1 &&
+          consent.preferences === true &&
+          Number.isFinite(consent.savedAt) &&
+          Date.now() - consent.savedAt >= 0 &&
           Date.now() - consent.savedAt < 180 * 86400000 &&
           valid(saved)
         ) {

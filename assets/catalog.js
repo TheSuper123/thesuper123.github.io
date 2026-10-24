@@ -1353,9 +1353,10 @@
     for (const game of list) {
       const article = document.createElement("article");
       article.className = "game-card";
+      article.dataset.game = game.id;
       const url = "gra.html?gra=" + encodeURIComponent(game.id);
       const selected = favorites.has(game.id);
-      article.innerHTML = `<a class="card-image" href="${url}" tabindex="-1" aria-hidden="true"><img src="assets/art/${game.art}.svg" alt="" width="600" height="430" loading="lazy"><span class="card-number">SG / ${String(games.indexOf(game) + 1).padStart(2, "0")}</span><span class="card-open">↗</span></a><div class="card-info"><h3><a href="${url}">${game.name}</a></h3><button class="favorite" aria-label="${selected ? "Usuń z ulubionych" : "Dodaj do ulubionych"}: ${game.name}" aria-pressed="${selected}">${selected ? "♥" : "♡"}</button></div><p class="card-desc">${game.desc}</p><div class="card-meta"><span class="card-meta-label">${game.tag}</span><a class="card-quick" href="${url}" data-salon-play="${game.id}" aria-label="Zagraj tutaj: ${game.name}">Zagraj tutaj <span aria-hidden="true">↗</span></a></div>`;
+      article.innerHTML = `<a class="card-image" href="${url}" tabindex="-1" aria-hidden="true"><img src="assets/art/${game.art}.svg" alt="" width="600" height="430" loading="lazy"><span class="card-number">SG / ${String(games.indexOf(game) + 1).padStart(2, "0")}</span><span class="card-open">↗</span></a><div class="card-info"><h3><a href="${url}">${game.name}</a></h3><button class="favorite" aria-label="${selected ? "Usuń z ulubionych" : "Dodaj do ulubionych"}: ${game.name}" aria-pressed="${selected}">${selected ? "♥" : "♡"}</button></div><p class="card-desc">${game.desc}</p><div class="card-meta"><span class="card-meta-label"><a href="gry.html#${game.id}" aria-label="Zasady gry: ${game.name}">${game.tag} · Zasady</a></span><a class="card-quick" href="${url}" data-salon-play="${game.id}" aria-label="Zagraj tutaj: ${game.name}">Zagraj tutaj <span aria-hidden="true">↗</span></a></div>`;
       article.querySelector(".favorite").addEventListener("click", () => {
         if (favorites.has(game.id)) favorites.delete(game.id);
         else favorites.add(game.id);

@@ -13,9 +13,14 @@
       "skibidi-fish",
     ]).has(id)
   ) {
-    location.replace(
-      new URL("others/?gra=" + encodeURIComponent(id), window.SpinnerBase),
-    );
+    document.querySelector("#game-title").textContent = "Materiał niedostępny.";
+    const notice = document.querySelector("#game-placeholder");
+    notice.textContent =
+      "Ten materiał został wycofany z publicznej wersji serwisu do czasu wyjaśnienia praw. ";
+    const home = document.createElement("a");
+    home.href = new URL("index.html#gry", window.SpinnerBase);
+    home.textContent = "Wybierz grę z aktualnego katalogu";
+    notice.append(home);
     return;
   }
   if (!game) {

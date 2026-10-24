@@ -45,3 +45,7 @@ Kolejne 39 gier i kompas mają własny kod oraz 40 nowych ilustracji wektorowych
 ## Gra 101 — 23 października 2026
 
 Ostatnia warta wykorzystuje ogólne mechaniki bossfightu bullet hell, z własnym Nadzorcą, geometrią pocisków, dialogami, sekwencjami i syntetyczną muzyką. Nie przeniesiono wyglądu Sansa, grafik, nagrań, tekstów, nazewnictwa menu ani przebiegu scen z Undertale. Podstawą rozdzielenia jest samodzielna realizacja ogólnych zasad, bez przejmowania rozpoznawalnych elementów utworu. Kod i oprawa nowej gry są publiczne; archiwum nie było zmieniane. Szczegóły: [101-OSTATNIA-WARTA.md](101-OSTATNIA-WARTA.md). To opis implementacji, nie indywidualna opinia prawna.
+
+## Wstrzymanie publikacji archiwum — 24 października 2026
+
+Szyfrowane materiały `others` pozostają w repozytorium, ale zostały wyłączone z publicznej publikacji GitHub Pages przez `_config.yml`. Usunięto linki do ich udostępniania oraz przekierowanie z publicznego odtwarzacza. Nieużywane starsze quizy, sondaże, prototyp oraz strona „wkrótce” również nie są publikowane. Nie zmieniano szyfrogramów, hasła, soli ani historii Git. Kopie z dawnych publikacji i kwestie prawne ich przechowywania nadal wymagają weryfikacji przez właściciela. Raport: [AUDYT-GOOGLE.md](AUDYT-GOOGLE.md).

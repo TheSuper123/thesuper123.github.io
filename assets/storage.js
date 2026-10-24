@@ -3,6 +3,8 @@
   "use strict";
   const receiptKey = "spinner:consent:v1";
   const prefix = "spinner:prefs:";
+  const receiptLifetime = 180 * 86400000;
+  let expiryTimer = null;
   const memory = new Map();
   let changes = null;
   try {
@@ -18,7 +20,8 @@
         value.version === 1 &&
         typeof value.preferences === "boolean" &&
         Number.isFinite(value.savedAt) &&
-        Date.now() - value.savedAt < 180 * 86400000
+        Date.now() - value.savedAt >= 0 &&
+        Date.now() - value.savedAt < receiptLifetime
         ? value
         : null;
     } catch {
@@ -42,9 +45,39 @@
       /* Private browsing can deny storage access. */
     }
   }
+  function checkExpiry() {
+    if (!choice) return;
+    const age = Date.now() - choice.savedAt;
+    if (age >= 0 && age < receiptLifetime) return;
+    choice = null;
+    clearTimeout(expiryTimer);
+    clearRetained();
+    try {
+      localStorage.removeItem(receiptKey);
+    } catch {
+      /* Storage may be blocked. */
+    }
+    window.dispatchEvent(new Event("spinner:consent-change"));
+  }
+  function scheduleExpiry() {
+    clearTimeout(expiryTimer);
+    if (!choice) return;
+    expiryTimer = setTimeout(
+      () => {
+        checkExpiry();
+        scheduleExpiry();
+      },
+      Math.max(
+        1,
+        Math.min(86400000, choice.savedAt + receiptLifetime - Date.now()),
+      ),
+    );
+  }
   if (!choice?.preferences) clearRetained();
+  scheduleExpiry();
   const preferences = {
     get(key, fallback = null) {
+      checkExpiry();
       if (memory.has(key)) return memory.get(key);
       if (choice?.preferences) {
         try {
@@ -57,6 +90,7 @@
       return fallback;
     },
     set(key, value) {
+      checkExpiry();
       memory.set(key, value);
       if (choice?.preferences) {
         try {
@@ -76,6 +110,7 @@
   window.SpinnerStorage = {
     preferences,
     get consent() {
+      checkExpiry();
       return choice;
     },
     choose(allowPreferences) {
@@ -91,21 +126,38 @@
       }
       if (!choice.preferences) clearRetained();
       else for (const [key, value] of memory) preferences.set(key, value);
+      scheduleExpiry();
       window.dispatchEvent(new Event("spinner:consent-change"));
     },
   };
   window.addEventListener("storage", (event) => {
+    if (event.key === null) {
+      choice = readChoice();
+      memory.clear();
+      if (!choice?.preferences) clearRetained();
+      scheduleExpiry();
+      window.dispatchEvent(new Event("spinner:consent-change"));
+      window.dispatchEvent(new Event("spinner:preferences-cleared"));
+      return;
+    }
     if (event.key?.startsWith(prefix)) {
       memory.delete(event.key.slice(prefix.length));
       return;
     }
     if (event.key !== receiptKey) return;
     choice = readChoice();
+    scheduleExpiry();
     if (!choice?.preferences) {
       memory.clear();
       clearRetained();
     }
     window.dispatchEvent(new Event("spinner:consent-change"));
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      checkExpiry();
+      scheduleExpiry();
+    }
   });
   if (changes)
     changes.onmessage = (event) => {

@@ -6,7 +6,7 @@ Strona jest statyczna. Uruchom z katalogu repozytorium:
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Nie ma procesu budowania ani zależności wymaganych do zwykłego uruchomienia. Gry otwierają się również bez konta i bez dostępu do zewnętrznych usług. Publikacja statycznej strony odbywa się przez GitHub Pages po aktualizacji gałęzi skonfigurowanej jako źródło. Ustawienia produkcyjnego Firebase konfiguruje się osobno w konsoli.
+Do zwykłego uruchomienia wystarczy serwer statyczny. Przed publikacją uruchom `scripts/build_public_content.py`, potem `scripts/build_offline_pack.py` i `scripts/build_public_site.py`. Produkcja korzysta z wykluczeń Jekyll w `_config.yml`; nie przywracaj `.nojekyll`. Gry otwierają się również bez konta i bez dostępu do zewnętrznych usług. Publikacja statycznej strony odbywa się przez GitHub Pages po aktualizacji gałęzi skonfigurowanej jako źródło. Ustawienia produkcyjnego Firebase konfiguruje się osobno w konsoli.
 
 Przy zmianach publicznych plików przed publikacją odśwież listę offline przez `python3 scripts/build_offline_pack.py` i sprawdź ją opcją `--check`. Instalację na iPhonie, przechowywanie plików oraz aktualizacje opisuje [APLIKACJA-OFFLINE.md](APLIKACJA-OFFLINE.md).
 
@@ -60,7 +60,7 @@ SDK jest serwowane lokalnie. W trakcie pracy inicjalizacja rzeczywistego SDK 13.
 
 ## Klucz w starszym czacie — działanie właściciela
 
-W starym `aigemzegar.html` znaleziono osadzony klucz Google Generative Language API. Usunięto klucz i integrację z bieżącego pliku; dawny adres pokazuje stronę archiwalną. **Unieważnić / zrotować stary klucz w Google Cloud**, sprawdzić wykorzystanie i limity. Klucz może nadal być w historii Git oraz w wcześniej opublikowanej wersji. Nie wypisywano jego wartości i nie wysyłano nim żądań. Nie używać kluczy rozliczeniowych w publicznym JavaScript; ewentualny przyszły czat wymaga zaplecza z uwierzytelnianiem i limitami.
+W starym `aigemzegar.html` znaleziono osadzony klucz Google Generative Language API. Usunięto klucz i integrację z bieżącego pliku; dawny plik ma lokalną stronę archiwalną i jest wyłączony z publikacji. **Unieważnić / zrotować stary klucz w Google Cloud**, sprawdzić wykorzystanie i limity. Klucz może nadal być w historii Git oraz w wcześniej opublikowanej wersji. Nie wypisywano jego wartości i nie wysyłano nim żądań. Nie używać kluczy rozliczeniowych w publicznym JavaScript; ewentualny przyszły czat wymaga zaplecza z uwierzytelnianiem i limitami.
 
 ## Prywatność, prawa do treści i reklamy
 
@@ -79,3 +79,7 @@ Poprawiono ścieżkę osadzenia, brakujące rozszerzenia przejść i strukturę 
 Materiały wymagające weryfikacji zostały wydzielone do `others`, usunięte z publicznego katalogu i zastąpione szyfrogramami. Archiwum działa na HTTPS za pośrednictwem Web Crypto i service workera. Nie dodawaj tam jawnych kopii materiałów. Instrukcje weryfikacji, odzyskiwania i ograniczenia ochrony: [others/README.md](../others/README.md).
 
 Sprawdzono odblokowanie rzeczywistym hasłem i rozgrywkę zaszyfrowanych Tetrisa oraz Dooma w Chromium, a także odmowę dostępu po zamknięciu sesji. Zwykłe testy automatyczne nie zawierają tego hasła; używają oddzielnego archiwum tymczasowego. Przeniesienie plików nie usuwa ich wcześniejszych wersji z Git ani z dotychczasowego wdrożenia.
+
+## Audyt Google i wersja publiczna — 24 października 2026
+
+Archiwum oraz prototypy są zachowane w źródłach i wykluczone z publikacji. Crawlerom i użytkownikom udostępniany jest ten sam pełny katalog HTML oraz biblioteka zasad. Raport z poprawkami i nieweryfikowalnymi ustawieniami konta / domeny: [AUDYT-GOOGLE.md](AUDYT-GOOGLE.md).

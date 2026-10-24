@@ -56,3 +56,7 @@ python3 tests/test_others.py
 Nie usuwa plików z historii Git, poprzednich wdrożeń, kopii, cache innych usług ani klonów repozytorium. Publiczne repozytorium mogło już udostępnić starsze materiały. Archiwizer nie przepisuje historii Git. Wdrożenie zmienionego drzewa usuwa jawne pliki z bieżącego serwisu, lecz nie usuwa ich wcześniej opublikowanych kopii.
 
 Szyfrowanie i hasło nie zastępują licencji i nie rozstrzygają legalności przechowywania ani udostępniania materiałów. Przed dalszym wykorzystaniem wyjaśnij pochodzenie zasobów opisanych w [liście praw](../docs/PRAWA-DO-MATERIALOW.md).
+
+## Publikacja wyłączona — 24 października 2026
+
+Bieżąca konfiguracja GitHub Pages wyklucza cały katalog `others`. Pliki pozostają do pracy lokalnej i wyjaśnienia praw; hasło i szyfrowanie nie zostały zmienione. Lokalny serwer z checkoutu może nadal obsługiwać bramkę. Podgląd wersji publicznej nie zawiera bramki, manifestu ani szyfrogramów. Nie przywracać publikowania tych plików przed wyjaśnieniem praw. Zmiana nie usuwa historycznych kopii ani publikacji.

@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  document.documentElement.classList.add("site-interactive");
   const base = new URL("../", document.currentScript.src);
   window.SpinnerBase = base;
   window.spinnerToast = (message) => {

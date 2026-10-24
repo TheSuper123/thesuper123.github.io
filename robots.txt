@@ -1,2 +1,3 @@
 User-agent: *
 Disallow: /others/
+Sitemap: https://www.spinnerrealyt.pl/sitemap.xml

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <script src="assets/theme.js"></script>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Zasady, sterowanie i pomoc do wszystkich gier Spinner Games. Czytelne również bez JavaScriptu."
+    />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>Zasady wszystkich gier — Spinner Games</title>
+    <link rel="canonical" href="https://www.spinnerrealyt.pl/gry.html" />
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/theme.css" />
+    <link rel="stylesheet" href="assets/pwa.css" />
+    <link rel="stylesheet" href="assets/information.css" />
+    <script src="assets/storage.js" defer></script>
+    <script src="assets/site.js" defer></script>
+    <script src="assets/auth.js" defer></script>
+    <script src="assets/pwa.js" defer></script>
+    <script src="assets/rules.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Przejdź do treści</a>
+    <div class="topline">
+      <span>MAŁA PRZERWA. DOBRA GRA.</span
+      ><span>BEZ REKLAM <i>✳</i> BEZ OPŁAT</span>
+    </div>
+    <header class="site-header wrap">
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Spinner Games — strona główna"
+        ><img src="assets/mark.svg" width="38" height="38" alt="" /><span
+          >spinner<span class="brand-sub">NIEZALEŻNY SALON GIER</span></span
+        ></a
+      >
+      <nav aria-label="Menu główne">
+        <a href="index.html#gry">Gry <span class="tiny-arrow">↙</span></a
+        ><a href="o-serwisie.html">O salonie</a
+        ><button class="account-button" data-account>
+          <span class="account-dot"></span
+          ><span data-account-label>Twoje konto</span
+          ><span aria-hidden="true">↗</span>
+        </button>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="page-intro wrap">
+        <div class="eyebrow orange">ZANIM PADNIE PIERWSZY RUCH</div>
+        <h1>Znasz grę?<br /><em>Poznaj jej zasady.</em></h1>
+        <p>
+          Zasady i sterowanie wszystkich {{GAME_COUNT}} pozycji katalogu.
+          Przeczytasz je bez uruchamiania gry i bez logowania.
+        </p>
+      </section>
+      <div class="prose wrap">
+        <h2>Jak zacząć</h2>
+        <p>
+          Wybierz grę poniżej i rozwiń jej opis. Przycisk „Zagraj” otwiera
+          planszę. Sama rozgrywka wymaga JavaScriptu. Na telefonie plansza i
+          sterowanie mieszczą się razem; przyciski przytrzymuj lub dotykaj
+          zgodnie z opisem danej gry.
+        </p>
+        <h2>Twoje tempo</h2>
+        <p>
+          W większości gier P zatrzymuje rozgrywkę. Zasady, opcje, ukrycie karty
+          i przejście do innej aplikacji również mogą ją zatrzymać. Po powrocie
+          wznów ją przyciskiem. Zmiana motywu nie rozpoczyna nowej rundy.
+          Przycisk „Od początku” uruchamia nową próbę.
+        </p>
+        <h2>Wyniki i granie bez internetu</h2>
+        <p>
+          Konto nie jest potrzebne. Wyniki i ulubione mogą być zapamiętywane na
+          tym urządzeniu po zgodzie; konto ich nie synchronizuje. Punkty nie są
+          pieniędzmi i nie można ich wypłacać. Aby zabrać gry bez zasięgu,
+          otwórz <a href="aplikacja.html">Pobierz aplikację</a> i poczekaj na
+          potwierdzenie pobrania.
+        </p>
+        <nav class="information-links" aria-label="Pomoc w serwisie">
+          <a href="index.html#gry">Katalog gier</a
+          ><a href="kontakt.html">Zgłoś problem</a
+          ><a href="zasady-serwisu.html">Zasady korzystania</a>
+        </nav>
+        <div class="rules-list">{{GAME_RULES}}</div>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand" href="index.html"
+          ><img src="assets/mark.svg" width="30" height="30" alt="" /><span
+            >spinner<span class="brand-sub"
+              >MAŁA PRZERWA. DOBRA GRA.</span
+            ></span
+          ></a
+        >
+        <div class="footer-links">
+          <a href="gry.html">Zasady gier</a><a href="kontakt.html">Kontakt</a
+          ><a href="zasady-serwisu.html">Zasady serwisu</a
+          ><a href="prywatnosc.html">Prywatność</a
+          ><button data-cookie-settings>Ustawienia cookies</button>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>© <span data-year>2026</span> Spinner Games</span
+        ><span>MAŁA PRZERWA. DOBRA GRA.</span>
+      </div>
+    </footer>
+  </body>
+</html>

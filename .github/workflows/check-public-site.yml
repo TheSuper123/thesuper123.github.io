@@ -1,0 +1,19 @@
+name: Check public site
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check generated catalog and rules
+        run: python3 scripts/build_public_content.py --check
+      - name: Check offline package
+        run: python3 scripts/build_offline_pack.py --check
+      - name: Check publication boundary and links
+        run: python3 scripts/build_public_site.py

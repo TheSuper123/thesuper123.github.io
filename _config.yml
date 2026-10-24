@@ -1,0 +1,20 @@
+{
+  "title": "Spinner Games",
+  "url": "https://www.spinnerrealyt.pl",
+  "baseurl": "",
+  "timezone": "Europe/Warsaw",
+  "exclude": [
+    "others",
+    "docs",
+    "tests",
+    "scripts",
+    "templates",
+    ".github",
+    "README.md",
+    "aigemzegar.html",
+    "games/neonincremental1.html",
+    "games/polls.html",
+    "games/quiz.html",
+    "games/soon.html"
+  ]
+}

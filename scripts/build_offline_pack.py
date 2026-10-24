@@ -18,7 +18,8 @@ def build():
     if not games or len(set(games)) != len(games):
         raise ValueError('Expected a nonempty catalog of distinct game files')
     roots = ['index.html', 'gra.html', 'aplikacja.html', 'o-serwisie.html',
-             'prywatnosc.html', 'offline.html', 'manifest.webmanifest']
+             'prywatnosc.html', 'offline.html', 'manifest.webmanifest',
+             'gry.html', 'kontakt.html', 'zasady-serwisu.html']
     assets = [p.relative_to(ROOT).as_posix() for p in (ROOT / 'assets').rglob('*')
               if p.is_file() and p != OUTPUT and 'firebase' not in p.name.lower()]
     files = sorted(set(roots + games + assets))
@@ -26,7 +27,8 @@ def build():
     core = roots + [p for p in assets if p.startswith(('assets/fonts/', 'assets/icons/', 'assets/art/'))]
     core += ['assets/' + p for p in ['site.css', 'theme.css', 'salon.css', 'pwa.css',
              'player-screen.css', 'mark.svg', 'theme.js', 'storage.js', 'site.js',
-             'catalog.js', 'salon.js', 'salon-day.js', 'auth.js', 'play.js', 'pwa.js']]
+             'catalog.js', 'salon.js', 'salon-day.js', 'auth.js', 'play.js', 'pwa.js',
+             'information.css', 'rules.js']]
     digest = hashlib.sha256(json.dumps(dict(files=files, core=sorted(set(core))), sort_keys=True).encode())
     for name in files + ['service-worker.js']:
         digest.update(name.encode() + b'\0' + (ROOT / name).read_bytes())

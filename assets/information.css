@@ -1,0 +1,114 @@
+.information-links {
+  display: flex;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+}
+.information-links a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.rules-list {
+  margin-block: 35px 80px;
+}
+.rules-game {
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 20px;
+}
+.rules-game:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.rules-game > summary {
+  cursor: pointer;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 20px;
+  gap: 12px;
+  align-items: center;
+  padding: 22px 0;
+  font:
+    600 25px/1.2 Fraunces,
+    serif;
+}
+.rules-game > summary::-webkit-details-marker {
+  display: none;
+}
+.rules-number {
+  font:
+    10px/1.5 Mono,
+    monospace;
+  color: var(--orange);
+}
+.rules-game > summary > span:last-child {
+  color: var(--orange);
+  font:
+    24px DM,
+    sans-serif;
+}
+.rules-game[open] > summary > span:last-child {
+  transform: rotate(45deg);
+}
+.rules-content {
+  padding: 0 0 28px 52px;
+}
+.rules-content h3 {
+  font:
+    600 23px Fraunces,
+    serif;
+  margin: 22px 0 10px;
+}
+.rules-content p {
+  line-height: 1.9;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+.contact-address {
+  display: block;
+  font:
+    600 30px/1.3 Fraunces,
+    serif;
+  overflow-wrap: anywhere;
+  margin-block: 24px;
+}
+.rules-content .button {
+  white-space: normal;
+  text-align: left;
+}
+.card-meta-label a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+html:not(.site-interactive) [data-account],
+html:not(.site-interactive) .catalog-toolbar {
+  display: none;
+}
+@media (max-width: 600px) {
+  .rules-game > summary {
+    grid-template-columns: 28px minmax(0, 1fr) 18px;
+    gap: 9px;
+    font-size: 22px;
+    padding-block: 20px;
+  }
+  .rules-content {
+    padding-left: 0;
+  }
+  .contact-address {
+    font-size: 25px;
+  }
+}
+
+.game-card .card-meta-label {
+  min-width: 0;
+  max-width: 100%;
+  flex: 1;
+}
+.game-card .card-meta-label a {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.game-card {
+  min-width: 0;
+}

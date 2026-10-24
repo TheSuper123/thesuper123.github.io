@@ -61,7 +61,7 @@
       (!supported
         ? "Otwórz tę stronę w Safari na iPhonie, korzystając z adresu HTTPS."
         : state?.ready
-          ? "Cały publiczny katalog, ilustracje i zasady są na tym urządzeniu. Logowanie i archiwum Others wymagają internetu."
+          ? "Cały publiczny katalog, ilustracje i zasady są na tym urządzeniu. Logowanie i linki zewnętrzne wymagają internetu."
           : downloading
             ? "Zostaw tę stronę otwartą. Możesz przerwać i dokończyć później."
             : state

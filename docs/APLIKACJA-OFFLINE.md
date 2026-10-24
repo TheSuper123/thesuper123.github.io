@@ -17,7 +17,7 @@ Manifest ma względny identyfikator, zakres i adres startowy, tryb `standalone` 
 
 Cache Storage `spinner-public-<wersja>` służy funkcji offline. Jest niezależny od zgody na opcjonalne `spinner:prefs:*`. Wycofanie zgody na preferencje usuwa preferencje; usuwanie zestawu offline usuwa pliki aplikacji. Ustawienia przeglądarki mogą usunąć obie kategorie. Podczas dalszego używania serwisu odwiedzane pliki znów trafiają do cache.
 
-`others/` zachowuje własny worker o węższym zakresie i sesyjny klucz deszyfrowania. Worker publiczny nie przechwytuje żądań do archiwum ani poleceń z jego stron. Czyszczenie i aktualizacja kasują wyłącznie cache z publicznym prefiksem. Logowanie, archiwum i linki zewnętrzne wymagają sieci. Wszystkie 100 publicznych pozycji, w tym statyczny kompas polityczny, działają offline. Odpowiedzi kompasu nadal są tylko w pamięci karty.
+`others/` zachowuje w źródłach własny worker o węższym zakresie i sesyjny klucz deszyfrowania. Worker publiczny nie przechwytuje żądań do archiwum ani poleceń z jego stron. Czyszczenie i aktualizacja kasują wyłącznie cache z publicznym prefiksem. Publiczna wersja od 24 października 2026 nie udostępnia archiwum; kopia źródłowa służy wyłącznie pracy lokalnej i wyjaśnieniu praw. Logowanie i linki zewnętrzne wymagają sieci. Wszystkie 100 publicznych pozycji, w tym statyczny kompas polityczny, działają offline. Odpowiedzi kompasu nadal są tylko w pamięci karty.
 
 ## Przerwanie i aktualizacje
 

@@ -14,6 +14,7 @@
     <meta name="theme-color" content="#f4f1e8" />
     <title>Polityka prywatności — Spinner Games</title>
     <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://www.spinnerrealyt.pl/prywatnosc.html" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="assets/site.css" />
@@ -21,6 +22,7 @@
     <script src="assets/site.js" defer></script>
     <script src="assets/auth.js" defer></script>
     <link rel="stylesheet" href="assets/theme.css" />
+    <link rel="stylesheet" href="assets/information.css" />
     <link rel="stylesheet" href="assets/pwa.css" />
     <script src="assets/pwa.js" defer></script>
   </head>
@@ -52,7 +54,7 @@
     <main id="main">
       <section class="page-intro wrap">
         <div class="eyebrow orange">
-          OSTATNIA AKTUALIZACJA: 23 PAŹDZIERNIKA 2026
+          OSTATNIA AKTUALIZACJA: 24 PAŹDZIERNIKA 2026
         </div>
         <h1>Twoja prywatność.<br /><em>Jasne zasady.</em></h1>
         <p>
@@ -182,11 +184,11 @@
           <code>spinner-public-</code> zawiera wyłącznie publiczny kod, strony,
           ilustracje i fonty. Nie zapisuje haseł, odpowiedzi ani wyników
           kompasu, odpowiedzi Firebase ani odszyfrowanych materiałów Others.
-          Logowanie i archiwum wymagają internetu. Pliki pozostają do ich
-          usunięcia, zastąpienia podczas aktualizacji lub wyczyszczenia przez
-          przeglądarkę. iOS może samodzielnie usunąć je przy braku miejsca.
-          Próba uzyskania trwalszego przechowywania po pełnym pobraniu zależy od
-          decyzji przeglądarki.
+          Logowanie wymaga internetu. Pliki pozostają do ich usunięcia,
+          zastąpienia podczas aktualizacji lub wyczyszczenia przez przeglądarkę.
+          iOS może samodzielnie usunąć je przy braku miejsca. Próba uzyskania
+          trwalszego przechowywania po pełnym pobraniu zależy od decyzji
+          przeglądarki.
         </p>
         <p>
           Pliki usuniesz przez „Usuń pobrane pliki aplikacji” na stronie
@@ -194,8 +196,8 @@
           danych witryn przeglądarki. Usunięcie samej ikony z ekranu
           początkowego nie musi usunąć danych witryny. Czyszczenie plików
           offline nie usuwa osobno zapisanych ulubionych, wyników, sesji konta
-          ani danych archiwum. Przy dalszym korzystaniu z serwisu otwierane
-          publiczne pliki mogą ponownie trafić do pamięci offline.
+          ani historycznych danych archiwum. Przy dalszym korzystaniu z serwisu
+          otwierane publiczne pliki mogą ponownie trafić do pamięci offline.
         </p>
         <h3>Kompas polityczny</h3>
         <p>
@@ -261,19 +263,15 @@
           podejmowania decyzji wywołujących skutki prawne w sposób wyłącznie
           zautomatyzowany.
         </p>
-        <h2>Szyfrowane archiwum others</h2>
+        <h2>Historyczne archiwum</h2>
         <p>
-          Archiwum materiałów do przeglądu jest chronione wspólnym hasłem. Hasło
-          nie jest przesyłane do zewnętrznej usługi ani zapisywane w pamięci
-          trwałej. Przeglądarka wyprowadza klucz z użyciem PBKDF2 i losowej
-          soli, a pliki odszyfrowuje lokalnie. Klucz sesji pozostaje w pamięci
-          service workera; zamknięcie lub odświeżenie bramki blokuje dostęp, a
-          sesja trwa maksymalnie 30 minut. Rejestracja service workera jest
-          mechanizmem technicznym wymaganym do udostępnienia tej funkcji na
-          Twoje żądanie. Nie zapisujemy odszyfrowanych plików przez Cache API;
-          odpowiedzi są oznaczone jako no-store. Logi hostingu mogą obejmować
-          pobranie zaszyfrowanych plików na zasadach opisanych wyżej. Opcjonalny
-          zapis wyników pozostaje objęty wyborem preferencji.
+          Archiwum materiałów do weryfikacji nie jest już udostępniane w
+          publicznej wersji strony. Wcześniejsza funkcja korzystała ze wspólnego
+          hasła i klucza pozostającego w pamięci service workera maksymalnie
+          przez 30 minut. Nie zapisywała odszyfrowanych plików w Cache Storage.
+          Dane historycznych witryn i rejestracje service workerów można usunąć
+          w ustawieniach przeglądarki. Wycofanie publikacji nie usuwa wcześniej
+          pobranych kopii ani logów hostingu.
         </p>
         <h2>9. Kontakt i zmiany</h2>
         <p>
@@ -298,7 +296,8 @@
           ></a
         >
         <div class="footer-links">
-          <a href="others/">Others — archiwum</a
+          <a href="gry.html">Zasady gier</a><a href="kontakt.html">Kontakt</a
+          ><a href="zasady-serwisu.html">Zasady serwisu</a
           ><a href="o-serwisie.html">O serwisie</a
           ><a href="prywatnosc.html">Prywatność</a
           ><button data-cookie-settings>Ustawienia cookies</button>
