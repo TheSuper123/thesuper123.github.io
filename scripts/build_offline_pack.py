@@ -11,6 +11,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'assets/offline-pack.js'
+UNLISTED_ASSETS = {'assets/niem.css', 'assets/niem.js'}
 
 
 def build():
@@ -21,7 +22,8 @@ def build():
              'prywatnosc.html', 'offline.html', 'manifest.webmanifest',
              'gry.html', 'kontakt.html', 'zasady-serwisu.html']
     assets = [p.relative_to(ROOT).as_posix() for p in (ROOT / 'assets').rglob('*')
-              if p.is_file() and p != OUTPUT and 'firebase' not in p.name.lower()]
+              if p.is_file() and p != OUTPUT and 'firebase' not in p.name.lower()
+              and p.relative_to(ROOT).as_posix() not in UNLISTED_ASSETS]
     files = sorted(set(roots + games + assets))
     # Keep the whole catalog readable offline, even before downloading all engines.
     core = roots + [p for p in assets if p.startswith(('assets/fonts/', 'assets/icons/', 'assets/art/'))]

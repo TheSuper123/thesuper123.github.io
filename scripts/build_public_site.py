@@ -18,8 +18,9 @@ ORIGIN = 'https://www.spinnerrealyt.pl/'
 PAGES = {'index.html', 'gra.html', 'gry.html', 'kontakt.html', 'zasady-serwisu.html',
          'o-serwisie.html', 'prywatnosc.html', 'aplikacja.html', 'offline.html', '404.html',
          'tictactoe.html', 'robots.txt', 'sitemap.xml', 'manifest.webmanifest', 'CNAME',
-         'service-worker.js'}
+         'service-worker.js', 'niem.html'}
 SENSITIVE = {'others', 'docs', 'scripts', 'tests', 'templates', '.github'}
+UNLISTED = {'niem.html'}
 
 
 class Document(HTMLParser):
@@ -28,6 +29,7 @@ class Document(HTMLParser):
         self.links = []
         self.ids = set()
         self.base = None
+        self.robots = set()
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
@@ -35,6 +37,8 @@ class Document(HTMLParser):
             self.ids.add(a['id'])
         if tag == 'base':
             self.base = a.get('href')
+        if tag == 'meta' and a.get('name', '').lower() == 'robots':
+            self.robots.update(token.strip().lower() for token in a.get('content', '').split(','))
         for key in ['src', 'href']:
             if a.get(key) and tag != 'base':
                 self.links.append(a[key])
@@ -78,6 +82,9 @@ def validate(files):
             doc = Document()
             doc.feed((ROOT / name).read_text())
             parsed[name] = doc
+    for name in UNLISTED:
+        if name not in parsed or 'noindex' not in parsed[name].robots:
+            raise ValueError('Unlisted page must request noindex: ' + name)
     def verify(ref, current):
         if ref.startswith(('data:', 'blob:', 'mailto:', 'tel:')):
             return
@@ -91,6 +98,8 @@ def validate(files):
             target += 'index.html'
         if target not in files:
             raise ValueError(f'Unpublished local target: {current} -> {ref}')
+        if target in UNLISTED and current not in UNLISTED:
+            raise ValueError(f'Unlisted page must not be linked publicly: {current} -> {ref}')
         if link.fragment and target in parsed and unquote(link.fragment) not in parsed[target].ids:
             raise ValueError(f'Missing anchor: {current} -> {ref}')
     for name, doc in parsed.items():
@@ -109,6 +118,8 @@ def validate(files):
     pack = json.loads((ROOT / 'assets/offline-pack.js').read_text().split(' = ', 1)[1].rstrip(';\n'))
     if not set(pack['files']) <= files:
         raise ValueError('Offline pack contains files outside the public site')
+    if set(pack['files']) & UNLISTED:
+        raise ValueError('Unlisted pages must not be distributed in the offline pack')
     return {'public_files': len(files), 'games': len(catalog()), 'advertising': 'disabled', 'archive': 'excluded'}
 
 

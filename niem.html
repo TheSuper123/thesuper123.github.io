@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <script src="assets/theme.js"></script>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="same-origin" />
+    <meta name="theme-color" content="#f4f1e8" />
+    <meta
+      name="description"
+      content="Niem — 20 zdań do przećwiczenia niemieckich spójników i szyku zdania."
+    />
+    <title>Niem — spójniki niemieckie</title>
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/theme.css" />
+    <link rel="stylesheet" href="assets/niem.css" />
+    <script src="assets/niem.js" defer></script>
+  </head>
+  <body class="niem-page">
+    <a class="skip-link" href="#exercise">Przejdź do ćwiczenia</a>
+    <header class="site-header wrap">
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Spinner Games — strona główna"
+      >
+        <img src="assets/mark.svg" width="32" height="32" alt="" />
+        <span
+          >spinner<span class="brand-sub">ZESZYT DO NIEMIECKIEGO</span></span
+        >
+      </a>
+    </header>
+    <main class="wrap niem-main">
+      <section class="niem-intro" aria-labelledby="niem-title">
+        <div>
+          <p class="eyebrow">DEUTSCH / KONJUNKTIONEN</p>
+          <h1 id="niem-title">Niem<span>.</span></h1>
+          <p class="niem-lead">
+            Jedna luka.<br /><em>Właściwe połączenie.</em>
+          </p>
+        </div>
+        <div class="niem-intro-note">
+          <span class="niem-edition">ĆWICZENIE 01 / SPÓJNIKI</span>
+          <p>
+            Wpisz w każde zdanie jeden wyraz ze ściągi. Polska podpowiedź
+            określa znaczenie, a niemiecki szyk pomoże wybrać odpowiedź.
+          </p>
+          <p class="niem-session">
+            Odpowiedzi zostają tylko w otwartej karcie. Odświeżenie strony je
+            usuwa.
+          </p>
+          <a class="niem-jump" href="#exercise"
+            >Przejdź do zdań <span aria-hidden="true">↓</span></a
+          >
+        </div>
+      </section>
+
+      <div class="niem-layout">
+        <aside class="niem-sidebar" aria-label="Postęp i pomoc">
+          <div class="niem-progress">
+            <div>
+              <span>WYPEŁNIONE ZDANIA</span
+              ><strong id="niem-completed">0 / 20</strong>
+            </div>
+            <progress
+              id="niem-progress"
+              value="0"
+              max="20"
+              aria-label="Wypełnione zdania"
+            >
+              0 z 20
+            </progress>
+            <p>Bez zegara. Możesz poprawiać odpowiedzi dowolną liczbę razy.</p>
+          </div>
+          <details class="niem-cheatsheet" id="niem-cheatsheet">
+            <summary>
+              Ściąga ze spójników <span aria-hidden="true">+</span>
+            </summary>
+            <div class="niem-rule">
+              <h2><span>01</span> Szyk prosty</h2>
+              <p>Po spójniku: podmiot + odmieniony czasownik.</p>
+              <dl lang="de">
+                <div>
+                  <dt>und</dt>
+                  <dd lang="pl">i, a</dd>
+                </div>
+                <div>
+                  <dt>aber</dt>
+                  <dd lang="pl">ale</dd>
+                </div>
+                <div>
+                  <dt>denn</dt>
+                  <dd lang="pl">bo, ponieważ</dd>
+                </div>
+                <div>
+                  <dt>oder</dt>
+                  <dd lang="pl">albo, lub</dd>
+                </div>
+                <div>
+                  <dt>sondern</dt>
+                  <dd lang="pl">lecz (po przeczeniu)</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="niem-rule">
+              <h2><span>02</span> Szyk przestawny</h2>
+              <p>Po wyrazie łączącym: odmieniony czasownik + podmiot.</p>
+              <dl lang="de">
+                <div>
+                  <dt>dann</dt>
+                  <dd lang="pl">potem, następnie</dd>
+                </div>
+                <div>
+                  <dt>deshalb / darum / deswegen</dt>
+                  <dd lang="pl">dlatego</dd>
+                </div>
+                <div>
+                  <dt>sonst</dt>
+                  <dd lang="pl">w przeciwnym razie</dd>
+                </div>
+                <div>
+                  <dt>trotzdem</dt>
+                  <dd lang="pl">mimo to</dd>
+                </div>
+                <div>
+                  <dt>außerdem</dt>
+                  <dd lang="pl">poza tym, oprócz tego</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="niem-rule">
+              <h2><span>03</span> Szyk końcowy</h2>
+              <p>W zdaniu podrzędnym odmieniony czasownik trafia na koniec.</p>
+              <dl lang="de">
+                <div>
+                  <dt>dass</dt>
+                  <dd lang="pl">że</dd>
+                </div>
+                <div>
+                  <dt>weil</dt>
+                  <dd lang="pl">ponieważ</dd>
+                </div>
+                <div>
+                  <dt>ob</dt>
+                  <dd lang="pl">czy</dd>
+                </div>
+                <div>
+                  <dt>wann</dt>
+                  <dd lang="pl">kiedy (w pytaniu zależnym)</dd>
+                </div>
+                <div>
+                  <dt>warum</dt>
+                  <dd lang="pl">dlaczego</dd>
+                </div>
+              </dl>
+            </div>
+            <p class="niem-rule-note">
+              To wyrazy ze zdjęcia: spójniki, przysłówki łączące i wyrazy
+              pytające. „Deshalb”, „darum” i „deswegen” są tu wymienne. Uznajemy
+              też zapis „ausserdem”.
+            </p>
+          </details>
+        </aside>
+
+        <section
+          id="exercise"
+          class="niem-workbook"
+          aria-labelledby="exercise-title"
+        >
+          <div class="niem-workbook-heading">
+            <h2 id="exercise-title">Uzupełnij zdania</h2>
+            <span>01—20</span>
+          </div>
+          <noscript
+            ><p class="niem-notice">
+              Możesz wypełnić zdania, ale sprawdzanie odpowiedzi wymaga
+              włączonego JavaScriptu.
+            </p></noscript
+          >
+          <form id="niem-exercise" autocomplete="off" novalidate>
+            <ol class="niem-questions">
+              <li id="question-1">
+                <label for="answer-1" lang="de"
+                  >Ich bleibe heute zu Hause,
+                  <input
+                    id="answer-1"
+                    name="answer-1"
+                    type="text"
+                    aria-describedby="hint-1 feedback-1"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  ich krank bin.</label
+                >
+                <p class="niem-hint" id="hint-1">
+                  Znaczenie: <span>ponieważ</span>
+                </p>
+                <p class="niem-feedback" id="feedback-1" hidden></p>
+              </li>
+              <li id="question-2">
+                <label for="answer-2" lang="de"
+                  >Mia hört Musik
+                  <input
+                    id="answer-2"
+                    name="answer-2"
+                    type="text"
+                    aria-describedby="hint-2 feedback-2"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  ihr Bruder liest ein Buch.</label
+                >
+                <p class="niem-hint" id="hint-2">Znaczenie: <span>i</span></p>
+                <p class="niem-feedback" id="feedback-2" hidden></p>
+              </li>
+              <li id="question-3">
+                <label for="answer-3" lang="de"
+                  >Ich möchte mitkommen,
+                  <input
+                    id="answer-3"
+                    name="answer-3"
+                    type="text"
+                    aria-describedby="hint-3 feedback-3"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  ich habe keine Zeit.</label
+                >
+                <p class="niem-hint" id="hint-3">Znaczenie: <span>ale</span></p>
+                <p class="niem-feedback" id="feedback-3" hidden></p>
+              </li>
+              <li id="question-4">
+                <label for="answer-4" lang="de"
+                  >Zuerst putze ich mir die Zähne,
+                  <input
+                    id="answer-4"
+                    name="answer-4"
+                    type="text"
+                    aria-describedby="hint-4 feedback-4"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  gehe ich ins Bett.</label
+                >
+                <p class="niem-hint" id="hint-4">
+                  Znaczenie: <span>potem</span>
+                </p>
+                <p class="niem-feedback" id="feedback-4" hidden></p>
+              </li>
+              <li id="question-5">
+                <label for="answer-5" lang="de"
+                  >Paul fragt,
+                  <input
+                    id="answer-5"
+                    name="answer-5"
+                    type="text"
+                    aria-describedby="hint-5 feedback-5"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  wir morgen Zeit haben.</label
+                >
+                <p class="niem-hint" id="hint-5">Znaczenie: <span>czy</span></p>
+                <p class="niem-feedback" id="feedback-5" hidden></p>
+              </li>
+              <li id="question-6">
+                <label for="answer-6" lang="de"
+                  >Ich esse kein Fleisch,
+                  <input
+                    id="answer-6"
+                    name="answer-6"
+                    type="text"
+                    aria-describedby="hint-6 feedback-6"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  ich esse lieber Gemüse.</label
+                >
+                <p class="niem-hint" id="hint-6">
+                  Znaczenie: <span>lecz</span>
+                </p>
+                <p class="niem-feedback" id="feedback-6" hidden></p>
+              </li>
+              <li id="question-7">
+                <label for="answer-7" lang="de"
+                  >Es regnet stark,
+                  <input
+                    id="answer-7"
+                    name="answer-7"
+                    type="text"
+                    aria-describedby="hint-7 feedback-7"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  bleiben wir zu Hause.</label
+                >
+                <p class="niem-hint" id="hint-7">
+                  Znaczenie: <span>dlatego</span>
+                </p>
+                <p class="niem-feedback" id="feedback-7" hidden></p>
+              </li>
+              <li id="question-8">
+                <label for="answer-8" lang="de"
+                  >Weißt du,
+                  <input
+                    id="answer-8"
+                    name="answer-8"
+                    type="text"
+                    aria-describedby="hint-8 feedback-8"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  der Zug abfährt?</label
+                >
+                <p class="niem-hint" id="hint-8">
+                  Znaczenie: <span>kiedy</span>
+                </p>
+                <p class="niem-feedback" id="feedback-8" hidden></p>
+              </li>
+              <li id="question-9">
+                <label for="answer-9" lang="de"
+                  >Wir müssen jetzt losgehen,
+                  <input
+                    id="answer-9"
+                    name="answer-9"
+                    type="text"
+                    aria-describedby="hint-9 feedback-9"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  verpassen wir den Bus.</label
+                >
+                <p class="niem-hint" id="hint-9">
+                  Znaczenie: <span>w przeciwnym razie</span>
+                </p>
+                <p class="niem-feedback" id="feedback-9" hidden></p>
+              </li>
+              <li id="question-10">
+                <label for="answer-10" lang="de"
+                  >Ich weiß,
+                  <input
+                    id="answer-10"
+                    name="answer-10"
+                    type="text"
+                    aria-describedby="hint-10 feedback-10"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  du gut Deutsch sprichst.</label
+                >
+                <p class="niem-hint" id="hint-10">Znaczenie: <span>że</span></p>
+                <p class="niem-feedback" id="feedback-10" hidden></p>
+              </li>
+              <li id="question-11">
+                <label for="answer-11" lang="de"
+                  >Möchtest du Tee
+                  <input
+                    id="answer-11"
+                    name="answer-11"
+                    type="text"
+                    aria-describedby="hint-11 feedback-11"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  trinkst du lieber Wasser?</label
+                >
+                <p class="niem-hint" id="hint-11">
+                  Znaczenie: <span>albo</span>
+                </p>
+                <p class="niem-feedback" id="feedback-11" hidden></p>
+              </li>
+              <li id="question-12">
+                <label for="answer-12" lang="de"
+                  >Ich bin sehr müde,
+                  <input
+                    id="answer-12"
+                    name="answer-12"
+                    type="text"
+                    aria-describedby="hint-12 feedback-12"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  lerne ich noch eine Stunde.</label
+                >
+                <p class="niem-hint" id="hint-12">
+                  Znaczenie: <span>mimo to</span>
+                </p>
+                <p class="niem-feedback" id="feedback-12" hidden></p>
+              </li>
+              <li id="question-13">
+                <label for="answer-13" lang="de"
+                  >Erkläre mir bitte,
+                  <input
+                    id="answer-13"
+                    name="answer-13"
+                    type="text"
+                    aria-describedby="hint-13 feedback-13"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  du heute so traurig bist.</label
+                >
+                <p class="niem-hint" id="hint-13">
+                  Znaczenie: <span>dlaczego</span>
+                </p>
+                <p class="niem-feedback" id="feedback-13" hidden></p>
+              </li>
+              <li id="question-14">
+                <label for="answer-14" lang="de"
+                  >Ich nehme einen Schirm mit,
+                  <input
+                    id="answer-14"
+                    name="answer-14"
+                    type="text"
+                    aria-describedby="hint-14 feedback-14"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  es regnet heute stark.</label
+                >
+                <p class="niem-hint" id="hint-14">Znaczenie: <span>bo</span></p>
+                <p class="niem-feedback" id="feedback-14" hidden></p>
+              </li>
+              <li id="question-15">
+                <label for="answer-15" lang="de"
+                  >Das Zimmer ist hell,
+                  <input
+                    id="answer-15"
+                    name="answer-15"
+                    type="text"
+                    aria-describedby="hint-15 feedback-15"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  hat es einen Balkon.</label
+                >
+                <p class="niem-hint" id="hint-15">
+                  Znaczenie: <span>poza tym</span>
+                </p>
+                <p class="niem-feedback" id="feedback-15" hidden></p>
+              </li>
+              <li id="question-16">
+                <label for="answer-16" lang="de"
+                  >Der Bus kommt nicht,
+                  <input
+                    id="answer-16"
+                    name="answer-16"
+                    type="text"
+                    aria-describedby="hint-16 feedback-16"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  gehe ich zu Fuß.</label
+                >
+                <p class="niem-hint" id="hint-16">
+                  Znaczenie: <span>dlatego</span>
+                </p>
+                <p class="niem-feedback" id="feedback-16" hidden></p>
+              </li>
+              <li id="question-17">
+                <label for="answer-17" lang="de"
+                  >Wir nehmen die Jacken mit,
+                  <input
+                    id="answer-17"
+                    name="answer-17"
+                    type="text"
+                    aria-describedby="hint-17 feedback-17"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  es abends kalt wird.</label
+                >
+                <p class="niem-hint" id="hint-17">
+                  Znaczenie: <span>ponieważ</span>
+                </p>
+                <p class="niem-feedback" id="feedback-17" hidden></p>
+              </li>
+              <li id="question-18">
+                <label for="answer-18" lang="de"
+                  >Ich trainiere jeden Tag,
+                  <input
+                    id="answer-18"
+                    name="answer-18"
+                    type="text"
+                    aria-describedby="hint-18 feedback-18"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  werde ich langsam besser.</label
+                >
+                <p class="niem-hint" id="hint-18">
+                  Znaczenie: <span>dlatego</span>
+                </p>
+                <p class="niem-feedback" id="feedback-18" hidden></p>
+              </li>
+              <li id="question-19">
+                <label for="answer-19" lang="de"
+                  >Sie sagt,
+                  <input
+                    id="answer-19"
+                    name="answer-19"
+                    type="text"
+                    aria-describedby="hint-19 feedback-19"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  sie morgen früher kommt.</label
+                >
+                <p class="niem-hint" id="hint-19">Znaczenie: <span>że</span></p>
+                <p class="niem-feedback" id="feedback-19" hidden></p>
+              </li>
+              <li id="question-20">
+                <label for="answer-20" lang="de"
+                  >Ich möchte keinen Kaffee,
+                  <input
+                    id="answer-20"
+                    name="answer-20"
+                    type="text"
+                    aria-describedby="hint-20 feedback-20"
+                    maxlength="40"
+                    autocapitalize="none"
+                    spellcheck="false"
+                  />
+                  ich möchte einen Tee.</label
+                >
+                <p class="niem-hint" id="hint-20">
+                  Znaczenie: <span>lecz</span>
+                </p>
+                <p class="niem-feedback" id="feedback-20" hidden></p>
+              </li>
+            </ol>
+            <div class="niem-actions" id="niem-actions" hidden>
+              <button class="button primary" type="submit">
+                Sprawdź odpowiedzi <span aria-hidden="true">↗</span>
+              </button>
+              <button class="button" type="reset">Wyczyść</button>
+            </div>
+            <p
+              class="niem-result"
+              id="niem-result"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Wpisz odpowiedzi, a potem sprawdź swój wynik.
+            </p>
+          </form>
+          <details class="niem-solutions" id="niem-solutions" hidden>
+            <summary>Odpowiedzi i wyjaśnienia</summary>
+            <p>
+              Najpierw spróbuj samodzielnie. Poniżej znajdziesz rozwiązania
+              wszystkich 20 zdań.
+            </p>
+            <ol id="niem-answer-key"></ol>
+          </details>
+        </section>
+      </div>
+    </main>
+    <footer class="wrap niem-footer">
+      <span>NIEM / KONIEC ĆWICZENIA</span
+      ><a href="prywatnosc.html">Prywatność ↗</a>
+    </footer>
+  </body>
+</html>

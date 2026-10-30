@@ -30,7 +30,7 @@ class PreviewHandler(QuietHandler):
             self.wfile.write(data)
 
 
-class PublicSiteChecks(MoreGames):
+class PublicPreview(MoreGames):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -57,6 +57,8 @@ class PublicSiteChecks(MoreGames):
             self.assertEqual(external,[])
         finally:c.close()
 
+
+class PublicSiteChecks(PublicPreview):
     def test_preview_uses_real_publication_exclusions_and_all_local_links_resolve(self):
         self.assertEqual(self.info['games'],101)
         self.assertEqual(self.info['archive'],'excluded')

@@ -1,0 +1,452 @@
+.niem-page .site-header {
+  height: 92px;
+}
+.niem-page .wrap {
+  max-width: 1180px;
+}
+.niem-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: end;
+  padding: 58px 0 48px;
+  border-bottom: 1px solid var(--ink);
+}
+.niem-intro .eyebrow {
+  margin: 0 0 18px;
+  color: var(--muted);
+}
+.niem-intro h1 {
+  font:
+    550 clamp(88px, 10vw, 144px) / 0.88 Fraunces,
+    serif;
+  letter-spacing: -7px;
+  margin: 0 0 24px;
+}
+.niem-intro h1 span {
+  color: var(--orange);
+}
+.niem-lead {
+  font:
+    500 clamp(26px, 3vw, 38px) / 1.18 Fraunces,
+    serif;
+  margin: 0;
+}
+.niem-lead em {
+  color: var(--game-green);
+  font-weight: 450;
+}
+.niem-intro-note {
+  max-width: 440px;
+  padding-bottom: 4px;
+}
+.niem-edition {
+  font:
+    10px/1.5 Mono,
+    monospace;
+  letter-spacing: 1px;
+  color: var(--orange);
+}
+.niem-intro-note p {
+  font-size: 15px;
+  margin: 16px 0 0;
+  line-height: 1.8;
+}
+.niem-intro-note .niem-session {
+  color: var(--muted);
+  font-size: 12px;
+}
+.niem-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.niem-jump span {
+  color: var(--orange);
+}
+.niem-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 54px;
+  padding-top: 40px;
+  align-items: start;
+}
+.niem-sidebar {
+  min-width: 0;
+}
+.niem-progress {
+  padding: 20px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--game-green);
+}
+.niem-progress > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.niem-progress span {
+  font:
+    9px/1.5 Mono,
+    monospace;
+  letter-spacing: 0.6px;
+}
+.niem-progress strong {
+  font:
+    500 22px/1.3 Fraunces,
+    serif;
+  white-space: nowrap;
+}
+.niem-progress progress {
+  display: block;
+  width: 100%;
+  height: 5px;
+  margin: 16px 0;
+  accent-color: var(--game-green);
+  border: none;
+  background: var(--line);
+}
+.niem-progress progress::-webkit-progress-bar {
+  background: var(--line);
+}
+.niem-progress progress::-webkit-progress-value {
+  background: var(--game-green);
+}
+.niem-progress progress::-moz-progress-bar {
+  background: var(--game-green);
+}
+.niem-progress p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.niem-cheatsheet {
+  margin-top: 24px;
+  border-block: 1px solid var(--line);
+}
+.niem-cheatsheet > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 0;
+  font-weight: 600;
+  font-size: 14px;
+  min-height: 48px;
+}
+.niem-cheatsheet > summary::-webkit-details-marker {
+  display: none;
+}
+.niem-cheatsheet > summary span {
+  color: var(--orange);
+  font:
+    24px/1 Mono,
+    monospace;
+}
+.niem-cheatsheet[open] > summary span {
+  transform: rotate(45deg);
+}
+.niem-rule {
+  border-top: 1px solid var(--line);
+  padding: 16px 0;
+}
+.niem-rule h2 {
+  font:
+    600 20px/1.3 Fraunces,
+    serif;
+  margin: 0;
+}
+.niem-rule h2 span {
+  font:
+    10px Mono,
+    monospace;
+  color: var(--game-green);
+  margin-right: 6px;
+}
+.niem-rule > p,
+.niem-rule-note {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+.niem-rule dl {
+  margin: 14px 0 0;
+}
+.niem-rule dl > div {
+  margin-top: 8px;
+}
+.niem-rule dt {
+  font-size: 14px;
+  font-weight: 650;
+}
+.niem-rule dd {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.niem-rule-note {
+  margin: 0 0 20px;
+}
+.niem-workbook {
+  min-width: 0;
+}
+.niem-workbook-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+}
+.niem-workbook-heading h2 {
+  font:
+    550 32px/1.2 Fraunces,
+    serif;
+  margin: 0;
+}
+.niem-workbook-heading > span {
+  font:
+    11px Mono,
+    monospace;
+  color: var(--muted);
+}
+.niem-questions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: sentence;
+}
+.niem-questions > li {
+  position: relative;
+  counter-increment: sentence;
+  padding: 27px 0 24px 44px;
+  border-bottom: 1px solid var(--line);
+}
+.niem-questions > li::before {
+  content: counter(sentence, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 34px;
+  font:
+    11px/1.5 Mono,
+    monospace;
+  color: var(--muted);
+}
+.niem-questions label {
+  display: block;
+  font-size: 19px;
+  line-height: 2.6;
+  cursor: text;
+}
+.niem-questions input {
+  width: 154px;
+  max-width: 100%;
+  min-height: 44px;
+  margin: 2px 4px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--ink);
+  border-radius: 3px 3px 0 0;
+  color: var(--ink);
+  background: var(--white);
+  text-align: center;
+  font-size: 17px;
+  font-weight: 550;
+  line-height: 1.5;
+  vertical-align: baseline;
+}
+.niem-questions input:focus-visible {
+  outline-offset: 2px;
+}
+.niem-hint {
+  margin: 9px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.niem-hint span {
+  font-weight: 600;
+}
+.niem-feedback {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.niem-questions [data-state="correct"] input {
+  border-color: var(--game-green);
+  background: var(--surface-2);
+}
+.niem-questions [data-state="correct"] .niem-feedback {
+  color: var(--game-green);
+}
+.niem-questions [data-state="wrong"] input,
+.niem-questions [data-state="empty"] input {
+  border-color: var(--game-red);
+}
+.niem-questions [data-state="wrong"] .niem-feedback,
+.niem-questions [data-state="empty"] .niem-feedback {
+  color: var(--game-red);
+}
+.niem-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+.niem-actions[hidden],
+.niem-solutions[hidden],
+.niem-feedback[hidden] {
+  display: none;
+}
+.niem-actions .button {
+  justify-content: center;
+  min-height: 48px;
+}
+.niem-result {
+  font-size: 14px;
+  line-height: 1.8;
+  padding: 18px 0;
+  margin: 0;
+}
+.niem-solutions {
+  border-block: 1px solid var(--line);
+  margin-top: 12px;
+}
+.niem-solutions summary {
+  cursor: pointer;
+  padding: 18px 0;
+  min-height: 48px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.niem-solutions > p {
+  font-size: 13px;
+  color: var(--muted);
+}
+.niem-solutions ol {
+  padding-left: 24px;
+}
+.niem-solutions li {
+  font-size: 14px;
+  padding: 9px 0;
+}
+.niem-solutions li::marker {
+  font:
+    11px Mono,
+    monospace;
+  color: var(--muted);
+}
+.niem-solutions li p {
+  font-size: 13px;
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+.niem-notice {
+  border-left: 3px solid var(--orange);
+  padding: 12px 16px;
+  font-size: 14px;
+}
+.niem-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 28px;
+  margin-top: 64px;
+  border-top: 1px solid var(--ink);
+  font:
+    10px/1.5 Mono,
+    monospace;
+  color: var(--muted);
+}
+.niem-footer a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 959px) {
+  .niem-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .niem-progress {
+    padding: 18px 20px;
+  }
+  .niem-cheatsheet {
+    margin-top: 16px;
+  }
+  .niem-rule dl > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: baseline;
+  }
+}
+@media (max-width: 600px) {
+  .niem-page .wrap {
+    width: calc(100% - 40px);
+  }
+  .niem-page .site-header {
+    height: 80px;
+  }
+  .niem-intro {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 32px 0;
+    gap: 28px;
+  }
+  .niem-intro h1 {
+    letter-spacing: -5px;
+    font-size: 100px;
+  }
+  .niem-lead {
+    font-size: 31px;
+  }
+  .niem-intro-note {
+    max-width: none;
+  }
+  .niem-intro-note p {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .niem-layout {
+    padding-top: 24px;
+  }
+  .niem-workbook-heading h2 {
+    font-size: 28px;
+  }
+  .niem-questions > li {
+    padding: 22px 0 22px 32px;
+  }
+  .niem-questions > li::before {
+    top: 29px;
+    font-size: 10px;
+  }
+  .niem-questions label {
+    font-size: 17px;
+    line-height: 2.8;
+  }
+  .niem-questions input {
+    width: 134px;
+    font-size: 16px;
+    margin-inline: 2px;
+  }
+  .niem-actions .primary {
+    flex: 1 1 100%;
+  }
+  .niem-footer {
+    margin-top: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
