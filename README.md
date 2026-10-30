@@ -37,7 +37,7 @@ python3 tests/test_player_integration.py
 ```
 
 - [Uruchomienie, Firebase, zakres testów i działania przed publikacją](docs/URUCHOMIENIE-I-BEZPIECZENSTWO.md)
-- [Audyt przygotowania do Google Ads / AdSense i granice potwierdzenia](docs/AUDYT-GOOGLE.md)
+- [AdSense — audyt przygotowania, plan integracji i granice potwierdzenia](docs/AUDYT-GOOGLE.md)
 - [Aplikacja na iPhonie, pobieranie offline i aktualizacje](docs/APLIKACJA-OFFLINE.md)
 - [Gra 101: Ostatnia warta — autorski bossfight](docs/101-OSTATNIA-WARTA.md)
 - [Odkrywanie salonu: nastrój, losowanie, trasa dnia i szybka runda](docs/ODKRYWANIE-SALONU.md)

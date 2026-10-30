@@ -1,8 +1,10 @@
-# Przygotowanie do Google Ads / AdSense — 24 października 2026
+# Przygotowanie do AdSense
+
+Przegląd kodu: 24 października 2026. Doprecyzowanie zakresu: 30 października 2026 — właściciel potwierdził, że chodzi o wyświetlanie reklam AdSense w serwisie.
 
 Nie potwierdzono pełnej zgodności ani zatwierdzenia przez Google. Wykonano przegląd kodu, poprawki publicznej wersji i testy lokalne. Strona nadal nie wyświetla reklam ani analityki. Nie dodawano numeru wydawcy, fikcyjnego `ads.txt`, kodu reklam ani komunikatu udającego certyfikowaną CMP.
 
-Google Ads służy promowaniu strony, a AdSense wyświetlaniu reklam na stronie. Wymagania i czynności na koncie różnią się. Sama liczba gier, panel cookies, regulamin lub sitemap nie zapewniają akceptacji; Google ocenia m.in. treść, faktyczne działanie miejsca docelowego, sposób pozyskiwania ruchu i konto.
+Ten raport dotyczy AdSense. Sama liczba gier, panel cookies, regulamin lub sitemap nie zapewniają akceptacji; Google ocenia m.in. treść, faktyczne działanie witryny, sposób pozyskiwania ruchu i konto wydawcy.
 
 ## Co sprawdzono i zmieniono
 
@@ -26,11 +28,21 @@ Google Ads służy promowaniu strony, a AdSense wyświetlaniu reklam na stronie.
 6. Ustalić charakter i wiek odbiorców. Jeżeli serwis lub jego część podlega zasadom dotyczącym dzieci, zastosować odpowiednie ograniczenia w koncie i emisji. Zwykły napis o wieku nie zastępuje tej oceny.
 7. Nie wykorzystywać odpowiedzi kompasu politycznego ani wniosków o poglądach do profilowania reklamowego. Aktualny kod ich nie utrwala ani nie wysyła do pomiaru reklam.
 
-## Jeżeli chodzi o promowanie strony w Google Ads
+## Konkretny plan integracji AdSense
 
-Przed kampanią sprawdzić końcowy adres, domenę wyświetlaną, działanie przez HTTPS i dostępność w docelowym kraju na rzeczywistych urządzeniach. Reklama ma opisywać działającą funkcję, a nie wycofane archiwum, prototyp lub zapowiedzianą funkcję. Sprawdzić w koncie weryfikację reklamodawcy, ograniczenia kraju i tematyki oraz dokładny powód ewentualnego odrzucenia.
+Do dalszej konfiguracji potrzebne są rzeczywisty publiczny identyfikator `ca-pub-…` i status domeny w sekcji **Witryny** AdSense, w tym dokładny komunikat ewentualnego odrzucenia. Nie pobierać numeru z cudzej witryny ani odtwarzać starego identyfikatora bez potwierdzenia właściciela. Sam identyfikator nie daje dostępu do konta. Haseł, dokumentów tożsamości ani danych płatniczych nie należy przesyłać do repozytorium lub rozmowy.
 
-Brak śledzenia na stronie nie uniemożliwia reklamowania samego serwisu. Jeśli mają zostać dodane tagi Google, konwersje lub remarketing, potrzebna jest osobna konfiguracja wymaganych zgód i sygnałów Consent Mode w regionach objętych odpowiednimi zasadami. Wymogu certyfikowanej CMP dla produktów wydawcy nie należy automatycznie utożsamiać z wymaganiami każdej strony reklamowanej w Google Ads. Kampanie dotyczące kompasu i treści politycznych wymagają oddzielnego sprawdzenia aktualnych ograniczeń tematycznych, w tym dla UE.
+| Etap | Konkretna czynność | Warunek zakończenia |
+| --- | --- | --- |
+| Konto i domena | Właściciel dodaje domenę `spinnerrealyt.pl` w AdSense i przekazuje publiczny identyfikator oraz wskazaną w panelu metodę weryfikacji. Weryfikację można przygotować oddzielnie od emisji reklam. | Panel potwierdza weryfikację domeny; samo umieszczenie kodu nie oznacza zatwierdzenia witryny. |
+| Weryfikacja w kodzie | Wdrożyć wybraną metodę zgodnie z instrukcją z tego konta. Jeśli panel wskazuje `ads.txt`, użyć dokładnego autoryzowanego wpisu. Dodać plik do kontrolowanej publikacji w `scripts/build_public_site.py`; obecnie taki plik celowo nie istnieje. | Wskazany plik lub znacznik jest publicznie dostępny, a AdSense odczytuje go pod właściwą domeną. |
+| Zgody reklamowe | Właściciel konfiguruje certyfikowaną CMP, np. właściwy komunikat w AdSense → **Prywatność i wyświetlanie wiadomości**. Zintegrować otrzymaną konfigurację i możliwość ponownego otwarcia ustawień. Zgoda na lokalne wyniki nie może włączać reklam. | Sprawdzone nowe wejście, odmowa, wybory szczegółowe i cofnięcie zgody na rzeczywistym wdrożeniu, zgodnie z wybraną CMP i aktualnymi zasadami Google. |
+| Pierwsze miejsce reklamowe | Proponowany początek: jedno oznaczone miejsce w treści katalogu `index.html`, z rezerwacją wysokości i odstępem od kart oraz przycisków. Nie dodawać pustego boksu reklamowego przed rzeczywistą integracją. | Reklama nie zasłania treści, nie przesuwa sterowania i nie daje się pomylić z kartą gry. Sprawdzone oba motywy i mały ekran. |
+| Wyłączenia | W tej konfiguracji pozostawić bez reklam same gry, `gra.html`, szybki odtwarzacz, kompas, logowanie, instalację, dokumenty informacyjne, ekran offline i błędy. Sprawdzić wyłączenia także w panelu, jeżeli będą używane reklamy automatyczne. | Brak emisji w ramkach gier, dialogach i przy sterowaniu. To przyjęty plan rozmieszczenia dla tej witryny, a nie twierdzenie, że Google zawsze zabrania reklam na każdej wymienionej stronie. |
+| Treść i pamięć offline | Przy włączaniu emisji usunąć nieaktualne hasła „bez reklam”, uzupełnić politykę o faktycznych dostawców i przetwarzanie oraz zmienić kontrolę publikacji świadomie dopuszczającą wybraną integrację. Nie dodawać skryptów reklam, reklam ani sygnałów zgody do pakietu offline. | Lokalny wybór preferencji pozostaje niezależny; bez sieci nie są odtwarzane zapisane reklamy. Testy PWA i zgód nadal przechodzą. |
+| Ocena Google | Właściciel zgłasza witrynę do oceny w sekcji **Witryny**, zgodnie ze statusem widocznym na swoim koncie. | Decyzja widoczna w AdSense. Żaden test tego repozytorium jej nie zastępuje. |
+
+Aktualnie można potwierdzić przygotowanie kodu opisane w raporcie. Integracja z konkretnym kontem, certyfikowana CMP, emisja i zatwierdzenie przez Google pozostają niewykonane. Nie należy przedstawiać strony jako już zaakceptowanej przez AdSense.
 
 ## Publikacja i utrzymanie
 
@@ -55,13 +67,13 @@ Po zmianie formatowania HTML najpierw uruchomić generator treści, a potem gene
 
 24 października 2026 próby otwarcia oficjalnych stron pomocy Google, domeny `www.spinnerrealyt.pl` i adresu GitHub Pages zakończyły się błędem proxy środowiska `Tunnel connection failed: 403 Forbidden`. Próby zwykłego odczytu DNS nie powiodły się również dla znanej domeny `thesuper123.github.io` (`Temporary failure in name resolution`). To nie jest dowód, że strona zwraca Google błąd 403 lub że jej DNS jest błędny. Nie obchodzono proxy, nie wyłączano TLS i nie uznano bieżących zasad Google za przeczytane lub niezależnie potwierdzone.
 
+30 października 2026 ponowiono odczyt zasad programu AdSense, wymagań CMP i `https://www.spinnerrealyt.pl/`. Wszystkie trzy próby nadal zakończyły się tym samym błędem proxy. Doprecyzowanie planu nie jest ponownym potwierdzeniem działania witryny produkcyjnej ani aktualności zasad Google.
+
 Właściciel powinien sprawdzić bieżące wymagania i status w swoim koncie. Punkty odniesienia do samodzielnej aktualnej weryfikacji:
 
 - [Zasady programu AdSense](https://support.google.com/adsense/answer/48182?hl=pl)
 - [Kwalifikacja do AdSense](https://support.google.com/adsense/answer/9724?hl=pl)
 - [Wymagania Google dotyczące CMP](https://support.google.com/adsense/answer/13554116?hl=pl)
 - [Zasady Google dla wydawców](https://support.google.com/publisherpolicies/)
-- [Wymagania dotyczące miejsca docelowego w Google Ads](https://support.google.com/adspolicy/answer/6368661?hl=pl)
-- [Zasady Google Ads](https://support.google.com/adspolicy/)
 
 Podglądy interfejsu znajdują się w `docs/screenshots/public-site/`. Nie są publikowane jako części serwisu.
